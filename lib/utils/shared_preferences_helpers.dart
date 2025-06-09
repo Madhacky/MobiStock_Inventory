@@ -54,6 +54,42 @@ class SharedPreferencesHelper {
     return null;
   }
 
+  // Shop ID methods
+  static const String _shopIdKey = 'shop_id';
+
+  static Future<void> setShopId(String shopId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_shopIdKey, shopId);
+  }
+
+  static Future<String?> getShopId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_shopIdKey);
+  }
+
+  static Future<void> removeShopId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_shopIdKey);
+  }
+
+  // Store shop store name
+  static const String _shopStoreNameKey = 'shop_store_name';
+
+  static Future<void> setShopStoreName(String shopStoreName) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_shopStoreNameKey, shopStoreName);
+  }
+
+  static Future<String?> getShopStoreName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_shopStoreNameKey);
+  }
+
+  static Future<void> removeShopStoreName() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_shopStoreNameKey);
+  }
+
   static Future<void> clearAll() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();

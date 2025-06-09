@@ -1,108 +1,135 @@
 import 'package:flutter/material.dart';
+import 'package:mobistock/services/jwt_validator.dart';
 import 'package:mobistock/services/route_services.dart';
+import 'package:mobistock/services/validate_user.dart';
+import 'package:mobistock/utils/shared_preferences_helpers.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> 
+class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  
   late AnimationController _pulseController;
   late AnimationController _fadeController;
   late AnimationController _scaleController;
   late AnimationController _rotateController;
-  
+
   late Animation<double> _pulseAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _rotateAnimation;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize animation controllers
     _pulseController = AnimationController(
       duration: Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
       duration: Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _scaleController = AnimationController(
       duration: Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _rotateController = AnimationController(
       duration: Duration(milliseconds: 3000),
       vsync: this,
     );
-    
+
     // Create animations
-    _pulseAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-    
+    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn,
-    ));
-    
-    _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
-    
-    _rotateAnimation = Tween<double>(
-      begin: 0.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
-      parent: _rotateController,
-      curve: Curves.easeInOut,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
+
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
+
+    _rotateAnimation = Tween<double>(begin: 0.0, end: 2.0).animate(
+      CurvedAnimation(parent: _rotateController, curve: Curves.easeInOut),
+    );
+
     // Start animations
     _startAnimations();
-    
-    // Auto navigate after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
-      RouteService.toLogin();
+
+    // Auto navigate after 3 seconds with JWT token check
+    Future.delayed(Duration(seconds: 3), () async {
+      await _checkTokenAndNavigate();
     });
   }
-  
+
+  Future<void> _checkTokenAndNavigate() async {
+    try {
+      // First check if user has basic login status
+      bool isLoggedIn = await ValidateUser.checkLoginStatus();
+      
+      if (!isLoggedIn) {
+        RouteService.toLogin();
+        return;
+      }
+
+      // Get JWT token using SharedPreferencesHelper
+      final token = await SharedPreferencesHelper.getJwtToken();
+      
+      if (token == null || token.isEmpty) {
+        // No token found, navigate to login
+        RouteService.toLogin();
+        return;
+      }
+
+      // Check if token is expired
+      final isExpired = JwtHelper.isTokenExpired(token);
+      
+      if (isExpired) {
+        // Token expired, clear login status and navigate to login
+        print('JWT Token expired, redirecting to login');
+        // Clear the expired token and login status
+        await SharedPreferencesHelper.setIsLoggedIn(false);
+        RouteService.toLogin();
+      } else {
+        // Token is valid, navigate to dashboard
+        print('JWT Token is valid, navigating to dashboard');
+        RouteService.toDashboard();
+      }
+    } catch (e) {
+      print('Error checking token in splash screen: $e');
+      // On error, navigate to login for safety
+      RouteService.toLogin();
+    }
+  }
+
   void _startAnimations() async {
     // Start scale animation first
     _scaleController.forward();
-    
+
     // Start fade animation after a short delay
     await Future.delayed(Duration(milliseconds: 300));
     _fadeController.forward();
-    
+
     // Start pulse animation
     await Future.delayed(Duration(milliseconds: 500));
     _pulseController.repeat(reverse: true);
-    
+
     // Start rotation animation
     await Future.delayed(Duration(milliseconds: 800));
     _rotateController.repeat();
   }
-  
+
   @override
   void dispose() {
     _pulseController.dispose();
@@ -111,7 +138,7 @@ class _SplashScreenState extends State<SplashScreen>
     _rotateController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,11 +147,7 @@ class _SplashScreenState extends State<SplashScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-              Color(0xFF9C27B0),
-            ],
+            colors: [Color(0xFF667eea), Color(0xFF764ba2), Color(0xFF9C27B0)],
             stops: [0.0, 0.5, 1.0],
           ),
         ),
@@ -132,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             // Animated background particles
             ...List.generate(20, (index) => _buildFloatingParticle(index)),
-            
+
             // Main content
             Center(
               child: Column(
@@ -189,7 +212,9 @@ class _SplashScreenState extends State<SplashScreen>
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(0.2),
+                                                color: Colors.black.withOpacity(
+                                                  0.2,
+                                                ),
                                                 spreadRadius: 2,
                                                 blurRadius: 15,
                                                 offset: Offset(0, 5),
@@ -213,9 +238,9 @@ class _SplashScreenState extends State<SplashScreen>
                       );
                     },
                   ),
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Animated app name
                   FadeTransition(
                     opacity: _fadeAnimation,
@@ -223,10 +248,12 @@ class _SplashScreenState extends State<SplashScreen>
                       position: Tween<Offset>(
                         begin: Offset(0, 0.5),
                         end: Offset.zero,
-                      ).animate(CurvedAnimation(
-                        parent: _fadeController,
-                        curve: Curves.easeOut,
-                      )),
+                      ).animate(
+                        CurvedAnimation(
+                          parent: _fadeController,
+                          curve: Curves.easeOut,
+                        ),
+                      ),
                       child: Column(
                         children: [
                           Text(
@@ -259,9 +286,9 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 60),
-                  
+
                   // Loading indicator
                   FadeTransition(
                     opacity: _fadeAnimation,
@@ -279,7 +306,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ],
               ),
             ),
-            
+
             // Bottom version text
             Positioned(
               bottom: 50,
@@ -303,11 +330,11 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
-  
+
   Widget _buildFloatingParticle(int index) {
     final random = (index * 0.1) % 1.0;
     final delay = Duration(milliseconds: (random * 2000).toInt());
-    
+
     return Positioned(
       left: (random * MediaQuery.of(context).size.width * 0.8),
       top: (random * MediaQuery.of(context).size.height * 0.6) + 100,

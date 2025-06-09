@@ -7,6 +7,7 @@ class DashboardBinding extends Bindings {
   void dependencies() {
     // Put controllers needed for home and main app
     Get.put<DashboardController>(DashboardController());
+    Get.put<AuthController>(AuthController());
     // Add other controllers as needed
   }
 }

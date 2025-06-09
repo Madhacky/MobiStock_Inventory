@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobistock/controllers/auth_controller.dart';
+import 'package:mobistock/controllers/dashboard_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthController controller = Get.find<AuthController>();
-    
+
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
