@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobistock/models/auth/login_model.dart';
+import 'package:mobistock/models/auth/signup_model.dart';
 import 'package:mobistock/services/api_services.dart';
 import 'package:mobistock/services/app_config.dart';
 import 'package:mobistock/services/route_services.dart';
@@ -10,10 +11,13 @@ import 'package:dio/dio.dart' as dio;
 
 class AuthController extends GetxController
     with GetSingleTickerProviderStateMixin {
+
+
   // Separate GlobalKeys for each form
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
+
 
   // Text Controllers
   final TextEditingController emailController = TextEditingController();
@@ -21,6 +25,13 @@ class AuthController extends GetxController
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController shopStoreNameController = TextEditingController();
+
+  // Address Controllers
+  final TextEditingController streetController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
+  final TextEditingController zipcodeController = TextEditingController();
 
   // Observables
   final RxBool isLoading = false.obs;
@@ -40,6 +51,7 @@ class AuthController extends GetxController
 
   // App config instance
   final AppConfig _config = AppConfig.instance;
+
   @override
   void onInit() {
     super.onInit();
@@ -106,6 +118,11 @@ class AuthController extends GetxController
         passwordController.clear();
         confirmPasswordController.clear();
         nameController.clear();
+        shopStoreNameController.clear();
+        streetController.clear();
+        cityController.clear();
+        stateController.clear();
+        zipcodeController.clear();
       }
     } catch (e) {
       print('Controllers already disposed: $e');
@@ -172,6 +189,61 @@ class AuthController extends GetxController
     return null;
   }
 
+  String? validateShopStoreName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Shop store name is required';
+    }
+    if (value.length < 2) {
+      return 'Shop store name must be at least 2 characters';
+    }
+    return null;
+  }
+
+  // Address validation methods
+  String? validateStreet(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Street address is required';
+    }
+    if (value.length < 5) {
+      return 'Street address must be at least 5 characters';
+    }
+    return null;
+  }
+
+  String? validateCity(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'City is required';
+    }
+    if (value.length < 2) {
+      return 'City must be at least 2 characters';
+    }
+    return null;
+  }
+
+  String? validateState(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'State is required';
+    }
+    if (value.length < 2) {
+      return 'State must be at least 2 characters';
+    }
+    return null;
+  }
+
+  String? validateZipcode(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Zipcode is required';
+    }
+    if (value.length < 5) {
+      return 'Zipcode must be at least 5 characters';
+    }
+    // Optional: Add regex validation for zipcode format
+    if (!RegExp(r'^\d{5,6}$').hasMatch(value)) {
+      return 'Please enter a valid zipcode';
+    }
+    return null;
+  }
+
   // Auth methods
   //login
   Future<void> login(BuildContext context) async {
@@ -211,7 +283,7 @@ class AuthController extends GetxController
 
             RouteService.toDashboard();
 
-            ToastCustom.successToast(context, 'Login Successfull');
+            ToastCustom.successToast(context, 'Login Successful');
           } else {
             ToastCustom.errorToast(
               context,
@@ -229,7 +301,7 @@ class AuthController extends GetxController
         );
       }
     } catch (e) {
-      ToastCustom.errorToast(context, 'Error Occured :Login failed');
+      ToastCustom.errorToast(context, 'Error Occurred: Login failed');
     } finally {
       isLoading.value = false;
     }
@@ -240,7 +312,7 @@ class AuthController extends GetxController
     try {
       // Clear all stored data
       await SharedPreferencesHelper.clearAll();
-
+      
       // Navigate back to login screen
       RouteService.logout();
 
@@ -262,30 +334,91 @@ class AuthController extends GetxController
     }
   }
 
-  // Check if user is logged in (useful for splash screen or app initialization)
-  Future<bool> checkLoginStatus() async {
-    try {
-      bool isLoggedIn = await SharedPreferencesHelper.getIsLoggedIn();
-      String? token = await SharedPreferencesHelper.getJwtToken();
-
-      // Check if both login status and token exist
-      return isLoggedIn && token != null && token.isNotEmpty;
-    } catch (e) {
-      print('Error checking login status: $e');
-      return false;
-    }
-  }
-
-  //sign up
-  Future<void> signup() async {
+  //sign up - Updated to match the JSON payload structure with status check
+  Future<void> signup(BuildContext context) async {
     if (!signupFormKey.currentState!.validate()) return;
 
     try {
       isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 2));
-      RouteService.toVerifyEmail(parameters: {"email": emailController.text});
+
+      Map<String, dynamic> signupParameters = {
+        'shopStoreName': shopStoreNameController.text.trim(),
+        'shopAddress': {
+          'street': streetController.text.trim(),
+          'city': cityController.text.trim(),
+          'state': stateController.text.trim(),
+          'zipcode': zipcodeController.text.trim(),
+        },
+        'email': emailController.text.trim(),
+        'password': passwordController.text.trim(),
+        'role': {'id': 1},
+        'Status': 1,
+      };
+
+      dio.Response? response = await _apiService.requestPostForApi(
+        url: _config.signupEndpoint,
+        dictParameter: signupParameters,
+        authToken: false,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        try {
+          SignupResponse signupResponse = SignupResponse.fromJson(
+            response.data,
+          );
+
+          // Check if signup was successful using status = 1 or isSuccess = true
+          if (response.statusCode == 200) {
+            // Store user information
+            if (signupResponse.payload?.email != null) {
+              await SharedPreferencesHelper.setUsername(
+                signupResponse.payload!.email!,
+              );
+            }
+
+            // Store shop information
+            if (signupResponse.payload?.shopId != null) {
+              await SharedPreferencesHelper.setShopId(
+                signupResponse.payload!.shopId!,
+              );
+            }
+
+            // Show success message from API or default message
+            String successMessage = 'Account created successfully!';
+            ToastCustom.successToast(context, successMessage);
+
+            // Clear the form after successful signup
+            clearControllers();
+
+            // Navigate back to login
+            RouteService.backToLogin();
+          } else {
+            ToastCustom.errorToast(
+              context,
+              "Signup failed or account already exists",
+            );
+          }
+        } catch (parseError) {
+          ToastCustom.errorToast(context, 'Invalid response format');
+          print('Parse error: $parseError');
+          print('Response data: ${response.data}');
+        }
+      } else {
+        if (response != null &&response.statusCode == 400) {
+          ToastCustom.errorToast(
+            context,
+            "Signup failed or account already exists",
+          );
+        } else {
+          ToastCustom.errorToast(
+            context,
+            'Network error. Please check your connection.',
+          );
+        }
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Signup failed: ${e.toString()}');
+      ToastCustom.errorToast(context, 'Signup failed: ${e.toString()}');
+      print('Signup error: $e');
     } finally {
       isLoading.value = false;
     }
@@ -298,8 +431,6 @@ class AuthController extends GetxController
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 2));
       ToastCustom.successToast(context, "Password reset email sent!");
-      //  Get.snackbar('Success', 'Password reset email sent!');
-      // Get.back();
     } catch (e) {
       Get.snackbar('Error', 'Reset failed: ${e.toString()}');
     } finally {
@@ -318,6 +449,11 @@ class AuthController extends GetxController
       passwordController.dispose();
       confirmPasswordController.dispose();
       nameController.dispose();
+      shopStoreNameController.dispose();
+      streetController.dispose();
+      cityController.dispose();
+      stateController.dispose();
+      zipcodeController.dispose();
     } catch (e) {
       print('Error disposing controllers: $e');
     }

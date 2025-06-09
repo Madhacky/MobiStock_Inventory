@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mobistock/controllers/auth_controller.dart';
+import 'package:mobistock/controllers/dashboard_controller.dart';
 
 class AuthBinding extends Bindings {
   @override
@@ -7,6 +8,10 @@ class AuthBinding extends Bindings {
     Get.put<AuthController>(
       AuthController(),
        permanent: true,
+    );
+    Get.put<DashboardController>(
+      DashboardController(),
+       permanent: false,
     );
     
   }

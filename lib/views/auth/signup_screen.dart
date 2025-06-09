@@ -35,7 +35,7 @@ class SignupScreen extends StatelessWidget {
                       const SizedBox(height: 40),
                       _buildSignupForm(controller),
                       const SizedBox(height: 32),
-                      _buildSignupButton(controller),
+                      _buildSignupButton(controller, context),
                       const SizedBox(height: 40),
                       _buildLoginPrompt(controller),
                     ],
@@ -64,7 +64,7 @@ class SignupScreen extends StatelessWidget {
             ),
           ),
           child: Icon(
-            Icons.person_add_outlined,
+            Icons.store_outlined,
             size: 40,
             color: Colors.white,
           ),
@@ -81,7 +81,7 @@ class SignupScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Sign up to get started with us',
+          'Set up your shop and get started',
           style: TextStyle(
             fontSize: 16,
             color: Colors.white.withOpacity(0.8),
@@ -97,13 +97,16 @@ class SignupScreen extends StatelessWidget {
       key: controller.signupFormKey,
       child: Column(
         children: [
+          // Shop Store Name
           _buildModernTextField(
-            controller: controller.nameController,
-            hintText: 'Full Name',
-            prefixIcon: Icons.person_outline_rounded,
-            validator: controller.validateName,
+            controller: controller.shopStoreNameController,
+            hintText: 'Shop Store Name',
+            prefixIcon: Icons.store_mall_directory_outlined,
+            validator: controller.validateShopStoreName,
           ),
           const SizedBox(height: 20),
+          
+          // Email
           _buildModernTextField(
             controller: controller.emailController,
             hintText: 'Email Address',
@@ -112,6 +115,8 @@ class SignupScreen extends StatelessWidget {
             validator: controller.validateEmail,
           ),
           const SizedBox(height: 20),
+          
+          // Password
           Obx(() => _buildModernTextField(
             controller: controller.passwordController,
             hintText: 'Password',
@@ -129,6 +134,8 @@ class SignupScreen extends StatelessWidget {
             validator: controller.validatePassword,
           )),
           const SizedBox(height: 20),
+          
+          // Confirm Password
           Obx(() => _buildModernTextField(
             controller: controller.confirmPasswordController,
             hintText: 'Confirm Password',
@@ -145,6 +152,70 @@ class SignupScreen extends StatelessWidget {
             ),
             validator: controller.validateConfirmPassword,
           )),
+          const SizedBox(height: 20),
+          
+          // Address Section Header
+          Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                color: Colors.white.withOpacity(0.8),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Shop Address',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Street Address
+          _buildModernTextField(
+            controller: controller.streetController,
+            hintText: 'Street Address',
+            prefixIcon: Icons.home_outlined,
+            validator: controller.validateStreet,
+          ),
+          const SizedBox(height: 20),
+          
+          // City and State Row
+          Row(
+            children: [
+              Expanded(
+                child: _buildModernTextField(
+                  controller: controller.cityController,
+                  hintText: 'City',
+                  prefixIcon: Icons.location_city_outlined,
+                  validator: controller.validateCity,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildModernTextField(
+                  controller: controller.stateController,
+                  hintText: 'State',
+                  prefixIcon: Icons.map_outlined,
+                  validator: controller.validateState,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          
+          // Zipcode
+          _buildModernTextField(
+            controller: controller.zipcodeController,
+            hintText: 'Zipcode',
+            prefixIcon: Icons.local_post_office_outlined,
+            keyboardType: TextInputType.number,
+            validator: controller.validateZipcode,
+          ),
         ],
       ),
     );
@@ -201,7 +272,7 @@ class SignupScreen extends StatelessWidget {
     );
   }
   
-  Widget _buildSignupButton(AuthController controller) {
+  Widget _buildSignupButton(AuthController controller, BuildContext context) {
     return Obx(() => Container(
       height: 56,
       decoration: BoxDecoration(
@@ -225,7 +296,7 @@ class SignupScreen extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: controller.isLoading.value ? null : controller.signup,
+          onTap: controller.isLoading.value ? null : () => controller.signup(context),
           child: Center(
             child: controller.isLoading.value 
               ? SizedBox(

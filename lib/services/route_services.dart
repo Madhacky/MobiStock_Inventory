@@ -48,6 +48,7 @@ class RouteService {
   static void logout() {
     // Clear all data and go to login
     Get.delete<AuthController>(force: true);
+    Get.deleteAll(force: true);
     Get.offAllNamed(AppRoutes.login);
   }
 
