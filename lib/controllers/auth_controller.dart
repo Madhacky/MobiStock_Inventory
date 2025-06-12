@@ -1,23 +1,24 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobistock/models/auth/login_model.dart';
 import 'package:mobistock/models/auth/signup_model.dart';
 import 'package:mobistock/services/api_services.dart';
 import 'package:mobistock/services/app_config.dart';
+import 'package:mobistock/services/cookie_extractor.dart';
 import 'package:mobistock/services/route_services.dart';
-import 'package:mobistock/utils/shared_preferences_helpers.dart';
+import 'package:mobistock/services/secure_storage_service.dart';
+import 'package:mobistock/services/shared_preferences_services.dart';
 import 'package:mobistock/utils/toasts.dart';
 import 'package:dio/dio.dart' as dio;
 
 class AuthController extends GetxController
     with GetSingleTickerProviderStateMixin {
-
-
   // Separate GlobalKeys for each form
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
-
 
   // Text Controllers
   final TextEditingController emailController = TextEditingController();
@@ -264,7 +265,10 @@ class AuthController extends GetxController
       );
 
       if (response != null) {
+        // After successful login
         try {
+          // After successful login
+          await CookieExtractor.extractAndSaveJSessionId(response);
           LoginResponse loginResponse = LoginResponse.fromJson(response.data);
 
           if (loginResponse.isSuccess && loginResponse.payload != null) {
@@ -312,7 +316,7 @@ class AuthController extends GetxController
     try {
       // Clear all stored data
       await SharedPreferencesHelper.clearAll();
-      
+      await SecureStorageHelper.deleteJSessionId();
       // Navigate back to login screen
       RouteService.logout();
 
@@ -404,7 +408,7 @@ class AuthController extends GetxController
           print('Response data: ${response.data}');
         }
       } else {
-        if (response != null &&response.statusCode == 400) {
+        if (response != null && response.statusCode == 400) {
           ToastCustom.errorToast(
             context,
             "Signup failed or account already exists",

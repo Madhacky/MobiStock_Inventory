@@ -3,11 +3,12 @@
   import 'package:get/get.dart';
   import 'package:mobistock/routes/app_pages.dart';
   import 'package:mobistock/routes/app_routes.dart';
+import 'package:mobistock/services/api_services.dart';
   import 'package:mobistock/utils/page_not_found.dart';
 
   void main() async {
     WidgetsFlutterBinding.ensureInitialized();
-
+final apiService = ApiServices(); // This sets up the interceptors
     // Load environment variables
     await dotenv.load(fileName: ".env");
     runApp(MyApp());

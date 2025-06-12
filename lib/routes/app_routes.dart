@@ -9,6 +9,14 @@ class AppRoutes {
   
   // Main App Routes
   static const String dashboard = '/dashboard';
+  static const String inventory_management = '/inventory-management';
+  //customer analytics
+  static const String customerManagement = '/customer-management';
+  static const String customerAnalytics = '/customer-analytics';
+
+  
+
+
   static const String profile = '/profile';
   static const String settings = '/settings';
   
@@ -29,5 +37,7 @@ class AppRoutes {
     settings,
     notFound,
     error,
+    inventory_management,
+    customerManagement
   ];
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobistock/services/jwt_validator.dart';
 import 'package:mobistock/services/route_services.dart';
+import 'package:mobistock/services/shared_preferences_services.dart';
 import 'package:mobistock/services/validate_user.dart';
-import 'package:mobistock/utils/shared_preferences_helpers.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

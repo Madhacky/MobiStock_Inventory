@@ -4,6 +4,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobistock/models/dashboard_models/charts/monthly_emi_dues_model.dart';
+import 'package:mobistock/models/dashboard_models/charts/monthly_revenue_model.dart';
+import 'package:mobistock/models/dashboard_models/charts/top_selling_models.dart';
 import 'package:mobistock/models/dashboard_models/sales_summary_model.dart';
 import 'package:mobistock/models/dashboard_models/stock_summary_model.dart';
 import 'package:mobistock/models/dashboard_models/today_sales_header_model.dart';
@@ -45,6 +48,9 @@ class DashboardController extends GetxController
     fetchSalesSummary();
     fetchTodaysSalesCard();
     fetchStockSummary();
+    fetchMonthlyRevenueChart();
+    fetchisTopSellingModelChart() ;
+    fetchMonthlyEmiDuesChart();
   }
 
   @override
@@ -222,7 +228,7 @@ class DashboardController extends GetxController
       isSalesSummaryLoading.value = true;
       hasSalesSummaryError.value = false;
       errorMessage.value = '';
-
+      await Future.delayed(Duration(seconds: 3));
       dio.Response? response = await _apiService.requestGetForApi(
         url: _config.todaysalessummary,
         authToken: true, // Set based on your authentication requirement
@@ -271,7 +277,7 @@ class DashboardController extends GetxController
       isTodaysSalesCardLoading.value = true;
       hasTodaysSalesCardError.value = false;
       todaysSalesCarderrorMessage.value = '';
-
+      await Future.delayed(Duration(seconds: 3));
       dio.Response? response = await _apiService.requestGetForApi(
         url: _config.todaysalesCard,
         authToken: true, // Set based on your authentication requirement
@@ -324,7 +330,7 @@ class DashboardController extends GetxController
       isStockSummaryLoading.value = true;
       hasStockSummaryError.value = false;
       stockSummaryerrorMessage.value = '';
-
+      await Future.delayed(Duration(seconds: 3));
       dio.Response? response = await _apiService.requestGetForApi(
         url: _config.stockSummary,
         authToken: true, // Set based on your authentication requirement
@@ -337,7 +343,6 @@ class DashboardController extends GetxController
         final companyStockMap = responseData.payload.companyWiseStock.map(
           (key, value) => MapEntry(key, value),
         );
-
 
         final lowStockList =
             responseData.payload.lowStockDetails
@@ -359,6 +364,115 @@ class DashboardController extends GetxController
       stockSummaryerrorMessage.value = 'Error: $error';
     } finally {
       isStockSummaryLoading.value = false;
+    }
+  }
+
+  //charts api
+  RxBool isMonthlyRevenueChartLoading = false.obs;
+  var monthlyRevenueCharterrorMessage = ''.obs;
+  var hasMonthlyRevenueChartError = false.obs;
+  RxMap<String, double> monthlyRevenueChartPayload = RxMap<String, double>({});
+  Future<void> fetchMonthlyRevenueChart() async {
+    try {
+      isMonthlyRevenueChartLoading.value = true;
+      hasMonthlyRevenueChartError.value = false;
+      monthlyRevenueCharterrorMessage.value = '';
+      await Future.delayed(Duration(seconds: 3));
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: _config.monthlyRevenueChart,
+        authToken: true, // Set based on your authentication requirement
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final responseData = MonthlyRevenueChartModel.fromJson(response.data);
+        log("${responseData.payload.toString()}");
+        monthlyRevenueChartPayload!.value = Map<String, double>.from(
+          responseData.payload,
+        );
+      } else {
+        hasMonthlyRevenueChartError.value = true;
+        monthlyRevenueCharterrorMessage.value =
+            'Failed to fetch data. Status: ${response?.statusCode}';
+      }
+    } catch (error) {
+      hasMonthlyRevenueChartError.value = true;
+      monthlyRevenueCharterrorMessage.value = 'Error: $error';
+    } finally {
+      isMonthlyRevenueChartLoading.value = false;
+    }
+  }
+
+  //top selling model
+  RxBool isTopSellingModelChartLoading = false.obs;
+  var topSellingModelCharterrorMessage = ''.obs;
+  var hasisTopSellingModelChartError = false.obs;
+  RxMap<String, double> topSellingModelChartPayload = RxMap<String, double>(
+    {},
+  );
+  Future<void> fetchisTopSellingModelChart() async {
+    try {
+      isTopSellingModelChartLoading.value = true;
+      hasisTopSellingModelChartError.value = false;
+      topSellingModelCharterrorMessage.value = '';
+      await Future.delayed(Duration(seconds: 3));
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: _config.topSellingModelsChart,
+        authToken: true, // Set based on your authentication requirement
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final responseData = TopSellingModelsResponse.fromJson(response.data);
+        log("${responseData.payload.toString()}");
+        topSellingModelChartPayload.value = Map<String, double>.from(
+          responseData.chartData,
+        );
+      } else {
+        hasisTopSellingModelChartError.value = true;
+        topSellingModelCharterrorMessage.value =
+            'Failed to fetch data. Status: ${response?.statusCode}';
+      }
+    } catch (error) {
+      hasisTopSellingModelChartError.value = true;
+      topSellingModelCharterrorMessage.value = 'Error: $error';
+    } finally {
+      isTopSellingModelChartLoading.value = false;
+    }
+  }
+
+  //Monthly Emi Dues
+    RxBool isMonthlyEmiDuesChartLoading = false.obs;
+  var monthlyEmiDuesCharterrorMessage = ''.obs;
+  var hasmonthlyEmiDuesChartError = false.obs;
+  RxMap<String, double> monthlyEmiDuesChartPayload = RxMap<String, double>(
+    {},
+  );
+  Future<void> fetchMonthlyEmiDuesChart() async {
+    try {
+      isMonthlyEmiDuesChartLoading.value = true;
+      hasmonthlyEmiDuesChartError.value = false;
+      monthlyEmiDuesCharterrorMessage.value = '';
+      await Future.delayed(Duration(seconds: 3));
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: _config.monthlyEmiDuesChart,
+        authToken: true, // Set based on your authentication requirement
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final responseData = MonthlyDuesResponse.fromJson(response.data);
+        log("${responseData.payload.toString()}");
+        monthlyEmiDuesChartPayload.value = Map<String, double>.from(
+          responseData.chartDataRemaining,
+        );
+      } else {
+        hasmonthlyEmiDuesChartError.value = true;
+        monthlyEmiDuesCharterrorMessage.value =
+            'Failed to fetch data. Status: ${response?.statusCode}';
+      }
+    } catch (error) {
+      hasmonthlyEmiDuesChartError.value = true;
+      monthlyEmiDuesCharterrorMessage.value = 'Error: $error';
+    } finally {
+      isMonthlyEmiDuesChartLoading.value = false;
     }
   }
 }

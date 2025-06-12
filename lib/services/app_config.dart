@@ -1,22 +1,22 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 
 class AppConfig {
   // Private constructor
   AppConfig._();
-  
+
   // Singleton instance
   static final AppConfig _instance = AppConfig._();
   static AppConfig get instance => _instance;
-  
+
   // Environment variables getters
-  String get baseUrl => dotenv.env['BASE_URL'] ?? 'https://backend-production-33c0.up.railway.app';
+  String get baseUrl =>
+      dotenv.env['BASE_URL'] ??
+      'https://backend-production-33c0.up.railway.app';
   bool get isDebugMode => dotenv.env['DEBUG_MODE']?.toLowerCase() == 'true';
   String get appName => dotenv.env['APP_NAME'] ?? 'Flutter App';
   String get appVersion => dotenv.env['APP_VERSION'] ?? '1.0';
 
-  
-
-  
   // Specific endpoints
   String get loginEndpoint => '$baseUrl/login/jwt';
   String get signupEndpoint => '$baseUrl/users/createUser';
@@ -26,10 +26,33 @@ class AppConfig {
   String get todaysalessummary => '$baseUrl/api/sales/today-sales-summary';
   String get todaysalesCard => '$baseUrl/api/sales/today';
   String get stockSummary => '$baseUrl/api/mobiles/stock-details';
+  String get monthlyRevenueChart => '$baseUrl/api/sales/revenue/monthly';
+  String get topSellingModelsChart =>
+      '$baseUrl/api/sales/top-models?month=3&year=2024';
+  String get monthlyEmiDuesChart => '$baseUrl/api/dues/monthly-summary';
+
+  //inventory management endpoints
+  String get getInventoryData =>
+      '$baseUrl/inventory/shop?page=0&size=10&sortBy=id';
+
+  //customer management endpoints
+  String get getMonthlyNewCustomerEndpoint =>
+      '$baseUrl/api/customers/count/monthly';
+  String get getVillageDistributionEndpoint =>
+      '$baseUrl/api/customers/count/location';
+  String get getMonthlyRepeatCustomerEndpoint =>
+      '$baseUrl/api/sales/count/monthly/repeated';
+       String get getTopCustomerOverviewEndpoint =>
+      '$baseUrl/api/sales/top-customers';
+      
 
 
+  // Utility methods
+  static bool get isSmallScreen => Get.width < 360;
+  static bool get isMediumScreen => Get.width >= 360 && Get.width < 400;
+  static double get screenWidth => Get.width;
+  static double get screenHeight => Get.height;
 
-  
   // Debug print method
   void printConfig() {
     if (isDebugMode) {

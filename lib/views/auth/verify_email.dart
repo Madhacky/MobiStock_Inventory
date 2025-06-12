@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobistock/services/route_services.dart';
+import 'package:mobistock/utils/custom_appbar.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
   const VerifyEmailScreen({super.key});
@@ -27,7 +28,7 @@ class VerifyEmailScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              _buildCustomAppBar(),
+              buildCustomAppBar("Verify E-mail",isdark: false),
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
@@ -51,43 +52,7 @@ class VerifyEmailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
-              onPressed: () => Get.back(),
-              padding: const EdgeInsets.all(8),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Text(
-            'Verify Email',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+ 
   
   Widget _buildHeaderSection(String email) {
     return Column(

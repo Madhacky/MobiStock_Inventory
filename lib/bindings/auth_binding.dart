@@ -9,10 +9,10 @@ class AuthBinding extends Bindings {
       AuthController(),
        permanent: true,
     );
-    Get.put<DashboardController>(
-      DashboardController(),
-       permanent: false,
-    );
+    // Get.put<DashboardController>(
+    //   DashboardController(),
+    //    permanent: false,
+    // );
     
   }
 }

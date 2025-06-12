@@ -1,13 +1,18 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:mobistock/bindings/auth_binding.dart';
+import 'package:mobistock/bindings/customer_management_binding.dart';
 import 'package:mobistock/bindings/dashboard_binding.dart';
+import 'package:mobistock/bindings/inventory_management_binding.dart';
 import 'package:mobistock/routes/app_routes.dart';
 import 'package:mobistock/views/auth/login_screen.dart';
 import 'package:mobistock/views/auth/reset_password.dart';
 import 'package:mobistock/views/auth/signup_screen.dart';
 import 'package:mobistock/views/auth/verify_email.dart';
+import 'package:mobistock/views/customer/customer.dart';
+import 'package:mobistock/views/customer/customer_analytics.dart';
 import 'package:mobistock/views/dashboard/dashboard_screen.dart';
+import 'package:mobistock/views/inventory%20management/inventory_management.dart';
 import 'package:mobistock/views/splash/splash_screen.dart';
 
 class AppPages {
@@ -21,14 +26,6 @@ class AppPages {
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 500),
     ),
-
-    // // Welcome/Onboarding Screen
-    // GetPage(
-    //   name: AppRoutes.welcome,
-    //   page: () => WelcomeScreen(),
-    //   transition: Transition.rightToLeft,
-    //   transitionDuration: Duration(milliseconds: 300),
-    // ),
 
     // Authentication Routes
     GetPage(
@@ -61,23 +58,44 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: AuthBinding(),
     ),
+
+    //main screens
     GetPage(
       name: AppRoutes.dashboard,
       page: () => InventoryDashboard(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
-      binding: DashboardBinding()
+      binding: DashboardBinding(),
+    ),
+
+    GetPage(
+      name: AppRoutes.inventory_management,
+      page: () => InventoryManagementScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 500),
+      binding: InventoryManagementBinding(),
+    ),
+
+    //customer analytics
+    GetPage(
+      name: AppRoutes.customerManagement,
+      page: () => CustomerManagementScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: CustomerManagementBinding()
+    ),
+
+    GetPage(
+      name: AppRoutes.customerAnalytics,
+      page: () => CustomerAnalytics(),
+      transition: Transition.leftToRight,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: CustomerManagementBinding()
+
     ),
   ];
 
   //   // Main App Routes
-  //   GetPage(
-  //     name: AppRoutes.home,
-  //     page: () => HomeScreen(),
-  //     transition: Transition.fadeIn,
-  //     transitionDuration: Duration(milliseconds: 500),
-  //     binding: HomeBinding(),
-  //   ),
 
   //   GetPage(
   //     name: AppRoutes.profile,

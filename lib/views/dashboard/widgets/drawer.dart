@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mobistock/routes/app_routes.dart';
 import 'package:mobistock/utils/app_styles.dart';
 import 'package:flutter/services.dart';
 
@@ -44,7 +45,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       duration: Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     // Start animations
     _slideController.forward();
     _fadeController.forward();
@@ -139,10 +140,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFf8f9fa),
-            Color(0xFFe9ecef),
-          ],
+          colors: [Color(0xFFf8f9fa), Color(0xFFe9ecef)],
         ),
         boxShadow: [
           BoxShadow(
@@ -349,7 +347,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
 
   Widget _buildModernMenuItem(DrawerMenuItem item, int index) {
     final isSelected = _selectedIndex == index;
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       child: Material(
@@ -361,13 +359,13 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             duration: Duration(milliseconds: 200),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected 
-                  ? item.color.withOpacity(0.1) 
-                  : Colors.transparent,
+              color:
+                  isSelected ? item.color.withOpacity(0.1) : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
-              border: isSelected 
-                  ? Border.all(color: item.color.withOpacity(0.3), width: 1)
-                  : null,
+              border:
+                  isSelected
+                      ? Border.all(color: item.color.withOpacity(0.3), width: 1)
+                      : null,
             ),
             child: Row(
               children: [
@@ -375,16 +373,13 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: isSelected 
-                        ? item.color 
-                        : item.color.withOpacity(0.1),
+                    color:
+                        isSelected ? item.color : item.color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     item.icon,
-                    color: isSelected 
-                        ? Colors.white 
-                        : item.color,
+                    color: isSelected ? Colors.white : item.color,
                     size: 22,
                   ),
                 ),
@@ -400,15 +395,17 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                             style: AppStyles.custom(
                               size: 15,
                               weight: FontWeight.w600,
-                              color: isSelected 
-                                  ? item.color 
-                                  : Color(0xFF2d3436),
+                              color:
+                                  isSelected ? item.color : Color(0xFF2d3436),
                             ),
                           ),
                           if (item.isNew) ...[
                             SizedBox(width: 8),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: Color(0xFFe17055),
                                 borderRadius: BorderRadius.circular(8),
@@ -483,7 +480,11 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.support_agent_rounded, color: Colors.white, size: 18),
+                      Icon(
+                        Icons.support_agent_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Get Support',
@@ -515,31 +516,39 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
 
   void _handleMenuTap(DrawerMenuItem item, int index) {
     HapticFeedback.lightImpact();
-    
+
     setState(() {
       _selectedIndex = index;
     });
-
-    // Close drawer after selection
-    Navigator.of(context).pop();
-    
-    // Show navigation feedback
-    _showNavigationSnackbar(item.title, item.color);
+    print(_selectedIndex);
+    switch (_selectedIndex) {
+      case 2:
+        Get.toNamed(AppRoutes.inventory_management);
+        case 3:
+        Get.toNamed(AppRoutes.customerManagement);
+      default:
+        _showNavigationSnackbar(item.title, item.color);
+    }
   }
 
-  void _showNavigationSnackbar(String feature, Color color) {
-    Get.snackbar(
-      'Navigating to $feature',
-      'Loading $feature module...',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: color,
-      colorText: Colors.white,
-      margin: EdgeInsets.all(16),
-      borderRadius: 12,
-      icon: Icon(Icons.launch_rounded, color: Colors.white),
-      shouldIconPulse: false,
-      duration: Duration(seconds: 2),
-      animationDuration: Duration(milliseconds: 300),
-    );
-  }
+  // // Close drawer after selection
+  // Navigator.of(context).pop();
+  // // Show navigation feedback
+  // _showNavigationSnackbar(item.title, item.color);
+}
+
+void _showNavigationSnackbar(String feature, Color color) {
+  Get.snackbar(
+    'Navigating to $feature',
+    'Loading $feature module...',
+    snackPosition: SnackPosition.TOP,
+    backgroundColor: color,
+    colorText: Colors.white,
+    margin: EdgeInsets.all(16),
+    borderRadius: 12,
+    icon: Icon(Icons.launch_rounded, color: Colors.white),
+    shouldIconPulse: false,
+    duration: Duration(seconds: 2),
+    animationDuration: Duration(milliseconds: 300),
+  );
 }
