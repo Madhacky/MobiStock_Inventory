@@ -14,11 +14,20 @@ class AppRoutes {
   static const String customerManagement = '/customer-management';
   static const String customerAnalytics = '/customer-analytics';
 
+
+  //
+
   
 
 
   static const String profile = '/profile';
   static const String settings = '/settings';
+
+
+  //Sales Managenment
+  static const String salesManagement = '/sales-management';
+
+  
   
   // Error Routes
   static const String notFound = '/404';

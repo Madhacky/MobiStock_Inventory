@@ -103,18 +103,18 @@ class AppTheme {
     ),
 
     // Card Theme
-    cardTheme: CardTheme(
-      color: cardLight,
-      elevation: 2,
-      shadowColor: shadowLight,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: borderLight,
-          width: 1,
-        ),
-      ),
-    ),
+    // cardTheme: CardTheme(
+    //   color: cardLight,
+    //   elevation: 2,
+    //   shadowColor: shadowLight,
+    //   shape: RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.circular(14),
+    //     side: BorderSide(
+    //       color: borderLight,
+    //       width: 1,
+    //     ),
+    //   ),
+    // ),
 
     // Input Decoration Theme
     inputDecorationTheme: InputDecorationTheme(
@@ -305,18 +305,18 @@ class AppTheme {
     ),
 
     // Card Theme
-    cardTheme: CardTheme(
-      color: cardDark,
-      elevation: 4,
-      shadowColor: shadowDark,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: borderDark,
-          width: 1,
-        ),
-      ),
-    ),
+    // cardTheme: CardTheme(
+    //   color: cardDark,
+    //   elevation: 4,
+    //   shadowColor: shadowDark,
+    //   shape: RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.circular(14),
+    //     side: BorderSide(
+    //       color: borderDark,
+    //       width: 1,
+    //     ),
+    //   ),
+    // ),
 
     // Input Decoration Theme
     inputDecorationTheme: InputDecorationTheme(

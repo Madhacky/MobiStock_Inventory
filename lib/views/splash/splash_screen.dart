@@ -12,6 +12,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
+  
   late AnimationController _fadeController;
   late AnimationController _scaleController;
   late AnimationController _rotateController;

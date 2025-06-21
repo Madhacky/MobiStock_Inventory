@@ -4,6 +4,7 @@ import 'package:mobistock/bindings/auth_binding.dart';
 import 'package:mobistock/bindings/customer_management_binding.dart';
 import 'package:mobistock/bindings/dashboard_binding.dart';
 import 'package:mobistock/bindings/inventory_management_binding.dart';
+import 'package:mobistock/bindings/sales_managenment_binding.dart';
 import 'package:mobistock/routes/app_routes.dart';
 import 'package:mobistock/views/auth/login_screen.dart';
 import 'package:mobistock/views/auth/reset_password.dart';
@@ -13,10 +14,12 @@ import 'package:mobistock/views/customer/customer.dart';
 import 'package:mobistock/views/customer/customer_analytics.dart';
 import 'package:mobistock/views/dashboard/dashboard_screen.dart';
 import 'package:mobistock/views/inventory%20management/inventory_management.dart';
+import 'package:mobistock/views/sales%20management/fiveform.dart';
+import 'package:mobistock/views/sales%20management/sales_managenment_screen.dart';
 import 'package:mobistock/views/splash/splash_screen.dart';
 
 class AppPages {
-  static const String initial = AppRoutes.splash;
+  static const String initial = AppRoutes.salesManagement;
 
   static final routes = [
     // // Splash Screen
@@ -92,6 +95,15 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: CustomerManagementBinding()
 
+    ),
+    //
+    //sales management
+    GetPage(
+      name: AppRoutes.salesManagement,
+      page: () => Fiveform(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: SalesManagenmentBinding(),
     ),
   ];
 
