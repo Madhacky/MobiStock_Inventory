@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/auth_controller.dart';
+import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 
 class SignupScreen extends StatelessWidget {
   @override

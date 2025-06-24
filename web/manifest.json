@@ -1,6 +1,6 @@
 {
-    "name": "mobistock",
-    "short_name": "mobistock",
+    "name": "smartbecho",
+    "short_name": "smartbecho",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

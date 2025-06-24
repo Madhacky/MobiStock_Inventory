@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobistock/services/theme_config.dart';
+import 'package:smartbecho/services/theme_config.dart';
 
 class AppTheme {
   // Light Theme Colors

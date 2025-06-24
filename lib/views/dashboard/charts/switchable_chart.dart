@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/dashboard_controller.dart';
-import 'package:mobistock/utils/app_colors.dart';
-import 'package:mobistock/utils/generic_charts.dart';
-import 'package:mobistock/views/dashboard/widgets/dashboard_shimmers.dart';
-import 'package:mobistock/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/controllers/dashboard_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/generic_charts.dart';
+import 'package:smartbecho/views/dashboard/widgets/dashboard_shimmers.dart';
+import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
 
 class SwitchableChartWidget extends StatefulWidget {
   final dynamic payload;

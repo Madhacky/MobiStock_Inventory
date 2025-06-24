@@ -1,4 +1,4 @@
-package com.example.mobistock
+package com.example.smartbecho
 
 import io.flutter.embedding.android.FlutterActivity
 

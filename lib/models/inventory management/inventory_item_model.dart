@@ -2,7 +2,8 @@ class InventoryItem {
   final int id;
   final String logo;
   final String model;
-  final String ramRom;
+  final String ram;
+  final String rom;
   final String color;
   final double sellingPrice;
   final int quantity;
@@ -16,7 +17,8 @@ class InventoryItem {
     required this.id,
     required this.logo,
     required this.model,
-    required this.ramRom,
+    required this.ram,
+    required this.rom,
     required this.color,
     required this.sellingPrice,
     required this.quantity,
@@ -30,7 +32,8 @@ class InventoryItem {
       id: json['id'],
       logo: json['logo'] ?? '',
       model: json['model'] ?? '',
-      ramRom: "${json['ram'] ?? ''}/${json['rom'] ?? ''}",
+      ram: "${json['ram'] ?? ''}",
+      rom: "${json['rom'] ?? ''}",
       color: json['color'] ?? '',
       sellingPrice: (json['sellingPrice'] ?? 0).toDouble(),
       quantity: json['qty'] ?? 0,
@@ -61,8 +64,8 @@ class InventoryItem {
       'id': id,
       'logo': logo,
       'model': model,
-      'ram': ramRom.split('/').first,
-      'rom': ramRom.split('/').last,
+      'ram': ram,
+      'rom': rom,
       'color': color,
       'sellingPrice': sellingPrice,
       'qty': quantity,

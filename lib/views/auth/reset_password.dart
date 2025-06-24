@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/auth_controller.dart';
-import 'package:mobistock/utils/custom_appbar.dart';
+import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
+import 'package:smartbecho/utils/custom_appbar.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   @override
@@ -175,7 +175,7 @@ class ResetPasswordScreen extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap:() => controller.isLoading.value ? null : controller.resetPassword(context),
+          onTap:() => controller.isLoading.value ? null : controller.resetPassword(context,controller.emailController.text),
           child: Center(
             child: controller.isLoading.value 
               ? Row(

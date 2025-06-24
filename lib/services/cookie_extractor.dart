@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:mobistock/services/secure_storage_service.dart';
+import 'package:smartbecho/services/secure_storage_service.dart';
 
 class CookieExtractor {
   /// Extract JSESSIONID from Dio Response and save to SecureStorage

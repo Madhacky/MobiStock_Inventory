@@ -37,10 +37,12 @@ class LoginResponse {
 class LoginPayload {
   final String userToken;
   final List<int> loginDate;
+  final String refreshToken;
 
   LoginPayload({
     required this.userToken,
     required this.loginDate,
+    required this.refreshToken
   });
 
   factory LoginPayload.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class LoginPayload {
       loginDate: json['loginDate'] != null 
           ? List<int>.from(json['loginDate']) 
           : [],
+          refreshToken: json["refreshToken"]??""
     );
   }
 
@@ -56,6 +59,7 @@ class LoginPayload {
     return {
       'userToken': userToken,
       'loginDate': loginDate,
+      'refreshToken':refreshToken
     };
   }
 

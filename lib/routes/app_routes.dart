@@ -5,14 +5,33 @@ class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String resetPassword = '/reset-password';
+  static const String forgotPasswordOtp = '/forgot-password-OTP';
+
+
   static const String verifyEmail = '/verify-email';
   
   // Main App Routes
   static const String dashboard = '/dashboard';
+
+  //inventory managemnet
   static const String inventory_management = '/inventory-management';
-  //customer analytics
+  static const String salesStockDashboard = '/sales-stock-dashboard';
+  static const String companyStockDetails = '/company-stock-details';
+  static const String addNewItem = '/add-new-item';
+
+
+
+  //customer management
   static const String customerManagement = '/customer-management';
   static const String customerAnalytics = '/customer-analytics';
+  static const String customerDetails = '/customer-details';
+
+//bill managemanet
+  static const String billHistory = '/bill-history';
+  static const String billDetails = '/bill-details';
+  static const String addBill = '/add-bill';
+
+
 
   
 

@@ -1,4 +1,4 @@
-import 'package:mobistock/services/shared_preferences_services.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
 
 class ValidateUser {
     // Check if user is logged in 

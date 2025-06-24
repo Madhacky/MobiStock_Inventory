@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobistock/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class AppStyles {
   static TextStyle _roboto({
