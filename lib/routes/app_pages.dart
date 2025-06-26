@@ -19,7 +19,7 @@ import 'package:mobistock/views/sales%20management/sales_managenment_screen.dart
 import 'package:mobistock/views/splash/splash_screen.dart';
 
 class AppPages {
-  static const String initial = AppRoutes.salesManagement;
+  static const String initial = AppRoutes.inventory_management;
 
   static final routes = [
     // // Splash Screen

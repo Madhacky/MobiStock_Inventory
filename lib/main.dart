@@ -5,6 +5,7 @@
   import 'package:mobistock/routes/app_routes.dart';
 import 'package:mobistock/services/api_services.dart';
   import 'package:mobistock/utils/page_not_found.dart';
+import 'package:mobistock/views/dues%20management/dues_management.dart';
 
   void main() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -32,14 +33,14 @@ final apiService = ApiServices(); // This sets up the interceptors
           primarySwatch: Colors.purple,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: AppPages.initial,
-        getPages: AppPages.routes,
-        unknownRoute: GetPage(
-          name: AppRoutes.notFound,
-          page: () => PageNotFoundScreen(),
-        ),
+        // initialRoute: AppPages.initial,
+        // getPages: AppPages.routes,
+        // unknownRoute: GetPage(
+        //   name: AppRoutes.notFound,
+        //   page: () => PageNotFoundScreen(),
+        // ),
 
-        // home:Fiveform(),
+       home:DuesManagement(),
         debugShowCheckedModeBanner: false,
       );
     }
