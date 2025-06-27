@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_stock_comtroller.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
-import 'package:smartbecho/views/inventory%20management/components/company_stock_grid.dart';
-import 'package:smartbecho/views/inventory%20management/components/low_stock_alert_card.dart';
-import 'package:smartbecho/views/inventory%20management/widgets/sales_dashboard_shimmer.dart';
+import 'package:smartbecho/views/inventory/components/company_stock_grid.dart';
+import 'package:smartbecho/views/inventory/components/low_stock_alert_card.dart';
+import 'package:smartbecho/views/inventory/widgets/sales_dashboard_shimmer.dart';
 
 class SalesStockDashboard extends StatelessWidget {
   final InventorySalesStockController controller = Get.find();

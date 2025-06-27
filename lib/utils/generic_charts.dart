@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:smartbecho/utils/app_styles.dart';
+
 class GenericBarChart extends StatelessWidget {
   final String title;
   final Map<String, double> payload;
@@ -63,7 +66,11 @@ class GenericBarChart extends StatelessWidget {
                 titlesData: _buildTitlesData(),
                 borderData: FlBorderData(show: false),
                 barGroups: _buildBarGroups(),
-                gridData: const FlGridData(show: false, drawHorizontalLine: false, drawVerticalLine: false),
+                gridData: const FlGridData(
+                  show: false,
+                  drawHorizontalLine: false,
+                  drawVerticalLine: false,
+                ),
               ),
               swapAnimationDuration: const Duration(milliseconds: 400),
               swapAnimationCurve: Curves.easeInOut,
@@ -155,9 +162,10 @@ class GenericBarChart extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             backDrawRodData: BackgroundBarChartRodData(
               show: true,
-              toY: payload.values.isNotEmpty
-                  ? payload.values.reduce((a, b) => a > b ? a : b) * 1.2
-                  : 100,
+              toY:
+                  payload.values.isNotEmpty
+                      ? payload.values.reduce((a, b) => a > b ? a : b) * 1.2
+                      : 100,
               color: Colors.grey[200],
             ),
           ),
@@ -204,44 +212,44 @@ class GenericBarChart extends StatelessWidget {
 }
 
 // Enum to specify the type of data being displayed
-enum ChartDataType {
-  quantity,
-  revenue,
-}
+enum ChartDataType { quantity, revenue }
 
 // Helper class to convert API responses to chart data
 class ChartDataConverter {
   // Convert top selling models API response to chart data
-  static Map<String, double> fromTopSellingModels(List<dynamic> apiResponse, {bool useQuantity = true}) {
+  static Map<String, double> fromTopSellingModels(
+    List<dynamic> apiResponse, {
+    bool useQuantity = true,
+  }) {
     Map<String, double> chartData = {};
-    
+
     for (var item in apiResponse) {
       String key = "${item['brand']} ${item['model']}";
-      double value = useQuantity 
-          ? (item['quantity'] as num).toDouble()
-          : (item['totalAmount'] as num).toDouble();
+      double value =
+          useQuantity
+              ? (item['quantity'] as num).toDouble()
+              : (item['totalAmount'] as num).toDouble();
       chartData[key] = value;
     }
-    
+
     return chartData;
   }
-  
+
   // Convert monthly revenue API response to chart data
-  static Map<String, double> fromMonthlyRevenue(Map<String, dynamic> apiResponse) {
+  static Map<String, double> fromMonthlyRevenue(
+    Map<String, dynamic> apiResponse,
+  ) {
     Map<String, double> chartData = {};
-    
+
     apiResponse.forEach((key, value) {
       chartData[key] = (value as num).toDouble();
     });
-    
+
     return chartData;
   }
 }
 
-
-
 //pie chart
-
 
 // Model for Pie Chart Data
 class PieChartDataModel {
@@ -260,7 +268,6 @@ class PieChartDataModel {
     return total > 0 ? (value / total) * 100 : 0;
   }
 }
-
 
 class GenericPieChart extends StatefulWidget {
   final String title;
@@ -309,7 +316,7 @@ class _GenericPieChartState extends State<GenericPieChart> {
   @override
   Widget build(BuildContext context) {
     final pieData = _generatePieData();
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       padding: EdgeInsets.all(widget.screenWidth * 0.05),
@@ -393,7 +400,8 @@ class _GenericPieChartState extends State<GenericPieChart> {
                   touchedIndex = -1;
                   return;
                 }
-                touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                touchedIndex =
+                    pieTouchResponse.touchedSection!.touchedSectionIndex;
               });
             },
           ),
@@ -410,48 +418,52 @@ class _GenericPieChartState extends State<GenericPieChart> {
     return Wrap(
       spacing: 16,
       runSpacing: 8,
-      children: pieData.asMap().entries.map((entry) {
-        final index = entry.key;
-        final data = entry.value;
-        final total = widget.payload.values.fold(0.0, (sum, value) => sum + value);
-        
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: data.color,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                data.label,
-                style: TextStyle(
-                  fontSize: widget.isSmallScreen ? 12 : 13,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
+      children:
+          pieData.asMap().entries.map((entry) {
+            final index = entry.key;
+            final data = entry.value;
+            final total = widget.payload.values.fold(
+              0.0,
+              (sum, value) => sum + value,
+            );
+
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: data.color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        );
-      }).toList(),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    data.label,
+                    style: TextStyle(
+                      fontSize: widget.isSmallScreen ? 12 : 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey.shade700,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
     );
   }
 
   List<PieChartDataModel> _generatePieData() {
     final colors = widget.customColors ?? _defaultColors;
     final entries = widget.payload.entries.toList();
-    
+
     return entries.asMap().entries.map((entry) {
       final index = entry.key;
       final mapEntry = entry.value;
-      
+
       return PieChartDataModel(
         label: mapEntry.key,
         value: mapEntry.value,
@@ -462,18 +474,19 @@ class _GenericPieChartState extends State<GenericPieChart> {
 
   List<PieChartSectionData> _buildPieSections(List<PieChartDataModel> pieData) {
     final total = widget.payload.values.fold(0.0, (sum, value) => sum + value);
-    
+
     return pieData.asMap().entries.map((entry) {
       final index = entry.key;
       final data = entry.value;
       final isTouched = index == touchedIndex;
       final radius = isTouched ? widget.chartRadius + 10 : widget.chartRadius;
       final percentage = data.getPercentage(total);
-      
+
       return PieChartSectionData(
         color: data.color,
         value: data.value,
-        title: widget.showPercentages ? '${percentage.toStringAsFixed(0)}%' : '',
+        title:
+            widget.showPercentages ? '${percentage.toStringAsFixed(0)}%' : '',
         radius: radius,
         titleStyle: TextStyle(
           fontSize: widget.isSmallScreen ? 12 : 14,
@@ -498,7 +511,6 @@ class _GenericPieChartState extends State<GenericPieChart> {
     return value.toStringAsFixed(0);
   }
 }
-
 
 enum ChartLineDataType { revenue, users, orders, calories, steps, temperature }
 
@@ -587,12 +599,13 @@ class GenericLineChart extends StatelessWidget {
   }
 
   LineChartBarData _buildLineBarData() {
-    final spots = payload.entries
-        .toList()
-        .asMap()
-        .entries
-        .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value))
-        .toList();
+    final spots =
+        payload.entries
+            .toList()
+            .asMap()
+            .entries
+            .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value))
+            .toList();
 
     return LineChartBarData(
       spots: spots,
@@ -635,14 +648,14 @@ class GenericLineChart extends StatelessWidget {
       enabled: true,
       touchTooltipData: LineTouchTooltipData(
         getTooltipColor: (touchedSpot) => primaryColor.withOpacity(0.9),
-       // tooltipRoundedRadius: 12,
+        // tooltipRoundedRadius: 12,
         tooltipPadding: const EdgeInsets.all(12),
         tooltipMargin: 8,
         getTooltipItems: (touchedSpots) {
           return touchedSpots.map((spot) {
             final key = payload.keys.elementAt(spot.x.toInt());
             final value = spot.y;
-            
+
             return LineTooltipItem(
               '$key\n${_formatValue(value)}',
               const TextStyle(
@@ -680,12 +693,8 @@ class GenericLineChart extends StatelessWidget {
   FlTitlesData _buildTitlesData() {
     return FlTitlesData(
       show: true,
-      rightTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-      topTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -798,5 +807,409 @@ class LineChartExample extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+//double bar chart
+class GenericDoubleBarChart extends StatelessWidget {
+  final String title;
+  final Map<String, double> payload;
+  final double screenWidth;
+  final bool isSmallScreen;
+  final double barWidth;
+  final double chartHeight;
+  final ChartDataType dataType;
+  // New parameters for dual bar chart
+  final Map<String, double>? secondaryPayload;
+  final String? primaryLabel;
+  final String? secondaryLabel;
+  final Color? primaryBarColor;
+  final Color? secondaryBarColor;
+  final bool showTotals;
+
+  const GenericDoubleBarChart({
+    Key? key,
+    required this.title,
+    required this.payload,
+    required this.screenWidth,
+    required this.isSmallScreen,
+    this.barWidth = 18.0,
+    this.chartHeight = 280.0,
+    this.dataType = ChartDataType.revenue,
+    this.secondaryPayload,
+    this.primaryLabel,
+    this.secondaryLabel,
+    this.primaryBarColor,
+    this.secondaryBarColor,
+    this.showTotals = false,
+  }) : super(key: key);
+
+  Color get primaryColor => primaryBarColor ?? const Color(0xFFE74C3C);
+  Color get primaryLight => primaryColor.withOpacity(0.3);
+  Color get secondaryColor => secondaryBarColor ?? const Color(0xFF27AE60);
+  Color get secondaryLight => secondaryColor.withOpacity(0.3);
+
+  @override
+  Widget build(BuildContext context) {
+    // Calculate totals for tooltip if needed
+    final totalPrimary = payload.values.fold(0.0, (sum, value) => sum + value);
+    final totalSecondary =
+        secondaryPayload?.values.fold(0.0, (sum, value) => sum + value) ?? 0.0;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      padding: EdgeInsets.all(screenWidth * 0.04),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.grey.shade50],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 16),
+          if (showTotals) _buildTotalsRow(totalPrimary, totalSecondary),
+          _buildLegend(),
+          const SizedBox(height: 8),
+          SizedBox(height: chartHeight, child: _buildChart()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        Icon(
+          dataType == ChartDataType.revenue
+              ? Icons.attach_money
+              : Icons.inventory,
+          size: 20,
+          color: Colors.grey.shade600,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: isSmallScreen ? 14 : 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade800,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTotalsRow(double totalPrimary, double totalSecondary) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildTotalItem(
+            primaryLabel ?? 'Primary',
+            totalPrimary,
+            primaryColor,
+          ),
+          if (secondaryPayload != null)
+            _buildTotalItem(
+              secondaryLabel ?? 'Secondary',
+              totalSecondary,
+              secondaryColor,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTotalItem(String label, double value, Color color) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          _formatValue(value),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLegend() {
+    if (secondaryPayload == null) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildLegendItem(primaryLabel ?? 'Primary', primaryColor),
+          const SizedBox(width: 20),
+          _buildLegendItem(secondaryLabel ?? 'Secondary', secondaryColor),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(String label, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade700,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChart() {
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: _getMaxY(),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (group) {
+              return Colors.grey.shade800.withOpacity(0.9);
+            },
+            tooltipBorderRadius: BorderRadius.all(Radius.circular(8)),
+            tooltipPadding: const EdgeInsets.all(8),
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final key = payload.keys.elementAt(groupIndex);
+              final isSecondary = rodIndex == 1;
+              final value =
+                  isSecondary
+                      ? (secondaryPayload?[key] ?? 0.0)
+                      : payload[key] ?? 0.0;
+              final label =
+                  isSecondary
+                      ? (secondaryLabel ?? 'Secondary')
+                      : (primaryLabel ?? 'Primary');
+
+              return BarTooltipItem(
+                '$key\n$label: ${_formatValue(value)}',
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) => _buildBottomTitle(value),
+              reservedSize: 40,
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: isSmallScreen ? 50 : 60,
+              getTitlesWidget: (value, meta) => _buildLeftTitle(value),
+            ),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border(
+            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+            left: BorderSide(color: Colors.grey.shade300, width: 1),
+          ),
+        ),
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          drawHorizontalLine: true,
+          horizontalInterval: _getMaxY() / 5,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(color: Colors.grey.shade200, strokeWidth: 1);
+          },
+        ),
+        barGroups: _buildBarGroups(),
+      ),
+    );
+  }
+
+  Widget _buildBottomTitle(double value) {
+    final index = value.toInt();
+    if (index < 0 || index >= payload.length) return const SizedBox.shrink();
+
+    final key = payload.keys.elementAt(index);
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Text(
+        _formatLabel(key),
+        style: TextStyle(
+          color: Colors.grey.shade600,
+          fontWeight: FontWeight.w500,
+          fontSize: isSmallScreen ? 10 : 12,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildLeftTitle(double value) {
+    return Text(
+      _formatAxisValue(value),
+      style: TextStyle(
+        color: Colors.grey.shade600,
+        fontWeight: FontWeight.w500,
+        fontSize: isSmallScreen ? 10 : 11,
+      ),
+    );
+  }
+
+  List<BarChartGroupData> _buildBarGroups() {
+    return payload.entries.map((entry) {
+      final index = payload.keys.toList().indexOf(entry.key);
+      final secondaryValue = secondaryPayload?[entry.key] ?? 0.0;
+
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: entry.value,
+            color: primaryColor,
+            width: barWidth,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            ),
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [primaryLight, primaryColor],
+            ),
+          ),
+          if (secondaryPayload != null)
+            BarChartRodData(
+              toY: secondaryValue,
+              color: secondaryColor,
+              width: barWidth,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(4),
+                topRight: Radius.circular(4),
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [secondaryLight, secondaryColor],
+              ),
+            ),
+        ],
+      );
+    }).toList();
+  }
+
+  double _getMaxY() {
+    final maxPrimary =
+        payload.values.isEmpty ? 0.0 : payload.values.reduce(max);
+    final maxSecondary =
+        secondaryPayload?.values.isEmpty ?? true
+            ? 0.0
+            : secondaryPayload!.values.reduce(max);
+    final maxValue = max(maxPrimary, maxSecondary);
+    return maxValue * 1.2; // Add 20% padding
+  }
+
+  String _formatValue(double value) {
+    if (dataType == ChartDataType.revenue) {
+      if (value >= 1000000) {
+        return '\$${(value / 1000000).toStringAsFixed(1)}M';
+      } else if (value >= 1000) {
+        return '\$${(value / 1000).toStringAsFixed(1)}K';
+      } else {
+        return '\$${value.toStringAsFixed(0)}';
+      }
+    } else {
+      if (value >= 1000) {
+        return '${(value / 1000).toStringAsFixed(1)}K';
+      } else {
+        return value.toStringAsFixed(0);
+      }
+    }
+  }
+
+  String _formatAxisValue(double value) {
+    if (dataType == ChartDataType.revenue) {
+      if (value >= 1000000) {
+        return '${(value / 1000000).toStringAsFixed(0)}M';
+      } else if (value >= 1000) {
+        return '${(value / 1000).toStringAsFixed(0)}K';
+      } else {
+        return value.toStringAsFixed(0);
+      }
+    } else {
+      if (value >= 1000) {
+        return '${(value / 1000).toStringAsFixed(0)}K';
+      } else {
+        return value.toStringAsFixed(0);
+      }
+    }
+  }
+
+  String _formatLabel(String label) {
+    if (isSmallScreen && label.length > 8) {
+      return '${label.substring(0, 6)}..';
+    }
+    return label;
   }
 }

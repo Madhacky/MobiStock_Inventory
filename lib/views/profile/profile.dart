@@ -12,20 +12,92 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              _buildCustomAppBar(),
-              _buildQuickStatsCards(),
-              _buildProfileInfoCard(),
-              _buildAccountDetailsCard(),
-              _buildShopGalleryCard(),
-              _buildActionButtons(),
-              SizedBox(height: 20),
-            ],
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return _buildLoadingWidget();
+          } else if (controller.hasError.value) {
+            return _buildErrorWidget();
+          } else {
+            return RefreshIndicator(
+              onRefresh: controller.refreshProfile,
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    _buildCustomAppBar(),
+                    _buildQuickStatsCards(),
+                    _buildProfileInfoCard(),
+                    _buildAccountDetailsCard(),
+                    _buildShopGalleryCard(),
+                    _buildSocialMediaCard(),
+                    _buildActionButtons(),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            );
+          }
+        }),
+      ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(color: Color(0xFF6C5CE7)),
+          SizedBox(height: 16),
+          Text(
+            'Loading Profile...',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+          SizedBox(height: 16),
+          Text(
+            'Failed to load profile',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 8),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              controller.errorMessage.value,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ),
+          SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: controller.refreshProfile,
+            icon: Icon(Icons.refresh),
+            label: Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF6C5CE7),
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -37,23 +109,74 @@ class ProfileScreen extends StatelessWidget {
       actionItem: Obx(
         () => AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          child: ElevatedButton.icon(
-            onPressed: controller.isEditing.value ? controller.saveProfile : controller.toggleEditMode,
-            icon: Icon(
-              controller.isEditing.value ? Icons.save : Icons.edit,
-              size: 16,
-            ),
-            label: Text(
-              controller.isEditing.value ? 'Save' : 'Edit',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: controller.isEditing.value ? Color(0xFF51CF66) : Color(0xFF6C5CE7),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              elevation: 0,
-            ),
-          ),
+          child:
+              controller.isEditing.value
+                  ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: controller.cancelEdit,
+                        icon: Icon(Icons.close, size: 16),
+                        label: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[600],
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: controller.saveProfile,
+                        icon: Icon(Icons.save, size: 16),
+                        label: Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF51CF66),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ],
+                  )
+                  : ElevatedButton.icon(
+                    onPressed: controller.toggleEditMode,
+                    icon: Icon(Icons.edit, size: 16),
+                    label: Text(
+                      'Edit',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Color(0xFF6C5CE7),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
         ),
       ),
     );
@@ -71,21 +194,27 @@ class ProfileScreen extends StatelessWidget {
           final stats = [
             {
               'title': 'Profile Score',
-              'value': '85%',
+              'value': '${controller.galleryImages.length * 20 + 20}%',
               'icon': Icons.account_circle_outlined,
               'color': Color(0xFF6C5CE7),
             },
             {
-              'title': 'Account Age',
-              'value': '2 years',
+              'title': 'Member Since',
+              'value':
+                  controller.memberSince.value.isNotEmpty
+                      ? controller.memberSince.value.split('/').last
+                      : 'N/A',
               'icon': Icons.calendar_today_outlined,
               'color': Color(0xFF51CF66),
             },
             {
-              'title': 'Last Login',
-              'value': 'Today',
-              'icon': Icons.access_time_outlined,
-              'color': Color(0xFFFF9500),
+              'title': 'Status',
+              'value': controller.accountStatus.value,
+              'icon': Icons.check_circle_outlined,
+              'color':
+                  controller.accountStatus.value.toLowerCase() == 'active'
+                      ? Color(0xFF51CF66)
+                      : Color(0xFFFF9500),
             },
           ];
 
@@ -214,12 +343,14 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              'R',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF6C5CE7),
+                            child: Obx(
+                              () => Text(
+                                controller.profileInitials,
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF6C5CE7),
+                                ),
                               ),
                             ),
                           ),
@@ -249,76 +380,74 @@ class ProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Obx(
-                            () => controller.isEditing.value
-                                ? buildStyledTextField(
-                                    labelText: 'Shop Name',
-                                    controller: TextEditingController(text: controller.shopName.value),
-                                    hintText: 'Enter shop name',
-                                    onChanged: (value) => controller.shopName.value = value,
-                                  )
-                                : Text(
-                                    controller.shopName.value,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                            () =>
+                                controller.isEditing.value
+                                    ? buildStyledTextField(
+                                      labelText: 'Shop Name',
+                                      controller: TextEditingController(
+                                        text: controller.shopName.value,
+                                      ),
+                                      hintText: 'Enter shop name',
+                                      onChanged:
+                                          (value) =>
+                                              controller.shopName.value = value,
+                                    )
+                                    : Text(
+                                      controller.shopName.value,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
                                     ),
-                                  ),
                           ),
                           SizedBox(height: 4),
-                          Text(
-                            controller.emailAddress.value,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[600],
+                          Obx(
+                            () => Text(
+                              controller.emailAddress.value,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey[600],
+                              ),
                             ),
                           ),
                           SizedBox(height: 8),
                           Row(
                             children: [
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Color(0xFF6C5CE7).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text(
-                                  'ID: ${controller.shopId.value}',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF6C5CE7),
+                                child: Obx(
+                                  () => Text(
+                                    'ID: ${controller.shopId.value}',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF6C5CE7),
+                                    ),
                                   ),
                                 ),
                               ),
                               SizedBox(width: 8),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Color(0xFF51CF66).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFF51CF66),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Active',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF51CF66),
-                                      ),
-                                    ),
-                                  ],
+                                child: Icon(
+                                  Icons.verified,
+                                  color: Color(0xFF51CF66),
+                                  size: 12,
                                 ),
                               ),
                             ],
@@ -329,139 +458,46 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 20),
-                Divider(color: Colors.grey[200]),
-                SizedBox(height: 16),
-                _buildProfileFields(),
+                Obx(
+                  () =>
+                      controller.isEditing.value
+                          ? buildStyledTextField(
+                            labelText: 'GST Number',
+                            controller: TextEditingController(
+                              text: controller.gstNumber.value,
+                            ),
+                            hintText: 'GST number...',
+                            onChanged:
+                                (value) => controller.gstNumber.value = value,
+                          )
+                          : Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey[200]!),
+                            ),
+                            child: Text(
+                              controller.gstNumber.value.isEmpty
+                                  ? 'No gst number available'
+                                  : controller.gstNumber.value,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    controller.gstNumber.value.isEmpty
+                                        ? Colors.grey[500]
+                                        : Colors.black87,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildProfileFields() {
-    return Obx(
-      () => Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _buildInfoField(
-                  'Email Address',
-                  controller.emailAddress.value,
-                  Icons.email_outlined,
-                  controller.isEditing.value,
-                  (value) => controller.emailAddress.value = value,
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _buildInfoField(
-                  'Phone Number',
-                  controller.phoneNumber.value,
-                  Icons.phone_outlined,
-                  controller.isEditing.value,
-                  (value) => controller.phoneNumber.value = value,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          _buildInfoField(
-            'Shop Address',
-            controller.shopAddress.value,
-            Icons.location_on_outlined,
-            controller.isEditing.value,
-            (value) => controller.shopAddress.value = value,
-          ),
-          SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildInfoField(
-                  'Near Landmark',
-                  controller.nearLandmark.value,
-                  Icons.place_outlined,
-                  controller.isEditing.value,
-                  (value) => controller.nearLandmark.value = value,
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _buildInfoField(
-                  'Pin Code',
-                  controller.pinCode.value,
-                  Icons.pin_drop_outlined,
-                  controller.isEditing.value,
-                  (value) => controller.pinCode.value = value,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12),
-          _buildInfoField(
-            'City, State',
-            controller.city.value,
-            Icons.location_city_outlined,
-            controller.isEditing.value,
-            (value) => controller.city.value = value,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoField(
-    String label,
-    String value,
-    IconData icon,
-    bool isEditable,
-    Function(String)? onChanged,
-  ) {
-    final textController = TextEditingController(text: value);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 14, color: Colors.grey[500]),
-            SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 6),
-        isEditable && onChanged != null
-            ? buildStyledTextField(
-                labelText: label,
-                controller: textController,
-                hintText: 'Enter $label',
-                onChanged: onChanged,
-              )
-            : Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-                child: Text(
-                  value.isEmpty ? 'Not specified' : value,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: value.isEmpty ? Colors.grey[400] : Colors.black87,
-                  ),
-                ),
-              ),
-      ],
     );
   }
 
@@ -496,12 +532,12 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withOpacity(0.1),
+                    color: Color(0xFF51CF66).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
-                    Icons.account_circle_outlined,
-                    color: Color(0xFF6C5CE7),
+                    Icons.account_box_outlined,
+                    color: Color(0xFF51CF66),
                     size: 20,
                   ),
                 ),
@@ -521,48 +557,20 @@ class ProfileScreen extends StatelessWidget {
             padding: EdgeInsets.all(20),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildAccountDetailItem(
-                        'Account Status',
-                        controller.accountStatus.value,
-                        Icons.check_circle_outline,
-                        Color(0xFF51CF66),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: _buildAccountDetailItem(
-                        'Member Since',
-                        controller.memberSince.value,
-                        Icons.calendar_today_outlined,
-                        Color(0xFF00BCD4),
-                      ),
-                    ),
-                  ],
+                _buildDetailRow(
+                  Icons.phone_outlined,
+                  'Phone Number',
+                  controller.phoneNumber.value,
+                  isEditable: true,
+                  onChanged: (value) => controller.phoneNumber.value = value,
                 ),
-                SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildAccountDetailItem(
-                        'Password Status',
-                        controller.passwordStatus.value,
-                        Icons.lock_outline,
-                        Color(0xFFFF9500),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: _buildAccountDetailItem(
-                        'User ID',
-                        controller.userId.value,
-                        Icons.badge_outlined,
-                        Color(0xFF8B7ED8),
-                      ),
-                    ),
-                  ],
+                SizedBox(height: 16),
+                _buildDetailRow(
+                  Icons.location_on_outlined,
+                  'Shop Address',
+                      controller.fullAddress,
+                  isEditable: true,
+                  onChanged: (value) => controller.shopAddress.value = value,
                 ),
               ],
             ),
@@ -572,47 +580,63 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAccountDetailItem(
-    String title,
-    String value,
+  Widget _buildDetailRow(
     IconData icon,
-    Color color,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    String label,
+    String value, {
+    bool isEditable = false,
+    Function(String)? onChanged,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(icon, color: Colors.grey[600], size: 16),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: color, size: 14),
-              SizedBox(width: 6),
               Text(
-                title,
+                label,
                 style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
                   color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
                 ),
+              ),
+              SizedBox(height: 4),
+              Obx(
+                () =>
+                    controller.isEditing.value && isEditable
+                        ? buildStyledTextField(
+                          controller: TextEditingController(text: value),
+                          labelText: 'Enter $label',
+                          onChanged: onChanged,
+                          hintText: "",
+                        )
+                        : Text(
+                          value.isEmpty ? 'Not specified' : value,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color:
+                                value.isEmpty
+                                    ? Colors.grey[500]
+                                    : Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
               ),
             ],
           ),
-          SizedBox(height: 6),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -643,36 +667,41 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.photo_library_outlined,
-                    color: Color(0xFF6C5CE7),
-                    size: 20,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFF9500).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.photo_library_outlined,
+                        color: Color(0xFFFF9500),
+                        size: 20,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      'Shop Gallery',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 12),
-                Text(
-                  'Shop Gallery',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                Spacer(),
-                TextButton.icon(
-                  onPressed: controller.uploadImage,
-                  icon: Icon(Icons.add_photo_alternate_outlined, size: 16),
-                  label: Text('Add Image', style: TextStyle(fontSize: 12)),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Color(0xFF6C5CE7),
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                Obx(
+                  () => Text(
+                    '${controller.galleryImages.length}/10',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
@@ -680,18 +709,10 @@ class ProfileScreen extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.all(20),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1,
-              ),
-              itemCount: 4,
-              itemBuilder: (context, index) {
+            child: Obx(() {
+              if (controller.galleryImages.isEmpty) {
                 return Container(
+                  height: 120,
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(12),
@@ -707,21 +728,182 @@ class ProfileScreen extends StatelessWidget {
                         Icon(
                           Icons.add_photo_alternate_outlined,
                           color: Colors.grey[400],
-                          size: 28,
+                          size: 32,
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Add Image',
+                          'Add photos of your shop',
                           style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 11,
+                            color: Colors.grey[600],
+                            fontSize: 14,
                           ),
+                        ),
+                        SizedBox(height: 4),
+                        TextButton(
+                          onPressed: controller.addGalleryImage,
+                          child: Text('Upload Photos'),
                         ),
                       ],
                     ),
                   ),
                 );
-              },
+              }
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1,
+                ),
+                itemCount:
+                    controller.galleryImages.length +
+                    (controller.galleryImages.length < 10 ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == controller.galleryImages.length) {
+                    return GestureDetector(
+                      onTap: controller.addGalleryImage,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.grey[300]!,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        child: Icon(Icons.add, color: Colors.grey[600]),
+                      ),
+                    );
+                  }
+
+                  return Stack(
+                    children: [
+                      Image.network(
+                        controller.galleryImages[index].imageUrl,
+
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                           
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: Colors.grey.shade300,),
+                            child: Icon(Icons.broken_image, color: Colors.grey),
+                          );
+                        },
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () => controller.removeGalleryImage(index),
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaCard() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF3B82F6).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.share_outlined,
+                    color: Color(0xFF3B82F6),
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'Social Media Links',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                _buildSocialRow(
+                  Icons.facebook,
+                  'Facebook',
+                  controller.facebookUrl.value,
+                  Color(0xFF1877F2),
+                  onChanged: (value) => controller.facebookUrl.value = value,
+                ),
+                SizedBox(height: 16),
+                _buildSocialRow(
+                  Icons.camera_alt,
+                  'Instagram',
+                  controller.instagramUrl.value,
+                  Color(0xFFE4405F),
+                  onChanged: (value) => controller.instagramUrl.value = value,
+                ),
+                SizedBox(height: 16),
+                _buildSocialRow(
+                  Icons.language,
+                  'Website',
+                  controller.websiteUrl.value,
+                  Color(0xFF10B981),
+                  onChanged: (value) => controller.websiteUrl.value = value,
+                ),
+              ],
             ),
           ),
         ],
@@ -729,95 +911,79 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildSocialRow(
+    IconData icon,
+    String platform,
+    String url,
+    Color color, {
+    Function(String)? onChanged,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 16),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Obx(
+            () =>
+                controller.isEditing.value
+                    ? buildStyledTextField(
+                      controller: TextEditingController(text: url),
+                      hintText: 'Enter $platform URL',
+                      onChanged: onChanged,
+                      labelText: "",
+                    )
+                    : Text(
+                      url.isEmpty ? 'Not connected' : url,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: url.isEmpty ? Colors.grey[500] : Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+          ),
+        ),
+        if (!controller.isEditing.value && url.isNotEmpty)
+          IconButton(
+            onPressed: () => controller.openUrl(url),
+            icon: Icon(Icons.open_in_new, size: 16, color: Colors.grey[600]),
+            constraints: BoxConstraints(minWidth: 32, minHeight: 32),
+            padding: EdgeInsets.all(4),
+          ),
+      ],
+    );
+  }
+
   Widget _buildActionButtons() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Obx(
-        () => controller.isEditing.value
-            ? Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: controller.cancelEdit,
-                      icon: Icon(Icons.close, size: 16),
-                      label: Text('Cancel'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[600],
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: controller.saveProfile,
-                      icon: Icon(Icons.save, size: 16),
-                      label: Text('Save Changes'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF51CF66),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: controller.changePassword,
-                      icon: Icon(Icons.lock_outline, size: 16),
-                      label: Text('Change Password'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF9500),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Get.snackbar(
-                          'Info',
-                          'Logout functionality would be implemented here',
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                          snackPosition: SnackPosition.TOP,
-                        );
-                      },
-                      icon: Icon(Icons.logout, size: 16),
-                      label: Text('Logout'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        side: BorderSide(color: Colors.red.withOpacity(0.5)),
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        backgroundColor: Colors.red.withOpacity(0.05),
-                      ),
-                    ),
-                  ),
-                ],
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            child: TextButton.icon(
+              onPressed: () {},
+              icon: Icon(
+                Icons.delete_outline,
+                size: 18,
+                color: Colors.red[600],
               ),
+              label: Text(
+                'Delete Account',
+                style: TextStyle(color: Colors.red[600]),
+              ),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

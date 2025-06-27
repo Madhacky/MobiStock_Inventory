@@ -4,6 +4,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/models/customer%20dues%20management/monthly_dues_analytics_model.dart';
+import 'package:smartbecho/models/dashboard_models/charts/due_summary_model.dart';
 import 'package:smartbecho/models/dashboard_models/charts/monthly_emi_dues_model.dart';
 import 'package:smartbecho/models/dashboard_models/charts/monthly_revenue_model.dart';
 import 'package:smartbecho/models/dashboard_models/charts/top_selling_models.dart';
@@ -441,37 +443,41 @@ class DashboardController extends GetxController
   }
 
   //Monthly Emi Dues
-  RxBool isMonthlyEmiDuesChartLoading = false.obs;
-  var monthlyEmiDuesCharterrorMessage = ''.obs;
-  var hasmonthlyEmiDuesChartError = false.obs;
-  RxMap<String, double> monthlyEmiDuesChartPayload = RxMap<String, double>({});
+  RxBool isDuesCollectionStatusChartLoading = false.obs;
+  var duesCollectionStatusCharterrorMessage = ''.obs;
+  var hasDuesCollectionStatusChartError = false.obs;
+  RxMap<String, double> duesCollectionStatusChartPayload =
+      RxMap<String, double>({});
   Future<void> fetchMonthlyEmiDuesChart() async {
     try {
-      isMonthlyEmiDuesChartLoading.value = true;
-      hasmonthlyEmiDuesChartError.value = false;
-      monthlyEmiDuesCharterrorMessage.value = '';
+      isDuesCollectionStatusChartLoading.value = true;
+      hasDuesCollectionStatusChartError.value = false;
+      duesCollectionStatusCharterrorMessage.value = '';
       await Future.delayed(Duration(seconds: 3));
       dio.Response? response = await _apiService.requestGetForApi(
-        url: _config.monthlyEmiDuesChart,
+        url: _config.duesCollectionStatusChart,
         authToken: true, // Set based on your authentication requirement
       );
 
       if (response != null && response.statusCode == 200) {
-        final responseData = MonthlyDuesResponse.fromJson(response.data);
-        log("${responseData.payload.toString()}");
-        monthlyEmiDuesChartPayload.value = Map<String, double>.from(
-          responseData.chartDataRemaining,
-        );
+        final responseData = DuesSummaryResponse.fromJson(response.data);
+        responseData.payload.toJson().removeWhere((key, value) {
+          return key == "remainingPercentage" && key == "collectedPercentage";
+        });
+        duesCollectionStatusChartPayload.value = {
+          'collected': responseData.payload.collected,
+          'remaining': responseData.payload.remaining,
+        };
       } else {
-        hasmonthlyEmiDuesChartError.value = true;
-        monthlyEmiDuesCharterrorMessage.value =
+        hasDuesCollectionStatusChartError.value = true;
+        duesCollectionStatusCharterrorMessage.value =
             'Failed to fetch data. Status: ${response?.statusCode}';
       }
     } catch (error) {
-      hasmonthlyEmiDuesChartError.value = true;
-      monthlyEmiDuesCharterrorMessage.value = 'Error: $error';
+      hasDuesCollectionStatusChartError.value = true;
+      duesCollectionStatusCharterrorMessage.value = 'Error: $error';
     } finally {
-      isMonthlyEmiDuesChartLoading.value = false;
+      isDuesCollectionStatusChartLoading.value = false;
     }
   }
 }

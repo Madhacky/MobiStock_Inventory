@@ -136,7 +136,8 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
 
               _buildHeaderButton(
                 Icons.person_rounded,
-                onTap: () => Get.toNamed(AppRoutes.profile),
+                
+                //onTap: () => Get.toNamed(AppRoutes.profile),
               ),
               SizedBox(width: 8),
               _buildHeaderButton(
@@ -1031,18 +1032,18 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         //monthly emi dues
         Obx(
           () =>
-              controller.isMonthlyEmiDuesChartLoading.value
-                  ? GenericBarChartShimmer(title: "EMI dues per month")
-                  : controller.hasmonthlyEmiDuesChartError.value
+              controller.isDuesCollectionStatusChartLoading.value
+                  ? GenericBarChartShimmer(title: "Dues Collection Status")
+                  : controller.hasDuesCollectionStatusChartError.value
                   ? buildErrorCard(
-                    controller.monthlyEmiDuesCharterrorMessage,
+                    controller.duesCollectionStatusCharterrorMessage,
                     controller.screenWidth,
                     controller.screenHeight,
                     controller.isSmallScreen,
                   )
                   : SwitchableChartWidget(
-                    payload: controller.monthlyEmiDuesChartPayload,
-                    title: "EMI dues per month",
+                    payload: controller.duesCollectionStatusChartPayload,
+                    title: "Dues Collection Status",
                     screenWidth: controller.screenWidth,
                     screenHeight: controller.screenHeight,
                     isSmallScreen: controller.isSmallScreen,

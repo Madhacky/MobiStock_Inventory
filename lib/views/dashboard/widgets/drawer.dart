@@ -4,25 +4,6 @@ import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:flutter/services.dart';
 
-// Menu Item Model for Drawer
-class DrawerMenuItem {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final String category;
-  final bool isNew;
-
-  DrawerMenuItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-    this.category = 'General',
-    this.isNew = false,
-  });
-}
-
 class ModernAppDrawer extends StatefulWidget {
   @override
   _ModernAppDrawerState createState() => _ModernAppDrawerState();
@@ -88,23 +69,23 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       category: 'Relations',
     ),
     DrawerMenuItem(
-      title: 'Stock History',
-      subtitle: 'View stock movements',
-      icon: Icons.history_rounded,
+      title: 'Account Management',
+      subtitle: 'Manage Account data',
+      icon: Icons.groups_3_sharp,
       color: Color(0xFFf093fb),
       category: 'Reports',
     ),
     DrawerMenuItem(
       title: 'Bill History',
-      subtitle: 'Track pending payments',
+      subtitle: 'Finance overview',
       icon: Icons.receipt_long_rounded,
       color: Color(0xFFfa709a),
       category: 'Finance',
     ),
     DrawerMenuItem(
-      title: 'Accounts Management',
-      subtitle: 'Financial overview',
-      icon: Icons.account_balance_rounded,
+      title: 'Dues Management',
+      subtitle: 'Track pending payments',
+      icon: Icons.receipt_rounded,
       color: Color(0xFF74b9ff),
       category: 'Finance',
     ),
@@ -204,7 +185,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'smartbecho',
+                            'Smart Becho',
                             style: AppStyles.custom(
                               size: 24,
                               weight: FontWeight.bold,
@@ -524,10 +505,15 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     switch (_selectedIndex) {
       case 2:
         Get.toNamed(AppRoutes.inventory_management);
-        case 3:
+      case 3:
         Get.toNamed(AppRoutes.customerManagement);
-        case 5 :
+            case 4:
+        Get.toNamed(AppRoutes.accountManagement);
+      case 5:
         Get.toNamed(AppRoutes.billHistory);
+      case 6:
+        Get.toNamed(AppRoutes.customerDuesManagement);
+  
       default:
         _showNavigationSnackbar(item.title, item.color);
     }
@@ -553,4 +539,23 @@ void _showNavigationSnackbar(String feature, Color color) {
     duration: Duration(seconds: 2),
     animationDuration: Duration(milliseconds: 300),
   );
+}
+
+// Menu Item Model for Drawer
+class DrawerMenuItem {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final String category;
+  final bool isNew;
+
+  DrawerMenuItem({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    this.category = 'General',
+    this.isNew = false,
+  });
 }

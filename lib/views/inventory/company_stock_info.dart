@@ -16,8 +16,9 @@ class CompanyStockDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize controller
-    final controller = Get.put(CompanyStockDetailsController());
+    final controller = Get.find<CompanyStockDetailsController>();
     final String companyName = Get.parameters['companyName'] ?? "";
+
     // Initialize with data if provided, otherwise fetch from API
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (stockItems != null) {
@@ -39,7 +40,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
           children: [
             _buildSearchAndFilterSection(controller),
             _buildStockSummaryCards(controller),
-            _buildStockItemsList(controller),
+            _buildOptimizedStockItemsList(controller),
           ],
         );
       }),
@@ -130,15 +131,15 @@ class CompanyStockDetailsPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Search Bar
+          // Search Bar with debouncing
           CustomSearchWidget(
             hintText: 'Search models...',
             controller: controller.searchController,
-            onChanged: (value) => controller.updateSearchQuery(value),
+            onChanged:
+                (value) => controller.updateSearchQueryWithDebounce(value),
             primaryColor: Color(0xFF9CA3AF),
             backgroundColor: Colors.grey.withOpacity(0.05),
             borderRadius: 12,
-
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
             prefixIcon: Icons.search,
@@ -330,31 +331,77 @@ class CompanyStockDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStockItemsList(CompanyStockDetailsController controller) {
+  // Optimized list with lazy loading and virtualization
+  Widget _buildOptimizedStockItemsList(
+    CompanyStockDetailsController controller,
+  ) {
     return Expanded(
-      child: Obx(
-        () => GridView.builder(
-          padding: const EdgeInsets.all(16),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.8, // Adjust this to control card height
-          ),
-          itemCount: controller.filteredItems.length,
-          itemBuilder: (context, index) {
-            final item = controller.filteredItems[index];
-            return _buildStockItemCard(item, controller);
+      child: Obx(() {
+        final displayedItems = controller.displayedItems;
+        final hasMore = controller.hasMoreItems.value;
+
+        if (displayedItems.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.search_off, size: 64, color: Colors.grey.shade400),
+                const SizedBox(height: 16),
+                Text(
+                  'No items found',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Try adjusting your search or filters',
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            // Load more when near bottom
+            if (scrollInfo.metrics.pixels >=
+                scrollInfo.metrics.maxScrollExtent - 200) {
+              controller.loadMoreItems();
+            }
+            return false;
           },
-        ),
-      ),
+          child: GridView.builder(
+            padding: const EdgeInsets.all(16),
+            // Use cacheExtent for better scrolling performance
+            cacheExtent: 1000,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.8,
+            ),
+            itemCount:
+                hasMore ? displayedItems.length + 2 : displayedItems.length,
+            itemBuilder: (context, index) {
+              // Show loading indicators at bottom
+              if (index >= displayedItems.length) {
+                return _buildLoadingCard();
+              }
+
+              final item = displayedItems[index];
+              return _buildOptimizedStockItemCard(item, controller);
+            },
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildStockItemCard(
-    StockItem item,
-    CompanyStockDetailsController controller,
-  ) {
+  Widget _buildLoadingCard() {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -371,213 +418,102 @@ class CompanyStockDetailsPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top section with product icon and price
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: controller
-                      .getCompanyColor(item.company)
-                      .withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
+          Expanded(
+            child: Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.grey.shade400,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Optimized card widget with RepaintBoundary for better performance
+  Widget _buildOptimizedStockItemCard(
+    StockItem item,
+    CompanyStockDetailsController controller,
+  ) {
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+              spreadRadius: 1,
+            ),
+          ],
+          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top section with product icon and price
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
                     color: controller
                         .getCompanyColor(item.company)
-                        .withOpacity(0.2),
-                  ),
-                ),
-                child: Icon(
-                  Icons.phone_android,
-                  color: controller.getCompanyColor(item.company),
-                  size: 20,
-                ),
-              ),
-              Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    item.formattedPrice,
-                    style: const TextStyle(
-                      color: Color(0xFF1A1A1A),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
+                        .withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
                       color: controller
-                          .getStockStatusColor(item)
-                          .withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                          .getCompanyColor(item.company)
+                          .withOpacity(0.2),
                     ),
-                    child: Text(
-                      '${item.qty}',
-                      style: TextStyle(
-                        color: controller.getStockStatusColor(item),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
+                  ),
+                  child: Icon(
+                    Icons.phone_android,
+                    color: controller.getCompanyColor(item.company),
+                    size: 20,
+                  ),
+                ),
+                const Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      item.formattedPrice,
+                      style: const TextStyle(
+                        color: Color(0xFF1A1A1A),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // Product details
-          Text(
-            item.model,
-            style: const TextStyle(
-              color: Color(0xFF1A1A1A),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          const SizedBox(height: 6),
-
-          Text(
-            item.ramRomDisplay,
-            style: const TextStyle(
-              color: Color(0xFF6B7280),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          // Color variant
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: controller.getColorForVariant(item.color),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              item.color,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-
-          Spacer(),
-
-          // Stock status section
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: controller.getStockStatusColor(item).withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: controller.getStockStatusColor(item).withOpacity(0.1),
-              ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      controller.getStockStatusIcon(item),
-                      color: controller.getStockStatusColor(item),
-                      size: 12,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: controller
+                            .getStockStatusColor(item)
+                            .withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Text(
-                        item.stockStatus,
+                        '${item.qty}',
                         style: TextStyle(
                           color: controller.getStockStatusColor(item),
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 6),
-
-                // Action buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 28,
-                        child: ElevatedButton(
-                          onPressed: () => controller.updateStock(item),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFF3B82F6,
-                            ).withOpacity(0.1),
-                            foregroundColor: const Color(0xFF3B82F6),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: Icon(Icons.edit, size: 12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Container(
-                        height: 28,
-                        child: ElevatedButton(
-                          onPressed: () => controller.sellItem(item),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFF10B981,
-                            ).withOpacity(0.1),
-                            foregroundColor: const Color(0xFF10B981),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: Icon(Icons.shopping_cart, size: 12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Container(
-                        height: 28,
-                        child: ElevatedButton(
-                          onPressed: () => controller.viewDetails(item),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFF6B7280,
-                            ).withOpacity(0.1),
-                            foregroundColor: const Color(0xFF6B7280),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: Icon(Icons.visibility, size: 12),
                         ),
                       ),
                     ),
@@ -585,8 +521,162 @@ class CompanyStockDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+
+            const SizedBox(height: 12),
+
+            // Product details
+            Text(
+              item.model,
+              style: const TextStyle(
+                color: Color(0xFF1A1A1A),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              item.ramRomDisplay,
+              style: const TextStyle(
+                color: Color(0xFF6B7280),
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 6),
+
+            // Color variant
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: controller.getColorForVariant(item.color),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                item.color,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+
+            const Spacer(),
+
+            // Stock status section
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: controller.getStockStatusColor(item).withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: controller.getStockStatusColor(item).withOpacity(0.1),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        controller.getStockStatusIcon(item),
+                        color: controller.getStockStatusColor(item),
+                        size: 12,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          item.stockStatus,
+                          style: TextStyle(
+                            color: controller.getStockStatusColor(item),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // Action buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 28,
+                          child: ElevatedButton(
+                            onPressed: () => controller.updateStock(item),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                0xFF3B82F6,
+                              ).withOpacity(0.1),
+                              foregroundColor: const Color(0xFF3B82F6),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Icon(Icons.edit, size: 12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: SizedBox(
+                          height: 28,
+                          child: ElevatedButton(
+                            onPressed: () => controller.sellItem(item),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                0xFF10B981,
+                              ).withOpacity(0.1),
+                              foregroundColor: const Color(0xFF10B981),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Icon(Icons.shopping_cart, size: 12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: SizedBox(
+                          height: 28,
+                          child: ElevatedButton(
+                            onPressed: () => controller.viewDetails(item),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                0xFF6B7280,
+                              ).withOpacity(0.1),
+                              foregroundColor: const Color(0xFF6B7280),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Icon(Icons.visibility, size: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

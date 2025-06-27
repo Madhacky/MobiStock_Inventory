@@ -7,9 +7,9 @@ import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_search_field.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
-import 'package:smartbecho/views/inventory%20management/inventory_shimmer.dart';
+import 'package:smartbecho/views/inventory/widgets/inventory_shimmer.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:smartbecho/views/inventory%20management/widgets/invenrtory_shimmers.dart';
+import 'package:smartbecho/views/inventory/widgets/invenrtory_shimmers.dart';
 
 class InventoryManagementScreen extends StatelessWidget {
   final InventoryController controller = Get.find<InventoryController>();

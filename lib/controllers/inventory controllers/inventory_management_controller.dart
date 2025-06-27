@@ -166,8 +166,7 @@ class InventoryController extends GetxController {
     super.onClose();
   }
 
-  // ADD MOBILE FORM METHODS
-
+  
   /// Get company brand color for UI theming
   Color getCompanyColor(String? company) {
     switch (company?.toLowerCase()) {

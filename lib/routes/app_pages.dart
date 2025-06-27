@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:smartbecho/bindings/account%20management%20bimding/account_management_binding.dart';
 import 'package:smartbecho/bindings/auth%20bindings/auth_binding.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_history_bindings.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_operation_binding.dart';
+import 'package:smartbecho/bindings/customer%20dues%20bindings/customer_dues_management_binding.dart';
 import 'package:smartbecho/bindings/customer%20management%20bindings/customer_details_binding.dart';
 import 'package:smartbecho/bindings/customer%20management%20bindings/customer_management_binding.dart';
 import 'package:smartbecho/bindings/dashboard_binding.dart';
@@ -12,6 +14,7 @@ import 'package:smartbecho/bindings/inventory%20management%20bindings/sales_dash
 import 'package:smartbecho/bindings/profile/profile_binding.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/company_stock_detail_controller.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/views/account%20management/account_management.dart';
 import 'package:smartbecho/views/auth/forgot_password_otp.dart';
 import 'package:smartbecho/views/auth/login_screen.dart';
 import 'package:smartbecho/views/auth/reset_password.dart';
@@ -20,14 +23,15 @@ import 'package:smartbecho/views/auth/verify_email.dart';
 import 'package:smartbecho/views/bill%20history/bill_history.dart';
 import 'package:smartbecho/views/bill%20history/components/add_bill.dart';
 import 'package:smartbecho/views/bill%20history/components/bill_details.dart';
+import 'package:smartbecho/views/customer%20dues/customer_dues_management.dart';
 import 'package:smartbecho/views/customer/components/customer_card_view.dart';
 import 'package:smartbecho/views/customer/customer.dart';
 import 'package:smartbecho/views/customer/components/customer_analytics.dart';
 import 'package:smartbecho/views/dashboard/dashboard_screen.dart';
-import 'package:smartbecho/views/inventory%20management/components/add_mobile_form.dart';
-import 'package:smartbecho/views/inventory%20management/inventory_management.dart';
-import 'package:smartbecho/views/inventory%20management/sales_dashboard.dart';
-import 'package:smartbecho/views/inventory%20management/company_stock_info.dart';
+import 'package:smartbecho/views/inventory/components/add_mobile_form.dart';
+import 'package:smartbecho/views/inventory/inventory_management.dart';
+import 'package:smartbecho/views/inventory/sales_dashboard.dart';
+import 'package:smartbecho/views/inventory/company_stock_info.dart';
 import 'package:smartbecho/views/profile/profile.dart';
 import 'package:smartbecho/views/splash/splash_screen.dart';
 
@@ -164,12 +168,30 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
-        GetPage(
+    GetPage(
       name: AppRoutes.addBill,
       page: () => AddBillForm(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: BillOperationBinding(),
+    ),
+
+    //customer dues management
+    GetPage(
+      name: AppRoutes.customerDuesManagement,
+      page: () => CustomerDuesManagementScreen(),
+      transition: Transition.fade,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: CustomerDuesManagementBinding(),
+    ),
+
+    //account management
+        GetPage(
+      name: AppRoutes.accountManagement,
+      page: () => AccountManagementScreen(),
+      transition: Transition.fade,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: AccountManagementBinding(),
     ),
   ];
 

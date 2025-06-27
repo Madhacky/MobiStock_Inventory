@@ -1,4 +1,5 @@
 // controllers/company_stock_details_controller.dart
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart' as dio;
@@ -17,7 +18,13 @@ class CompanyStockDetailsController extends GetxController {
   var isLoading = false.obs;
   var stockItems = <StockItem>[].obs;
   var filteredItems = <StockItem>[].obs;
-  
+
+  // Lazy loading variables
+  var displayedItems = <StockItem>[].obs;
+  var hasMoreItems = false.obs;
+  var currentPage = 0.obs;
+  static const int itemsPerPage = 20;
+
   // Filter and search variables
   var selectedFilter = 'All'.obs;
   var searchQuery = ''.obs;
@@ -26,6 +33,10 @@ class CompanyStockDetailsController extends GetxController {
 
   // Company information
   var companyName = ''.obs;
+
+  // Debounce timer for search
+  Timer? _debounceTimer;
+  static const Duration _debounceDuration = Duration(milliseconds: 500);
 
   // Filter and sort options
   final List<String> filterOptions = [
@@ -52,11 +63,13 @@ class CompanyStockDetailsController extends GetxController {
     ever(searchQuery, (_) => _updateFilteredItems());
     ever(selectedSort, (_) => _updateFilteredItems());
     ever(stockItems, (_) => _updateFilteredItems());
+    ever(filteredItems, (_) => _updateDisplayedItems());
   }
 
   @override
   void onClose() {
     searchController.dispose();
+    _debounceTimer?.cancel();
     super.onClose();
   }
 
@@ -74,13 +87,16 @@ class CompanyStockDetailsController extends GetxController {
       companyName.value = company;
 
       dio.Response? response = await _apiService.requestGetForApi(
-        url: '${_config.baseUrl}/inventory/filter?company=$company', // Update with your actual endpoint
+        url: '${_config.baseUrl}/inventory/filter?company=$company',
         authToken: true,
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data is String ? json.decode(response.data) : response.data;
-        
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
+
         List<dynamic> stockList;
         if (data is Map<String, dynamic> && data.containsKey('payload')) {
           stockList = data['payload'] as List<dynamic>;
@@ -90,8 +106,9 @@ class CompanyStockDetailsController extends GetxController {
           throw Exception('Unexpected response format');
         }
 
-        stockItems.value = stockList.map((json) => StockItem.fromJson(json)).toList();
-        
+        stockItems.value =
+            stockList.map((json) => StockItem.fromJson(json)).toList();
+
         log("Stock items loaded successfully for $company");
         log("Total items: ${stockItems.length}");
       }
@@ -103,7 +120,15 @@ class CompanyStockDetailsController extends GetxController {
     }
   }
 
-  // Update search query
+  // Update search query with debouncing
+  void updateSearchQueryWithDebounce(String query) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(_debounceDuration, () {
+      searchQuery.value = query;
+    });
+  }
+
+  // Update search query immediately
   void updateSearchQuery(String query) {
     searchQuery.value = query;
   }
@@ -124,25 +149,35 @@ class CompanyStockDetailsController extends GetxController {
 
     // Apply search filter
     if (searchQuery.value.isNotEmpty) {
-      items = items.where((item) =>
-          item.model.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-          item.color.toLowerCase().contains(searchQuery.value.toLowerCase())).toList();
+      items =
+          items
+              .where(
+                (item) =>
+                    item.model.toLowerCase().contains(
+                      searchQuery.value.toLowerCase(),
+                    ) ||
+                    item.color.toLowerCase().contains(
+                      searchQuery.value.toLowerCase(),
+                    ),
+              )
+              .toList();
     }
 
     // Apply category filter
     if (selectedFilter.value != 'All') {
-      items = items.where((item) {
-        switch (selectedFilter.value) {
-          case 'In Stock':
-            return !item.isOutOfStock && !item.isLowStock;
-          case 'Low Stock':
-            return item.isLowStock && !item.isOutOfStock;
-          case 'Out of Stock':
-            return item.isOutOfStock;
-          default:
-            return true;
-        }
-      }).toList();
+      items =
+          items.where((item) {
+            switch (selectedFilter.value) {
+              case 'In Stock':
+                return !item.isOutOfStock && !item.isLowStock;
+              case 'Low Stock':
+                return item.isLowStock && !item.isOutOfStock;
+              case 'Out of Stock':
+                return item.isOutOfStock;
+              default:
+                return true;
+            }
+          }).toList();
     }
 
     // Apply sorting
@@ -168,13 +203,53 @@ class CompanyStockDetailsController extends GetxController {
     filteredItems.value = items;
   }
 
+  // Update displayed items for lazy loading
+  void _updateDisplayedItems() {
+    currentPage.value = 0;
+
+    if (filteredItems.isEmpty) {
+      displayedItems.value = [];
+      hasMoreItems.value = false;
+      return;
+    }
+
+    final int endIndex = itemsPerPage.clamp(0, filteredItems.length);
+    displayedItems.value = filteredItems.take(endIndex).toList();
+    hasMoreItems.value = filteredItems.length > itemsPerPage;
+  }
+
+  // Load more items for pagination
+  void loadMoreItems() {
+    if (!hasMoreItems.value || isLoading.value) return;
+
+    final int nextPage = currentPage.value + 1;
+    final int startIndex = nextPage * itemsPerPage;
+    final int endIndex = (startIndex + itemsPerPage).clamp(
+      0,
+      filteredItems.length,
+    );
+
+    if (startIndex < filteredItems.length) {
+      final newItems = filteredItems.sublist(startIndex, endIndex);
+      displayedItems.addAll(newItems);
+      currentPage.value = nextPage;
+
+      // Check if there are more items
+      hasMoreItems.value = endIndex < filteredItems.length;
+    } else {
+      hasMoreItems.value = false;
+    }
+  }
+
   // Getters for UI
   int get totalStock => stockItems.fold(0, (sum, item) => sum + item.qty);
-  
-  int get lowStockCount => stockItems.where((item) => item.isLowStock && !item.isOutOfStock).length;
-  
-  int get outOfStockCount => stockItems.where((item) => item.isOutOfStock).length;
-  
+
+  int get lowStockCount =>
+      stockItems.where((item) => item.isLowStock && !item.isOutOfStock).length;
+
+  int get outOfStockCount =>
+      stockItems.where((item) => item.isOutOfStock).length;
+
   Color get totalStockColor {
     if (totalStock == 0) return const Color(0xFFEF4444);
     if (totalStock < 50) return const Color(0xFFF59E0B);
@@ -244,13 +319,21 @@ class CompanyStockDetailsController extends GetxController {
       case 'All':
         return const Icon(Icons.apps, size: 16, color: Color(0xFF6B7280));
       case 'In Stock':
-        return const Icon(Icons.check_circle, size: 16, color: Color(0xFF10B981));
+        return const Icon(
+          Icons.check_circle,
+          size: 16,
+          color: Color(0xFF10B981),
+        );
       case 'Low Stock':
         return const Icon(Icons.warning, size: 16, color: Color(0xFFF59E0B));
       case 'Out of Stock':
         return const Icon(Icons.error, size: 16, color: Color(0xFFEF4444));
       default:
-        return const Icon(Icons.filter_list, size: 16, color: Color(0xFF6B7280));
+        return const Icon(
+          Icons.filter_list,
+          size: 16,
+          color: Color(0xFF6B7280),
+        );
     }
   }
 
@@ -259,23 +342,94 @@ class CompanyStockDetailsController extends GetxController {
     // Implement update stock functionality
     log("Update stock for ${item.model}");
     // You can show a dialog or navigate to update screen
+    Get.dialog(
+      AlertDialog(
+        title: Text('Update Stock'),
+        content: Text('Update stock for ${item.model}?'),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              // Add your update stock logic here
+              Get.back();
+              Get.snackbar('Success', 'Stock updated successfully');
+            },
+            child: Text('Update'),
+          ),
+        ],
+      ),
+    );
   }
 
   void sellItem(StockItem item) {
     // Implement sell functionality
     log("Sell ${item.model}");
-    // You can show a dialog or navigate to sell screen
+    Get.dialog(
+      AlertDialog(
+        title: Text('Sell Item'),
+        content: Text('Sell ${item.model}?'),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              // Add your sell logic here
+              Get.back();
+              Get.snackbar('Success', 'Item sold successfully');
+            },
+            child: Text('Sell'),
+          ),
+        ],
+      ),
+    );
   }
 
   void viewDetails(StockItem item) {
     // Implement view details functionality
     log("View details for ${item.model}");
-    // You can navigate to details screen
+    Get.dialog(
+      AlertDialog(
+        title: Text('Item Details'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Model: ${item.model}'),
+            Text('Company: ${item.company}'),
+            Text('Color: ${item.color}'),
+            Text('RAM/ROM: ${item.ramRomDisplay}'),
+            Text('Stock: ${item.qty}'),
+            Text('Price: ${item.formattedPrice}'),
+            Text('Status: ${item.stockStatus}'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text('Close')),
+        ],
+      ),
+    );
   }
 
   void refreshData() {
     if (companyName.value.isNotEmpty) {
       fetchStockItems(companyName.value);
+    }
+  }
+
+  // Method to reset filters
+  void resetFilters() {
+    selectedFilter.value = 'All';
+    selectedSort.value = 'Model Name';
+    searchController.clear();
+    searchQuery.value = '';
+  }
+
+  // Method to apply multiple filters at once
+  void applyFilters({String? filter, String? sort, String? search}) {
+    if (filter != null) selectedFilter.value = filter;
+    if (sort != null) selectedSort.value = sort;
+    if (search != null) {
+      searchController.text = search;
+      searchQuery.value = search;
     }
   }
 }

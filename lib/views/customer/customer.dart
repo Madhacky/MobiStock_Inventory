@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smartbecho/routes/app_routes.dart';
-import 'package:smartbecho/views/inventory%20management/inventory_shimmer.dart';
+import 'package:smartbecho/views/inventory/widgets/inventory_shimmer.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
 import 'package:smartbecho/services/app_config.dart';
@@ -183,50 +183,51 @@ class CustomerManagementScreen extends StatelessWidget {
     );
   }
 
- Widget _buildAdvancedSearchAndFilters() {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.08),
-          spreadRadius: 0,
-          blurRadius: 20,
-          offset: Offset(0, 4),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header with expand/collapse functionality
-        InkWell(
-          onTap: () => controller.toggleFiltersExpanded(),
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Icon(Icons.search, color: Color(0xFF6C5CE7), size: 20),
-                SizedBox(width: 8),
-                Text(
-                  'Search & Filters',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+  Widget _buildAdvancedSearchAndFilters() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with expand/collapse functionality
+          InkWell(
+            onTap: () => controller.toggleFiltersExpanded(),
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(Icons.search, color: Color(0xFF6C5CE7), size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'Search & Filters',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
-                ),
-                
-                // Active filter indicator
-                Obx(() {
-                  bool hasActiveFilters = controller.searchQuery.value.isNotEmpty ||
-                      controller.selectedFilter.value != 'All Customers';
-                  
-                  return hasActiveFilters
-                      ? Container(
+
+                  // Active filter indicator
+                  Obx(() {
+                    bool hasActiveFilters =
+                        controller.searchQuery.value.isNotEmpty ||
+                        controller.selectedFilter.value != 'All Customers';
+
+                    return hasActiveFilters
+                        ? Container(
                           margin: EdgeInsets.only(left: 8),
                           width: 8,
                           height: 8,
@@ -235,150 +236,186 @@ class CustomerManagementScreen extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                         )
-                      : SizedBox();
-                }),
-                
-                Spacer(),
-                
-                // Clear all button (only show when expanded or has active filters)
-                Obx(() {
-                  bool hasActiveFilters = controller.searchQuery.value.isNotEmpty ||
-                      controller.selectedFilter.value != 'All Customers';
-                  
-                  return (controller.isFiltersExpanded.value || hasActiveFilters)
-                      ? TextButton.icon(
+                        : SizedBox();
+                  }),
+
+                  Spacer(),
+
+                  // Clear all button (only show when expanded or has active filters)
+                  Obx(() {
+                    bool hasActiveFilters =
+                        controller.searchQuery.value.isNotEmpty ||
+                        controller.selectedFilter.value != 'All Customers';
+
+                    return (controller.isFiltersExpanded.value ||
+                            hasActiveFilters)
+                        ? TextButton.icon(
                           onPressed: () => controller.resetFilters(),
                           icon: Icon(Icons.clear_all, size: 14),
                           label: Text('Clear', style: TextStyle(fontSize: 11)),
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.grey[600],
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             minimumSize: Size(0, 0),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                         )
-                      : SizedBox();
-                }),
-                
-                SizedBox(width: 8),
-                
-                // Expand/collapse arrow
-                Obx(() => AnimatedRotation(
-                  turns: controller.isFiltersExpanded.value ? 0.5 : 0,
-                  duration: Duration(milliseconds: 200),
-                  child: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey[600],
-                    size: 20,
+                        : SizedBox();
+                  }),
+
+                  SizedBox(width: 8),
+
+                  // Expand/collapse arrow
+                  Obx(
+                    () => AnimatedRotation(
+                      turns: controller.isFiltersExpanded.value ? 0.5 : 0,
+                      duration: Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.grey[600],
+                        size: 20,
+                      ),
+                    ),
                   ),
-                )),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        
-        // Collapsible content
-        Obx(() => AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          height: controller.isFiltersExpanded.value ? null : 0,
-          child: controller.isFiltersExpanded.value
-              ? Container(
-                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Divider(color: Colors.grey[200], height: 1),
-                      SizedBox(height: 16),
-                      
-                      // Search bar with enhanced design
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+
+          // Collapsible content
+          Obx(
+            () => AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              height: controller.isFiltersExpanded.value ? null : 0,
+              child:
+                  controller.isFiltersExpanded.value
+                      ? Container(
+                        padding: EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 16,
                         ),
-                        child: TextField(
-                          onChanged: controller.onSearchChanged,
-                          decoration: InputDecoration(
-                            hintText: 'Search by name, phone, location...',
-                            hintStyle: TextStyle(fontSize: 13, color: Colors.grey[500]),
-                            prefixIcon: Container(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(Icons.search, size: 18, color: Color(0xFF6C5CE7)),
-                            ),
-                            suffixIcon: Obx(
-                              () => controller.searchQuery.value.isNotEmpty
-                                  ? IconButton(
-                                    onPressed: () {
-                                      controller.searchQuery.value = '';
-                                      controller.filterCustomers();
-                                    },
-                                    icon: Icon(
-                                      Icons.clear,
-                                      size: 16,
-                                      color: Colors.grey[400],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Divider(color: Colors.grey[200], height: 1),
+                            SizedBox(height: 16),
+
+                            // Search bar with enhanced design
+                            Container(
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.grey.withOpacity(0.2),
+                                ),
+                              ),
+                              child: TextField(
+                                onChanged: controller.onSearchChanged,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'Search by name, phone, location...',
+                                  hintStyle: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[500],
+                                  ),
+                                  prefixIcon: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Icon(
+                                      Icons.search,
+                                      size: 18,
+                                      color: Color(0xFF6C5CE7),
                                     ),
-                                  )
-                                  : SizedBox(),
+                                  ),
+                                  suffixIcon: Obx(
+                                    () =>
+                                        controller.searchQuery.value.isNotEmpty
+                                            ? IconButton(
+                                              onPressed: () {
+                                                controller.searchQuery.value =
+                                                    '';
+                                                controller.filterCustomers();
+                                              },
+                                              icon: Icon(
+                                                Icons.clear,
+                                                size: 16,
+                                                color: Colors.grey[400],
+                                              ),
+                                            )
+                                            : SizedBox(),
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
                             ),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 12),
-                          ),
+
+                            SizedBox(height: 12),
+
+                            // Filter chips
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: [
+                                _buildFilterChip('All', 'All Customers'),
+                                _buildFilterChip('New', 'New Customers'),
+                                _buildFilterChip(
+                                  'Regular',
+                                  'Regular Customers',
+                                ),
+                                _buildFilterChip(
+                                  'Repeated',
+                                  'Repeated Customers',
+                                ),
+                                _buildFilterChip('VIP', 'VIP Customers'),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-
-                      SizedBox(height: 12),
-
-                      // Filter chips
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
-                        children: [
-                          _buildFilterChip('All', 'All Customers'),
-                          _buildFilterChip('New', 'New Customers'),
-                          _buildFilterChip('Regular', 'Regular Customers'),
-                          _buildFilterChip('Repeated', 'Repeated Customers'),
-                          _buildFilterChip('VIP', 'VIP Customers'),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox(),
-        )),
-      ],
-    ),
-  );
-}
-
-Widget _buildFilterChip(String label, String value) {
-  return Obx(
-    () => FilterChip(
-      label: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          color: controller.selectedFilter.value == value
-              ? Colors.white
-              : Colors.grey[700],
-        ),
+                      )
+                      : SizedBox(),
+            ),
+          ),
+        ],
       ),
-      selected: controller.selectedFilter.value == value,
-      onSelected: (selected) => controller.onFilterChanged(value),
-      selectedColor: Color(0xFF6C5CE7),
-      backgroundColor: Colors.grey[100],
-      checkmarkColor: Colors.white,
-      side: BorderSide.none,
-      elevation: 0,
-      pressElevation: 1,
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildFilterChip(String label, String value) {
+    return Obx(
+      () => FilterChip(
+        label: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color:
+                controller.selectedFilter.value == value
+                    ? Colors.white
+                    : Colors.grey[700],
+          ),
+        ),
+        selected: controller.selectedFilter.value == value,
+        onSelected: (selected) => controller.onFilterChanged(value),
+        selectedColor: Color(0xFF6C5CE7),
+        backgroundColor: Colors.grey[100],
+        checkmarkColor: Colors.white,
+        side: BorderSide.none,
+        elevation: 0,
+        pressElevation: 1,
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+    );
+  }
+
   Widget _buildCustomerAnalyticsCard(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -572,7 +609,6 @@ Widget _buildFilterChip(String label, String value) {
                       icon: Icon(Icons.download_outlined, size: 20),
                       tooltip: 'Export Data',
                     ),
-
                   ],
                 ),
               ],
@@ -818,7 +854,7 @@ Widget _buildFilterChip(String label, String value) {
       icon: Icons.add,
       activeIcon: Icons.close,
       backgroundColor: Color(0xFF6C5CE7),
-      foregroundColor: Colors.white,
+      foregroundColor: const Color.fromARGB(255, 219, 153, 153),
       overlayColor: Colors.black,
       overlayOpacity: 0.4,
       spacing: 12,
