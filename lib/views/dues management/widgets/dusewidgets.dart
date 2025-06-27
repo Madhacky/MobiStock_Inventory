@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:smartbecho/utils/app_colors.dart';
 
 class DuesWidget {
@@ -92,19 +93,19 @@ class DuesWidget {
     );
   }
 
-  static Widget circularProgresbar() {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: CircularPercentIndicator(
-        radius: 60.0,
-        lineWidth: 5.0,
-        percent: 0.4,
-        center: Text("100%"),
-        progressColor: AppTheme.primaryLight,
-        backgroundColor: Colors.grey,
-      ),
-    );
-  }
+  // static Widget circularProgresbar() {
+  //   return Container(
+  //     padding: EdgeInsets.all(8),
+  //     child: CircularPercentIndicator(
+  //       radius: 60.0,
+  //       lineWidth: 5.0,
+  //       percent: 0.4,
+  //       center: Text("100%"),
+  //       progressColor: AppTheme.primaryLight,
+  //       backgroundColor: Colors.grey,
+  //     ),
+  //   );
+  // }
 
   static Widget dateShow({
     required String title,

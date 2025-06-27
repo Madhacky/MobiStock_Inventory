@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
+import 'package:smartbecho/routes/app_routes.dart';
 
 class RouteService {
   // Authentication Navigation
@@ -97,6 +98,3 @@ class RouteService {
   }
 }
 
-class AppRoutes {
-  static String login;
-}
