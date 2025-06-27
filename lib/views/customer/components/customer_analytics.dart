@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/customer_controller.dart';
-import 'package:mobistock/utils/common_chart_loader.dart';
-import 'package:mobistock/utils/custom_appbar.dart';
-import 'package:mobistock/utils/generic_charts.dart';
-import 'package:mobistock/views/customer/customer_screen_shimmers.dart';
-import 'package:mobistock/views/dashboard/widgets/dashboard_shimmers.dart';
-import 'package:mobistock/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
+import 'package:smartbecho/utils/common_chart_loader.dart';
+import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/generic_charts.dart';
+import 'package:smartbecho/views/customer/widgets/customer_screen_shimmers.dart';
+import 'package:smartbecho/views/dashboard/widgets/dashboard_shimmers.dart';
+import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
 
 class CustomerAnalytics extends StatefulWidget {
   const CustomerAnalytics({super.key});

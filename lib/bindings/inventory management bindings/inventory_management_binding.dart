@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/inventory_management_controller.dart';
+import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
 
 class InventoryManagementBinding extends Bindings {
   @override

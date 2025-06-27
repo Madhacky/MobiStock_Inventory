@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/utils/app_styles.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class CommonWidgets {
   

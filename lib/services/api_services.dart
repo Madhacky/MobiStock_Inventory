@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as getx;
-import 'package:mobistock/services/secure_storage_service.dart';
-import 'package:mobistock/services/shared_preferences_services.dart';
+import 'package:smartbecho/services/secure_storage_service.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
 
 class ApiServices {
   final Dio _dio = Dio();

@@ -1,17 +1,21 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/models/auth/login_model.dart';
-import 'package:mobistock/models/auth/signup_model.dart';
-import 'package:mobistock/services/api_services.dart';
-import 'package:mobistock/services/app_config.dart';
-import 'package:mobistock/services/cookie_extractor.dart';
-import 'package:mobistock/services/route_services.dart';
-import 'package:mobistock/services/secure_storage_service.dart';
-import 'package:mobistock/services/shared_preferences_services.dart';
-import 'package:mobistock/utils/toasts.dart';
+import 'package:smartbecho/models/auth/login_model.dart';
+import 'package:smartbecho/models/auth/signup_model.dart';
+import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/services/api_services.dart';
+import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/services/cookie_extractor.dart';
+import 'package:smartbecho/services/route_services.dart' hide AppRoutes;
+import 'package:smartbecho/services/secure_storage_service.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/toasts.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:smartbecho/views/auth/forgot_password_otp.dart';
 
 class AuthController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -109,7 +113,18 @@ class AuthController extends GetxController
   }
 
   void goToResetPassword() {
-    Get.toNamed('/reset-password');
+    if (emailController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        'Email is required',
+        backgroundColor: AppTheme.errorDark,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 2),
+      );
+    } else {
+      Get.toNamed('/reset-password');
+    }
   }
 
   void clearControllers() {
@@ -272,10 +287,12 @@ class AuthController extends GetxController
           LoginResponse loginResponse = LoginResponse.fromJson(response.data);
 
           if (loginResponse.isSuccess && loginResponse.payload != null) {
+            //meanwhile using refresh token
             String userToken = loginResponse.payload!.userToken;
+            String refreshToken = loginResponse.payload!.refreshToken;
             List<int> loginDate = loginResponse.payload!.loginDate;
 
-            await SharedPreferencesHelper.setJwtToken(userToken);
+            await SharedPreferencesHelper.setJwtToken(refreshToken);
             await SharedPreferencesHelper.setLoginDate(loginDate);
             await SharedPreferencesHelper.setIsLoggedIn(true);
 
@@ -428,17 +445,87 @@ class AuthController extends GetxController
     }
   }
 
-  Future<void> resetPassword(BuildContext context) async {
+//reset pass
+  Future<void> resetPassword(BuildContext context, String email) async {
     if (!resetPasswordFormKey.currentState!.validate()) return;
 
     try {
       isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 2));
-      ToastCustom.successToast(context, "Password reset email sent!");
+      bool isSuccess = await resetPasswordApi(email: email);
+      if (isSuccess) {
+        Get.snackbar(
+          "Success",
+          "Please check email for OTP",
+          backgroundColor: Colors.green.withOpacity(0.8),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 2),
+        );
+        Get.toNamed(AppRoutes.forgotPasswordOtp, parameters: {"email": email});
+      } else {
+        Get.snackbar(
+          'Error',
+          'Please try again later',
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+        );
+      }
     } catch (e) {
       Get.snackbar('Error', 'Reset failed: ${e.toString()}');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  //reset pass api
+  Future<bool> resetPasswordApi({required String email}) async {
+    try {
+      dio.Response? response = await _apiService.requestPostForApi(
+        url: _config.resetPasswordUrl,
+        authToken: false,
+        dictParameter: {'email': email},
+      );
+
+      if (response != null) {
+        if (response.statusCode == 200) {
+          final data =
+              response.data is String
+                  ? json.decode(response.data)
+                  : response.data;
+
+          // Check if the response indicates success
+          if (data is Map<String, dynamic>) {
+            String status = data['status'] ?? '';
+            int statusCode = data['statusCode'] ?? 0;
+            String message = data['message'] ?? '';
+
+            if (status.toLowerCase() == 'success' && statusCode == 200) {
+              log("✅ Reset password email sent successfully");
+              log("Message: $message");
+              return true;
+            } else {
+              log("❌ Reset password failed: $message");
+              return false;
+            }
+          } else {
+            log("❌ Unexpected response format in resetPasswordApi");
+            return false;
+          }
+        } else {
+          log(
+            "❌ Reset password API failed with status code: ${response.statusCode}",
+          );
+          return false;
+        }
+      } else {
+        log("❌ No response received from reset password API");
+        return false;
+      }
+    } catch (error) {
+      log("❌ Error in resetPasswordApi: $error");
+      return false;
     }
   }
 

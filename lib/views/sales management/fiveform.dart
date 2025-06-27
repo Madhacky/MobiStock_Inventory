@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/sales_managenment_controller.dart';
-import 'package:mobistock/views/sales%20management/sales_managenment_screen.dart';
-import 'package:mobistock/views/sales%20management/widgets/sales_widgets.dart';
+import 'package:smartbecho/controllers/sales_managenment_controller.dart';
+import 'package:smartbecho/views/sales%20management/sales_managenment_screen.dart';
+import 'package:smartbecho/views/sales%20management/widgets/sales_widgets.dart';
 
 class Fiveform extends StatefulWidget {
   const Fiveform({super.key});

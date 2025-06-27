@@ -37,15 +37,17 @@ class SharedPreferencesHelper {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_jwtTokenKey);
   }
-static Future<void> setJSessionId(String jsessionId) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString(_jsessionIdKey, jsessionId);
-}
 
-static Future<String?> getJSessionId() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(_jsessionIdKey);
-}
+  static Future<void> setJSessionId(String jsessionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_jsessionIdKey, jsessionId);
+  }
+
+  static Future<String?> getJSessionId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_jsessionIdKey);
+  }
+
   // Login date methods
   static Future<void> setLoginDate(List<int> loginDate) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobistock/utils/app_colors.dart';
-import 'package:mobistock/utils/app_styles.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:motion_toast/motion_toast.dart';
 
 class ToastCustom {

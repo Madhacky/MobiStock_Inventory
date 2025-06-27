@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/routes/app_routes.dart';
-import 'package:mobistock/utils/app_styles.dart';
+import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:flutter/services.dart';
 
 // Menu Item Model for Drawer
@@ -95,7 +95,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       category: 'Reports',
     ),
     DrawerMenuItem(
-      title: 'Dues Management',
+      title: 'Bill History',
       subtitle: 'Track pending payments',
       icon: Icons.receipt_long_rounded,
       color: Color(0xFFfa709a),
@@ -204,7 +204,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'MobiStock',
+                            'smartbecho',
                             style: AppStyles.custom(
                               size: 24,
                               weight: FontWeight.bold,
@@ -526,6 +526,8 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
         Get.toNamed(AppRoutes.inventory_management);
         case 3:
         Get.toNamed(AppRoutes.customerManagement);
+        case 5 :
+        Get.toNamed(AppRoutes.billHistory);
       default:
         _showNavigationSnackbar(item.title, item.color);
     }

@@ -12,13 +12,17 @@ class AppConfig {
   // Environment variables getters
   String get baseUrl =>
       dotenv.env['BASE_URL'] ??
-      'https://backend-production-33c0.up.railway.app';
+      'https://backend-production-91e4.up.railway.app';
   bool get isDebugMode => dotenv.env['DEBUG_MODE']?.toLowerCase() == 'true';
   String get appName => dotenv.env['APP_NAME'] ?? 'Flutter App';
   String get appVersion => dotenv.env['APP_VERSION'] ?? '1.0';
 
   // Specific endpoints
   String get loginEndpoint => '$baseUrl/login/jwt';
+  String get resetPasswordUrl => '$baseUrl/users/forgot-password';
+  String get resetPasswordOTPUrl => '$baseUrl/users/verify-otp-reset-password';
+
+
   String get signupEndpoint => '$baseUrl/users/createUser';
   String get registerEndpoint => '$baseUrl/auth/register';
   String get profileEndpoint => '$baseUrl/user/profile';
@@ -32,8 +36,19 @@ class AppConfig {
   String get monthlyEmiDuesChart => '$baseUrl/api/dues/monthly-summary';
 
   //inventory management endpoints
-  String get getInventoryData =>
-      '$baseUrl/inventory/shop?page=0&size=10&sortBy=id';
+  String get getInventoryData => '$baseUrl/inventory/shop';
+  String get getInventorySummaryCards=> '$baseUrl/inventory/business-summary';
+  String get getLowStockAlerts => '$baseUrl/inventory/low-stock-alerts';
+  String get getCompanyStocks=> '$baseUrl/inventory/summary';
+  String get addInventoryItem => '$baseUrl/api/mobiles/create';
+
+  //Bill History
+  String get getAllBills => '$baseUrl/bill/all';
+
+
+
+
+
 
   //customer management endpoints
   String get getMonthlyNewCustomerEndpoint =>
@@ -42,10 +57,10 @@ class AppConfig {
       '$baseUrl/api/customers/count/location';
   String get getMonthlyRepeatCustomerEndpoint =>
       '$baseUrl/api/sales/count/monthly/repeated';
-       String get getTopCustomerOverviewEndpoint =>
+  String get getTopCustomerOverviewEndpoint =>
       '$baseUrl/api/sales/top-customers';
-      
-
+        String get getTopStatsCardsDataEndpoint =>
+      '$baseUrl/api/customers/stats';
 
   // Utility methods
   static bool get isSmallScreen => Get.width < 360;

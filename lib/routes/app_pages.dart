@@ -1,22 +1,28 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:mobistock/bindings/auth_binding.dart';
-import 'package:mobistock/bindings/customer_management_binding.dart';
-import 'package:mobistock/bindings/dashboard_binding.dart';
-import 'package:mobistock/bindings/inventory_management_binding.dart';
-import 'package:mobistock/bindings/sales_managenment_binding.dart';
-import 'package:mobistock/routes/app_routes.dart';
-import 'package:mobistock/views/auth/login_screen.dart';
-import 'package:mobistock/views/auth/reset_password.dart';
-import 'package:mobistock/views/auth/signup_screen.dart';
-import 'package:mobistock/views/auth/verify_email.dart';
-import 'package:mobistock/views/customer/customer.dart';
-import 'package:mobistock/views/customer/customer_analytics.dart';
-import 'package:mobistock/views/dashboard/dashboard_screen.dart';
-import 'package:mobistock/views/inventory%20management/inventory_management.dart';
-import 'package:mobistock/views/sales%20management/fiveform.dart';
-import 'package:mobistock/views/sales%20management/sales_managenment_screen.dart';
-import 'package:mobistock/views/splash/splash_screen.dart';
+import 'package:smartbecho/bindings/auth%20bindings/auth_binding.dart';
+import 'package:smartbecho/bindings/customer%20management%20bindings/customer_management_binding.dart';
+import 'package:smartbecho/bindings/dashboard_binding.dart';
+import 'package:smartbecho/bindings/inventory%20management%20bindings/company_stock_details_binding.dart';
+import 'package:smartbecho/bindings/inventory%20management%20bindings/inventory_management_binding.dart';
+import 'package:smartbecho/bindings/inventory%20management%20bindings/sales_dashboard_binding.dart';
+import 'package:smartbecho/bindings/profile/profile_binding.dart';
+import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/views/auth/forgot_password_otp.dart';
+import 'package:smartbecho/views/auth/login_screen.dart';
+import 'package:smartbecho/views/auth/reset_password.dart';
+import 'package:smartbecho/views/auth/signup_screen.dart';
+import 'package:smartbecho/views/auth/verify_email.dart';
+import 'package:smartbecho/views/customer/components/customer_analytics.dart';
+import 'package:smartbecho/views/customer/customer.dart';
+import 'package:smartbecho/views/dashboard/dashboard_screen.dart';
+import 'package:smartbecho/views/inventory%20management/company_stock_info.dart';
+import 'package:smartbecho/views/inventory%20management/components/add_mobile_form.dart';
+import 'package:smartbecho/views/inventory%20management/inventory_management.dart';
+import 'package:smartbecho/views/inventory%20management/sales_dashboard.dart';
+import 'package:smartbecho/views/profile/profile.dart';
+import 'package:smartbecho/views/splash/splash_screen.dart';
+
 
 class AppPages {
   static const String initial = AppRoutes.inventory_management;
@@ -55,6 +61,12 @@ class AppPages {
       binding: AuthBinding(),
     ),
     GetPage(
+      name: AppRoutes.forgotPasswordOtp,
+      page: () => OTPVerificationScreen(),
+      transition: Transition.downToUp,
+      transitionDuration: Duration(milliseconds: 400),
+    ),
+    GetPage(
       name: AppRoutes.verifyEmail,
       page: () => VerifyEmailScreen(),
       transition: Transition.rightToLeft,
@@ -62,6 +74,13 @@ class AppPages {
       binding: AuthBinding(),
     ),
 
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => ProfileScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: ProfileBinding(),
+    ),
     //main screens
     GetPage(
       name: AppRoutes.dashboard,
@@ -71,12 +90,33 @@ class AppPages {
       binding: DashboardBinding(),
     ),
 
+    /// inventory management
     GetPage(
       name: AppRoutes.inventory_management,
       page: () => InventoryManagementScreen(),
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 500),
       binding: InventoryManagementBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.salesStockDashboard,
+      page: () => SalesStockDashboard(),
+      transition: Transition.rightToLeftWithFade,
+      transitionDuration: Duration(milliseconds: 500),
+      binding: SalesDashboardBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.companyStockDetails,
+      page: () => CompanyStockDetailsPage(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 500),
+      binding: CompanyStockDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.addNewItem,
+      page: () => MobileInventoryForm(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 500),
     ),
 
     //customer analytics
@@ -85,7 +125,7 @@ class AppPages {
       page: () => CustomerManagementScreen(),
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
-      binding: CustomerManagementBinding()
+      binding: CustomerManagementBinding(),
     ),
 
     GetPage(
@@ -95,15 +135,6 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: CustomerManagementBinding()
 
-    ),
-    //
-    //sales management
-    GetPage(
-      name: AppRoutes.salesManagement,
-      page: () => Fiveform(),
-      transition: Transition.fadeIn,
-      transitionDuration: Duration(milliseconds: 300),
-      binding: SalesManagenmentBinding(),
     ),
   ];
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/utils/app_colors.dart';
-import 'package:mobistock/views/dues%20management/widgets/dusewidgets.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/views/dues%20management/widgets/dusewidgets.dart';
 
 class DuesManagement extends StatefulWidget {
   const DuesManagement({super.key});

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/auth_controller.dart';
-import 'package:mobistock/routes/app_routes.dart';
+import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 
 class RouteService {
   // Authentication Navigation
@@ -96,4 +95,8 @@ class RouteService {
   static void offAndToNamed(String routeName, {dynamic arguments}) {
     Get.offAndToNamed(routeName, arguments: arguments);
   }
+}
+
+class AppRoutes {
+  static String login;
 }

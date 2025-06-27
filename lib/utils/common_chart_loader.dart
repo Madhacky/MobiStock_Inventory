@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/utils/generic_charts.dart';
-import 'package:mobistock/views/dashboard/charts/switchable_chart.dart';
-import 'package:mobistock/views/dashboard/widgets/dashboard_shimmers.dart';
-import 'package:mobistock/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/utils/generic_charts.dart';
+import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
+import 'package:smartbecho/views/dashboard/widgets/dashboard_shimmers.dart';
+import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
 
 Widget commonChartloader({
   required Map<String, double> chartData,

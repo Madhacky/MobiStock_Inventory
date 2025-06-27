@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:mobistock/routes/app_routes.dart';
-import 'package:mobistock/views/inventory%20management/inventory_shimmer.dart';
+import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/views/inventory%20management/inventory_shimmer.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:mobistock/controllers/customer_controller.dart';
-import 'package:mobistock/services/app_config.dart';
-import 'package:mobistock/utils/app_styles.dart';
-import 'package:mobistock/utils/custom_appbar.dart';
-import 'package:mobistock/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
+import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_styles.dart';
+import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class CustomerManagementScreen extends StatelessWidget {
@@ -21,13 +21,15 @@ class CustomerManagementScreen extends StatelessWidget {
       floatingActionButton: buildFloatingActionButtons(),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
               buildCustomAppBar("Customer Management", isdark: true),
               _buildStatsCards(),
-              _buildSearchAndFilters(),
+              _buildAdvancedSearchAndFilters(),
               _buildCustomerAnalyticsCard(context),
               _buildCustomerDataGrid(),
+              _buildLoadMoreButton(),
             ],
           ),
         ),
@@ -37,8 +39,8 @@ class CustomerManagementScreen extends StatelessWidget {
 
   Widget _buildStatsCards() {
     return Container(
-      height: 120,
-      margin: EdgeInsets.symmetric(vertical: 16),
+      height: 130,
+      margin: EdgeInsets.symmetric(vertical: 5),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -49,42 +51,39 @@ class CustomerManagementScreen extends StatelessWidget {
               {
                 'title': 'Total Customers',
                 'value': controller.totalCustomers.value.toString(),
-                'subtitle': 'Registered Customers',
-                'icon': Icons.people,
+                'icon': Icons.people_outline,
                 'color': Color(0xFF6C5CE7),
+                'trend': '+12%',
+                'trendUp': true,
               },
               {
-                'title': 'Repeated Customers',
+                'title': 'Repeat Customers',
                 'value': controller.repeatedCustomers.value.toString(),
-                'subtitle': 'Loyal Customers',
-                'icon': Icons.refresh,
+                'icon': Icons.refresh_outlined,
                 'color': Color(0xFFFF9500),
+                'trend': '+8%',
+                'trendUp': true,
               },
               {
-                'title': 'New Customers This Month',
+                'title': 'New This Month',
                 'value': controller.newCustomersThisMonth.value.toString(),
-                'subtitle': 'Monthly Growth',
-                'icon': Icons.person_add,
+                'icon': Icons.person_add_outlined,
                 'color': Color(0xFF51CF66),
+                'trend': '+24%',
+                'trendUp': true,
               },
-              // {
-              //   'title': 'Total Purchases',
-              //   'value': controller.totalPurchases.value.toString(),
-              //   'subtitle': 'Recent Activity',
-              //   'icon': Icons.shopping_cart,
-              //   'color': Color(0xFF00CEC9),
-              // },
             ];
 
             return Container(
-              width: 180,
+              width: 200,
               margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
-              child: _buildStatCard(
+              child: _buildEnhancedStatCard(
                 stats[index]['title'] as String,
                 stats[index]['value'] as String,
-                stats[index]['subtitle'] as String,
                 stats[index]['icon'] as IconData,
                 stats[index]['color'] as Color,
+                stats[index]['trend'] as String,
+                stats[index]['trendUp'] as bool,
               ),
             );
           });
@@ -93,255 +92,403 @@ class CustomerManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(
+  Widget _buildEnhancedStatCard(
     String title,
     String value,
-    String subtitle,
     IconData icon,
     Color color,
+    String trend,
+    bool trendUp,
   ) {
     return Container(
-      padding: EdgeInsets.all(14),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: Offset(0, 2),
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
           ),
         ],
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(width: 8),
               Container(
-                padding: EdgeInsets.all(6),
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: color, size: 18),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                decoration: BoxDecoration(
+                  color:
+                      trendUp
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      trendUp ? Icons.trending_up : Icons.trending_down,
+                      size: 12,
+                      color: trendUp ? Colors.green : Colors.red,
+                    ),
+                    SizedBox(width: 2),
+                    Text(
+                      trend,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: trendUp ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
           SizedBox(height: 4),
           Text(
-            subtitle,
-            style: TextStyle(fontSize: 10, color: Colors.grey[500]),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchAndFilters() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Search & Filters',
+            value,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  height: 40,
-                  child: TextField(
-                    // onChanged: controller.searchCustomers,
-                    decoration: InputDecoration(
-                      hintText: 'Search customers...',
-                      hintStyle: TextStyle(fontSize: 12),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        size: 18,
-                        color: Color(0xFF6C5CE7),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: Color(0xFF6C5CE7).withOpacity(0.3),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: Color(0xFF6C5CE7).withOpacity(0.3),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Color(0xFF6C5CE7)),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                flex: 1,
-                child: Obx(
-                  () => Container(
-                    height: 40,
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFF6C5CE7).withOpacity(0.3),
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey[50],
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: controller.selectedFilter.value,
-                        items:
-                            controller.filterOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            }).toList(),
-                        onChanged: (String? newValue) {
-                          if (newValue != null) {
-                            //  controller.applyFilter(newValue);
-                          }
-                        },
-                        icon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color(0xFF6C5CE7),
-                          size: 18,
-                        ),
-                        isExpanded: true,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCustomerAnalyticsCard(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Get.toNamed(AppRoutes.customerAnalytics);
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
+ Widget _buildAdvancedSearchAndFilters() {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.08),
+          spreadRadius: 0,
+          blurRadius: 20,
+          offset: Offset(0, 4),
         ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 60,
-              height: 70,
-              child: Lottie.asset(
-                'assets/customer analytics.json',
-              ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header with expand/collapse functionality
+        InkWell(
+          onTap: () => controller.toggleFiltersExpanded(),
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(Icons.search, color: Color(0xFF6C5CE7), size: 20),
+                SizedBox(width: 8),
+                Text(
+                  'Search & Filters',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                
+                // Active filter indicator
+                Obx(() {
+                  bool hasActiveFilters = controller.searchQuery.value.isNotEmpty ||
+                      controller.selectedFilter.value != 'All Customers';
+                  
+                  return hasActiveFilters
+                      ? Container(
+                          margin: EdgeInsets.only(left: 8),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6C5CE7),
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      : SizedBox();
+                }),
+                
+                Spacer(),
+                
+                // Clear all button (only show when expanded or has active filters)
+                Obx(() {
+                  bool hasActiveFilters = controller.searchQuery.value.isNotEmpty ||
+                      controller.selectedFilter.value != 'All Customers';
+                  
+                  return (controller.isFiltersExpanded.value || hasActiveFilters)
+                      ? TextButton.icon(
+                          onPressed: () => controller.resetFilters(),
+                          icon: Icon(Icons.clear_all, size: 14),
+                          label: Text('Clear', style: TextStyle(fontSize: 11)),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey[600],
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            minimumSize: Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        )
+                      : SizedBox();
+                }),
+                
+                SizedBox(width: 8),
+                
+                // Expand/collapse arrow
+                Obx(() => AnimatedRotation(
+                  turns: controller.isFiltersExpanded.value ? 0.5 : 0,
+                  duration: Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey[600],
+                    size: 20,
+                  ),
+                )),
+              ],
             ),
-            SizedBox(width: 16),
+          ),
+        ),
+        
+        // Collapsible content
+        Obx(() => AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          height: controller.isFiltersExpanded.value ? null : 0,
+          child: controller.isFiltersExpanded.value
+              ? Container(
+                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(color: Colors.grey[200], height: 1),
+                      SizedBox(height: 16),
+                      
+                      // Search bar with enhanced design
+                      Container(
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                        ),
+                        child: TextField(
+                          onChanged: controller.onSearchChanged,
+                          decoration: InputDecoration(
+                            hintText: 'Search by name, phone, location...',
+                            hintStyle: TextStyle(fontSize: 13, color: Colors.grey[500]),
+                            prefixIcon: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(Icons.search, size: 18, color: Color(0xFF6C5CE7)),
+                            ),
+                            suffixIcon: Obx(
+                              () => controller.searchQuery.value.isNotEmpty
+                                  ? IconButton(
+                                    onPressed: () {
+                                      controller.searchQuery.value = '';
+                                      controller.filterCustomers();
+                                    },
+                                    icon: Icon(
+                                      Icons.clear,
+                                      size: 16,
+                                      color: Colors.grey[400],
+                                    ),
+                                  )
+                                  : SizedBox(),
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(height: 12),
+
+                      // Filter chips
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          _buildFilterChip('All', 'All Customers'),
+                          _buildFilterChip('New', 'New Customers'),
+                          _buildFilterChip('Regular', 'Regular Customers'),
+                          _buildFilterChip('Repeated', 'Repeated Customers'),
+                          _buildFilterChip('VIP', 'VIP Customers'),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : SizedBox(),
+        )),
+      ],
+    ),
+  );
+}
+
+Widget _buildFilterChip(String label, String value) {
+  return Obx(
+    () => FilterChip(
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: controller.selectedFilter.value == value
+              ? Colors.white
+              : Colors.grey[700],
+        ),
+      ),
+      selected: controller.selectedFilter.value == value,
+      onSelected: (selected) => controller.onFilterChanged(value),
+      selectedColor: Color(0xFF6C5CE7),
+      backgroundColor: Colors.grey[100],
+      checkmarkColor: Colors.white,
+      side: BorderSide.none,
+      elevation: 0,
+      pressElevation: 1,
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+  );
+}
+  Widget _buildCustomerAnalyticsCard(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF6C5CE7), Color(0xFF8B7ED8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF6C5CE7).withOpacity(0.3),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          /// Left Section: Analytics
+          Expanded(
+            child: InkWell(
+              onTap: () => Get.toNamed(AppRoutes.customerAnalytics),
+              borderRadius: BorderRadius.circular(16),
+              child: Row(
                 children: [
-                  Text(
-                    'Customer Analytics',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: Lottie.asset(
+                      'assets/customer analytics.json',
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Tap to view engagement insights, repeat visits, and more.',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Analytics',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          'Customer trends & growth',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
+          ),
 
-            Icon(Icons.chevron_right, color: Colors.grey[500]),
-          ],
-        ),
+          /// Divider between two sections
+          Container(
+            width: 1,
+            height: 90,
+            margin: EdgeInsets.symmetric(horizontal: 12),
+            color: Colors.white.withOpacity(0.3),
+          ),
+
+          /// Right Section: Details
+          Expanded(
+            child: InkWell(
+              onTap: () => Get.toNamed(AppRoutes.customerDetails),
+              borderRadius: BorderRadius.circular(16),
+              child: Row(
+                children: [
+                  Icon(Icons.person_outline, color: Colors.white, size: 32),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Card View',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          'View all customer records',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -351,27 +498,27 @@ class CustomerManagementScreen extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: Offset(0, 2),
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         children: [
-          // Header
+          // Enhanced Header
           Container(
-            height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 60,
+            padding: EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
-              color: Color(0xFF6C5CE7).withOpacity(0.05),
+              color: Colors.grey[50],
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
               border: Border(
                 bottom: BorderSide(color: Colors.grey[200]!, width: 1),
@@ -379,49 +526,179 @@ class CustomerManagementScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.people, color: Color(0xFF6C5CE7), size: 20),
-                SizedBox(width: 8),
-                Text(
-                  'Customer Data',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF6C5CE7).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.people_outline,
+                    color: Color(0xFF6C5CE7),
+                    size: 20,
                   ),
                 ),
+                SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Customer Database',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Obx(
+                      () => Text(
+                        '${controller.filteredApiCustomers.length} customers found',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ),
+                  ],
+                ),
                 Spacer(),
-                Obx(
-                  () => Text(
-                    '${controller.filteredCustomers.length} customers',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => controller.refreshData(),
+                      icon: Icon(Icons.refresh_outlined, size: 20),
+                      tooltip: 'Refresh Data',
+                    ),
+                    IconButton(
+                      onPressed: () => controller.exportCustomersToCSV(),
+                      icon: Icon(Icons.download_outlined, size: 20),
+                      tooltip: 'Export Data',
+                    ),
+
+                  ],
                 ),
               ],
             ),
           ),
 
-          // Pluto Grid
+          // Enhanced Pluto Grid
           Obx(() {
             if (controller.isLoading.value) {
-              return SizedBox(
+              return Container(
                 height: 400,
                 child: Center(
-                  child:buildPlutoGridShimmer()
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Color(0xFF6C5CE7),
+                        strokeWidth: 3,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading customer data...',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
 
             if (controller.hasError.value) {
-              return buildErrorCard(
-                controller.errorMessage,
-                AppConfig.screenWidth,
-                400,
-                AppConfig.isSmallScreen,
+              return Container(
+                height: 400,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red[300],
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Failed to load customer data',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        controller.errorMessage.value,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => controller.refreshData(),
+                        icon: Icon(Icons.refresh, size: 16),
+                        label: Text('Retry'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF6C5CE7),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            if (controller.filteredApiCustomers.isEmpty) {
+              return Container(
+                height: 400,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.people_outline,
+                        size: 64,
+                        color: Colors.grey[300],
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'No customers found',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Try adjusting your search criteria or add new customers',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () => print('Add Customer'),
+                        icon: Icon(Icons.person_add, size: 16),
+                        label: Text('Add First Customer'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF6C5CE7),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             }
 
             return Container(
-              height: 400,
+              height: 500,
               child: PlutoGrid(
                 columns: controller.columns,
                 rows: controller.rows,
@@ -429,64 +706,49 @@ class CustomerManagementScreen extends StatelessWidget {
                   controller.plutoGridStateManager = event.stateManager;
                   controller.plutoGridStateManager?.setShowColumnFilter(true);
                 },
-                // onChanged: (PlutoGridOnChangedEvent event) {
-                //   controller.onGridChanged(event);
-                // },
-                // onSelected: (PlutoGridOnSelectedEvent event) {
-                //   controller.onRowSelected(event);
-                // },
+                onRowDoubleTap: (PlutoGridOnRowDoubleTapEvent event) {
+                  // final customer = controller._getCustomerFromRow(event.row);
+                  // controller.viewCustomerDetails(customer);
+                },
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
-                    gridBorderColor: Colors.grey[300]!,
+                    gridBorderColor: Colors.grey[200]!,
                     gridBorderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
                     ),
                     columnTextStyle: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
                       color: Colors.grey[700],
                     ),
                     cellTextStyle: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       color: Colors.black87,
                     ),
                     rowColor: Colors.white,
-                    evenRowColor: Colors.grey[50],
-                    activatedColor: Color(0xFF6C5CE7).withOpacity(0.1),
+                    evenRowColor: Colors.grey[25],
+                    activatedColor: Color(0xFF6C5CE7).withOpacity(0.08),
                     gridBackgroundColor: Colors.white,
                     borderColor: Colors.grey[200]!,
                     activatedBorderColor: Color(0xFF6C5CE7),
                     inactivatedBorderColor: Colors.grey[300]!,
                     iconColor: Colors.grey[600]!,
                     disabledIconColor: Colors.grey[400]!,
-                    columnHeight: 45,
-                    rowHeight: 50,
+                    columnHeight: 50,
+                    rowHeight: 55,
                   ),
                   columnFilter: PlutoGridColumnFilterConfig(
                     filters: const [...FilterHelper.defaultFilters],
                     resolveDefaultColumnFilter: (column, resolver) {
-                      if (column.field == 'amount') {
+                      if (column.field == 'totalPurchase' ||
+                          column.field == 'totalDues') {
                         return resolver<PlutoFilterTypeGreaterThan>()
                             as PlutoFilterType;
                       }
                       return resolver<PlutoFilterTypeContains>()
                           as PlutoFilterType;
                     },
-                  ),
-                  localeText: PlutoGridLocaleText(
-                    filterColumn: 'Filter',
-                    filterType: 'Type',
-                    filterValue: 'Value',
-                    filterAllColumns: 'All Columns',
-                    filterContains: 'Contains',
-                    filterEquals: 'Equals',
-                    filterStartsWith: 'Starts with',
-                    filterEndsWith: 'Ends with',
-                    filterGreaterThan: 'Greater than',
-                    filterGreaterThanOrEqualTo: 'Greater than or equal to',
-                    filterLessThan: 'Less than',
-                    filterLessThanOrEqualTo: 'Less than or equal to',
                   ),
                 ),
               ),
@@ -497,42 +759,114 @@ class CustomerManagementScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildLoadMoreButton() {
+    return Obx(() {
+      if (controller.currentPage.value >= controller.totalPages.value - 1) {
+        return SizedBox.shrink();
+      }
+
+      return Container(
+        margin: EdgeInsets.fromLTRB(16, 0, 16, 20),
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed:
+              controller.isLoadingMore.value
+                  ? null
+                  : controller.loadMoreCustomers,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Color(0xFF6C5CE7),
+            padding: EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Color(0xFF6C5CE7).withOpacity(0.3)),
+            ),
+            elevation: 0,
+          ),
+          child:
+              controller.isLoadingMore.value
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF6C5CE7),
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text('Loading more customers...'),
+                    ],
+                  )
+                  : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.expand_more, size: 20),
+                      SizedBox(width: 8),
+                      Text('Load More Customers'),
+                    ],
+                  ),
+        ),
+      );
+    });
+  }
+
   Widget buildFloatingActionButtons() {
     return SpeedDial(
-      icon: Icons.menu,
+      icon: Icons.add,
       activeIcon: Icons.close,
       backgroundColor: Color(0xFF6C5CE7),
       foregroundColor: Colors.white,
+      overlayColor: Colors.black,
+      overlayOpacity: 0.4,
+      spacing: 12,
+      spaceBetweenChildren: 12,
+      buttonSize: Size(56, 56),
+      childrenButtonSize: Size(56, 56),
+      animationCurve: Curves.easeInOutCubic,
+      animationDuration: Duration(milliseconds: 300),
       children: [
         SpeedDialChild(
-          child: Icon(Icons.person_add),
+          child: Icon(Icons.person_add_outlined, size: 24),
           label: 'Add New Customer',
-          //  onTap: controller.addNewCustomer,
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           backgroundColor: Color(0xFF6C5CE7),
+          foregroundColor: Colors.white,
+          onTap: () => print('Add Customer'),
         ),
         SpeedDialChild(
-          child: Icon(Icons.edit),
+          child: Icon(Icons.edit_outlined, size: 24),
           label: 'Edit Selected',
-          // onTap: controller.editSelectedCustomer,
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           backgroundColor: Color(0xFFFF9500),
+          foregroundColor: Colors.white,
+          onTap: () => print('Edit Customer'),
         ),
         SpeedDialChild(
-          child: Icon(Icons.delete),
-          label: 'Delete Selected',
-          // onTap: controller.deleteSelectedCustomer,
-          backgroundColor: Color(0xFFE74C3C),
-        ),
-        SpeedDialChild(
-          child: Icon(Icons.download),
-          label: 'Export Data',
-          //onTap: controller.exportCustomerData,
+          child: Icon(Icons.upload_file_outlined, size: 24),
+          label: 'Import Data',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           backgroundColor: Color(0xFF00CEC9),
+          foregroundColor: Colors.white,
+          onTap: () => print('Import Data'),
         ),
         SpeedDialChild(
-          child: Icon(Icons.refresh),
-          label: 'Refresh',
-          //  onTap: controller.refreshData,
+          child: Icon(Icons.download_outlined, size: 24),
+          label: 'Export Data',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           backgroundColor: Color(0xFF51CF66),
+          foregroundColor: Colors.white,
+          onTap: () => controller.exportCustomersToCSV(),
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.refresh_outlined, size: 24),
+          label: 'Refresh',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          backgroundColor: Color(0xFF8B7ED8),
+          foregroundColor: Colors.white,
+          onTap: () => controller.refreshData(),
         ),
       ],
     );

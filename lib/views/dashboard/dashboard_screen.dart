@@ -2,15 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/controllers/auth_controller.dart';
-import 'package:mobistock/controllers/dashboard_controller.dart';
-import 'package:mobistock/models/dashboard_models/sales_summary_model.dart';
-import 'package:mobistock/utils/app_styles.dart';
-import 'package:mobistock/utils/generic_charts.dart';
-import 'package:mobistock/views/dashboard/charts/switchable_chart.dart';
-import 'package:mobistock/views/dashboard/widgets/dashboard_shimmers.dart';
-import 'package:mobistock/views/dashboard/widgets/drawer.dart';
-import 'package:mobistock/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
+import 'package:smartbecho/controllers/dashboard_controller.dart';
+import 'package:smartbecho/controllers/user_prefs_controller.dart';
+import 'package:smartbecho/models/dashboard_models/sales_summary_model.dart';
+import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_styles.dart';
+import 'package:smartbecho/utils/generic_charts.dart';
+import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
+import 'package:smartbecho/views/dashboard/widgets/dashboard_shimmers.dart';
+import 'package:smartbecho/views/dashboard/widgets/drawer.dart';
+import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/views/dashboard/widgets/user_pref_dailog.dart';
 
 class InventoryDashboard extends StatefulWidget {
   @override
@@ -21,6 +24,8 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
   final DashboardController controller = Get.find<DashboardController>();
 
   final AuthController authController = Get.find<AuthController>();
+  final UserPrefsController userPrefsController =
+      Get.find<UserPrefsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -116,15 +121,23 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                 ),
           ),
           SizedBox(width: 16),
-          Expanded(
-            child:Image.asset('assets/applogo.png'),
-          ),
+          Expanded(child: Image.asset('assets/applogo.png')),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildHeaderButton(Icons.notifications_outlined),
+              _buildHeaderButton(
+                Icons.filter_alt_sharp,
+                onTap:
+                    () => context.showViewPreferencesBottomSheet(
+                      userPrefsController,
+                    ),
+              ),
               SizedBox(width: 8),
-              _buildHeaderButton(Icons.person_outline_rounded),
+
+              _buildHeaderButton(
+                Icons.person_rounded,
+                onTap: () => Get.toNamed(AppRoutes.profile),
+              ),
               SizedBox(width: 8),
               _buildHeaderButton(
                 Icons.logout,
@@ -202,34 +215,53 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
   }
 
   Widget _buildTopStatsGrid() {
-    return Obx(
-      () =>
-          controller.isTodaysSalesCardLoading.value
-              ? TodaysSalesStatsShimmer(
-                // isSmallScreen: controller.isSmallScreen,
-                // screenWidth: controller.screenWidth,
-                itemCount: 3,
-              )
-              : controller.hasTodaysSalesCardError.value
-              ? buildErrorCard(
-                controller.todaysSalesCarderrorMessage,
-                controller.screenWidth,
-                controller.screenHeight,
-                controller.isSmallScreen,
-              )
-              : GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: controller.isSmallScreen ? 3.8 : 4.2,
-                ),
-                itemCount: controller.topStats.length,
-                itemBuilder:
-                    (context, index) =>
-                        _buildTopStatCard(controller.topStats[index]),
-              ),
+    return Column(
+      children: [
+        Obx(
+          () =>
+              controller.isTodaysSalesCardLoading.value
+                  ? TodaysSalesStatsShimmer(itemCount: 3)
+                  : controller.hasTodaysSalesCardError.value
+                  ? buildErrorCard(
+                    controller.todaysSalesCarderrorMessage,
+                    controller.screenWidth,
+                    controller.screenHeight,
+                    controller.isSmallScreen,
+                  )
+                  : userPrefsController.isTopStatGridView.value
+                  ? _buildTopStatsGridView()
+                  : _buildTopStatsListView(),
+        ),
+      ],
+    );
+  }
+
+  // Grid view widget
+  Widget _buildTopStatsGridView() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: controller.isSmallScreen ? 1 : 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 10,
+        childAspectRatio: controller.isSmallScreen ? 2.5 : 2,
+      ),
+      itemCount: controller.topStats.length,
+      itemBuilder:
+          (context, index) => _buildTopStatCard(controller.topStats[index]),
+    );
+  }
+
+  // List view widget
+  Widget _buildTopStatsListView() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => SizedBox(height: 10),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: controller.topStats.length,
+      itemBuilder:
+          (context, index) => _buildTopStatCard(controller.topStats[index]),
     );
   }
 
@@ -394,7 +426,6 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     );
   }
 
-  // buildErrorCard(controller, controller.screenWidth, controller.screenHeight, controller.isSmallScreen),
   Widget _buildSummaryCardsSection() {
     return Column(
       children: [
@@ -418,43 +449,19 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
 
         SizedBox(height: 16),
 
-        // Stock and EMI Summary - Responsive Layout
-        LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 360) {
-              // Stack vertically for very small screens
-              return Obx(
-                () => Column(
-                  children: [
-                    controller.isStockSummaryLoading.value
-                        ? buildSalesSummaryShimmer(context, controller)
-                        : controller.hasStockSummaryError.value
-                        ? buildErrorCard(
-                          controller.stockSummaryerrorMessage,
-                          controller.screenWidth,
-                          controller.screenHeight,
-                          controller.isSmallScreen,
-                        )
-                        : _buildSummaryCard(
-                          title: 'Stock Summary',
-                          child: _buildStockSummaryContent(),
-                        ),
-                    SizedBox(height: 16),
-                    _buildSummaryCard(
-                      title: 'EMI Summary',
-                      child: _buildEMISummaryContent(),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              // Side by side for larger screens
-              return Obx(
-                () => Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child:
+        Column(
+          children: [
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return Obx(() {
+                  bool shouldUseGridView =
+                      userPrefsController.isInventorySummaryGridView.value &&
+                      constraints.maxWidth >= 360;
+
+                  if (!shouldUseGridView) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
                           controller.isStockSummaryLoading.value
                               ? buildSalesSummaryShimmer(context, controller)
                               : controller.hasStockSummaryError.value
@@ -468,19 +475,54 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                                 title: 'Stock Summary',
                                 child: _buildStockSummaryContent(),
                               ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: _buildSummaryCard(
-                        title: 'EMI Summary',
-                        child: _buildEMISummaryContent(),
+                          SizedBox(height: 16),
+                          _buildSummaryCard(
+                            title: 'EMI Summary',
+                            child: _buildEMISummaryContent(),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
-          },
+                    );
+                  } else {
+                    // Grid View (Side by side)
+                    return SingleChildScrollView(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child:
+                                controller.isStockSummaryLoading.value
+                                    ? buildSalesSummaryShimmer(
+                                      context,
+                                      controller,
+                                    )
+                                    : controller.hasStockSummaryError.value
+                                    ? buildErrorCard(
+                                      controller.stockSummaryerrorMessage,
+                                      controller.screenWidth,
+                                      controller.screenHeight,
+                                      controller.isSmallScreen,
+                                    )
+                                    : _buildSummaryCard(
+                                      title: 'Stock Summary',
+                                      child: _buildStockSummaryContent(),
+                                    ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: _buildSummaryCard(
+                              title: 'EMI Summary',
+                              child: _buildEMISummaryContent(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                });
+              },
+            ),
+          ],
         ),
       ],
     );
@@ -954,7 +996,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                     screenHeight: controller.screenHeight,
                     isSmallScreen: controller.isSmallScreen,
                     initialChartType: "barchart", // Start with bar chart
-                     chartDataType: ChartDataType.revenue,
+                    chartDataType: ChartDataType.revenue,
                   ),
         ),
 
@@ -981,14 +1023,13 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                       const Color(0xFF2196F3), // Blue for iPhone
                       const Color(0xFFE91E63), // Pink for Realme
                       const Color(0xFFFF9800), // Orange for Samsung
-
                     ],
                     chartDataType: ChartDataType.quantity,
                   ),
         ),
 
-        //monthly emi dues 
-         Obx(
+        //monthly emi dues
+        Obx(
           () =>
               controller.isMonthlyEmiDuesChartLoading.value
                   ? GenericBarChartShimmer(title: "EMI dues per month")
@@ -1010,12 +1051,10 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                       const Color(0xFF2196F3), // Blue for iPhone
                       const Color(0xFFE91E63), // Pink for Realme
                       const Color(0xFFFF9800), // Orange for Samsung
-
                     ],
                     chartDataType: ChartDataType.revenue,
                   ),
         ),
-
       ],
     );
   }

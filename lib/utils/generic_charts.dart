@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:mobistock/utils/app_styles.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 class GenericBarChart extends StatelessWidget {
   final String title;
   final Map<String, double> payload;

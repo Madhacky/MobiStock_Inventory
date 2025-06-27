@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobistock/services/jwt_validator.dart';
-import 'package:mobistock/services/route_services.dart';
-import 'package:mobistock/services/shared_preferences_services.dart';
-import 'package:mobistock/services/validate_user.dart';
+import 'package:smartbecho/services/jwt_validator.dart';
+import 'package:smartbecho/services/route_services.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
+import 'package:smartbecho/services/validate_user.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -258,7 +258,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Column(
                         children: [
                           Text(
-                            'MobiStock',
+                            'smartbecho',
                             style: TextStyle(
                               fontSize: 42,
                               fontWeight: FontWeight.bold,

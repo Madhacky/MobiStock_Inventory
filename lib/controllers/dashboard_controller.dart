@@ -4,15 +4,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/models/dashboard_models/charts/monthly_emi_dues_model.dart';
-import 'package:mobistock/models/dashboard_models/charts/monthly_revenue_model.dart';
-import 'package:mobistock/models/dashboard_models/charts/top_selling_models.dart';
-import 'package:mobistock/models/dashboard_models/sales_summary_model.dart';
-import 'package:mobistock/models/dashboard_models/stock_summary_model.dart';
-import 'package:mobistock/models/dashboard_models/today_sales_header_model.dart';
-import 'package:mobistock/services/api_services.dart';
+import 'package:smartbecho/models/dashboard_models/charts/monthly_emi_dues_model.dart';
+import 'package:smartbecho/models/dashboard_models/charts/monthly_revenue_model.dart';
+import 'package:smartbecho/models/dashboard_models/charts/top_selling_models.dart';
+import 'package:smartbecho/models/dashboard_models/sales_summary_model.dart';
+import 'package:smartbecho/models/dashboard_models/stock_summary_model.dart';
+import 'package:smartbecho/models/dashboard_models/today_sales_header_model.dart';
+import 'package:smartbecho/services/api_services.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:mobistock/services/app_config.dart';
+import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/services/user_preference.dart';
 
 class DashboardController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -38,6 +39,8 @@ class DashboardController extends GetxController
 
   // App config instance
   final AppConfig _config = AppConfig.instance;
+  // Add view mode toggle
+  RxBool isGridView = true.obs;
 
   @override
   void onInit() {
@@ -49,7 +52,7 @@ class DashboardController extends GetxController
     fetchTodaysSalesCard();
     fetchStockSummary();
     fetchMonthlyRevenueChart();
-    fetchisTopSellingModelChart() ;
+    fetchisTopSellingModelChart();
     fetchMonthlyEmiDuesChart();
   }
 
@@ -406,9 +409,7 @@ class DashboardController extends GetxController
   RxBool isTopSellingModelChartLoading = false.obs;
   var topSellingModelCharterrorMessage = ''.obs;
   var hasisTopSellingModelChartError = false.obs;
-  RxMap<String, double> topSellingModelChartPayload = RxMap<String, double>(
-    {},
-  );
+  RxMap<String, double> topSellingModelChartPayload = RxMap<String, double>({});
   Future<void> fetchisTopSellingModelChart() async {
     try {
       isTopSellingModelChartLoading.value = true;
@@ -440,12 +441,10 @@ class DashboardController extends GetxController
   }
 
   //Monthly Emi Dues
-    RxBool isMonthlyEmiDuesChartLoading = false.obs;
+  RxBool isMonthlyEmiDuesChartLoading = false.obs;
   var monthlyEmiDuesCharterrorMessage = ''.obs;
   var hasmonthlyEmiDuesChartError = false.obs;
-  RxMap<String, double> monthlyEmiDuesChartPayload = RxMap<String, double>(
-    {},
-  );
+  RxMap<String, double> monthlyEmiDuesChartPayload = RxMap<String, double>({});
   Future<void> fetchMonthlyEmiDuesChart() async {
     try {
       isMonthlyEmiDuesChartLoading.value = true;

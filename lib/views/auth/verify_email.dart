@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobistock/services/route_services.dart';
-import 'package:mobistock/utils/custom_appbar.dart';
+import 'package:smartbecho/services/route_services.dart';
+import 'package:smartbecho/utils/custom_appbar.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
   const VerifyEmailScreen({super.key});
