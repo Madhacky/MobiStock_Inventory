@@ -48,45 +48,8 @@ class AccountManagementController extends GetxController {
         isAnimating.value = false;
       });
       
-      // Handle different tab actions
-      switch (tabId) {
-        case 'pay-bill':
-          handlePayBill();
-          break;
-        case 'withdraw':
-          handleWithdraw();
-          break;
-        case 'commission':
-          handleCommissionReceived();
-          break;
-        case 'history':
-          handleViewHistory();
-          break;
-        case 'emi':
-          handleEMISettlements();
-          break;
-      }
+      
     }
-  }
-  
-  void handlePayBill() {
-    Get.snackbar('Pay Bill', 'Opening payment interface...');
-  }
-  
-  void handleWithdraw() {
-    Get.snackbar('Withdraw', 'Opening withdrawal interface...');
-  }
-  
-  void handleCommissionReceived() {
-    Get.snackbar('Commission', 'Loading commission details...');
-  }
-  
-  void handleViewHistory() {
-    Get.snackbar('History', 'Loading transaction history...');
-  }
-  
-  void handleEMISettlements() {
-    Get.snackbar('EMI', 'Loading EMI settlements...');
   }
   
   void refreshData() {

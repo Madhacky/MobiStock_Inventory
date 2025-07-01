@@ -31,7 +31,7 @@ import 'package:smartbecho/views/dashboard/dashboard_screen.dart';
 import 'package:smartbecho/views/inventory/components/add_mobile_form.dart';
 import 'package:smartbecho/views/inventory/inventory_management.dart';
 import 'package:smartbecho/views/inventory/sales_dashboard.dart';
-import 'package:smartbecho/views/inventory/company_stock_info.dart';
+import 'package:smartbecho/views/inventory/components/company_stock_info.dart';
 import 'package:smartbecho/views/profile/profile.dart';
 import 'package:smartbecho/views/splash/splash_screen.dart';
 

@@ -166,7 +166,6 @@ class InventoryController extends GetxController {
     super.onClose();
   }
 
-  
   /// Get company brand color for UI theming
   Color getCompanyColor(String? company) {
     switch (company?.toLowerCase()) {
@@ -765,7 +764,6 @@ class InventoryController extends GetxController {
 
           log("Summary Cards loaded successfully");
           log("Total Companies: ${summaryCardsData.value?.totalCompanies}");
-          log("Total Revenue: ${summaryCardsData.value?.totalRevenue}");
         } else if (response.statusCode == 401 || response.statusCode == 403) {
           hasSummaryCardsError.value = true;
           summaryCardsErrorMessage.value =
@@ -796,26 +794,13 @@ class InventoryController extends GetxController {
   // Getter methods for easy access to summary data
   int get totalCompaniesAvailable =>
       summaryCardsData.value?.totalCompanies ?? 0;
-  int get totalModelsAvailable =>
-      summaryCardsData.value?.totalModelsAvailable ?? 0;
-  int get totalStockAvailable =>
-      summaryCardsData.value?.totalStockAvailable ?? 0;
-  int get totalUnitsSold => summaryCardsData.value?.totalUnitsSold ?? 0;
-  String get topSellingBrandAndModel =>
-      summaryCardsData.value?.topSellingBrandAndModel ?? '';
-  double get totalRevenue => summaryCardsData.value?.totalRevenue ?? 0.0;
 
-  // Formatted revenue for display
-  String get formattedTotalRevenue {
-    final revenue = totalRevenue;
-    if (revenue >= 1000000) {
-      return '₹${(revenue / 1000000).toStringAsFixed(1)}M';
-    } else if (revenue >= 1000) {
-      return '₹${(revenue / 1000).toStringAsFixed(1)}K';
-    } else {
-      return '₹${revenue.toStringAsFixed(0)}';
-    }
-  }
+  int get totalStockAvailable =>
+      summaryCardsData.value?.totalStock ?? 0;
+  int get lowStockAlert => summaryCardsData.value?.lowStockCount ?? 0;
+  int get monthlyPhoneSold =>
+      summaryCardsData.value?.totalPhonesSold ?? 0;
+
 
   //check session expiry
 

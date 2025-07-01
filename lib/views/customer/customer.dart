@@ -448,7 +448,7 @@ class CustomerManagementScreen extends StatelessWidget {
                     width: 60,
                     height: 60,
                     child: Lottie.asset(
-                      'assets/customer analytics.json',
+                      'assets/lottie/customer analytics.json',
                       fit: BoxFit.contain,
                     ),
                   ),

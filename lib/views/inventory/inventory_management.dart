@@ -52,7 +52,7 @@ class InventoryManagementScreen extends StatelessWidget {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: 5,
+                  itemCount: 4,
                   itemBuilder: (context, index) {
                     final stats = [
                       {
@@ -72,28 +72,17 @@ class InventoryManagementScreen extends StatelessWidget {
                         'gradient': [Color(0xFF00CEC9), Color(0xFF55E6DE)],
                       },
                       {
-                        'title': 'Total Units Sold',
-                        'value': controller.totalUnitsSold.toString(),
-                        'subtitle': 'Units Sold',
+                        'title': 'Low Stock Alert',
+                        'value': controller.lowStockAlert.toString(),
+                        'subtitle': 'Low Stocks',
                         'icon': Icons.sell,
                         'color': Color(0xFFFF6B6B),
                         'gradient': [Color(0xFFFF6B6B), Color(0xFFFF9A9A)],
                       },
                       {
-                        'title': 'Total Models',
-                        'value': controller.totalModelsAvailable.toString(),
-                        'subtitle': 'Total Models in Stock',
-                        'icon': Icons.mobile_friendly_outlined,
-                        'color': Color.fromARGB(255, 207, 81, 144),
-                        'gradient': [
-                          Color.fromARGB(255, 207, 81, 144),
-                          Color.fromARGB(255, 202, 144, 173),
-                        ],
-                      },
-                      {
-                        'title': 'Total Revenue',
-                        'value': controller.formattedTotalRevenue,
-                        'subtitle': 'Total finance',
+                        'title': 'Monthly Phone Sold',
+                        'value': controller.monthlyPhoneSold,
+                        'subtitle': 'Total Monthly finance',
                         'icon': Icons.trending_up,
                         'color': Color(0xFF51CF66),
                         'gradient': [Color(0xFF51CF66), Color(0xFF8CE896)],
@@ -105,7 +94,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       margin: EdgeInsets.only(right: index == 4 ? 0 : 12),
                       child: _buildStatCard(
                         stats[index]['title'] as String,
-                        stats[index]['value'] as String,
+                        stats[index]['value'].toString() ,
                         stats[index]['subtitle'] as String,
                         stats[index]['icon'] as IconData,
                         stats[index]['color'] as Color,

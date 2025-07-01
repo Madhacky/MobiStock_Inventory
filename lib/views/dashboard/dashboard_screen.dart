@@ -44,7 +44,6 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                   position: controller.slideAnimation,
                   child: Column(
                     children: [
-                      _buildHeader(),
                       Expanded(
                         child: RefreshIndicator(
                           onRefresh: controller.refreshDashboardData,
@@ -58,15 +57,17 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  height: controller.screenHeight * 0.02,
-                                ),
-                                _buildSearchBar(),
-                                SizedBox(
-                                  height: controller.screenHeight * 0.02,
-                                ),
-                                _buildTopStatsGrid(),
+                                dashboardAppBar(),
+                                buildDashboardHeader(),
 
+                                //     SizedBox(
+                                //       height: controller.screenHeight * 0.02,
+                                //     ),
+                                //  //   _buildSearchBar(),
+                                //     SizedBox(
+                                //       height: controller.screenHeight * 0.02,
+                                //     ),
+                                //  _buildTopStatsGrid(),
                                 SizedBox(
                                   height: controller.screenHeight * 0.03,
                                 ),
@@ -98,6 +99,652 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     );
   }
 
+  Widget _buildCombinedProfileStatsCard() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF667eea).withOpacity(0.3),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Profile Header Section
+          Row(
+            children: [
+              // Profile Avatar
+              Container(
+                padding: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.white.withOpacity(0.9),
+                  child: Icon(
+                    Icons.person_2_sharp,
+                    size: 35,
+                    color: Color(0xFF667eea),
+                  ),
+                ),
+              ),
+
+              SizedBox(width: 16),
+
+              // Profile Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Carly Jones",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.emoji_events, size: 18, color: Colors.amber),
+                        SizedBox(width: 6),
+                        Text(
+                          "Beginner Level",
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Working Hours Badge
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  "120 hrs",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 24),
+
+          // Stats Grid Section
+          Row(
+            children: [
+              // Total Sales Card
+              Expanded(
+                child: _buildStatItem(
+                  icon: Icons.trending_up,
+                  title: "Total Sales",
+                  value: "₹12,850",
+                  subtitle: "+15% from last week",
+                  iconColor: Colors.green,
+                ),
+              ),
+
+              SizedBox(width: 12),
+
+              // Units Sold Card
+              Expanded(
+                child: _buildStatItem(
+                  icon: Icons.inventory_2,
+                  title: "Units Sold",
+                  value: "2,380",
+                  subtitle: "This month",
+                  iconColor: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 20),
+
+          // Stock Progress Section
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Available Stock",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    "68,500 / 1,00,000",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 8),
+
+              // Progress Bar
+              Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: 0.685, // 68.5% of 100k
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.orange],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 4),
+
+              Text(
+                "68.5% of total capacity",
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem({
+    required IconData icon,
+    required String title,
+    required String value,
+    required String subtitle,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 8),
+
+          Text(
+            value,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          SizedBox(height: 4),
+
+          Text(
+            subtitle,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getMonthAbbreviation(int month) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return months[month - 1];
+  }
+
+  Widget _buildHeaderButton(IconData icon, {required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300, width: 0.5),
+        ),
+        child: Icon(
+          icon,
+          size: controller.isSmallScreen ? 20 : 22,
+          color: Colors.grey.shade700,
+        ),
+      ),
+    );
+  }
+
+  double _calculateStockProgress() {
+    if (controller.topStats.length > 2) {
+      try {
+        String stockValue = controller.topStats[2].value.replaceAll(
+          RegExp(r'[^\d.]'),
+          '',
+        );
+        double currentStock = double.tryParse(stockValue) ?? 0;
+        return (currentStock / 100000).clamp(0.0, 1.0);
+      } catch (e) {
+        return 0.0;
+      }
+    }
+    return 0.0;
+  }
+
+  //app bar
+  Widget dashboardAppBar() {
+    return Builder(
+      builder: (context) {
+        return Column(
+          children: [
+            Row(
+              children: [
+                _buildHeaderButton(
+                  Icons.menu_rounded,
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 85.0),
+                  child: Image.asset("assets/applogo.png", height: 50),
+                ),
+                Spacer(),
+
+                // Profile Avatar
+                CircleAvatar(
+                  radius: controller.isSmallScreen ? 22 : 24,
+                  backgroundColor: Colors.grey.shade200,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.person_2_sharp,
+                      size: controller.isSmallScreen ? 22 : 24,
+                    ),
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.profile);
+                    },
+
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                SizedBox(width: 5),
+                _buildHeaderButton(
+                  Icons.logout,
+                  onTap: () => authController.logout(),
+                ),
+              ],
+            ),
+            SizedBox(height: controller.isSmallScreen ? 2 : 30),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Welcome",
+                          style: AppStyles.custom(
+                            size: controller.isSmallScreen ? 14 : 30,
+                            color: Colors.black87,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Icon(Icons.waving_hand_rounded),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.store),
+                        SizedBox(width: 10),
+
+                        Text(
+                          "Ramu Mobile Accessories",
+                          style: AppStyles.custom(
+                            size: controller.isSmallScreen ? 14 : 20,
+                            color: Colors.black87,
+                            weight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildDashboardHeader() {
+    return Obx(
+      () =>
+          controller.isTodaysSalesCardLoading.value
+              ? TodaysSalesStatsShimmer(itemCount: 1)
+              : controller.hasTodaysSalesCardError.value
+              ? buildErrorCard(
+                controller.todaysSalesCarderrorMessage,
+                controller.screenWidth,
+                controller.screenHeight,
+                controller.isSmallScreen,
+              )
+              : Container(
+                margin: EdgeInsets.all(controller.screenWidth * 0.03),
+                // padding: EdgeInsets.all(controller.screenWidth * 0.05),
+                child: Column(
+                  children: [
+                    // Profile Header Section
+                    SizedBox(height: controller.isSmallScreen ? 2 : 35),
+
+                    // Stats Grid Section
+                    controller.isSmallScreen
+                        ? Column(
+                          children: [
+                            _buildDashboardStatItem(
+                              controller.topStats.isNotEmpty &&
+                                      controller.topStats.length > 0
+                                  ? controller.topStats[0]
+                                  : StatItem(
+                                    title: "Today's Sales",
+                                    value: "₹0",
+                                    icon: Icons.trending_up,
+                                    colors: [
+                                      Colors.green,
+                                      Colors.green.shade300,
+                                    ],
+                                  ),
+                              subtitle: "Today",
+                            ),
+                            SizedBox(height: 12),
+                            _buildDashboardStatItem(
+                              controller.topStats.isNotEmpty &&
+                                      controller.topStats.length > 1
+                                  ? controller.topStats[1]
+                                  : StatItem(
+                                    title: "Units Sold",
+                                    value: "0",
+                                    icon: Icons.inventory_2,
+                                    colors: [Colors.blue, Colors.blue.shade300],
+                                  ),
+                              subtitle: "Today",
+                            ),
+                          ],
+                        )
+                        : Row(
+                          children: [
+                            Expanded(
+                              child: _buildDashboardStatItem(
+                                controller.topStats.isNotEmpty &&
+                                        controller.topStats.length > 0
+                                    ? controller.topStats[0]
+                                    : StatItem(
+                                      title: "Today's Sales",
+                                      value: "₹0",
+                                      icon: Icons.trending_up,
+                                      colors: [
+                                        Colors.green,
+                                        Colors.green.shade300,
+                                      ],
+                                    ),
+                                subtitle: "Today",
+                              ),
+                            ),
+
+                            SizedBox(width: 12),
+
+                            Expanded(
+                              child: _buildDashboardStatItem(
+                                controller.topStats.isNotEmpty &&
+                                        controller.topStats.length > 1
+                                    ? controller.topStats[1]
+                                    : StatItem(
+                                      title: "Units Sold",
+                                      value: "0",
+                                      icon: Icons.inventory_2,
+                                      colors: [
+                                        Colors.blue,
+                                        Colors.blue.shade300,
+                                      ],
+                                    ),
+                                subtitle: "Today",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                    SizedBox(height: controller.isSmallScreen ? 16 : 20),
+
+                    // Stock Progress Section (if you have stock data in controller)
+                    if (controller.topStats.length > 2) ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Available Stock",
+                                style: AppStyles.custom(
+                                  size: controller.isSmallScreen ? 12 : 14,
+                                  color: Colors.black87,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                "${controller.topStats.length > 2 ? controller.topStats[2].value : '0'} / 1,00,000",
+                                style: AppStyles.custom(
+                                  size: controller.isSmallScreen ? 12 : 14,
+                                  color: Colors.black87,
+                                  weight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 8),
+
+                          // Progress Bar
+                          Container(
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: _calculateStockProgress(),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.amber, Colors.orange],
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 4),
+
+                          Text(
+                            "${(_calculateStockProgress() * 100).toStringAsFixed(1)}% of total capacity",
+                            style: AppStyles.custom(
+                              size: controller.isSmallScreen ? 10 : 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+    );
+  }
+
+  Widget _buildDashboardStatItem(StatItem stat, {required String subtitle}) {
+    return Container(
+      padding: EdgeInsets.all(controller.isSmallScreen ? 12 : 16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                stat.icon,
+                color: stat.colors[0],
+                size: controller.isSmallScreen ? 18 : 20,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  stat.title,
+                  style: AppStyles.custom(
+                    size: controller.isSmallScreen ? 10 : 12,
+                    color: Colors.grey.shade700,
+                    weight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 8),
+
+          Text(
+            stat.value,
+            style: AppStyles.custom(
+              size: controller.isSmallScreen ? 18 : 20,
+              color: Colors.black87,
+              weight: FontWeight.bold,
+            ),
+          ),
+
+          SizedBox(height: 4),
+
+          Text(
+            subtitle,
+            style: AppStyles.custom(
+              size: controller.isSmallScreen ? 9 : 10,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // String _getMonthAbbreviation(int month) {
+  //   const months = [
+  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  //   ];
+  //   return months[month - 1];
+  // }
+
+  // Widget _buildHeaderButton(IconData icon, {required VoidCallback onTap}) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
+  //       decoration: BoxDecoration(
+  //         color: Colors.grey.shade100,
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: Colors.grey.shade300, width: 0.5),
+  //       ),
+  //       child: Icon(
+  //         icon,
+  //         size: controller.isSmallScreen ? 20 : 22,
+  //         color: Colors.grey.shade700,
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.all(controller.screenWidth * 0.05),
@@ -111,65 +758,67 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Builder(
-            builder:
-                (context) => _buildHeaderButton(
-                  Icons.menu_rounded,
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                ),
-          ),
-          SizedBox(width: 16),
-          Expanded(child: Image.asset('assets/applogo.png')),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildHeaderButton(
-                Icons.filter_alt_sharp,
-                onTap:
-                    () => context.showViewPreferencesBottomSheet(
-                      userPrefsController,
-                    ),
-              ),
-              SizedBox(width: 8),
+      child: _buildCombinedProfileStatsCard(),
 
-              _buildHeaderButton(
-                Icons.person_rounded,
-                
-                //onTap: () => Get.toNamed(AppRoutes.profile),
-              ),
-              SizedBox(width: 8),
-              _buildHeaderButton(
-                Icons.logout,
-                onTap: () => authController.logout(),
-              ),
-            ],
-          ),
-        ],
-      ),
+      //  Row(
+      //   children: [
+      //     Builder(
+      //       builder:
+      //           (context) => _buildHeaderButton(
+      //             Icons.menu_rounded,
+      //             onTap: () => Scaffold.of(context).openDrawer(),
+      //           ),
+      //     ),
+      //     SizedBox(width: 16),
+      //     Expanded(child: Image.asset('assets/applogo.png')),
+      //     Row(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         _buildHeaderButton(
+      //           Icons.filter_alt_sharp,
+      //           onTap:
+      //               () => context.showViewPreferencesBottomSheet(
+      //                 userPrefsController,
+      //               ),
+      //         ),
+      //         SizedBox(width: 8),
+
+      //         _buildHeaderButton(
+      //           Icons.person_rounded,
+
+      //           //onTap: () => Get.toNamed(AppRoutes.profile),
+      //         ),
+      //         SizedBox(width: 8),
+      //         _buildHeaderButton(
+      //           Icons.logout,
+      //           onTap: () => authController.logout(),
+      //         ),
+      //       ],
+      //     ),
+      //   ],
+      // ),
     );
   }
 
-  Widget _buildHeaderButton(IconData icon, {void Function()? onTap}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey[300]!, width: 1),
-        ),
-        child: Icon(
-          icon,
-          color: Colors.grey[700],
-          size: controller.isSmallScreen ? 16 : 18,
-        ),
-      ),
-    );
-  }
+  // Widget _buildHeaderButton(IconData icon, {void Function()? onTap}) {
+  //   return InkWell(
+  //     onTap: onTap,
+  //     borderRadius: BorderRadius.circular(10),
+  //     child: Container(
+  //       padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
+  //       decoration: BoxDecoration(
+  //         color: Colors.grey[100],
+  //         borderRadius: BorderRadius.circular(10),
+  //         border: Border.all(color: Colors.grey[300]!, width: 1),
+  //       ),
+  //       child: Icon(
+  //         icon,
+  //         color: Colors.grey[700],
+  //         size: controller.isSmallScreen ? 16 : 18,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildSearchBar() {
     return Container(
@@ -215,124 +864,124 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     );
   }
 
-  Widget _buildTopStatsGrid() {
-    return Column(
-      children: [
-        Obx(
-          () =>
-              controller.isTodaysSalesCardLoading.value
-                  ? TodaysSalesStatsShimmer(itemCount: 3)
-                  : controller.hasTodaysSalesCardError.value
-                  ? buildErrorCard(
-                    controller.todaysSalesCarderrorMessage,
-                    controller.screenWidth,
-                    controller.screenHeight,
-                    controller.isSmallScreen,
-                  )
-                  : userPrefsController.isTopStatGridView.value
-                  ? _buildTopStatsGridView()
-                  : _buildTopStatsListView(),
-        ),
-      ],
-    );
-  }
+  // Widget _buildTopStatsGrid() {
+  //   return Column(
+  //     children: [
+  //       Obx(
+  //         () =>
+  //             controller.isTodaysSalesCardLoading.value
+  //                 ? TodaysSalesStatsShimmer(itemCount: 3)
+  //                 : controller.hasTodaysSalesCardError.value
+  //                 ? buildErrorCard(
+  //                   controller.todaysSalesCarderrorMessage,
+  //                   controller.screenWidth,
+  //                   controller.screenHeight,
+  //                   controller.isSmallScreen,
+  //                 )
+  //                 : userPrefsController.isTopStatGridView.value
+  //                 ? _buildTopStatsGridView()
+  //                 : _buildTopStatsListView(),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   // Grid view widget
-  Widget _buildTopStatsGridView() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: controller.isSmallScreen ? 1 : 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 10,
-        childAspectRatio: controller.isSmallScreen ? 2.5 : 2,
-      ),
-      itemCount: controller.topStats.length,
-      itemBuilder:
-          (context, index) => _buildTopStatCard(controller.topStats[index]),
-    );
-  }
+  // Widget _buildTopStatsGridView() {
+  //   return GridView.builder(
+  //     shrinkWrap: true,
+  //     physics: NeverScrollableScrollPhysics(),
+  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: controller.isSmallScreen ? 1 : 2,
+  //       mainAxisSpacing: 12,
+  //       crossAxisSpacing: 10,
+  //       childAspectRatio: controller.isSmallScreen ? 2.5 : 2,
+  //     ),
+  //     itemCount: controller.topStats.length,
+  //     itemBuilder:
+  //         (context, index) => _buildTopStatCard(controller.topStats[index]),
+  //   );
+  // }
 
-  // List view widget
-  Widget _buildTopStatsListView() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => SizedBox(height: 10),
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: controller.topStats.length,
-      itemBuilder:
-          (context, index) => _buildTopStatCard(controller.topStats[index]),
-    );
-  }
+  // // List view widget
+  // Widget _buildTopStatsListView() {
+  //   return ListView.separated(
+  //     separatorBuilder: (context, index) => SizedBox(height: 10),
+  //     shrinkWrap: true,
+  //     physics: NeverScrollableScrollPhysics(),
+  //     itemCount: controller.topStats.length,
+  //     itemBuilder:
+  //         (context, index) => _buildTopStatCard(controller.topStats[index]),
+  //   );
+  // }
 
-  Widget _buildTopStatCard(StatItem stat) {
-    return Container(
-      padding: EdgeInsets.all(controller.screenWidth * 0.04),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: stat.colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: stat.colors[0].withOpacity(0.25),
-            spreadRadius: 0,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              stat.icon,
-              color: Colors.white,
-              size: controller.isSmallScreen ? 20 : 24,
-            ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  stat.title,
-                  style: AppStyles.custom(
-                    size: controller.isSmallScreen ? 10 : 12,
-                    color: Colors.white.withOpacity(0.9),
-                    weight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  stat.value,
-                  style: AppStyles.custom(
-                    size: controller.isSmallScreen ? 20 : 24,
-                    weight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTopStatCard(StatItem stat) {
+  //   return Container(
+  //     padding: EdgeInsets.all(controller.screenWidth * 0.04),
+  //     decoration: BoxDecoration(
+  //       gradient: LinearGradient(
+  //         colors: stat.colors,
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       ),
+  //       borderRadius: BorderRadius.circular(16),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: stat.colors[0].withOpacity(0.25),
+  //           spreadRadius: 0,
+  //           blurRadius: 12,
+  //           offset: Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Container(
+  //           padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 8),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white.withOpacity(0.2),
+  //             borderRadius: BorderRadius.circular(12),
+  //           ),
+  //           child: Icon(
+  //             stat.icon,
+  //             color: Colors.white,
+  //             size: controller.isSmallScreen ? 20 : 24,
+  //           ),
+  //         ),
+  //         SizedBox(width: 16),
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 stat.title,
+  //                 style: AppStyles.custom(
+  //                   size: controller.isSmallScreen ? 10 : 12,
+  //                   color: Colors.white.withOpacity(0.9),
+  //                   weight: FontWeight.w500,
+  //                 ),
+  //                 maxLines: 1,
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //               SizedBox(height: 4),
+  //               Text(
+  //                 stat.value,
+  //                 style: AppStyles.custom(
+  //                   size: controller.isSmallScreen ? 20 : 24,
+  //                   weight: FontWeight.bold,
+  //                   color: Colors.white,
+  //                 ),
+  //                 maxLines: 1,
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildQuickActionsSection() {
     return Column(

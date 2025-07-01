@@ -4,21 +4,31 @@ import 'package:smartbecho/controllers/account%20management%20controller/account
 import 'package:smartbecho/models/account%20management%20models/account_summary_model.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
-import 'package:smartbecho/views/account%20management/components/commision.dart';
+import 'package:smartbecho/views/account%20management/components/commission_received.dart';
+import 'package:smartbecho/views/account%20management/components/emi_settlement.dart';
 import 'package:smartbecho/views/account%20management/components/history.dart';
 import 'package:smartbecho/views/account%20management/components/paybill.dart';
 import 'package:smartbecho/views/account%20management/components/withdraw.dart';
+import 'package:smartbecho/views/account%20management/widgets/header_widget.dart';
 
 class AccountManagementScreen extends StatelessWidget {
-  final AccountManagementController controller = Get.put(AccountManagementController());
+  final AccountManagementController controller =
+      Get.find<AccountManagementController>();
 
   final List<NavItemModel> navItems = [
     NavItemModel(
       id: 'account-summary',
-      label: 'Summary',
+      label: 'Account Summary',
       icon: Icons.account_balance_wallet_outlined,
       activeIcon: Icons.account_balance_wallet,
       color: Color(0xFF6C5CE7),
+    ),
+    NavItemModel(
+      id: 'history',
+      label: 'View History',
+      icon: Icons.history_outlined,
+      activeIcon: Icons.history,
+      color: Color(0xFFFF6B6B),
     ),
     NavItemModel(
       id: 'pay-bill',
@@ -36,44 +46,34 @@ class AccountManagementScreen extends StatelessWidget {
     ),
     NavItemModel(
       id: 'commission',
-      label: 'Commission',
+      label: 'Commission Received',
       icon: Icons.receipt_long_outlined,
       activeIcon: Icons.receipt_long,
       color: Color(0xFF4ECDC4),
     ),
     NavItemModel(
-      id: 'history',
-      label: 'History',
-      icon: Icons.history_outlined,
-      activeIcon: Icons.history,
-      color: Color(0xFFFF6B6B),
+      id: 'emi-settlement',
+      label: 'EMI Settlements',
+      icon: Icons.credit_card_outlined,
+      activeIcon: Icons.credit_card,
+      color: Color(0xFF9C27B0),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
             _buildCustomAppBar(),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    _buildAccountSummaryCards(),
-                    _buildMainContent(),
-                    SizedBox(height: 80), // Space for bottom nav
-                  ],
-                ),
-              ),
-            ),
+            _buildAnimatedTabBar(),
+            Expanded(child: _buildTabContent()),
           ],
         ),
       ),
-      bottomNavigationBar: _buildAnimatedBottomNavBar(),
     );
   }
 
@@ -88,10 +88,184 @@ class AccountManagementScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildAnimatedTabBar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: navItems.map((item) => _buildAnimatedTab(item)).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAnimatedTab(NavItemModel item) {
+    return Obx(() {
+      final isActive = controller.selectedTab.value == item.id;
+
+      return AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        margin: EdgeInsets.only(right: 8),
+        child: GestureDetector(
+          onTap: () => controller.onTabChanged(item.id),
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.symmetric(
+              horizontal: isActive ? 20 : 16,
+              vertical: 12,
+            ),
+            decoration: BoxDecoration(
+              color: isActive ? item.color : Colors.white,
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: isActive ? item.color : Colors.grey.withOpacity(0.3),
+                width: 1.5,
+              ),
+              boxShadow:
+                  isActive
+                      ? [
+                        BoxShadow(
+                          color: item.color.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ]
+                      : [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
+                  child: Icon(
+                    isActive ? item.activeIcon : item.icon,
+                    color: isActive ? Colors.white : Colors.grey[700],
+                    size: 18,
+                  ),
+                ),
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  width: isActive ? 8 : 0,
+                  child: SizedBox(width: isActive ? 8 : 0),
+                ),
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  width: isActive ? null : 0,
+                  child:
+                      isActive
+                          ? Text(
+                            item.label,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                          : SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildTabContent() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: Obx(() {
+        return AnimatedSwitcher(
+          duration: Duration(milliseconds: 400),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return SlideTransition(
+              position: animation.drive(
+                Tween(begin: Offset(1.0, 0.0), end: Offset.zero),
+              ),
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
+          child: _buildSelectedTabContent(),
+        );
+      }),
+    );
+  }
+
+  Widget _buildSelectedTabContent() {
+    if (controller.isLoading.value) {
+      return Container(
+        key: ValueKey('loading'),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF6C5CE7),
+            strokeWidth: 3,
+          ),
+        ),
+      );
+    }
+
+    switch (controller.selectedTab.value) {
+      case 'account-summary':
+        return Container(
+          key: ValueKey('account-summary'),
+          child: _buildAccountSummaryContent(),
+        );
+      case 'pay-bill':
+        return Container(key: ValueKey('pay-bill'), child: PayBillsPage());
+      case 'withdraw':
+        return Container(
+          key: ValueKey('withdraw'),
+          child: WithdrawHistoryPage(),
+        );
+      case 'commission':
+        return Container(
+          key: ValueKey('commission'),
+          child: CommissionReceivedPage(),
+        );
+      case 'history':
+        return Container(key: ValueKey('history'), child: History());
+      case 'emi-settlement':
+        return Container(
+          key: ValueKey('emi-settlement'),
+          child: EmiSettlement(),
+        );
+      default:
+        return Container(
+          key: ValueKey('default'),
+          child: _buildAccountSummaryContent(),
+        );
+    }
+  }
+
+  Widget _buildAccountSummaryContent() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildSectionTitle('Account Summary Dashboard'),
+          SizedBox(height: 16),
+          _buildAccountSummaryCards(),
+          SizedBox(height: 24),
+          _buildMetricsGrid(),
+          SizedBox(height: 24),
+          _buildChartsSection(),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAccountSummaryCards() {
     return Container(
-      height: 120,
-      margin: EdgeInsets.symmetric(vertical: 8),
+      height: 130,
       child: Obx(() {
         if (controller.isLoading.value) {
           return _buildSummaryCardsShimmer();
@@ -110,7 +284,6 @@ class AccountManagementScreen extends StatelessWidget {
 
         return ListView(
           scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: 16),
           children: [
             _buildSummaryCard(
               'Opening\nBalance',
@@ -119,13 +292,13 @@ class AccountManagementScreen extends StatelessWidget {
               Color(0xFF6C5CE7),
             ),
             _buildSummaryCard(
-              'Counter\nCash',
+              'In-Counter\nCash',
               '₹${controller.formatAmount(data.inCounterCash)}',
               Icons.payments_outlined,
               Color(0xFF51CF66),
             ),
             _buildSummaryCard(
-              'Account\nBalance',
+              'In-Account\nBalance',
               '₹${controller.formatAmount(data.inAccountBalance)}',
               Icons.account_balance_outlined,
               Color(0xFF4ECDC4),
@@ -136,23 +309,22 @@ class AccountManagementScreen extends StatelessWidget {
               Icons.shopping_cart_outlined,
               Color(0xFFFF9500),
             ),
-            _buildSummaryCard(
-              'Net\nBalance',
-              '₹${controller.formatAmount(data.netBalance)}',
-              Icons.savings_outlined,
-              Color(0xFF6C5CE7),
-            ),
           ],
         );
       }),
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
+  Widget _buildSummaryCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       width: 140,
       margin: EdgeInsets.only(right: 12),
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -174,29 +346,27 @@ class AccountManagementScreen extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: color, size: 18),
+            child: Icon(icon, color: color, size: 20),
           ),
-          SizedBox(height: 8),
+          Spacer(),
           Text(
             value,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 2),
+          SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 11,
               color: Colors.grey[600],
               height: 1.2,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -206,8 +376,7 @@ class AccountManagementScreen extends StatelessWidget {
   Widget _buildSummaryCardsShimmer() {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 5,
+      itemCount: 4,
       itemBuilder: (context, index) {
         return Container(
           width: 140,
@@ -227,90 +396,10 @@ class AccountManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMainContent() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Obx(() => _buildSelectedTabContent()),
-    );
-  }
-
-  Widget _buildSelectedTabContent() {
-    if (controller.isLoading.value) {
-      return Container(
-        height: 400,
-        child: Center(
-          child: CircularProgressIndicator(color: Color(0xFF6C5CE7)),
-        ),
-      );
-    }
-
-    switch (controller.selectedTab.value) {
-      case 'account-summary':
-        return _buildAccountSummaryContent();
-      case 'pay-bill':
-        return Paybill();
-      case 'withdraw':
-        return Withdraw();
-      case 'commission':
-        return Commision();
-      case 'history':
-        return History();
-      default:
-        return _buildAccountSummaryContent();
-    }
-  }
-
-  Widget _buildAccountSummaryContent() {
-    if (controller.accountData.value == null) {
-      return Container(
-        height: 400,
-        child: Center(
-          child: Text('No account data available'),
-        ),
-      );
-    }
-
-    return AnimatedOpacity(
-      opacity: controller.isAnimating.value ? 0.5 : 1.0,
-      duration: Duration(milliseconds: 300),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Account Summary Dashboard',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 16),
-            _buildMetricsGrid(),
-            SizedBox(height: 16),
-            _buildChartsAndPromotions(),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildMetricsGrid() {
-    final data = controller.accountData.value!;
-    
+    final data = controller.accountData.value;
+    if (data == null) return SizedBox.shrink();
+
     final metrics = [
       {
         'title': 'Total Paid Bills',
@@ -325,16 +414,16 @@ class AccountManagementScreen extends StatelessWidget {
         'color': Color(0xFF51CF66),
       },
       {
-        'title': 'Closing Balance',
-        'value': data.closingBalance,
+        'title': 'Net Balance',
+        'value': data.netBalance,
         'icon': Icons.savings_outlined,
-        'color': Color(0xFF6C5CE7),
+        'color': Color(0xFF4ECDC4),
       },
       {
-        'title': 'Cash Percentage',
-        'value': data.cashPercentage,
-        'icon': Icons.pie_chart,
-        'color': Color(0xFF4ECDC4),
+        'title': 'Closing Balance',
+        'value': data.closingBalance,
+        'icon': Icons.account_balance_outlined,
+        'color': Color(0xFF6C5CE7),
       },
     ];
 
@@ -345,7 +434,7 @@ class AccountManagementScreen extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.4,
+        childAspectRatio: 1.6,
       ),
       itemCount: metrics.length,
       itemBuilder: (context, index) {
@@ -360,13 +449,25 @@ class AccountManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricCard(String title, double value, IconData icon, Color color) {
+  Widget _buildMetricCard(
+    String title,
+    double value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,306 +478,63 @@ class AccountManagementScreen extends StatelessWidget {
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, color: color, size: 16),
+            child: Icon(icon, color: color, size: 18),
           ),
           Spacer(),
           Text(
-            title == 'Cash Percentage' 
-              ? '${value.toInt()}%' 
-              : '₹${controller.formatAmount(value)}',
+            '₹${controller.formatAmount(value)}',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 2),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          SizedBox(height: 4),
+          Text(title, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
         ],
       ),
     );
   }
 
-  Widget _buildChartsAndPromotions() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(flex: 1, child: _buildCashVsAccountChart()),
-        SizedBox(width: 12),
-        Expanded(flex: 1, child: _buildPromotionsSection()),
-      ],
-    );
-  }
-
-  Widget _buildCashVsAccountChart() {
-    final data = controller.accountData.value!;
-    
+  Widget _buildChartsSection() {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Cash vs Account',
+            'Financial Overview',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 16),
           Container(
-            height: 100,
+            height: 200,
             child: Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    child: CircularProgressIndicator(
-                      value: data.cashPercentage / 100,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF51CF66)),
-                    ),
-                  ),
-                  Container(
-                    width: 60,
-                    height: 60,
-                    child: CircularProgressIndicator(
-                      value: data.accountPercentage / 100,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.transparent,
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4ECDC4)),
-                    ),
-                  ),
-                  Text(
-                    '${data.cashPercentage.toInt()}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
+              child: Text(
+                'Chart visualization will be implemented here',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ),
           ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildLegendItem('Cash', Color(0xFF51CF66)),
-              _buildLegendItem('Account', Color(0xFF4ECDC4)),
-            ],
-          ),
         ],
       ),
     );
-  }
-
-  Widget _buildLegendItem(String label, Color color) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 9,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPromotionsSection() {
-    final promotions = [
-      {
-        'title': 'EMI Offers',
-        'description': '0% EMI available',
-        'color': Color(0xFF6C5CE7),
-      },
-      {
-        'title': 'Recharge Deals',
-        'description': '2% extra cashback',
-        'color': Color(0xFF4ECDC4),
-      },
-      {
-        'title': 'Premium Plan',
-        'description': 'Upgrade now',
-        'color': Color(0xFFFF9500),
-      },
-    ];
-
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Quick Actions',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          SizedBox(height: 8),
-          ...promotions.map((promo) => _buildPromotionCard(
-            promo['title'] as String,
-            promo['description'] as String,
-            promo['color'] as Color,
-          )).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPromotionCard(String title, String description, Color color) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 6),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: color,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 9,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(Icons.arrow_forward_ios, size: 10, color: color),
-        ],
-      ),
-    );
-  }
-
- 
- 
-
-
-  Widget _buildAnimatedBottomNavBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Container(
-          height: AppConfig.screenHeight*0.09,
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: navItems.map((item) => _buildBottomNavItem(item)).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(NavItemModel item) {
-    return Obx(() {
-      final isActive = controller.selectedTab.value == item.id;
-      
-      return Expanded(
-        child: GestureDetector(
-          onTap: () => controller.onTabChanged(item.id),
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: isActive ? item.color.withOpacity(0.1) : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  padding: EdgeInsets.all(isActive ? 4 : 2),
-                  child: Icon(
-                    isActive ? item.activeIcon : item.icon,
-                    color: isActive ? item.color : Colors.grey[600],
-                    size: isActive ? 20 : 18,
-                  ),
-                ),
-                SizedBox(height: 4),
-                AnimatedDefaultTextStyle(
-                  duration: Duration(milliseconds: 200),
-                  style: TextStyle(
-                    fontSize: isActive ? 11 : 10,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                    color: isActive ? item.color : Colors.grey[600],
-                  ),
-                  child: Text(
-                    item.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    });
   }
 }
 

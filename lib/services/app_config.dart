@@ -39,7 +39,7 @@ class AppConfig {
 
   //inventory management endpoints
   String get getInventoryData => '$baseUrl/inventory/shop';
-  String get getInventorySummaryCards => '$baseUrl/inventory/business-summary';
+  String get getInventorySummaryCards => '$baseUrl/api/mobiles/shop-summary';
   String get getLowStockAlerts => '$baseUrl/inventory/low-stock-alerts';
   String get getCompanyStocks => '$baseUrl/inventory/summary';
   String get addInventoryItem => '$baseUrl/api/mobiles/create';

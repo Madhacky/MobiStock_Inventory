@@ -6,7 +6,7 @@ import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_search_field.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
 
-import '../../controllers/inventory controllers/company_stock_detail_controller.dart';
+import '../../../controllers/inventory controllers/company_stock_detail_controller.dart';
 
 class CompanyStockDetailsPage extends StatelessWidget {
   final List<StockItem>? stockItems; // Optional - can be passed or fetched
