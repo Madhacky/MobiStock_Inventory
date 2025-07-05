@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 class CommonWidgets {
-  
   // Background Container
   static Widget backgroundContainer({required Widget child}) {
     return Container(
@@ -21,15 +21,13 @@ class CommonWidgets {
       child: child,
     );
   }
-  
+
   // Main Card Container
   static Widget mainCard({required Widget child}) {
     return Card(
       elevation: 12,
-      shadowColor: Colors.purple.withOpacity(0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shadowColor: const Color(0xFF9C27B0).withOpacity(0.3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         padding: const EdgeInsets.all(32.0),
         decoration: BoxDecoration(
@@ -37,17 +35,14 @@ class CommonWidgets {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Color(0xFFFAF8FC),
-            ],
+            colors: [AppTheme.backgroundLight, Color(0xFFFAF8FC)],
           ),
         ),
         child: child,
       ),
     );
   }
-  
+
   // Header Widget
   static Widget buildHeader({
     required String title,
@@ -61,17 +56,10 @@ class CommonWidgets {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF9C27B0),
-                Color(0xFFBA68C8),
-              ],
+              colors: [Color(0xFF9C27B0), Color(0xFFBA68C8)],
             ),
           ),
-          child: Icon(
-            icon,
-            size: 40,
-            color: Colors.white,
-          ),
+          child: Icon(icon, size: 40, color: AppTheme.backgroundLight),
         ),
         const SizedBox(height: 16),
         Text(
@@ -87,7 +75,7 @@ class CommonWidgets {
           subtitle,
           textAlign: TextAlign.center,
           style: AppStyles.custom(
-            color: Colors.grey[600]!,
+            color: AppTheme.grey600!,
             size: 16,
             weight: FontWeight.w400,
           ),
@@ -95,7 +83,7 @@ class CommonWidgets {
       ],
     );
   }
-  
+
   // Animated Text Field
   static Widget buildAnimatedTextField({
     required TextEditingController controller,
@@ -127,7 +115,7 @@ class CommonWidgets {
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: AppStyles.custom(
-                  color: Colors.grey[500]!,
+                  color: AppTheme.grey500!,
                   size: 16,
                   weight: FontWeight.w400,
                 ),
@@ -149,7 +137,7 @@ class CommonWidgets {
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.red, width: 1),
+                  borderSide: BorderSide(color: AppTheme.primaryRed, width: 1),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -162,7 +150,7 @@ class CommonWidgets {
       },
     );
   }
-  
+
   // Animated Button
   static Widget buildAnimatedButton({
     required String text,
@@ -181,10 +169,7 @@ class CommonWidgets {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF9C27B0),
-                  Color(0xFFBA68C8),
-                ],
+                colors: [Color(0xFF9C27B0), Color(0xFFBA68C8)],
               ),
               boxShadow: [
                 BoxShadow(
@@ -197,36 +182,37 @@ class CommonWidgets {
             child: ElevatedButton(
               onPressed: isLoading ? null : onPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
+                backgroundColor: AppTheme.transparent,
+                shadowColor: AppTheme.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Text(
-                    text,
-                    style: AppStyles.custom(
-                      color: Colors.white,
-                      size: 18,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
+              child:
+                  isLoading
+                      ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: AppTheme.backgroundLight,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : Text(
+                        text,
+                        style: AppStyles.custom(
+                          color: AppTheme.backgroundLight,
+                          size: 18,
+                          weight: FontWeight.w600,
+                        ),
+                      ),
             ),
           ),
         );
       },
     );
   }
-  
+
   // Text Button
   static Widget buildTextButton({
     required String text,
@@ -245,7 +231,7 @@ class CommonWidgets {
       ),
     );
   }
-  
+
   // Toggle Auth Text
   static Widget buildToggleAuthText({
     required String question,
@@ -258,7 +244,7 @@ class CommonWidgets {
         Text(
           question,
           style: AppStyles.custom(
-            color: Colors.grey[600]!,
+            color: AppTheme.grey600!,
             size: 14,
             weight: FontWeight.w400,
           ),
@@ -277,7 +263,7 @@ class CommonWidgets {
       ],
     );
   }
-  
+
   // Password Visibility Icon
   static Widget buildPasswordVisibilityIcon({
     required bool isObscure,
@@ -291,20 +277,23 @@ class CommonWidgets {
       onPressed: onPressed,
     );
   }
-  
+
   // Custom App Bar
   static AppBar buildCustomAppBar({String? title}) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparent,
       elevation: 0,
-      title: title != null ? Text(
-        title,
-        style: AppStyles.custom(
-          color: Color(0xFF4A148C),
-          size: 20,
-          weight: FontWeight.w600,
-        ),
-      ) : null,
+      title:
+          title != null
+              ? Text(
+                title,
+                style: AppStyles.custom(
+                  color: Color(0xFF4A148C),
+                  size: 20,
+                  weight: FontWeight.w600,
+                ),
+              )
+              : null,
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios, color: Color(0xFF9C27B0)),
         onPressed: () => Get.back(),

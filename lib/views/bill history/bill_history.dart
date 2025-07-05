@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 
 class BillsHistoryPage extends GetView<BillHistoryController> {
@@ -11,19 +13,20 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.grey50,
       body: SafeArea(
         child: Column(
           children: [
             buildCustomAppBar("Bills Management", isdark: true),
             // Show loading indicator when initially loading
             Obx(
-              () => controller.isLoading.value && controller.bills.isEmpty
-                  ? LinearProgressIndicator(
-                      backgroundColor: Colors.grey[200],
-                      color: Color(0xFF1E293B),
-                    )
-                  : SizedBox(),
+              () =>
+                  controller.isLoading.value && controller.bills.isEmpty
+                      ? LinearProgressIndicator(
+                        backgroundColor: AppTheme.grey200,
+                        color: Color(0xFF1E293B),
+                      )
+                      : SizedBox(),
             ),
             _buildCompactSearchAndFilters(),
             NotificationListener(
@@ -53,7 +56,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.addBill),
         backgroundColor: Color(0xFF1E293B),
-        child: Icon(Icons.add, color: Colors.white),
+        child: Icon(Icons.add, color: AppTheme.backgroundLight),
       ),
     );
   }
@@ -63,11 +66,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: AppTheme.greyOpacity05,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -86,31 +89,32 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                   padding: EdgeInsets.all(2),
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: AppTheme.grey50,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.greyOpacity02),
                   ),
                   child: TextField(
                     controller: controller.searchController,
                     onChanged: (value) => controller.onSearchChanged(),
                     decoration: InputDecoration(
                       hintText: 'Search bills by company, ID...',
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w400,
+                      hintStyle: AppStyles.custom(
+                        size: 14,
+                        color: AppTheme.grey600,
+                        weight: FontWeight.w400,
                       ),
                       suffixIcon: Obx(
-                        () => controller.searchQuery.value.isNotEmpty
-                            ? IconButton(
-                                onPressed: controller.clearSearch,
-                                icon: Icon(
-                                  Icons.clear,
-                                  size: 16,
-                                  color: Colors.grey[400],
-                                ),
-                              )
-                            : SizedBox(),
+                        () =>
+                            controller.searchQuery.value.isNotEmpty
+                                ? IconButton(
+                                  onPressed: controller.clearSearch,
+                                  icon: Icon(
+                                    Icons.clear,
+                                    size: 16,
+                                    color: AppTheme.grey400,
+                                  ),
+                                )
+                                : SizedBox(),
                       ),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(vertical: 10),
@@ -121,7 +125,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               SizedBox(width: 8),
               IconButton(
                 onPressed: () => _showExportDialog(Get.context!),
-                icon: Icon(Icons.file_download, size: 18, color: Color(0xFF1E293B)),
+                icon: Icon(
+                  Icons.file_download,
+                  size: 18,
+                  color: Color(0xFF1E293B),
+                ),
                 tooltip: 'Export',
               ),
               IconButton(
@@ -173,17 +181,22 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildCompactStatItem(String label, String count, IconData icon, Color color) {
+  Widget _buildCompactStatItem(
+    String label,
+    String count,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.only(right: 6),
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: AppTheme.greyOpacity05,
               blurRadius: 6,
               offset: Offset(0, 1),
             ),
@@ -199,9 +212,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 SizedBox(width: 4),
                 Text(
                   count,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+                  style: AppStyles.custom(
+                    size: 14,
+                    weight: FontWeight.bold,
                     color: color,
                   ),
                 ),
@@ -210,10 +223,10 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             SizedBox(height: 2),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 9,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+              style: AppStyles.custom(
+                size: 9,
+                color: AppTheme.grey600,
+                weight: FontWeight.w500,
               ),
             ),
           ],
@@ -250,21 +263,23 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               if (index == controller.bills.length) {
                 return controller.isLoadingMore.value
                     ? Container(
-                        padding: EdgeInsets.all(16),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF1E293B),
-                            strokeWidth: 2,
-                          ),
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF1E293B),
+                          strokeWidth: 2,
                         ),
-                      )
+                      ),
+                    )
                     : SizedBox.shrink();
               }
 
               final bill = controller.bills[index];
               return _buildCompactBillCard(bill);
             },
-            childCount: controller.bills.length + (controller.isLoadingMore.value ? 1 : 0),
+            childCount:
+                controller.bills.length +
+                (controller.isLoadingMore.value ? 1 : 0),
           ),
         ),
       );
@@ -275,11 +290,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.06),
+            color: AppTheme.greyOpacity06,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -303,7 +318,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                   gradient: LinearGradient(
                     colors: [
                       controller.getCompanyColor(bill.companyName),
-                      controller.getCompanyColor(bill.companyName).withOpacity(0.7),
+                      controller
+                          .getCompanyColor(bill.companyName)
+                          .withOpacity(0.7),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -312,7 +329,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 ),
                 child: Icon(
                   Icons.receipt_long,
-                  color: Colors.white,
+                  color: AppTheme.backgroundLight,
                   size: 18,
                 ),
               ),
@@ -326,10 +343,10 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           // Bill ID
           Text(
             '#${bill.billId}',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+            style: AppStyles.custom(
+              size: 14,
+              weight: FontWeight.bold,
+              color: AppTheme.black87,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -352,10 +369,10 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               Expanded(
                 child: Text(
                   bill.companyName,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
-                    fontWeight: FontWeight.w600,
+                  style: AppStyles.custom(
+                    size: 12,
+                    color: AppTheme.grey700,
+                    weight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -368,12 +385,12 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           // Date
           Row(
             children: [
-              Icon(Icons.calendar_today, size: 10, color: Colors.grey[500]),
+              Icon(Icons.calendar_today, size: 10, color: AppTheme.grey500),
               SizedBox(width: 4),
               Expanded(
                 child: Text(
                   bill.formattedDate,
-                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                  style: AppStyles.custom(size: 10, color: AppTheme.grey500),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -387,7 +404,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppTheme.grey50,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -398,23 +415,23 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                     Icon(
                       Icons.currency_rupee,
                       size: 10,
-                      color: Colors.grey[500],
+                      color: AppTheme.grey500,
                     ),
                     SizedBox(width: 4),
                     Text(
                       'Amount',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.custom(
+                        size: 10,
+                        color: AppTheme.grey500,
+                        weight: FontWeight.w500,
                       ),
                     ),
                     Spacer(),
                     Text(
                       bill.formattedAmount,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                      style: AppStyles.custom(
+                        size: 11,
+                        weight: FontWeight.bold,
                         color: Color(0xFF10B981),
                       ),
                     ),
@@ -429,23 +446,23 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                       Icon(
                         Icons.account_balance_wallet,
                         size: 10,
-                        color: Colors.grey[500],
+                        color: AppTheme.grey500,
                       ),
                       SizedBox(width: 4),
                       Text(
                         'Dues',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w500,
+                        style: AppStyles.custom(
+                          size: 10,
+                          color: AppTheme.grey500,
+                          weight: FontWeight.w500,
                         ),
                       ),
                       Spacer(),
                       Text(
                         bill.formattedDues,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
+                        style: AppStyles.custom(
+                          size: 11,
+                          weight: FontWeight.bold,
                           color: Color(0xFFEF4444),
                         ),
                       ),
@@ -458,27 +475,23 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 // Items count
                 Row(
                   children: [
-                    Icon(
-                      Icons.inventory_2,
-                      size: 10,
-                      color: Colors.grey[500],
-                    ),
+                    Icon(Icons.inventory_2, size: 10, color: AppTheme.grey500),
                     SizedBox(width: 4),
                     Text(
                       'Items',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.custom(
+                        size: 10,
+                        color: AppTheme.grey500,
+                        weight: FontWeight.w500,
                       ),
                     ),
                     Spacer(),
                     Text(
                       '${bill.totalItems}',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
+                      style: AppStyles.custom(
+                        size: 11,
+                        weight: FontWeight.bold,
+                        color: AppTheme.grey700,
                       ),
                     ),
                   ],
@@ -577,9 +590,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           SizedBox(width: 2),
           Text(
             bill.paid ? 'Paid' : 'Pending',
-            style: TextStyle(
-              fontSize: 8,
-              fontWeight: FontWeight.w600,
+            style: AppStyles.custom(
+              size: 8,
+              weight: FontWeight.w600,
               color: controller.getStatusColor(bill),
             ),
           ),
@@ -597,7 +610,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           SizedBox(height: 16),
           Text(
             'Loading bills...',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            style: AppStyles.custom(size: 16, color: AppTheme.grey600),
           ),
         ],
       ),
@@ -613,20 +626,22 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           SizedBox(height: 16),
           Text(
             'Error loading bills',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.red[600],
+            style: AppStyles.custom(
+              size: 18,
+              weight: FontWeight.w600,
+              color: AppTheme.red600,
             ),
           ),
           SizedBox(height: 8),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Obx(() => Text(
-              controller.error.value,
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              textAlign: TextAlign.center,
-            )),
+            child: Obx(
+              () => Text(
+                controller.error.value,
+                style: AppStyles.custom(size: 14, color: AppTheme.grey600),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           SizedBox(height: 16),
           ElevatedButton(
@@ -634,7 +649,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             child: Text('Retry'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF1E293B),
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.backgroundLight,
             ),
           ),
         ],
@@ -647,16 +662,16 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long, size: 64, color: Colors.grey[400]),
+          Icon(Icons.receipt_long, size: 64, color: AppTheme.grey400),
           SizedBox(height: 16),
           Text(
-            controller.searchQuery.value.isNotEmpty 
+            controller.searchQuery.value.isNotEmpty
                 ? 'No bills found for "${controller.searchQuery.value}"'
                 : 'No bills found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[600],
+            style: AppStyles.custom(
+              size: 18,
+              weight: FontWeight.w600,
+              color: AppTheme.grey600,
             ),
             textAlign: TextAlign.center,
           ),
@@ -665,7 +680,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             controller.searchQuery.value.isNotEmpty
                 ? 'Try searching with different keywords'
                 : 'Bills will appear here once you create them',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            style: AppStyles.custom(size: 14, color: AppTheme.grey500),
             textAlign: TextAlign.center,
           ),
           if (controller.searchQuery.value.isNotEmpty) ...[
@@ -675,7 +690,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               child: Text('Clear Search'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF1E293B),
-                foregroundColor: Colors.white,
+                foregroundColor: AppTheme.backgroundLight,
               ),
             ),
           ],
@@ -687,59 +702,57 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
   void _showExportDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Export Bills',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Choose export format:'),
-            const SizedBox(height: 16),
-            Obx(() => Text(
-              '${controller.bills.length} bills will be exported',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Text(
+              'Export Bills',
+              style: AppStyles.custom(weight: FontWeight.w600),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Choose export format:'),
+                const SizedBox(height: 16),
+                Obx(
+                  () => Text(
+                    '${controller.bills.length} bills will be exported',
+                    style: AppStyles.custom(size: 12, color: AppTheme.grey600),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
               ),
-            )),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _exportToPDF();
+                },
+                icon: const Icon(Icons.picture_as_pdf, size: 16),
+                label: const Text('PDF'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.primaryRed,
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _exportToExcel();
+                },
+                icon: const Icon(Icons.table_chart, size: 16),
+                label: const Text('Excel'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.primaryGreen,
+                ),
+              ),
+            ],
           ),
-          TextButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              _exportToPDF();
-            },
-            icon: const Icon(Icons.picture_as_pdf, size: 16),
-            label: const Text('PDF'),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              _exportToExcel();
-            },
-            icon: const Icon(Icons.table_chart, size: 16),
-            label: const Text('Excel'),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.green,
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -748,9 +761,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       'Export',
       'PDF export feature coming soon',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-      icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+      backgroundColor: AppTheme.primaryOrange,
+      colorText: AppTheme.backgroundLight,
+      icon: const Icon(Icons.picture_as_pdf, color: AppTheme.backgroundLight),
     );
   }
 
@@ -759,9 +772,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       'Export',
       'Excel export feature coming soon',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-      icon: const Icon(Icons.table_chart, color: Colors.white),
+      backgroundColor: AppTheme.primaryGreen,
+      colorText: AppTheme.backgroundLight,
+      icon: const Icon(Icons.table_chart, color: AppTheme.backgroundLight),
     );
   }
 
@@ -774,9 +787,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       'Share',
       'Sharing Bill #${bill.billId}',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-      icon: const Icon(Icons.share, color: Colors.white),
+      backgroundColor: AppTheme.primaryBlue,
+      colorText: AppTheme.backgroundLight,
+      icon: const Icon(Icons.share, color: AppTheme.backgroundLight),
     );
   }
 }

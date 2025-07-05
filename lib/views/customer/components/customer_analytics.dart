@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_chart_loader.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
@@ -41,7 +43,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.grey50,
       body: SafeArea(
         child: Column(
           children: [
@@ -67,17 +69,17 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: AppTheme.backgroundDark.withOpacity(0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: AppTheme.backgroundDark.withOpacity(0.04),
             spreadRadius: 0,
             blurRadius: 4,
             offset: const Offset(0, 1),
@@ -106,22 +108,22 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
             ],
           ),
           indicatorPadding: EdgeInsets.zero,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.grey[600],
-          labelStyle: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 13,
+          labelColor: AppTheme.backgroundLight,
+          unselectedLabelColor: AppTheme.grey600,
+          labelStyle: AppStyles.custom(
+            weight: FontWeight.w700,
+            size: 13,
             letterSpacing: 0.2,
           ),
-          unselectedLabelStyle: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 13,
-            color: Colors.grey[500],
+          unselectedLabelStyle: AppStyles.custom(
+            weight: FontWeight.w500,
+            size: 13,
+            color: AppTheme.grey500,
             letterSpacing: 0.1,
           ),
           splashFactory: NoSplash.splashFactory,
-          overlayColor: MaterialStateProperty.all(Colors.transparent),
-          dividerColor: Colors.transparent,
+          overlayColor: MaterialStateProperty.all(AppTheme.transparent),
+          dividerColor: AppTheme.transparent,
           tabs: [
             _buildTab('New', Icons.person_add_outlined),
             _buildTab('Repeat', Icons.refresh_outlined),
@@ -207,11 +209,12 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                 ),
                 const SizedBox(height: 16),
                 Obx(
-                  () => customerAnalyticsController
-                          .isVillageDistributionChartLoading
-                          .value
-                      ? const SizedBox.shrink()
-                      : _buildLegendCard(),
+                  () =>
+                      customerAnalyticsController
+                              .isVillageDistributionChartLoading
+                              .value
+                          ? const SizedBox.shrink()
+                          : _buildLegendCard(),
                 ),
               ],
             );
@@ -267,11 +270,12 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                       ),
                       const SizedBox(height: 16),
                       Obx(
-                        () => customerAnalyticsController
-                                .isVillageDistributionChartLoading
-                                .value
-                            ? const SizedBox.shrink()
-                            : _buildLegendCard(),
+                        () =>
+                            customerAnalyticsController
+                                    .isVillageDistributionChartLoading
+                                    .value
+                                ? const SizedBox.shrink()
+                                : _buildLegendCard(),
                       ),
                     ],
                   ),
@@ -314,27 +318,23 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           final isSmallScreen = screenWidth < 600;
 
           return Obx(
-            () => customerAnalyticsController
-                    .isTopCustomerChartLoading
-                    .value
-                ? buildTopCustomersShimmer(isSmallScreen)
-                : customerAnalyticsController
-                        .hasTopCustomerChartError
-                        .value
+            () =>
+                customerAnalyticsController.isTopCustomerChartLoading.value
+                    ? buildTopCustomersShimmer(isSmallScreen)
+                    : customerAnalyticsController.hasTopCustomerChartError.value
                     ? buildErrorCard(
-                        customerAnalyticsController
-                            .topCustomerChartErrorMessage,
-                        Get.width,
-                        Get.height,
-                        true,
-                      )
+                      customerAnalyticsController.topCustomerChartErrorMessage,
+                      Get.width,
+                      Get.height,
+                      true,
+                    )
                     : Column(
-                        children: [
-                          _buildTopCustomersChart(screenWidth, isSmallScreen),
-                          const SizedBox(height: 16),
-                          _buildTopCustomersList(),
-                        ],
-                      ),
+                      children: [
+                        _buildTopCustomersChart(screenWidth, isSmallScreen),
+                        const SizedBox(height: 16),
+                        _buildTopCustomersList(),
+                      ],
+                    ),
           );
         },
       ),
@@ -345,11 +345,11 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -368,18 +368,18 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                   children: [
                     Text(
                       'Top Customers Overview',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 16 : 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                      style: AppStyles.custom(
+                        size: isSmallScreen ? 16 : 18,
+                        weight: FontWeight.bold,
+                        color: AppTheme.black87,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Top Customers by Purchase Amount',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 14,
-                        color: Colors.grey[600],
+                      style: AppStyles.custom(
+                        size: isSmallScreen ? 12 : 14,
+                        color: AppTheme.grey600,
                       ),
                     ),
                   ],
@@ -393,22 +393,23 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           SizedBox(
             height: 300,
             child: Obx(
-              () => customerAnalyticsController.isTopCustomerChartLoading.value
-                  ? const GenericBarChartShimmer(title: "")
-                  : customerAnalyticsController
+              () =>
+                  customerAnalyticsController.isTopCustomerChartLoading.value
+                      ? const GenericBarChartShimmer(title: "")
+                      : customerAnalyticsController
                           .hasTopCustomerChartError
                           .value
                       ? buildErrorCard(
-                          customerAnalyticsController
-                              .topCustomerChartErrorMessage,
-                          screenWidth,
-                          Get.height,
-                          isSmallScreen,
-                        )
+                        customerAnalyticsController
+                            .topCustomerChartErrorMessage,
+                        screenWidth,
+                        Get.height,
+                        isSmallScreen,
+                      )
                       : _buildHorizontalBarChartFromList(
-                          customerAnalyticsController.topCustomerChartData,
-                          isSmallScreen,
-                        ),
+                        customerAnalyticsController.topCustomerChartData,
+                        isSmallScreen,
+                      ),
             ),
           ),
         ],
@@ -429,24 +430,25 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         children: [
           Text(
             'Show top',
-            style: TextStyle(color: Colors.grey[700], fontSize: 12),
+            style: AppStyles.custom(color: AppTheme.grey700, size: 12),
           ),
           const SizedBox(width: 8),
           DropdownButton<int>(
             value: _selectedCustomerCount,
-            dropdownColor: Colors.white,
+            dropdownColor: AppTheme.backgroundLight,
             underline: Container(),
-            style: const TextStyle(
+            style: AppStyles.custom(
               color: Color(0xFF6C5CE7),
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+              size: 12,
+              weight: FontWeight.bold,
             ),
-            items: [5, 10, 15, 20].map((count) {
-              return DropdownMenuItem<int>(
-                value: count,
-                child: Text('$count'),
-              );
-            }).toList(),
+            items:
+                [5, 10, 15, 20].map((count) {
+                  return DropdownMenuItem<int>(
+                    value: count,
+                    child: Text('$count'),
+                  );
+                }).toList(),
             onChanged: (value) {
               setState(() {
                 _selectedCustomerCount = value!;
@@ -456,7 +458,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           const SizedBox(width: 8),
           Text(
             'customers',
-            style: TextStyle(color: Colors.grey[700], fontSize: 12),
+            style: AppStyles.custom(color: AppTheme.grey700, size: 12),
           ),
         ],
       ),
@@ -467,83 +469,87 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     List<Map<String, dynamic>> dataList,
     bool isSmallScreen,
   ) {
-    final maxValue = dataList.isNotEmpty
-        ? dataList
-            .map((e) => e['totalSales'] as double)
-            .reduce((a, b) => a > b ? a : b)
-        : 100.0;
+    final maxValue =
+        dataList.isNotEmpty
+            ? dataList
+                .map((e) => e['totalSales'] as double)
+                .reduce((a, b) => a > b ? a : b)
+            : 100.0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
           child: Column(
-            children: dataList.map((entry) {
-              final name = entry['name'] ?? '';
-              final value = (entry['totalSales'] as num).toDouble();
-              final percentage = value / maxValue;
+            children:
+                dataList.map((entry) {
+                  final name = entry['name'] ?? '';
+                  final value = (entry['totalSales'] as num).toDouble();
+                  final percentage = value / maxValue;
 
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: isSmallScreen ? 60 : 80,
-                      child: Text(
-                        name,
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: isSmallScreen ? 10 : 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Stack(
-                          children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 800),
-                              width: (constraints.maxWidth - 92) * percentage,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF6C5CE7),
-                                    Color(0xFFA29BFE),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: isSmallScreen ? 60 : 80,
+                          child: Text(
+                            name,
+                            style: AppStyles.custom(
+                              color: AppTheme.grey700,
+                              size: isSmallScreen ? 10 : 12,
+                              weight: FontWeight.w500,
                             ),
-                            Positioned.fill(
-                              child: Center(
-                                child: Text(
-                                  '₹${_formatAmount(value)}',
-                                  style: TextStyle(
-                                    color: percentage > 0.5
-                                        ? Colors.white
-                                        : Colors.black87,
-                                    fontSize: isSmallScreen ? 10 : 11,
-                                    fontWeight: FontWeight.w600,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: AppTheme.grey200,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Stack(
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 800),
+                                  width:
+                                      (constraints.maxWidth - 92) * percentage,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF6C5CE7),
+                                        Color(0xFFA29BFE),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
-                              ),
+                                Positioned.fill(
+                                  child: Center(
+                                    child: Text(
+                                      '₹${_formatAmount(value)}',
+                                      style: AppStyles.custom(
+                                        color:
+                                            percentage > 0.5
+                                                ? AppTheme.backgroundLight
+                                                : AppTheme.black87,
+                                        size: isSmallScreen ? 10 : 11,
+                                        weight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList(),
           ),
         );
       },
@@ -554,11 +560,11 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -568,12 +574,12 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Customer Rankings',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+            style: AppStyles.custom(
+              size: 16,
+              weight: FontWeight.bold,
+              color: AppTheme.black87,
             ),
           ),
           const SizedBox(height: 16),
@@ -587,29 +593,29 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
               children: [
                 Text(
                   '#',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
+                  style: AppStyles.custom(
+                    size: 12,
+                    weight: FontWeight.w600,
+                    color: AppTheme.grey600,
                   ),
                 ),
                 const SizedBox(width: 24),
                 Expanded(
                   child: Text(
                     'Customer',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
+                    style: AppStyles.custom(
+                      size: 12,
+                      weight: FontWeight.w600,
+                      color: AppTheme.grey600,
                     ),
                   ),
                 ),
                 Text(
                   'Amount',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
+                  style: AppStyles.custom(
+                    size: 12,
+                    weight: FontWeight.w600,
+                    color: AppTheme.grey600,
                   ),
                 ),
               ],
@@ -620,64 +626,68 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
               .asMap()
               .entries
               .map((entry) {
-            final index = entry.key;
-            final customer = entry.value;
-            return Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 12,
-              ),
-              decoration: BoxDecoration(
-                color: index.isEven ? Colors.grey[50] : Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF6C5CE7), Color(0xFFA29BFE)],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${index + 1}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                final index = entry.key;
+                final customer = entry.value;
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        index.isEven
+                            ? AppTheme.grey50
+                            : AppTheme.backgroundLight,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF6C5CE7), Color(0xFFA29BFE)],
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: AppStyles.custom(
+                              color: AppTheme.backgroundLight,
+                              weight: FontWeight.bold,
+                              size: 12,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      customer['name'],
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          customer['name'],
+                          style: AppStyles.custom(
+                            color: AppTheme.grey700,
+                            size: 14,
+                            weight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                      Text(
+                        '₹${_formatAmount(customer['totalSales'])}',
+                        style: AppStyles.custom(
+                          color: AppTheme.black87,
+                          size: 14,
+                          weight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '₹${_formatAmount(customer['totalSales'])}',
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              })
+              .toList(),
         ],
       ),
     );
@@ -687,11 +697,11 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -701,43 +711,44 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Location Distribution',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
+            style: AppStyles.custom(
+              size: 14,
+              weight: FontWeight.w600,
+              color: AppTheme.black87,
             ),
           ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 12,
             runSpacing: 8,
-            children: customerAnalyticsController.villageDistributionPayload
-                .entries
-                .map((entry) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: _getColorForLocation(entry.key),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${entry.key} (${entry.value.toInt()}%)',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
+            children:
+                customerAnalyticsController.villageDistributionPayload.entries
+                    .map((entry) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: _getColorForLocation(entry.key),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${entry.key} (${entry.value.toInt()}%)',
+                            style: AppStyles.custom(
+                              size: 11,
+                              color: AppTheme.grey700,
+                            ),
+                          ),
+                        ],
+                      );
+                    })
+                    .toList(),
           ),
         ],
       ),
@@ -758,8 +769,6 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         .indexOf(location);
     return colors[index % colors.length];
   }
-
- 
 
   String _formatAmount(double amount) {
     if (amount >= 100000) {

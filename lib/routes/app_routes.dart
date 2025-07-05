@@ -31,6 +31,14 @@ class AppRoutes {
   static const String billDetails = '/bill-details';
   static const String addBill = '/add-bill';
 
+//customer dues management
+  static const String customerDuesManagement = '/customer-dues-management';
+
+
+  //account management\
+  static const String accountManagement = '/account-management';
+
+
 
 
 

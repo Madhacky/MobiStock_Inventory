@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
@@ -12,30 +13,30 @@ import 'package:smartbecho/utils/app_styles.dart';
 
 class BillOperationController extends GetxController {
   final GlobalKey<FormState> addBillFormKey = GlobalKey<FormState>();
-  
+
   // Bill Details
   final companyNameController = TextEditingController();
   final amountController = TextEditingController();
   final withoutGstController = TextEditingController();
   final gstController = TextEditingController();
   final duesController = TextEditingController();
-  
+
   // Observable variables
   var isPaid = true.obs;
   var isAddingBill = false.obs;
   var hasAddBillError = false.obs;
   var addBillErrorMessage = ''.obs;
-  
+
   // Items list
   var billItems = <BillItem>[].obs;
-  
+
   // Dropdown options
   List<String> companies = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme'];
   List<String> models = ['iPhone 14', 'iPhone 15', 'Galaxy S23', 'OnePlus 11'];
   List<String> ramOptions = ['4', '6', '8', '12', '16'];
   List<String> storageOptions = ['64', '128', '256', '512', '1024'];
   List<String> colorOptions = ['White', 'Black', 'Blue', 'Red', 'Green'];
-  
+
   // Validation methods
   String? validateCompanyName(String? value) {
     if (value == null || value.isEmpty) {
@@ -43,7 +44,7 @@ class BillOperationController extends GetxController {
     }
     return null;
   }
-  
+
   String? validateAmount(String? value) {
     if (value == null || value.isEmpty) {
       return 'Amount is required';
@@ -53,7 +54,7 @@ class BillOperationController extends GetxController {
     }
     return null;
   }
-  
+
   String? validateGst(String? value) {
     if (value == null || value.isEmpty) {
       return 'GST is required';
@@ -64,7 +65,7 @@ class BillOperationController extends GetxController {
     }
     return null;
   }
-  
+
   // Methods
   void addBillToSystem() async {
     if (addBillFormKey.currentState!.validate()) {
@@ -73,32 +74,34 @@ class BillOperationController extends GetxController {
         addBillErrorMessage.value = 'Please add at least one item';
         return;
       }
-      
+
       // Validate that all items have required fields
       for (int i = 0; i < billItems.length; i++) {
         BillItem item = billItems[i];
-        if (item.company.isEmpty || item.model.isEmpty || 
-            item.sellingPrice.isEmpty || item.qty.isEmpty) {
+        if (item.company.isEmpty ||
+            item.model.isEmpty ||
+            item.sellingPrice.isEmpty ||
+            item.qty.isEmpty) {
           hasAddBillError.value = true;
-          addBillErrorMessage.value = 'Please fill all required fields for Item ${i + 1}';
+          addBillErrorMessage.value =
+              'Please fill all required fields for Item ${i + 1}';
           return;
         }
       }
-      
+
       isAddingBill.value = true;
       hasAddBillError.value = false;
-      
+
       try {
         Map<String, dynamic> billData = _prepareBillData();
-        
+
         log('=== SENDING BILL DATA ===');
         log(jsonEncode(billData));
         log('========================');
-        
+
         // Send to API
-       // await _sendBillToAPI(billData);
-      isAddingBill.value = false;
-        
+        // await _sendBillToAPI(billData);
+        isAddingBill.value = false;
       } catch (e) {
         isAddingBill.value = false;
         hasAddBillError.value = true;
@@ -107,21 +110,22 @@ class BillOperationController extends GetxController {
       }
     }
   }
-  
+
   Map<String, dynamic> _prepareBillData() {
     // Prepare items array
-    List<Map<String, dynamic>> itemsArray = billItems.map((item) {
-      return {
-        "company": item.company,
-        "model": item.model,
-        "ram": int.tryParse(item.ram) ?? 0,
-        "rom": int.tryParse(item.rom) ?? 0,
-        "sellingPrice": item.sellingPrice,
-        "color": item.color,
-        "qty": item.qty,
-      };
-    }).toList();
-    
+    List<Map<String, dynamic>> itemsArray =
+        billItems.map((item) {
+          return {
+            "company": item.company,
+            "model": item.model,
+            "ram": int.tryParse(item.ram) ?? 0,
+            "rom": int.tryParse(item.rom) ?? 0,
+            "sellingPrice": item.sellingPrice,
+            "color": item.color,
+            "qty": item.qty,
+          };
+        }).toList();
+
     // Prepare main bill data
     return {
       "companyName": companyNameController.text.trim(),
@@ -133,10 +137,11 @@ class BillOperationController extends GetxController {
       "items": itemsArray,
     };
   }
-  
+
   Future<void> _sendBillToAPI(Map<String, dynamic> billData) async {
-    const String apiUrl = "YOUR_API_ENDPOINT_HERE"; // Replace with your actual API endpoint
-    
+    const String apiUrl =
+        "YOUR_API_ENDPOINT_HERE"; // Replace with your actual API endpoint
+
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -147,32 +152,30 @@ class BillOperationController extends GetxController {
         },
         body: jsonEncode(billData),
       );
-      
+
       log('API Response Status: ${response.statusCode}');
       log('API Response Body: ${response.body}');
-      
+
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // Success
         isAddingBill.value = false;
         Get.snackbar(
-          'Success', 
+          'Success',
           'Bill created successfully!',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+          backgroundColor: AppTheme.primaryGreen,
+          colorText: AppTheme.backgroundLight,
           duration: Duration(seconds: 3),
         );
-        
+
         // Clear the form after successful submission
         _clearForm();
-        
+
         // Go back to previous screen
         Get.back();
-        
       } else {
         // API returned an error
         throw Exception('API Error: ${response.statusCode} - ${response.body}');
       }
-      
     } on SocketException {
       throw Exception('No internet connection. Please check your network.');
     } on HttpException {
@@ -183,7 +186,7 @@ class BillOperationController extends GetxController {
       throw Exception('Unexpected error: ${e.toString()}');
     }
   }
-  
+
   void _clearForm() {
     // Clear all controllers
     companyNameController.clear();
@@ -191,34 +194,34 @@ class BillOperationController extends GetxController {
     withoutGstController.clear();
     gstController.clear();
     duesController.clear();
-    
+
     // Reset observables
     isPaid.value = true;
     hasAddBillError.value = false;
     addBillErrorMessage.value = '';
-    
+
     // Clear all items
     for (var item in billItems) {
       item.dispose();
     }
     billItems.clear();
   }
-  
+
   void cancelAddBill() {
     Get.back();
   }
-  
+
   void addNewItem() {
     billItems.add(BillItem());
   }
-  
+
   void removeItem(int index) {
     if (index >= 0 && index < billItems.length) {
       billItems.removeAt(index);
       calculateTotals(); // Recalculate totals after removing item
     }
   }
-  
+
   void calculateTotals() {
     double totalAmount = 0;
     for (var item in billItems) {
@@ -228,21 +231,21 @@ class BillOperationController extends GetxController {
         totalAmount += price * quantity;
       }
     }
-    
+
     double gstRate = double.tryParse(gstController.text) ?? 0;
     double withoutGstAmount = totalAmount / (1 + (gstRate / 100));
     double gstAmount = totalAmount - withoutGstAmount;
-    
+
     withoutGstController.text = withoutGstAmount.toStringAsFixed(2);
     amountController.text = totalAmount.toStringAsFixed(2);
-    
+
     if (!isPaid.value) {
       duesController.text = totalAmount.toStringAsFixed(2);
     } else {
       duesController.text = '0';
     }
   }
-  
+
   // Method to update item field and trigger calculation
   void updateItemField(int index, String field, String value) {
     if (index >= 0 && index < billItems.length) {
@@ -272,7 +275,7 @@ class BillOperationController extends GetxController {
       calculateTotals();
     }
   }
-  
+
   @override
   void onClose() {
     companyNameController.dispose();
@@ -280,12 +283,12 @@ class BillOperationController extends GetxController {
     withoutGstController.dispose();
     gstController.dispose();
     duesController.dispose();
-    
+
     // Dispose item controllers
     for (var item in billItems) {
       item.dispose();
     }
-    
+
     super.onClose();
   }
 }
@@ -298,16 +301,16 @@ class BillItem {
   String sellingPrice = '';
   String color = '';
   String qty = '';
-  
+
   // Add controllers for price and quantity to maintain state
   late TextEditingController priceController;
   late TextEditingController qtyController;
-  
+
   BillItem() {
     priceController = TextEditingController();
     qtyController = TextEditingController();
   }
-  
+
   void dispose() {
     priceController.dispose();
     qtyController.dispose();

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class SignupScreen extends StatelessWidget {
   @override
@@ -13,10 +15,7 @@ class SignupScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
           ),
         ),
         child: SafeArea(
@@ -48,7 +47,7 @@ class SignupScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildWelcomeSection() {
     return Column(
       children: [
@@ -56,42 +55,42 @@ class SignupScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: AppTheme.backgroundLight.withOpacity(0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: AppTheme.backgroundLight.withOpacity(0.3),
               width: 2,
             ),
           ),
           child: Icon(
             Icons.store_outlined,
             size: 40,
-            color: Colors.white,
+            color: AppTheme.backgroundLight,
           ),
         ),
         const SizedBox(height: 24),
         Text(
           'Create Account',
-          style: TextStyle(
+          style: AppStyles.custom(
             fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+            weight: FontWeight.bold,
+            color: AppTheme.backgroundLight,
             letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Set up your shop and get started',
-          style: TextStyle(
+          style: AppStyles.custom(
             fontSize: 16,
-            color: Colors.white.withOpacity(0.8),
-            fontWeight: FontWeight.w400,
+            color: AppTheme.backgroundLight.withOpacity(0.8),
+            weight: FontWeight.w400,
           ),
         ),
       ],
     );
   }
-  
+
   Widget _buildSignupForm(AuthController controller) {
     return Form(
       key: controller.signupFormKey,
@@ -105,7 +104,7 @@ class SignupScreen extends StatelessWidget {
             validator: controller.validateShopStoreName,
           ),
           const SizedBox(height: 20),
-          
+
           // Email
           _buildModernTextField(
             controller: controller.emailController,
@@ -115,66 +114,70 @@ class SignupScreen extends StatelessWidget {
             validator: controller.validateEmail,
           ),
           const SizedBox(height: 20),
-          
+
           // Password
-          Obx(() => _buildModernTextField(
-            controller: controller.passwordController,
-            hintText: 'Password',
-            prefixIcon: Icons.lock_outline,
-            obscureText: controller.obscurePassword.value,
-            suffixIcon: IconButton(
-              icon: Icon(
-                controller.obscurePassword.value 
-                  ? Icons.visibility_off_rounded 
-                  : Icons.visibility_rounded,
-                color: Colors.white.withOpacity(0.7),
+          Obx(
+            () => _buildModernTextField(
+              controller: controller.passwordController,
+              hintText: 'Password',
+              prefixIcon: Icons.lock_outline,
+              obscureText: controller.obscurePassword.value,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  controller.obscurePassword.value
+                      ? Icons.visibility_off_rounded
+                      : Icons.visibility_rounded,
+                  color: AppTheme.backgroundLight.withOpacity(0.7),
+                ),
+                onPressed: controller.togglePasswordVisibility,
               ),
-              onPressed: controller.togglePasswordVisibility,
+              validator: controller.validatePassword,
             ),
-            validator: controller.validatePassword,
-          )),
+          ),
           const SizedBox(height: 20),
-          
+
           // Confirm Password
-          Obx(() => _buildModernTextField(
-            controller: controller.confirmPasswordController,
-            hintText: 'Confirm Password',
-            prefixIcon: Icons.lock_outline,
-            obscureText: controller.obscureConfirmPassword.value,
-            suffixIcon: IconButton(
-              icon: Icon(
-                controller.obscureConfirmPassword.value 
-                  ? Icons.visibility_off_rounded 
-                  : Icons.visibility_rounded,
-                color: Colors.white.withOpacity(0.7),
+          Obx(
+            () => _buildModernTextField(
+              controller: controller.confirmPasswordController,
+              hintText: 'Confirm Password',
+              prefixIcon: Icons.lock_outline,
+              obscureText: controller.obscureConfirmPassword.value,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  controller.obscureConfirmPassword.value
+                      ? Icons.visibility_off_rounded
+                      : Icons.visibility_rounded,
+                  color: AppTheme.backgroundLight.withOpacity(0.7),
+                ),
+                onPressed: controller.toggleConfirmPasswordVisibility,
               ),
-              onPressed: controller.toggleConfirmPasswordVisibility,
+              validator: controller.validateConfirmPassword,
             ),
-            validator: controller.validateConfirmPassword,
-          )),
+          ),
           const SizedBox(height: 20),
-          
+
           // Address Section Header
           Row(
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.white.withOpacity(0.8),
+                color: AppTheme.backgroundLight.withOpacity(0.8),
                 size: 20,
               ),
               const SizedBox(width: 8),
               Text(
                 'Shop Address',
-                style: TextStyle(
+                style: AppStyles.custom(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  weight: FontWeight.bold,
+                  color: AppTheme.backgroundLight,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Street Address
           _buildModernTextField(
             controller: controller.streetController,
@@ -183,7 +186,7 @@ class SignupScreen extends StatelessWidget {
             validator: controller.validateStreet,
           ),
           const SizedBox(height: 20),
-          
+
           // City and State Row
           Row(
             children: [
@@ -207,7 +210,7 @@ class SignupScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Zipcode
           _buildModernTextField(
             controller: controller.zipcodeController,
@@ -220,7 +223,7 @@ class SignupScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildModernTextField({
     required TextEditingController controller,
     required String hintText,
@@ -232,10 +235,10 @@ class SignupScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.backgroundLight.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppTheme.backgroundLight.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -244,21 +247,21 @@ class SignupScreen extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
-        style: TextStyle(
-          color: Colors.white,
+        style: AppStyles.custom(
+          color: AppTheme.backgroundLight,
           fontSize: 16,
-          fontWeight: FontWeight.w500,
+          weight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+          hintStyle: AppStyles.custom(
+            color: AppTheme.backgroundLight.withOpacity(0.6),
             fontSize: 16,
-            fontWeight: FontWeight.w400,
+            weight: FontWeight.w400,
           ),
           prefixIcon: Icon(
             prefixIcon,
-            color: Colors.white.withOpacity(0.7),
+            color: AppTheme.backgroundLight.withOpacity(0.7),
             size: 22,
           ),
           suffixIcon: suffixIcon,
@@ -271,67 +274,72 @@ class SignupScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildSignupButton(AuthController controller, BuildContext context) {
-    return Obx(() => Container(
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFF6B6B),
-            Color(0xFFFF8E8E),
+    return Obx(
+      () => Container(
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFF6B6B), Color(0xFFFF8E8E)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFFFF6B6B).withOpacity(0.3),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: Offset(0, 8),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFFFF6B6B).withOpacity(0.3),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: controller.isLoading.value ? null : () => controller.signup(context),
-          child: Center(
-            child: controller.isLoading.value 
-              ? SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              : Text(
-                  'Create Account',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
+        child: Material(
+          color: AppTheme.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap:
+                controller.isLoading.value
+                    ? null
+                    : () => controller.signup(context),
+            child: Center(
+              child:
+                  controller.isLoading.value
+                      ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppTheme.backgroundLight,
+                          ),
+                        ),
+                      )
+                      : Text(
+                        'Create Account',
+                        style: AppStyles.custom(
+                          color: AppTheme.backgroundLight,
+                          fontSize: 18,
+                          weight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
-  
+
   Widget _buildLoginPrompt(AuthController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           "Already have an account? ",
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+          style: AppStyles.custom(
+            color: AppTheme.backgroundLight.withOpacity(0.8),
             fontSize: 16,
-            fontWeight: FontWeight.w400,
+            weight: FontWeight.w400,
           ),
         ),
         TextButton(
@@ -344,11 +352,11 @@ class SignupScreen extends StatelessWidget {
           child: Text(
             'Sign In',
             style: TextStyle(
-              color: Colors.white,
+              color: AppTheme.backgroundLight,
               fontSize: 16,
               fontWeight: FontWeight.bold,
               decoration: TextDecoration.underline,
-              decorationColor: Colors.white,
+              decorationColor: AppTheme.backgroundLight,
             ),
           ),
         ),

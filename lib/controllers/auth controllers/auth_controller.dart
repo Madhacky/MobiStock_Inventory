@@ -118,7 +118,7 @@ class AuthController extends GetxController
         "Error",
         'Email is required',
         backgroundColor: AppTheme.errorDark,
-        colorText: Colors.white,
+        colorText: AppTheme.backgroundLight,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 2),
       );
@@ -341,16 +341,16 @@ class AuthController extends GetxController
         'Success',
         'Logged out successfully',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+        backgroundColor: AppTheme.primaryGreen,
+        colorText: AppTheme.backgroundLight,
       );
     } catch (e) {
       Get.snackbar(
         'Error',
         'Logout failed: ${e.toString()}',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: AppTheme.primaryRed,
+        colorText: AppTheme.backgroundLight,
       );
     }
   }
@@ -445,7 +445,7 @@ class AuthController extends GetxController
     }
   }
 
-//reset pass
+  //reset pass
   Future<void> resetPassword(BuildContext context, String email) async {
     if (!resetPasswordFormKey.currentState!.validate()) return;
 
@@ -456,8 +456,8 @@ class AuthController extends GetxController
         Get.snackbar(
           "Success",
           "Please check email for OTP",
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
+          backgroundColor: AppTheme.primaryGreen.withOpacity(0.8),
+          colorText: AppTheme.backgroundLight,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 2),
         );
@@ -466,8 +466,8 @@ class AuthController extends GetxController
         Get.snackbar(
           'Error',
           'Please try again later',
-          backgroundColor: Colors.red.withOpacity(0.8),
-          colorText: Colors.white,
+          backgroundColor: AppTheme.primaryRed.withOpacity(0.8),
+          colorText: AppTheme.backgroundLight,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 3),
         );

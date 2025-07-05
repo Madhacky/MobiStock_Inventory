@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_card_view_controller.dart';
 import 'package:smartbecho/models/customer%20management/customer_data_model.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 
@@ -14,7 +15,7 @@ class CustomerDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.grey50,
       body: SafeArea(
         child: Column(
           children: [
@@ -24,7 +25,7 @@ class CustomerDetailsPage extends StatelessWidget {
               () =>
                   controller.isLoading.value && controller.apiCustomers.isEmpty
                       ? LinearProgressIndicator(
-                        backgroundColor: Colors.grey[200],
+                        backgroundColor: AppTheme.grey200,
                         color: Color(0xFF6C5CE7),
                       )
                       : SizedBox(),
@@ -62,11 +63,11 @@ class CustomerDetailsPage extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: AppTheme.greyOpacity05,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -85,9 +86,9 @@ class CustomerDetailsPage extends StatelessWidget {
                   padding: EdgeInsets.all(2),
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
+                    color: AppTheme.grey50,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.greyOpacity02),
                   ),
                   child: TextField(
                     onChanged: controller.onSearchChanged,
@@ -104,7 +105,7 @@ class CustomerDetailsPage extends StatelessWidget {
                                   icon: Icon(
                                     Icons.clear,
                                     size: 16,
-                                    color: Colors.grey[400],
+                                    color: AppTheme.grey400,
                                   ),
                                 )
                                 : SizedBox(),
@@ -172,10 +173,10 @@ class CustomerDetailsPage extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[100],
+                                  color: AppTheme.grey100,
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: Colors.grey.withOpacity(0.3),
+                                    color: AppTheme.greyOpacity03,
                                   ),
                                 ),
                                 child: Row(
@@ -184,7 +185,7 @@ class CustomerDetailsPage extends StatelessWidget {
                                     Icon(
                                       Icons.sort,
                                       size: 14,
-                                      color: Colors.grey[600],
+                                      color: AppTheme.grey600,
                                     ),
                                     SizedBox(width: 4),
                                     Obx(
@@ -195,9 +196,9 @@ class CustomerDetailsPage extends StatelessWidget {
                                               value!,
                                             ),
                                         underline: SizedBox(),
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey[700],
+                                        style: AppStyles.custom(
+                                          size: 11,
+                                          color: AppTheme.grey700,
                                         ),
                                         items:
                                             [
@@ -229,10 +230,10 @@ class CustomerDetailsPage extends StatelessWidget {
                               icon: Icon(Icons.clear_all, size: 14),
                               label: Text(
                                 'Clear All',
-                                style: TextStyle(fontSize: 11),
+                                style: AppStyles.custom(size: 11),
                               ),
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.grey[600],
+                                foregroundColor: AppTheme.grey600,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 8,
                                   vertical: 4,
@@ -256,20 +257,20 @@ class CustomerDetailsPage extends StatelessWidget {
       () => FilterChip(
         label: Text(
           filter,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
+          style: AppStyles.custom(
+            size: 11,
+            weight: FontWeight.w500,
             color:
                 controller.selectedFilter.value == filter
-                    ? Colors.white
-                    : Colors.grey[700],
+                    ? AppTheme.backgroundLight
+                    : AppTheme.grey700,
           ),
         ),
         selected: controller.selectedFilter.value == filter,
         onSelected: (selected) => controller.onFilterChanged(filter),
         selectedColor: Color(0xFF6C5CE7),
-        backgroundColor: Colors.grey[100],
-        checkmarkColor: Colors.white,
+        backgroundColor: AppTheme.grey100,
+        checkmarkColor: AppTheme.backgroundLight,
         side: BorderSide.none,
         elevation: 0,
         pressElevation: 1,
@@ -324,11 +325,11 @@ class CustomerDetailsPage extends StatelessWidget {
         margin: EdgeInsets.only(right: 6), // Reduced margin
         padding: EdgeInsets.all(8), // Reduced padding
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           borderRadius: BorderRadius.circular(8), // Smaller radius
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: AppTheme.greyOpacity05,
               blurRadius: 6,
               offset: Offset(0, 1),
             ),
@@ -339,19 +340,19 @@ class CustomerDetailsPage extends StatelessWidget {
           children: [
             Text(
               count.toString(),
-              style: TextStyle(
-                fontSize: 14, // Reduced font size
-                fontWeight: FontWeight.bold,
+              style: AppStyles.custom(
+                size: 14, // Reduced font size
+                weight: FontWeight.bold,
                 color: color,
               ),
             ),
             SizedBox(height: 2),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 9, // Reduced font size
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+              style: AppStyles.custom(
+                size: 9, // Reduced font size
+                color: AppTheme.grey600,
+                weight: FontWeight.w500,
               ),
             ),
           ],
@@ -415,11 +416,11 @@ class CustomerDetailsPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.06),
+            color: AppTheme.greyOpacity06,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -461,12 +462,12 @@ class CustomerDetailsPage extends StatelessWidget {
                           child: Icon(
                             Icons.person,
                             size: 18,
-                            color: Colors.white,
+                            color: AppTheme.backgroundLight,
                           ),
                         )
                         : Icon(
                           controller.getCustomerTypeIcon(customer.customerType),
-                          color: Colors.white,
+                          color: AppTheme.backgroundLight,
                           size: 18,
                         ),
               ),
@@ -480,10 +481,10 @@ class CustomerDetailsPage extends StatelessWidget {
           // Customer name
           Text(
             customer.name,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+            style: AppStyles.custom(
+              size: 14,
+              weight: FontWeight.bold,
+              color: AppTheme.black87,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -494,15 +495,15 @@ class CustomerDetailsPage extends StatelessWidget {
           // Phone number
           Row(
             children: [
-              Icon(Icons.phone, size: 10, color: Colors.grey[500]),
+              Icon(Icons.phone, size: 10, color: AppTheme.grey500),
               SizedBox(width: 4),
               Expanded(
                 child: Text(
                   customer.primaryPhone,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+                  style: AppStyles.custom(
+                    size: 11,
+                    color: AppTheme.grey600,
+                    weight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -515,12 +516,12 @@ class CustomerDetailsPage extends StatelessWidget {
           // Location
           Row(
             children: [
-              Icon(Icons.location_on, size: 10, color: Colors.grey[500]),
+              Icon(Icons.location_on, size: 10, color: AppTheme.grey500),
               SizedBox(width: 4),
               Expanded(
                 child: Text(
                   customer.location,
-                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                  style: AppStyles.custom(size: 10, color: AppTheme.grey500),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -534,7 +535,7 @@ class CustomerDetailsPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: AppTheme.grey50,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -545,23 +546,23 @@ class CustomerDetailsPage extends StatelessWidget {
                     Icon(
                       Icons.shopping_cart,
                       size: 10,
-                      color: Colors.grey[500],
+                      color: AppTheme.grey500,
                     ),
                     SizedBox(width: 4),
                     Text(
                       'Purchase',
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.custom(
+                        size: 9,
+                        color: AppTheme.grey500,
+                        weight: FontWeight.w500,
                       ),
                     ),
                     Spacer(),
                     Text(
                       customer.formattedTotalPurchase,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                      style: AppStyles.custom(
+                        size: 11,
+                        weight: FontWeight.bold,
                         color: Color(0xFF51CF66),
                       ),
                     ),
@@ -576,27 +577,27 @@ class CustomerDetailsPage extends StatelessWidget {
                     Icon(
                       Icons.account_balance_wallet,
                       size: 10,
-                      color: Colors.grey[500],
+                      color: AppTheme.grey500,
                     ),
                     SizedBox(width: 4),
                     Text(
                       'Dues',
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.grey[500],
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.custom(
+                        size: 9,
+                        color: AppTheme.grey500,
+                        weight: FontWeight.w500,
                       ),
                     ),
                     Spacer(),
                     Text(
                       customer.formattedTotalDues,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                      style: AppStyles.custom(
+                        size: 11,
+                        weight: FontWeight.bold,
                         color:
                             customer.totalDues > 0
                                 ? Color(0xFFFF6B6B)
-                                : Colors.grey[600],
+                                : AppTheme.grey600,
                       ),
                     ),
                   ],
@@ -696,9 +697,9 @@ class CustomerDetailsPage extends StatelessWidget {
           SizedBox(width: 2),
           Text(
             type.length > 6 ? type.substring(0, 3) : type,
-            style: TextStyle(
-              fontSize: 8,
-              fontWeight: FontWeight.w600,
+            style: AppStyles.custom(
+              size: 8,
+              weight: FontWeight.w600,
               color: controller.getCustomerTypeColor(type),
             ),
           ),
@@ -716,7 +717,7 @@ class CustomerDetailsPage extends StatelessWidget {
           SizedBox(height: 16),
           Text(
             'Loading customers...',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            style: AppStyles.custom(size: 16, color: AppTheme.grey600),
           ),
         ],
       ),
@@ -728,14 +729,14 @@ class CustomerDetailsPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+          Icon(Icons.error_outline, size: 64, color: AppTheme.red300),
           SizedBox(height: 16),
           Text(
             'Error loading customers',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.red[600],
+            style: AppStyles.custom(
+              size: 18,
+              weight: FontWeight.w600,
+              color: AppTheme.red600,
             ),
           ),
           SizedBox(height: 8),
@@ -743,7 +744,7 @@ class CustomerDetailsPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(
               controller.errorMessage.value,
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              style: AppStyles.custom(size: 14, color: AppTheme.grey600),
               textAlign: TextAlign.center,
             ),
           ),
@@ -753,7 +754,7 @@ class CustomerDetailsPage extends StatelessWidget {
             child: Text('Retry'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF6C5CE7),
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.backgroundLight,
             ),
           ),
         ],
@@ -766,20 +767,20 @@ class CustomerDetailsPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
+          Icon(Icons.people_outline, size: 64, color: AppTheme.grey400),
           SizedBox(height: 16),
           Text(
             'No customers found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[600],
+            style: AppStyles.custom(
+              size: 18,
+              weight: FontWeight.w600,
+              color: AppTheme.grey600,
             ),
           ),
           SizedBox(height: 8),
           Text(
             'Try adjusting your filters or search terms',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            style: AppStyles.custom(size: 14, color: AppTheme.grey500),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16),
@@ -788,7 +789,7 @@ class CustomerDetailsPage extends StatelessWidget {
             child: Text('Clear Filters'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF6C5CE7),
-              foregroundColor: Colors.white,
+              foregroundColor: AppTheme.backgroundLight,
             ),
           ),
         ],

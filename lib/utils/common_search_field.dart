@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class CustomSearchWidget extends StatelessWidget {
   final String hintText;
@@ -50,14 +52,15 @@ class CustomSearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color primary = primaryColor ?? const Color(0xFF6C5CE7);
-    final Color bgColor = backgroundColor ?? Colors.grey[50]!;
+    final Color bgColor = backgroundColor ?? AppTheme.grey50!;
     final double radius = borderRadius ?? 12.0;
-    final EdgeInsetsGeometry padding = contentPadding ?? 
+    final EdgeInsetsGeometry padding =
+        contentPadding ??
         const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 
     // Use provided controller or create a reactive one
-    final TextEditingController textController = controller ?? 
-        TextEditingController(text: initialValue);
+    final TextEditingController textController =
+        controller ?? TextEditingController(text: initialValue);
 
     // For reactive behavior when no controller is provided
     final RxString searchValue = (initialValue ?? '').obs;
@@ -80,48 +83,38 @@ class CustomSearchWidget extends StatelessWidget {
         },
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: hintStyle ?? TextStyle(
-            color: Colors.grey[600],
-            fontSize: 14,
-          ),
+          hintStyle:
+              hintStyle ??
+              AppStyles.custom(color: AppTheme.grey600, fontSize: 14),
           prefixIcon: Icon(
             prefixIcon ?? Icons.search,
             color: primary,
             size: 20,
           ),
           suffixIcon: _buildSuffixIcon(
-            primary, 
-            textController, 
-            searchValue, 
-            showClearButton
+            primary,
+            textController,
+            searchValue,
+            showClearButton,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
-            borderSide: BorderSide(
-              color: primary.withOpacity(0.2),
-            ),
+            borderSide: BorderSide(color: primary.withOpacity(0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
-            borderSide: BorderSide(
-              color: primary.withOpacity(0.2),
-            ),
+            borderSide: BorderSide(color: primary.withOpacity(0.2)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
-            borderSide: BorderSide(
-              color: primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: primary, width: 2),
           ),
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
-            borderSide: BorderSide(
-              color: Colors.grey.withOpacity(0.3),
-            ),
+            borderSide: BorderSide(color: AppTheme.greyOpacity03),
           ),
           filled: true,
-          fillColor: enabled ? bgColor : Colors.grey[100],
+          fillColor: enabled ? bgColor : AppTheme.grey100,
           contentPadding: padding,
         ),
       ),
@@ -129,13 +122,13 @@ class CustomSearchWidget extends StatelessWidget {
   }
 
   Widget? _buildSuffixIcon(
-    Color primaryColor, 
+    Color primaryColor,
     TextEditingController textController,
     RxString searchValue,
-    bool showClear
+    bool showClear,
   ) {
     if (suffixIcon != null) return suffixIcon;
-    
+
     if (!showClear) return null;
 
     if (controller != null) {
@@ -145,38 +138,31 @@ class CustomSearchWidget extends StatelessWidget {
         builder: (context, value, child) {
           return value.text.isNotEmpty
               ? IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: Colors.grey,
-                    size: 18,
-                  ),
-                  onPressed: () {
-                    textController.clear();
-                    onChanged('');
-                    onClear?.call();
-                  },
-                )
+                icon: Icon(Icons.clear, color: AppTheme.primarygrey, size: 18),
+                onPressed: () {
+                  textController.clear();
+                  onChanged('');
+                  onClear?.call();
+                },
+              )
               : const SizedBox.shrink();
         },
       );
     } else {
       // Use reactive approach
       return Obx(
-        () => searchValue.value.isNotEmpty
-            ? IconButton(
-                icon: Icon(
-                  Icons.clear,
-                  color: Colors.grey,
-                  size: 18,
-                ),
-                onPressed: () {
-                  textController.clear();
-                  searchValue.value = '';
-                  onChanged('');
-                  onClear?.call();
-                },
-              )
-            : const SizedBox.shrink(),
+        () =>
+            searchValue.value.isNotEmpty
+                ? IconButton(
+                  icon: Icon(Icons.clear, color: AppTheme.primarygrey, size: 18),
+                  onPressed: () {
+                    textController.clear();
+                    searchValue.value = '';
+                    onChanged('');
+                    onClear?.call();
+                  },
+                )
+                : const SizedBox.shrink(),
       );
     }
   }
@@ -221,7 +207,7 @@ class SearchVariants {
       height: 56,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       borderRadius: 16,
-      textStyle: const TextStyle(fontSize: 16),
+      textStyle: AppStyles.custom(fontSize: 16),
     );
   }
 
@@ -239,7 +225,7 @@ class SearchVariants {
       initialValue: initialValue,
       onClear: onClear,
       primaryColor: primaryColor,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparent,
       borderRadius: 0,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );

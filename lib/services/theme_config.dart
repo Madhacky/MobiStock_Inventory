@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class ThemeController extends GetxController {
   static const String _themeKey = 'theme_mode';
-  
+
   // Observable theme mode
   final Rx<ThemeMode> _themeMode = ThemeMode.system.obs;
-  
+
   // Getter for theme mode
   ThemeMode get themeMode => _themeMode.value;
-  
+
   // Observable for current theme brightness
   final RxBool _isDarkMode = false.obs;
   bool get isDarkMode => _isDarkMode.value;
@@ -19,7 +20,7 @@ class ThemeController extends GetxController {
   void onInit() {
     super.onInit();
     _loadThemeFromPrefs();
-    
+
     // Listen to system theme changes
     ever(_themeMode, (ThemeMode mode) {
       _updateDarkMode();
@@ -31,11 +32,11 @@ class ThemeController extends GetxController {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedTheme = prefs.getString(_themeKey);
-      
+
       if (savedTheme != null) {
         _themeMode.value = _parseThemeMode(savedTheme);
       }
-      
+
       _updateDarkMode();
     } catch (e) {
       print('Error loading theme preference: $e');
@@ -85,14 +86,14 @@ class ThemeController extends GetxController {
     _themeMode.value = ThemeMode.light;
     Get.changeThemeMode(ThemeMode.light);
     await _saveThemeToPrefs(ThemeMode.light);
-    
+
     Get.snackbar(
       'Theme Changed',
       'Switched to Light Theme',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
-      backgroundColor: Colors.grey[100],
-      colorText: Colors.black87,
+      backgroundColor: AppTheme.grey100,
+      colorText: AppTheme.black87,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
     );
@@ -103,14 +104,14 @@ class ThemeController extends GetxController {
     _themeMode.value = ThemeMode.dark;
     Get.changeThemeMode(ThemeMode.dark);
     await _saveThemeToPrefs(ThemeMode.dark);
-    
+
     Get.snackbar(
       'Theme Changed',
       'Switched to Dark Theme',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
-      backgroundColor: Colors.grey[800],
-      colorText: Colors.white,
+      backgroundColor: AppTheme.grey800,
+      colorText: AppTheme.backgroundLight,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
     );
@@ -121,14 +122,16 @@ class ThemeController extends GetxController {
     _themeMode.value = ThemeMode.system;
     Get.changeThemeMode(ThemeMode.system);
     await _saveThemeToPrefs(ThemeMode.system);
-    
+
     Get.snackbar(
       'Theme Changed',
       'Switched to System Theme',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
-      backgroundColor: Get.isPlatformDarkMode ? Colors.grey[800] : Colors.grey[100],
-      colorText: Get.isPlatformDarkMode ? Colors.white : Colors.black87,
+      backgroundColor:
+          Get.isPlatformDarkMode ? AppTheme.grey800 : AppTheme.grey100,
+      colorText:
+          Get.isPlatformDarkMode ? AppTheme.backgroundLight : AppTheme.black87,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
     );

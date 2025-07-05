@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 
 class BillDetailsPage extends StatelessWidget {
@@ -11,7 +13,7 @@ class BillDetailsPage extends StatelessWidget {
     final Bill bill = Get.arguments as Bill;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.grey50,
       body: SafeArea(
         child: Column(
           children: [
@@ -47,10 +49,7 @@ class BillDetailsPage extends StatelessWidget {
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1E293B),
-            Color(0xFF334155),
-          ],
+          colors: [Color(0xFF1E293B), Color(0xFF334155)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -73,12 +72,12 @@ class BillDetailsPage extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: AppTheme.backgroundLight.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.receipt_long,
-                  color: Colors.white,
+                  color: AppTheme.backgroundLight,
                   size: 24,
                 ),
               ),
@@ -89,19 +88,19 @@ class BillDetailsPage extends StatelessWidget {
                   children: [
                     Text(
                       'Bill #${bill.billId}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      style: AppStyles.custom(
+                        size: 24,
+                        weight: FontWeight.bold,
+                        color: AppTheme.backgroundLight,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       bill.companyName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.custom(
+                        size: 16,
+                        color: AppTheme.backgroundLight.withOpacity(0.8),
+                        weight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -111,15 +110,27 @@ class BillDetailsPage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
-          Divider(color: Colors.white.withOpacity(0.2)),
+          Divider(color: AppTheme.backgroundLight.withOpacity(0.2)),
           SizedBox(height: 16),
           Row(
             children: [
-              _buildHeaderInfo('Date', bill.formattedDate, Icons.calendar_today),
+              _buildHeaderInfo(
+                'Date',
+                bill.formattedDate,
+                Icons.calendar_today,
+              ),
               SizedBox(width: 24),
-              _buildHeaderInfo('Items', '${bill.totalItems}', Icons.inventory_2),
+              _buildHeaderInfo(
+                'Items',
+                '${bill.totalItems}',
+                Icons.inventory_2,
+              ),
               Spacer(),
-              _buildHeaderInfo('Amount', bill.formattedAmount, Icons.currency_rupee),
+              _buildHeaderInfo(
+                'Amount',
+                bill.formattedAmount,
+                Icons.currency_rupee,
+              ),
             ],
           ),
         ],
@@ -130,25 +141,25 @@ class BillDetailsPage extends StatelessWidget {
   Widget _buildHeaderInfo(String label, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.8), size: 16),
+        Icon(icon, color: AppTheme.backgroundLight.withOpacity(0.8), size: 16),
         SizedBox(width: 6),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.white.withOpacity(0.7),
-                fontWeight: FontWeight.w500,
+              style: AppStyles.custom(
+                size: 12,
+                color: AppTheme.backgroundLight.withOpacity(0.7),
+                weight: FontWeight.w500,
               ),
             ),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+              style: AppStyles.custom(
+                size: 14,
+                color: AppTheme.backgroundLight,
+                weight: FontWeight.bold,
               ),
             ),
           ],
@@ -164,7 +175,7 @@ class BillDetailsPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -174,9 +185,9 @@ class BillDetailsPage extends StatelessWidget {
           SizedBox(width: 6),
           Text(
             bill.status,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+            style: AppStyles.custom(
+              size: 12,
+              weight: FontWeight.bold,
               color: statusColor,
             ),
           ),
@@ -189,11 +200,11 @@ class BillDetailsPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: AppTheme.greyOpacity08,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -205,9 +216,9 @@ class BillDetailsPage extends StatelessWidget {
         children: [
           Text(
             'Bill Summary',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            style: AppStyles.custom(
+              size: 18,
+              weight: FontWeight.bold,
               color: Color(0xFF1E293B),
             ),
           ),
@@ -240,13 +251,17 @@ class BillDetailsPage extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 20),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: Color(0xFFEF4444),
+                    size: 20,
+                  ),
                   SizedBox(width: 8),
                   Text(
                     'Outstanding Dues: ${bill.formattedDues}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                    style: AppStyles.custom(
+                      size: 14,
+                      weight: FontWeight.w600,
                       color: Color(0xFFEF4444),
                     ),
                   ),
@@ -259,7 +274,12 @@ class BillDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
+  Widget _buildSummaryCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12),
@@ -274,18 +294,18 @@ class BillDetailsPage extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              style: AppStyles.custom(
+                size: 18,
+                weight: FontWeight.bold,
                 color: color,
               ),
             ),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+              style: AppStyles.custom(
+                size: 12,
+                color: AppTheme.grey600,
+                weight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
             ),
@@ -298,11 +318,11 @@ class BillDetailsPage extends StatelessWidget {
   Widget _buildItemsSection(Bill bill) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: AppTheme.greyOpacity08,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -318,9 +338,9 @@ class BillDetailsPage extends StatelessWidget {
               children: [
                 Text(
                   'Items (${bill.items.length})',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: AppStyles.custom(
+                    size: 18,
+                    weight: FontWeight.bold,
                     color: Color(0xFF1E293B),
                   ),
                 ),
@@ -333,9 +353,9 @@ class BillDetailsPage extends StatelessWidget {
                   ),
                   child: Text(
                     'Total Qty: ${bill.totalItems}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                    style: AppStyles.custom(
+                      size: 12,
+                      weight: FontWeight.w600,
                       color: Color(0xFF1E293B),
                     ),
                   ),
@@ -347,10 +367,8 @@ class BillDetailsPage extends StatelessWidget {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: bill.items.length,
-            separatorBuilder: (context, index) => Divider(
-              height: 1,
-              color: Colors.grey[200],
-            ),
+            separatorBuilder:
+                (context, index) => Divider(height: 1, color: AppTheme.grey200),
             itemBuilder: (context, index) {
               final item = bill.items[index];
               return _buildItemCard(item, index);
@@ -363,7 +381,7 @@ class BillDetailsPage extends StatelessWidget {
 
   Widget _buildItemCard(BillItem item, int index) {
     Color companyColor = _getCompanyColor(item.company);
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -383,16 +401,16 @@ class BillDetailsPage extends StatelessWidget {
             child: Center(
               child: Text(
                 item.company.isNotEmpty ? item.company[0].toUpperCase() : 'M',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                style: AppStyles.custom(
+                  size: 18,
+                  weight: FontWeight.bold,
+                  color: AppTheme.backgroundLight,
                 ),
               ),
             ),
           ),
           SizedBox(width: 12),
-          
+
           // Item details
           Expanded(
             child: Column(
@@ -400,10 +418,10 @@ class BillDetailsPage extends StatelessWidget {
               children: [
                 Text(
                   item.model,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                  style: AppStyles.custom(
+                    size: 16,
+                    weight: FontWeight.bold,
+                    color: AppTheme.black87,
                   ),
                 ),
                 SizedBox(height: 4),
@@ -411,9 +429,9 @@ class BillDetailsPage extends StatelessWidget {
                   children: [
                     Text(
                       item.company,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                      style: AppStyles.custom(
+                        size: 14,
+                        weight: FontWeight.w600,
                         color: companyColor,
                       ),
                     ),
@@ -421,15 +439,15 @@ class BillDetailsPage extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: AppTheme.grey100,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         item.ramRomDisplay,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
+                        style: AppStyles.custom(
+                          size: 10,
+                          weight: FontWeight.w500,
+                          color: AppTheme.grey600,
                         ),
                       ),
                     ),
@@ -438,13 +456,13 @@ class BillDetailsPage extends StatelessWidget {
                 SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.palette, size: 12, color: Colors.grey[500]),
+                    Icon(Icons.palette, size: 12, color: AppTheme.grey500),
                     SizedBox(width: 4),
                     Text(
                       item.color,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
+                      style: AppStyles.custom(
+                        size: 12,
+                        color: AppTheme.grey600,
                       ),
                     ),
                   ],
@@ -452,7 +470,7 @@ class BillDetailsPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Quantity and price
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -465,9 +483,9 @@ class BillDetailsPage extends StatelessWidget {
                 ),
                 child: Text(
                   'Qty: ${item.qty}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                  style: AppStyles.custom(
+                    size: 12,
+                    weight: FontWeight.bold,
                     color: Color(0xFF10B981),
                   ),
                 ),
@@ -475,18 +493,15 @@ class BillDetailsPage extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 item.formattedPrice,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                style: AppStyles.custom(
+                  size: 16,
+                  weight: FontWeight.bold,
                   color: Color(0xFF1E293B),
                 ),
               ),
               Text(
                 'per unit',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[500],
-                ),
+                style: AppStyles.custom(size: 10, color: AppTheme.grey500),
               ),
             ],
           ),
@@ -499,11 +514,11 @@ class BillDetailsPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: AppTheme.greyOpacity08,
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -515,14 +530,18 @@ class BillDetailsPage extends StatelessWidget {
         children: [
           Text(
             'Amount Breakdown',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            style: AppStyles.custom(
+              size: 18,
+              weight: FontWeight.bold,
               color: Color(0xFF1E293B),
             ),
           ),
           SizedBox(height: 16),
-          _buildAmountRow('Subtotal (Without GST)', '₹${bill.withoutGst.toStringAsFixed(0)}', false),
+          _buildAmountRow(
+            'Subtotal (Without GST)',
+            '₹${bill.withoutGst.toStringAsFixed(0)}',
+            false,
+          ),
           SizedBox(height: 8),
           _buildAmountRow('GST', bill.formattedGst, false),
           SizedBox(height: 8),
@@ -531,33 +550,48 @@ class BillDetailsPage extends StatelessWidget {
           _buildAmountRow('Total Amount', bill.formattedAmount, true),
           if (bill.dues > 0) ...[
             SizedBox(height: 8),
-            _buildAmountRow('Paid Amount', '₹${(bill.amount - bill.dues).toStringAsFixed(0)}', false, Colors.green),
+            _buildAmountRow(
+              'Paid Amount',
+              '₹${(bill.amount - bill.dues).toStringAsFixed(0)}',
+              false,
+              AppTheme.primaryGreen,
+            ),
             SizedBox(height: 8),
-            _buildAmountRow('Outstanding Dues', bill.formattedDues, false, Colors.red),
+            _buildAmountRow(
+              'Outstanding Dues',
+              bill.formattedDues,
+              false,
+              AppTheme.primaryRed,
+            ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildAmountRow(String label, String amount, bool isTotal, [Color? color]) {
+  Widget _buildAmountRow(
+    String label,
+    String amount,
+    bool isTotal, [
+    Color? color,
+  ]) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: isTotal ? 16 : 14,
-            fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-            color: color ?? (isTotal ? Color(0xFF1E293B) : Colors.grey[700]),
+          style: AppStyles.custom(
+            size: isTotal ? 16 : 14,
+            weight: isTotal ? FontWeight.bold : FontWeight.w500,
+            color: color ?? (isTotal ? Color(0xFF1E293B) : AppTheme.grey700),
           ),
         ),
         Text(
           amount,
-          style: TextStyle(
-            fontSize: isTotal ? 18 : 14,
-            fontWeight: FontWeight.bold,
-            color: color ?? (isTotal ? Color(0xFF1E293B) : Colors.grey[800]),
+          style: AppStyles.custom(
+            size: isTotal ? 18 : 14,
+            weight: FontWeight.bold,
+            color: color ?? (isTotal ? Color(0xFF1E293B) : AppTheme.grey800),
           ),
         ),
       ],
@@ -571,7 +605,7 @@ class BillDetailsPage extends StatelessWidget {
         FloatingActionButton.extended(
           onPressed: () => _editBill(bill),
           backgroundColor: Color(0xFF10B981),
-          foregroundColor: Colors.white,
+          foregroundColor: AppTheme.backgroundLight,
           icon: Icon(Icons.edit),
           label: Text('Edit'),
           heroTag: "edit",
@@ -579,7 +613,7 @@ class BillDetailsPage extends StatelessWidget {
         FloatingActionButton.extended(
           onPressed: () => _shareBill(bill),
           backgroundColor: Color(0xFF3B82F6),
-          foregroundColor: Colors.white,
+          foregroundColor: AppTheme.backgroundLight,
           icon: Icon(Icons.share),
           label: Text('Share'),
           heroTag: "share",
@@ -587,7 +621,7 @@ class BillDetailsPage extends StatelessWidget {
         FloatingActionButton.extended(
           onPressed: () => _downloadBill(bill),
           backgroundColor: Color(0xFF8B5CF6),
-          foregroundColor: Colors.white,
+          foregroundColor: AppTheme.backgroundLight,
           icon: Icon(Icons.download),
           label: Text('Download'),
           heroTag: "download",
@@ -607,7 +641,7 @@ class BillDetailsPage extends StatelessWidget {
       Color(0xFFEC4899), // Pink
       Color(0xFF84CC16), // Lime
     ];
-    
+
     int hash = company.hashCode;
     return colors[hash.abs() % colors.length];
   }
@@ -621,9 +655,9 @@ class BillDetailsPage extends StatelessWidget {
       'Share',
       'Sharing Bill #${bill.billId}',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-      icon: const Icon(Icons.share, color: Colors.white),
+      backgroundColor: AppTheme.primaryBlue,
+      colorText: AppTheme.backgroundLight,
+      icon: const Icon(Icons.share, color: AppTheme.backgroundLight),
     );
   }
 
@@ -633,8 +667,8 @@ class BillDetailsPage extends StatelessWidget {
       'Downloading Bill #${bill.billId}',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Color(0xFF8B5CF6),
-      colorText: Colors.white,
-      icon: const Icon(Icons.download, color: Colors.white),
+      colorText: AppTheme.backgroundLight,
+      icon: const Icon(Icons.download, color: AppTheme.backgroundLight),
     );
   }
 }

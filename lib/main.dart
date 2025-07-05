@@ -5,7 +5,10 @@ import 'package:smartbecho/routes/app_pages.dart';
 import 'package:smartbecho/routes/app_routes.dart';
   
 import 'package:smartbecho/services/api_services.dart';
+import 'package:smartbecho/test.dart';
+import 'package:smartbecho/views/stock_overview/stock_overviwe.dart';
 import 'package:smartbecho/utils/page_not_found.dart';
+import 'package:smartbecho/views/setting/setting_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +41,7 @@ void main() async {
           name: AppRoutes.notFound,
           page: () => PageNotFoundScreen(),
         ),
+        //  home: Test(),
         debugShowCheckedModeBanner: false,
       );
     }

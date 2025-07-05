@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+// import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class DuesWidget {
- 
-
   static Widget container({required Widget child, double? height}) {
     return Container(
       height: height,
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: AppTheme.backgroundLight.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.black, // Change to your desired color
+          color: AppTheme.backgroundDark, // Change to your desired color
           width: 2, // Change to your desired border width
         ),
       ),
@@ -32,10 +31,10 @@ class DuesWidget {
       margin: EdgeInsets.all(10),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: AppTheme.backgroundLight.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.black, // Change to your desired color
+          color: AppTheme.backgroundDark, // Change to your desired color
           width: 2, // Change to your desired border width
         ),
       ),
@@ -43,9 +42,9 @@ class DuesWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title, style: TextStyle(color: AppTheme.backgroundDark)),
+          Text(title, style: AppStyles.custom(color: AppTheme.backgroundDark)),
           SizedBox(height: 8),
-          Text(amount, style: TextStyle(fontSize: 24, color: amountColor)),
+          Text(amount, style: AppStyles.custom(size: 24, color: amountColor)),
         ],
       ),
     );
@@ -55,7 +54,7 @@ class DuesWidget {
     required text,
     required Function() onTap,
     IconData? icon,
-    Color? backgroundColor = Colors.transparent,
+    Color? backgroundColor = AppTheme.transparent,
     Color? textColor,
     Color? borderside,
   }) {
@@ -64,11 +63,11 @@ class DuesWidget {
       child: ElevatedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, color: textColor),
-        label: Text(text, style: TextStyle(color: textColor)),
+        label: Text(text, style: AppStyles.custom(color: textColor)),
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           side: BorderSide(
-            color: borderside ?? Colors.transparent,
+            color: borderside ?? AppTheme.transparent,
             width: 2,
           ), // Set border color and width here
         ),
@@ -76,22 +75,22 @@ class DuesWidget {
     );
   }
 
-  static Widget linearProgresbar() {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: LinearPercentIndicator(
-        // center: Text("sfsf"),
-        // width: 100.0,
-        animation: true,
-        animationDuration: 1000,
-        lineHeight: 20,
-        percent: 0.5,
-        backgroundColor: Colors.grey,
-        progressColor: AppTheme.primaryLight,
-        barRadius: Radius.circular(20),
-      ),
-    );
-  }
+  // static Widget linearProgresbar() {
+  //   return Container(
+  //     padding: EdgeInsets.all(8),
+  //     child: LinearPercentIndicator(
+  //       // center: Text("sfsf"),
+  //       // width: 100.0,
+  //       animation: true,
+  //       animationDuration: 1000,
+  //       lineHeight: 20,
+  //       percent: 0.5,
+  //       backgroundColor: AppTheme.primarygrey
+  //       progressColor: AppTheme.primaryLight,
+  //       barRadius: Radius.circular(20),
+  //     ),
+  //   );
+  // }
 
   // static Widget circularProgresbar() {
   //   return Container(
@@ -102,7 +101,7 @@ class DuesWidget {
   //       percent: 0.4,
   //       center: Text("100%"),
   //       progressColor: AppTheme.primaryLight,
-  //       backgroundColor: Colors.grey,
+  //       backgroundColor: AppTheme.primarygrey
   //     ),
   //   );
   // }
@@ -127,15 +126,15 @@ class DuesWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 15,
+                    style: AppStyles.custom(
+                      size: 15,
                       color: AppTheme.backgroundDark,
                     ),
                   ),
                   Text(
                     date,
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: AppStyles.custom(
+                      size: 20,
                       color: AppTheme.backgroundDark,
                     ),
                   ),

@@ -1,27 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:flutter/services.dart';
-
-// Menu Item Model for Drawer
-class DrawerMenuItem {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final String category;
-  final bool isNew;
-
-  DrawerMenuItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-    this.category = 'General',
-    this.isNew = false,
-  });
-}
 
 class ModernAppDrawer extends StatefulWidget {
   @override
@@ -88,23 +70,23 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       category: 'Relations',
     ),
     DrawerMenuItem(
-      title: 'Stock History',
-      subtitle: 'View stock movements',
-      icon: Icons.history_rounded,
+      title: 'Account Management',
+      subtitle: 'Manage Account data',
+      icon: Icons.groups_3_sharp,
       color: Color(0xFFf093fb),
       category: 'Reports',
     ),
     DrawerMenuItem(
       title: 'Bill History',
-      subtitle: 'Track pending payments',
+      subtitle: 'Finance overview',
       icon: Icons.receipt_long_rounded,
       color: Color(0xFFfa709a),
       category: 'Finance',
     ),
     DrawerMenuItem(
-      title: 'Accounts Management',
-      subtitle: 'Financial overview',
-      icon: Icons.account_balance_rounded,
+      title: 'Dues Management',
+      subtitle: 'Track pending payments',
+      icon: Icons.receipt_rounded,
       color: Color(0xFF74b9ff),
       category: 'Finance',
     ),
@@ -144,7 +126,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: AppTheme.backgroundDark.withOpacity(0.1),
             blurRadius: 20,
             offset: Offset(2, 0),
           ),
@@ -194,7 +176,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                       ),
                       child: Icon(
                         Icons.store_rounded,
-                        color: Colors.white,
+                        color: AppTheme.backgroundLight,
                         size: 28,
                       ),
                     ),
@@ -204,7 +186,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'smartbecho',
+                            'Smart Becho',
                             style: AppStyles.custom(
                               size: 24,
                               weight: FontWeight.bold,
@@ -276,11 +258,11 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             margin: EdgeInsets.symmetric(horizontal: 20),
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.backgroundLight,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: AppTheme.backgroundDark.withOpacity(0.05),
                   blurRadius: 10,
                   offset: Offset(0, 2),
                 ),
@@ -289,9 +271,9 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             child: Row(
               children: [
                 _buildStatItem('Sales', '₹1.2M', Color(0xFF43e97b)),
-                Container(width: 1, height: 30, color: Colors.grey[300]),
+                Container(width: 1, height: 30, color: AppTheme.grey300),
                 _buildStatItem('Orders', '245', Color(0xFF667eea)),
-                Container(width: 1, height: 30, color: Colors.grey[300]),
+                Container(width: 1, height: 30, color: AppTheme.grey300),
                 _buildStatItem('Stock', '89%', Color(0xFFfa709a)),
               ],
             ),
@@ -351,7 +333,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       child: Material(
-        color: Colors.transparent,
+        color: AppTheme.transparent,
         child: InkWell(
           onTap: () => _handleMenuTap(item, index),
           borderRadius: BorderRadius.circular(16),
@@ -360,7 +342,9 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color:
-                  isSelected ? item.color.withOpacity(0.1) : Colors.transparent,
+                  isSelected
+                      ? item.color.withOpacity(0.1)
+                      : AppTheme.transparent,
               borderRadius: BorderRadius.circular(16),
               border:
                   isSelected
@@ -379,7 +363,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                   ),
                   child: Icon(
                     item.icon,
-                    color: isSelected ? Colors.white : item.color,
+                    color: isSelected ? AppTheme.backgroundLight : item.color,
                     size: 22,
                   ),
                 ),
@@ -414,7 +398,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                                 'NEW',
                                 style: AppStyles.custom(
                                   size: 8,
-                                  color: Colors.white,
+                                  color: AppTheme.backgroundLight,
                                   weight: FontWeight.bold,
                                 ),
                               ),
@@ -482,7 +466,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                     children: [
                       Icon(
                         Icons.support_agent_rounded,
-                        color: Colors.white,
+                        color: AppTheme.backgroundLight,
                         size: 18,
                       ),
                       SizedBox(width: 8),
@@ -490,7 +474,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         'Get Support',
                         style: AppStyles.custom(
                           size: 14,
-                          color: Colors.white,
+                          color: AppTheme.backgroundLight,
                           weight: FontWeight.w600,
                         ),
                       ),
@@ -524,10 +508,15 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     switch (_selectedIndex) {
       case 2:
         Get.toNamed(AppRoutes.inventory_management);
-        case 3:
+      case 3:
         Get.toNamed(AppRoutes.customerManagement);
-        case 5 :
+      case 4:
+        Get.toNamed(AppRoutes.accountManagement);
+      case 5:
         Get.toNamed(AppRoutes.billHistory);
+      case 6:
+        Get.toNamed(AppRoutes.customerDuesManagement);
+
       default:
         _showNavigationSnackbar(item.title, item.color);
     }
@@ -545,12 +534,31 @@ void _showNavigationSnackbar(String feature, Color color) {
     'Loading $feature module...',
     snackPosition: SnackPosition.TOP,
     backgroundColor: color,
-    colorText: Colors.white,
+    colorText: AppTheme.backgroundLight,
     margin: EdgeInsets.all(16),
     borderRadius: 12,
-    icon: Icon(Icons.launch_rounded, color: Colors.white),
+    icon: Icon(Icons.launch_rounded, color: AppTheme.backgroundLight),
     shouldIconPulse: false,
     duration: Duration(seconds: 2),
     animationDuration: Duration(milliseconds: 300),
   );
+}
+
+// Menu Item Model for Drawer
+class DrawerMenuItem {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final String category;
+  final bool isNew;
+
+  DrawerMenuItem({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    this.category = 'General',
+    this.isNew = false,
+  });
 }

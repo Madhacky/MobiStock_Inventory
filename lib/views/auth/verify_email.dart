@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/services/route_services.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
@@ -12,23 +14,20 @@ class VerifyEmailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final String email = Get.parameters['email'] ?? '';
     log(email);
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              buildCustomAppBar("Verify E-mail",isdark: false),
+              buildCustomAppBar("Verify E-mail", isdark: false),
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
@@ -52,8 +51,6 @@ class VerifyEmailScreen extends StatelessWidget {
     );
   }
 
- 
-  
   Widget _buildHeaderSection(String email) {
     return Column(
       children: [
@@ -61,26 +58,26 @@ class VerifyEmailScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: AppTheme.backgroundLight.withOpacity(0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: AppTheme.backgroundLight.withOpacity(0.3),
               width: 2,
             ),
           ),
           child: Icon(
             Icons.email_outlined,
             size: 40,
-            color: Colors.white,
+            color: AppTheme.backgroundLight,
           ),
         ),
         const SizedBox(height: 24),
         Text(
           'Check Your Email',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+          style: AppStyles.custom(
+            size: 32,
+            weight: FontWeight.bold,
+            color: AppTheme.backgroundLight,
             letterSpacing: -0.5,
           ),
         ),
@@ -90,19 +87,19 @@ class VerifyEmailScreen extends StatelessWidget {
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white.withOpacity(0.8),
-                fontWeight: FontWeight.w400,
-                height: 1.5,
+              style: AppStyles.custom(
+                size: 16,
+                color: AppTheme.backgroundLight.withOpacity(0.8),
+                weight: FontWeight.w400,
+                // height: 1.5,
               ),
               children: [
                 TextSpan(text: 'We\'ve sent a verification link to\n'),
                 TextSpan(
                   text: email,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                  style: AppStyles.custom(
+                    weight: FontWeight.w600,
+                    color: AppTheme.backgroundLight,
                   ),
                 ),
               ],
@@ -112,7 +109,7 @@ class VerifyEmailScreen extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildActionButtons() {
     return Column(
       children: [
@@ -150,10 +147,7 @@ class VerifyEmailScreen extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFFF6B6B),
-            Color(0xFFFF8E8E),
-          ],
+          colors: [Color(0xFFFF6B6B), Color(0xFFFF8E8E)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -166,7 +160,7 @@ class VerifyEmailScreen extends StatelessWidget {
         ],
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppTheme.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onPressed,
@@ -174,18 +168,14 @@ class VerifyEmailScreen extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                Icon(icon, color: AppTheme.backgroundLight, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   text,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: AppStyles.custom(
+                    color: AppTheme.backgroundLight,
+                    size: 18,
+                    weight: FontWeight.bold,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -205,25 +195,25 @@ class VerifyEmailScreen extends StatelessWidget {
       width: double.infinity,
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.backgroundLight.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppTheme.backgroundLight.withOpacity(0.2),
           width: 1,
         ),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: AppTheme.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: onPressed,
           child: Center(
             child: Text(
               text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              style: AppStyles.custom(
+                color: AppTheme.backgroundLight,
+                size: 16,
+                weight: FontWeight.w600,
               ),
             ),
           ),
@@ -236,10 +226,10 @@ class VerifyEmailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.backgroundLight.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppTheme.backgroundLight.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -247,18 +237,18 @@ class VerifyEmailScreen extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.backgroundLight.withOpacity(0.8),
             size: 18,
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Didn\'t receive the email? Check your spam folder or try resending.',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                height: 1.4,
+              style: AppStyles.custom(
+                color: AppTheme.backgroundLight.withOpacity(0.8),
+                size: 14,
+                weight: FontWeight.w400,
+                // height: 1.4,
               ),
             ),
           ),

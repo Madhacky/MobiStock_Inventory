@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 import 'package:smartbecho/controllers/dashboard_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthController controller = Get.find<AuthController>();
-
 
     return Scaffold(
       body: Container(
@@ -15,10 +16,7 @@ class LoginScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
           ),
         ),
         child: SafeArea(
@@ -36,9 +34,9 @@ class LoginScreen extends StatelessWidget {
                       _buildWelcomeSection(),
                       const SizedBox(height: 48),
                       _buildLoginForm(controller),
-                      
+
                       const SizedBox(height: 32),
-                      _buildLoginButton(controller,context),
+                      _buildLoginButton(controller, context),
                       const SizedBox(height: 24),
                       _buildForgotPasswordButton(controller),
                       const SizedBox(height: 40),
@@ -53,7 +51,7 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildWelcomeSection() {
     return Column(
       children: [
@@ -61,42 +59,42 @@ class LoginScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: AppTheme.backgroundLight.withOpacity(0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: AppTheme.backgroundLight.withOpacity(0.3),
               width: 2,
             ),
           ),
           child: Icon(
             Icons.person_outline_rounded,
             size: 40,
-            color: Colors.white,
+            color: AppTheme.backgroundLight,
           ),
         ),
         const SizedBox(height: 24),
         Text(
           'Welcome Back!',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+          style: AppStyles.custom(
+            size: 32,
+            weight: FontWeight.bold,
+            color: AppTheme.backgroundLight,
             letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Sign in to continue your journey',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.8),
-            fontWeight: FontWeight.w400,
+          style: AppStyles.custom(
+            size: 16,
+            color: AppTheme.backgroundLight.withOpacity(0.8),
+            weight: FontWeight.w400,
           ),
         ),
       ],
     );
   }
-  
+
   Widget _buildLoginForm(AuthController controller) {
     return Form(
       key: controller.loginFormKey,
@@ -110,27 +108,29 @@ class LoginScreen extends StatelessWidget {
             validator: controller.validateEmail,
           ),
           const SizedBox(height: 20),
-          Obx(() => _buildModernTextField(
-            controller: controller.passwordController,
-            hintText: 'Password',
-            prefixIcon: Icons.lock_outline,
-            obscureText: controller.obscurePassword.value,
-            suffixIcon: IconButton(
-              icon: Icon(
-                controller.obscurePassword.value 
-                  ? Icons.visibility_off_rounded 
-                  : Icons.visibility_rounded,
-                color: Colors.white.withOpacity(0.7),
+          Obx(
+            () => _buildModernTextField(
+              controller: controller.passwordController,
+              hintText: 'Password',
+              prefixIcon: Icons.lock_outline,
+              obscureText: controller.obscurePassword.value,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  controller.obscurePassword.value
+                      ? Icons.visibility_off_rounded
+                      : Icons.visibility_rounded,
+                  color: AppTheme.backgroundLight.withOpacity(0.7),
+                ),
+                onPressed: controller.togglePasswordVisibility,
               ),
-              onPressed: controller.togglePasswordVisibility,
+              validator: controller.validatePassword,
             ),
-            validator: controller.validatePassword,
-          )),
+          ),
         ],
       ),
     );
   }
-  
+
   Widget _buildModernTextField({
     required TextEditingController controller,
     required String hintText,
@@ -142,10 +142,10 @@ class LoginScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.backgroundLight.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppTheme.backgroundLight.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -154,21 +154,21 @@ class LoginScreen extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+        style: AppStyles.custom(
+          color: AppTheme.backgroundLight,
+          size: 16,
+          weight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
+          hintStyle: AppStyles.custom(
+            color: AppTheme.backgroundLight.withOpacity(0.6),
+            size: 16,
+            weight: FontWeight.w400,
           ),
           prefixIcon: Icon(
             prefixIcon,
-            color: Colors.white.withOpacity(0.7),
+            color: AppTheme.backgroundLight.withOpacity(0.7),
             size: 22,
           ),
           suffixIcon: suffixIcon,
@@ -181,57 +181,63 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-  
-  Widget _buildLoginButton(AuthController controller,BuildContext context) {
-    return Obx(() => Container(
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFF6B6B),
-            Color(0xFFFF8E8E),
+
+  Widget _buildLoginButton(AuthController controller, BuildContext context) {
+    return Obx(
+      () => Container(
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFF6B6B), Color(0xFFFF8E8E)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFFFF6B6B).withOpacity(0.3),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: Offset(0, 8),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFFFF6B6B).withOpacity(0.3),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap:()=> controller.isLoading.value ? null : controller.login(context),
-          child: Center(
-            child: controller.isLoading.value 
-              ? SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-              : Text(
-                  'Sign In',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
+        child: Material(
+          color: AppTheme.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap:
+                () =>
+                    controller.isLoading.value
+                        ? null
+                        : controller.login(context),
+            child: Center(
+              child:
+                  controller.isLoading.value
+                      ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppTheme.backgroundLight,
+                          ),
+                        ),
+                      )
+                      : Text(
+                        'Sign In',
+                        style: AppStyles.custom(
+                          color: AppTheme.backgroundLight,
+                          size: 18,
+                          weight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
-  
+
   Widget _buildForgotPasswordButton(AuthController controller) {
     return TextButton(
       onPressed: controller.goToResetPassword,
@@ -241,26 +247,26 @@ class LoginScreen extends StatelessWidget {
       child: Text(
         'Forgot Password?',
         style: TextStyle(
-          color: Colors.white.withOpacity(0.9),
+          color: AppTheme.backgroundLight.withOpacity(0.9),
           fontSize: 16,
           fontWeight: FontWeight.w600,
           decoration: TextDecoration.underline,
-          decorationColor: Colors.white.withOpacity(0.6),
+          decorationColor: AppTheme.backgroundLight.withOpacity(0.6),
         ),
       ),
     );
   }
-  
+
   Widget _buildSignupPrompt(AuthController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           "Don't have an account? ",
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
+          style: AppStyles.custom(
+            color: AppTheme.backgroundLight.withOpacity(0.8),
+            size: 16,
+            weight: FontWeight.w400,
           ),
         ),
         TextButton(
@@ -273,11 +279,11 @@ class LoginScreen extends StatelessWidget {
           child: Text(
             'Sign Up',
             style: TextStyle(
-              color: Colors.white,
+              color: AppTheme.backgroundLight,
               fontSize: 16,
               fontWeight: FontWeight.bold,
               decoration: TextDecoration.underline,
-              decorationColor: Colors.white,
+              decorationColor: AppTheme.backgroundLight,
             ),
           ),
         ),

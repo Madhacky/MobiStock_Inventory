@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_operation_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
@@ -21,9 +22,7 @@ class AddBillForm extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildFormContent(controller),
-            ],
+            children: [_buildFormContent(controller)],
           ),
         ),
       ),
@@ -32,7 +31,7 @@ class AddBillForm extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BillOperationController controller) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundLight,
       elevation: 0,
       centerTitle: true,
       leading: Padding(
@@ -52,7 +51,11 @@ class AddBillForm extends StatelessWidget {
                 color: const Color(0xFF10B981),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.receipt_long, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.receipt_long,
+                color: AppTheme.backgroundLight,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -67,12 +70,12 @@ class AddBillForm extends StatelessWidget {
                       weight: FontWeight.w600,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Create a new billing entry',
-                    style: TextStyle(
+                    style: AppStyles.custom(
                       color: Color(0xFF6B7280),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
+                      size: 12,
+                      weight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -88,11 +91,11 @@ class AddBillForm extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: AppTheme.greyOpacity08,
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -162,7 +165,7 @@ class AddBillForm extends StatelessWidget {
                     prefixText: '₹ ',
                     keyboardType: TextInputType.number,
                     validator: controller.validateAmount,
-                   // readOnly: true,
+                    // readOnly: true,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -173,7 +176,7 @@ class AddBillForm extends StatelessWidget {
                     hintText: '0.00',
                     prefixText: '₹ ',
                     keyboardType: TextInputType.number,
-                   // readOnly: true,
+                    // readOnly: true,
                   ),
                 ),
               ],
@@ -184,34 +187,38 @@ class AddBillForm extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Items List
-            Obx(() => Column(
-              children: [
-                ...controller.billItems.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  BillItem item = entry.value;
-                  return _buildItemCard(controller, item, index);
-                }).toList(),
-                
-                // Add Item Button
-                Container(
-                  width: double.infinity,
-                  height: 48,
-                  margin: const EdgeInsets.only(top: 12),
-                  child: OutlinedButton.icon(
-                    onPressed: controller.addNewItem,
-                    icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Add Item'),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFF10B981).withOpacity(0.3)),
-                      foregroundColor: const Color(0xFF10B981),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+            Obx(
+              () => Column(
+                children: [
+                  ...controller.billItems.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    BillItem item = entry.value;
+                    return _buildItemCard(controller, item, index);
+                  }).toList(),
+
+                  // Add Item Button
+                  Container(
+                    width: double.infinity,
+                    height: 48,
+                    margin: const EdgeInsets.only(top: 12),
+                    child: OutlinedButton.icon(
+                      onPressed: controller.addNewItem,
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Add Item'),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: const Color(0xFF10B981).withOpacity(0.3),
+                        ),
+                        foregroundColor: const Color(0xFF10B981),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            )),
+                ],
+              ),
+            ),
 
             const SizedBox(height: 32),
 
@@ -223,21 +230,22 @@ class AddBillForm extends StatelessWidget {
                     child: Container(
                       height: 48,
                       child: OutlinedButton(
-                        onPressed: controller.isAddingBill.value
-                            ? null
-                            : controller.cancelAddBill,
+                        onPressed:
+                            controller.isAddingBill.value
+                                ? null
+                                : controller.cancelAddBill,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                          side: BorderSide(color: AppTheme.greyOpacity03),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Cancel',
-                          style: TextStyle(
+                          style: AppStyles.custom(
                             color: Color(0xFF6B7280),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            size: 12,
+                            weight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -248,9 +256,10 @@ class AddBillForm extends StatelessWidget {
                     child: Container(
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: controller.isAddingBill.value
-                            ? null
-                            : controller.addBillToSystem,
+                        onPressed:
+                            controller.isAddingBill.value
+                                ? null
+                                : controller.addBillToSystem,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B981),
                           shape: RoundedRectangleBorder(
@@ -258,36 +267,37 @@ class AddBillForm extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: controller.isAddingBill.value
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              )
-                            : const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    'Create Bill',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
+                        child:
+                            controller.isAddingBill.value
+                                ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppTheme.backgroundLight,
                                     ),
                                   ),
-                                ],
-                              ),
+                                )
+                                : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                      color: AppTheme.backgroundLight,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'Create Bill',
+                                      style: AppStyles.custom(
+                                        color: AppTheme.backgroundLight,
+                                        size: 12,
+                                        weight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                       ),
                     ),
                   ),
@@ -297,38 +307,39 @@ class AddBillForm extends StatelessWidget {
 
             // Error Message Display
             Obx(
-              () => controller.hasAddBillError.value
-                  ? Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.red.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 20,
+              () =>
+                  controller.hasAddBillError.value
+                      ? Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryRed.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppTheme.primaryRed.withOpacity(0.3),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              controller.addBillErrorMessage.value,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: AppTheme.primaryRed,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                controller.addBillErrorMessage.value,
+                                style: AppStyles.custom(
+                                  color: AppTheme.primaryRed,
+                                  size: 12,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+                          ],
+                        ),
+                      )
+                      : const SizedBox.shrink(),
             ),
           ],
         ),
@@ -340,87 +351,103 @@ class AddBillForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Payment Status',
-          style: TextStyle(
+          style: AppStyles.custom(
             color: Color(0xFF374151),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+            size: 13,
+            weight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 8),
-        Obx(() => Row(
-          children: [
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  controller.isPaid.value = true;
-                  controller.calculateTotals();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: controller.isPaid.value 
-                        ? const Color(0xFF10B981) 
-                        : Colors.grey.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: controller.isPaid.value 
-                          ? const Color(0xFF10B981) 
-                          : Colors.grey.withOpacity(0.3),
+        Obx(
+          () => Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    controller.isPaid.value = true;
+                    controller.calculateTotals();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color:
+                          controller.isPaid.value
+                              ? const Color(0xFF10B981)
+                              : AppTheme.greyOpacity01,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color:
+                            controller.isPaid.value
+                                ? const Color(0xFF10B981)
+                                : AppTheme.greyOpacity03,
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    'Paid',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: controller.isPaid.value ? Colors.white : const Color(0xFF6B7280),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  controller.isPaid.value = false;
-                  controller.calculateTotals();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: !controller.isPaid.value 
-                        ? const Color(0xFFEF4444) 
-                        : Colors.grey.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: !controller.isPaid.value 
-                          ? const Color(0xFFEF4444) 
-                          : Colors.grey.withOpacity(0.3),
-                    ),
-                  ),
-                  child: Text(
-                    'Unpaid',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: !controller.isPaid.value ? Colors.white : const Color(0xFF6B7280),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    child: Text(
+                      'Paid',
+                      textAlign: TextAlign.center,
+                      style: AppStyles.custom(
+                        color:
+                            controller.isPaid.value
+                                ? AppTheme.backgroundLight
+                                : const Color(0xFF6B7280),
+                        size: 14,
+                        weight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        )),
+              const SizedBox(width: 12),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    controller.isPaid.value = false;
+                    controller.calculateTotals();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color:
+                          !controller.isPaid.value
+                              ? const Color(0xFFEF4444)
+                              : AppTheme.greyOpacity01,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color:
+                            !controller.isPaid.value
+                                ? const Color(0xFFEF4444)
+                                : AppTheme.greyOpacity03,
+                      ),
+                    ),
+                    child: Text(
+                      'Unpaid',
+                      textAlign: TextAlign.center,
+                      style: AppStyles.custom(
+                        color:
+                            !controller.isPaid.value
+                                ? AppTheme.backgroundLight
+                                : const Color(0xFF6B7280),
+                        size: 14,
+                        weight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildItemCard(BillOperationController controller, BillItem item, int index) {
+  Widget _buildItemCard(
+    BillOperationController controller,
+    BillItem item,
+    int index,
+  ) {
     // Set initial values for controllers if they are empty
     if (item.priceController.text.isEmpty && item.sellingPrice.isNotEmpty) {
       item.priceController.text = item.sellingPrice;
@@ -433,9 +460,9 @@ class AddBillForm extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.05),
+        color: AppTheme.greyOpacity05,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: AppTheme.greyOpacity01),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -445,10 +472,10 @@ class AddBillForm extends StatelessWidget {
             children: [
               Text(
                 'Item ${index + 1}',
-                style: const TextStyle(
+                style: AppStyles.custom(
                   color: Color(0xFF374151),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  size: 14,
+                  weight: FontWeight.w600,
                 ),
               ),
               GestureDetector(
@@ -456,12 +483,12 @@ class AddBillForm extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: AppTheme.primaryRed.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
                     Icons.delete_outline,
-                    color: Colors.red,
+                    color: AppTheme.primaryRed,
                     size: 16,
                   ),
                 ),
@@ -469,7 +496,7 @@ class AddBillForm extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Company and Model
           Row(
             children: [
@@ -499,7 +526,7 @@ class AddBillForm extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // RAM and Storage
           Row(
             children: [
@@ -529,7 +556,7 @@ class AddBillForm extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Color, Price and Quantity
           Row(
             children: [
@@ -591,10 +618,10 @@ class AddBillForm extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           title,
-          style: const TextStyle(
+          style: AppStyles.custom(
             color: Color(0xFF1A1A1A),
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+            size: 16,
+            weight: FontWeight.w600,
           ),
         ),
       ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/dashboard_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 Widget buildErrorCard(
@@ -12,12 +13,12 @@ Widget buildErrorCard(
   return Container(
     padding: EdgeInsets.all(screenWidth * 0.04),
     decoration: BoxDecoration(
-      color: Colors.red[50],
+      color: AppTheme.red50,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: Colors.red[200]!, width: 1),
+      border: Border.all(color: AppTheme.red200, width: 1),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: AppTheme.backgroundDark.withOpacity(0.05),
           blurRadius: 8,
           offset: Offset(0, 2),
         ),
@@ -29,14 +30,14 @@ Widget buildErrorCard(
       children: [
         Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red[600], size: 20),
+            Icon(Icons.error_outline, color: AppTheme.red600, size: 20),
             SizedBox(width: 8),
             Text(
               'Sales Summary',
               style: AppStyles.custom(
                 size: isSmallScreen ? 14 : 16,
                 weight: FontWeight.bold,
-                color: Colors.red[800],
+                color: AppTheme.red800,
               ),
             ),
           ],
@@ -48,7 +49,7 @@ Widget buildErrorCard(
               : 'Unknown error occurred',
           style: AppStyles.custom(
             size: isSmallScreen ? 10 : 12,
-            color: Colors.red[700],
+            color: AppTheme.red700,
           ),
         ),
         SizedBox(height: screenHeight * 0.01),
@@ -56,15 +57,15 @@ Widget buildErrorCard(
           onPressed: () {},
           // controller.fetchSalesSummary(),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red[600],
-            foregroundColor: Colors.white,
+            backgroundColor: AppTheme.red600,
+            foregroundColor: AppTheme.backgroundLight,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           child: Text(
             'Retry',
             style: AppStyles.custom(
               size: isSmallScreen ? 10 : 12,
-              color: Colors.white,
+              color: AppTheme.backgroundLight,
             ),
           ),
         ),

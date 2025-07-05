@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class PageNotFoundScreen extends StatelessWidget {
   const PageNotFoundScreen({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class PageNotFoundScreen extends StatelessWidget {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: AppTheme.primaryBlue.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -30,15 +32,15 @@ class PageNotFoundScreen extends StatelessWidget {
                         Icon(
                           Icons.error_outline,
                           size: 80,
-                          color: Colors.blue[600],
+                          color: AppTheme.blue600,
                         ),
                         const SizedBox(height: 8),
                         Text(
                           '404',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[600],
+                          style: AppStyles.custom(
+                            size: 32,
+                            weight: FontWeight.bold,
+                            color: AppTheme.blue600,
                           ),
                         ),
                       ],
@@ -46,28 +48,28 @@ class PageNotFoundScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 32),
-                
+
                 Text(
                   'Oops! Page not found',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                  style: AppStyles.custom(
+                    size: 28,
+                    weight: FontWeight.bold,
+                    color: AppTheme.grey800,
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 Text(
                   'The page you\'re looking for doesn\'t exist.\nIt might have been moved or deleted.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                    height: 1.6,
+                  style: AppStyles.custom(
+                    size: 16,
+                    color: AppTheme.grey600,
+                    // height: 1.6,
                   ),
                 ),
                 const SizedBox(height: 48),
-                
+
                 Row(
                   children: [
                     Expanded(
@@ -82,8 +84,8 @@ class PageNotFoundScreen extends StatelessWidget {
                         icon: const Icon(Icons.arrow_back),
                         label: const Text('Go Back'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                          backgroundColor: AppTheme.primaryBlue,
+                          foregroundColor: AppTheme.backgroundLight,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -98,9 +100,9 @@ class PageNotFoundScreen extends StatelessWidget {
                         icon: const Icon(Icons.home),
                         label: const Text('Home'),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.blue,
+                          foregroundColor: AppTheme.primaryBlue,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: const BorderSide(color: Colors.blue),
+                          side: const BorderSide(color: AppTheme.primaryBlue),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/views/dues%20management/widgets/dusewidgets.dart';
 
 class DuesManagement extends StatefulWidget {
@@ -127,8 +128,8 @@ class dusecoustomerdetailscard extends StatelessWidget {
                                   radius: 25,
                                   child: Text(
                                     "DK",
-                                    style: TextStyle(
-                                      fontSize: 20,
+                                    style: AppStyles.custom(
+                                      size: 20,
                                       color: AppTheme.backgroundDark,
                                     ),
                                   ),
@@ -138,8 +139,8 @@ class dusecoustomerdetailscard extends StatelessWidget {
                                   children: [
                                     Text(
                                       "Default name",
-                                      style: TextStyle(
-                                        fontSize: 25,
+                                      style: AppStyles.custom(
+                                        size: 25,
                                         color: AppTheme.backgroundDark,
                                       ),
                                     ),
@@ -152,8 +153,8 @@ class dusecoustomerdetailscard extends StatelessWidget {
                                         ),
                                         Text(
                                           " Bill  #",
-                                          style: TextStyle(
-                                            fontSize: 16,
+                                          style: AppStyles.custom(
+                                            size: 16,
                                             color: AppTheme.backgroundDark,
                                           ),
                                         ),
@@ -183,19 +184,19 @@ class dusecoustomerdetailscard extends StatelessWidget {
                                   children: [
                                     Text(
                                       "Payment Progress",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                      style: AppStyles.custom(
+                                        weight: FontWeight.bold,
                                       ),
                                     ),
                                     Text(
                                       "100.0%",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                      style: AppStyles.custom(
+                                        weight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
-                                DuesWidget.linearProgresbar(),
+                                // DuesWidget.linearProgresbar(),
                               ],
                             ),
                           ),
@@ -293,7 +294,7 @@ class dusecoustomerdetailscard extends StatelessWidget {
                     ),
 
                     // SizedBox(height: 10),
-                    // Text("Transaction History",style: TextStyle(fontSize: 20, fontWeight:FontWeight.bold ,color:AppTheme.backgroundDark),),
+                    // Text("Transaction History",style: AppStyles.custom(size: 20, weight:FontWeight.bold ,color:AppTheme.backgroundDark),),
                     // Divider(),
                     // ListView.builder(
                     //   itemCount: 12,
@@ -306,9 +307,9 @@ class dusecoustomerdetailscard extends StatelessWidget {
               SizedBox(height: 10),
               Text(
                 "Payment History",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: AppStyles.custom(
+                  size: 20,
+                  weight: FontWeight.bold,
                   color: AppTheme.backgroundDark,
                 ),
               ),
@@ -322,10 +323,10 @@ class dusecoustomerdetailscard extends StatelessWidget {
               ListTile(
                 leading: Text(
                   "Payment",
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: AppStyles.custom(
+                    size: 20,
                     color: AppTheme.backgroundDark,
-                    fontWeight: FontWeight.bold,
+                    weight: FontWeight.bold,
                   ),
                 ),
                 trailing: Flexible(
@@ -334,19 +335,19 @@ class dusecoustomerdetailscard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
 
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: AppStyles.custom(
+                      size: 20,
                       color: AppTheme.backgroundDark,
-                      fontWeight: FontWeight.bold,
+                      weight: FontWeight.bold,
                     ),
                   ),
                 ),
                 title: Text(
                   "Date",
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: AppStyles.custom(
+                    size: 20,
                     color: AppTheme.backgroundDark,
-                    fontWeight: FontWeight.bold,
+                    weight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -375,10 +376,10 @@ class dusepaymenthistorylist extends StatelessWidget {
     return ListTile(
       leading: Text(
         "4000",
-        style: TextStyle(
-          fontSize: 25,
+        style: AppStyles.custom(
+          size: 25,
           color: AppTheme.successDark,
-          fontWeight: FontWeight.bold,
+          weight: FontWeight.bold,
         ),
       ),
       trailing: Flexible(
@@ -387,18 +388,18 @@ class dusepaymenthistorylist extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
 
-          style: TextStyle(
-            fontSize: 20,
+          style: AppStyles.custom(
+            size: 20,
             color: AppTheme.backgroundDark,
-            fontWeight: FontWeight.bold,
+            weight: FontWeight.bold,
           ),
         ),
       ),
       title: Text(
         "20/06/2025",
-        style: TextStyle(
+        style: AppStyles.custom(
           color: AppTheme.backgroundDark,
-          fontWeight: FontWeight.bold,
+          weight: FontWeight.bold,
         ),
       ),
     );
@@ -414,13 +415,13 @@ class dusecoustomerlist extends StatelessWidget {
       margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(50.0)),
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: AppTheme.backgroundDark),
       ),
       child: ListTile(
         leading: CircleAvatar(radius: 30, child: Text("DK")),
         title: Text(
           "Customer Name",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: AppStyles.custom(size: 20, weight: FontWeight.bold),
         ),
         subtitle: Row(
           children: [Icon(Icons.date_range, size: 20), Text("Bill #")],
@@ -430,14 +431,14 @@ class dusecoustomerlist extends StatelessWidget {
           children: [
             Text(
               "Remaining",
-              style: TextStyle(fontSize: 15, color: AppTheme.backgroundDark),
+              style: AppStyles.custom(size: 15, color: AppTheme.backgroundDark),
             ),
             SizedBox(height: 8),
             Text(
               "₹ -4356",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              style: AppStyles.custom(
+                size: 24,
+                weight: FontWeight.bold,
                 color: AppTheme.errorLight,
               ),
             ),
@@ -470,11 +471,11 @@ class _buildcard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: AppTheme.greyOpacity01,
               spreadRadius: 1,
               blurRadius: 4,
               offset: Offset(0, 2),
@@ -492,10 +493,10 @@ class _buildcard extends StatelessWidget {
                 Flexible(
                   child: Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[600],
+                    style: AppStyles.custom(
+                      size: 12,
+                      weight: FontWeight.bold,
+                      color: AppTheme.grey600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -515,16 +516,16 @@ class _buildcard extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+              style: AppStyles.custom(
+                size: 20,
+                weight: FontWeight.bold,
+                color: AppTheme.grey600,
               ),
             ),
             SizedBox(height: 8),
             Text(
               "subtitle",
-              style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+              style: AppStyles.custom(size: 10, color: AppTheme.grey500),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

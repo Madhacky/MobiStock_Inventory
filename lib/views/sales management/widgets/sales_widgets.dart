@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class SalesWidgets {
   static Widget salesTitle({required String title}) {
     return Text(
       title,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-        fontSize: 20.0,
+      style: AppStyles.custom(
+        weight: FontWeight.bold,
+        color: AppTheme.backgroundDark,
+        fontSize: 20,
       ),
     );
   }
@@ -22,10 +24,10 @@ class SalesWidgets {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.backgroundLight.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppTheme.backgroundLight.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -38,7 +40,7 @@ class SalesWidgets {
           labelText: label,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
-            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+            borderSide: BorderSide(color: AppTheme.primarygrey, width: 1.0),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -70,7 +72,10 @@ class SalesWidgets {
                   value: item,
                   child: Text(
                     item,
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    style: AppStyles.custom(
+                      size: 16,
+                      color: AppTheme.backgroundDark,
+                    ),
                   ),
                 ),
               )
@@ -81,7 +86,7 @@ class SalesWidgets {
         }
       },
       isExpanded: true,
-      // dropdownColor: Colors.white.opacity(0.9)zz,
+      // dropdownColor: AppTheme.backgroundLight.opacity(0.9)zz,
       decoration: InputDecoration(
         labelText: label,
         // hintText: hintText,
@@ -93,13 +98,10 @@ class SalesWidgets {
 
         // enabledBorder: OutlineInputBorder(
         //   borderRadius: BorderRadius.circular(8.0),
-        //   borderSide: BorderSide(color: Colors.grey, width: 1.0),
+        //   borderSide: BorderSide(color: AppTheme.primarygrey width: 1.0),
         // ),
       ),
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.deepPurple,
-      ),
+      icon: Icon(Icons.arrow_drop_down, color: Colors.deepPurple),
     );
   }
 
@@ -130,20 +132,21 @@ class SalesWidgets {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color ?? Colors.blue,
-        foregroundColor: textColor ?? Colors.white,
+        backgroundColor: color ?? AppTheme.primaryBlue,
+        foregroundColor: textColor ?? AppTheme.backgroundLight,
         minimumSize: Size(width ?? double.infinity, height ?? 50),
       ),
-      child: Text(text, style: TextStyle(fontSize: fontSize ?? 16)),
+      child: Text(text, style: AppStyles.custom(size: fontSize ?? 16)),
     );
   }
-  static  Widget previewItem(String label, String value) {
+
+  static Widget previewItem(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$label:", style: TextStyle(fontWeight: FontWeight.w600)),
+          Text("$label:", style: AppStyles.custom(weight: FontWeight.w600)),
           Flexible(child: Text(value, textAlign: TextAlign.right)),
         ],
       ),

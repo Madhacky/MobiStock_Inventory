@@ -27,9 +27,9 @@ class ToastCustom {
   // Success toast
   static successToast(BuildContext context, String message) {
     MotionToast.success(
-      title: const Text(
+      title:  Text(
         'Successful',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: AppStyles.custom(weight: FontWeight.bold),
       ),
       description: Text(
         message,
@@ -48,9 +48,9 @@ class ToastCustom {
   // Info toast
   static infoToast(BuildContext context, String message) {
     MotionToast.info(
-      title: const Text(
+      title:  Text(
         'Info',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: AppStyles.custom(weight: FontWeight.bold),
       ),
       description: Text(
         message,

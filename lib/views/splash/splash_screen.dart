@@ -3,6 +3,8 @@ import 'package:smartbecho/services/jwt_validator.dart';
 import 'package:smartbecho/services/route_services.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:smartbecho/services/validate_user.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -12,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
-  
+
   late AnimationController _fadeController;
   late AnimationController _scaleController;
   late AnimationController _rotateController;
@@ -78,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       // First check if user has basic login status
       bool isLoggedIn = await ValidateUser.checkLoginStatus();
-      
+
       if (!isLoggedIn) {
         RouteService.toLogin();
         return;
@@ -86,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       // Get JWT token using SharedPreferencesHelper
       final token = await SharedPreferencesHelper.getJwtToken();
-      
+
       if (token == null || token.isEmpty) {
         // No token found, navigate to login
         RouteService.toLogin();
@@ -95,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       // Check if token is expired
       final isExpired = JwtHelper.isTokenExpired(token);
-      
+
       if (isExpired) {
         // Token expired, clear login status and navigate to login
         print('JWT Token expired, redirecting to login');
@@ -180,14 +182,15 @@ class _SplashScreenState extends State<SplashScreen>
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
                                     colors: [
-                                      Colors.white.withOpacity(0.3),
-                                      Colors.white.withOpacity(0.1),
-                                      Colors.transparent,
+                                      AppTheme.backgroundLight.withOpacity(0.3),
+                                      AppTheme.backgroundLight.withOpacity(0.1),
+                                      AppTheme.transparent,
                                     ],
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.white.withOpacity(0.3),
+                                      color: AppTheme.backgroundLight
+                                          .withOpacity(0.3),
                                       spreadRadius: 10,
                                       blurRadius: 30,
                                       offset: Offset(0, 0),
@@ -207,15 +210,15 @@ class _SplashScreenState extends State<SplashScreen>
                                             shape: BoxShape.circle,
                                             gradient: LinearGradient(
                                               colors: [
-                                                Colors.white,
-                                                Colors.white.withOpacity(0.8),
+                                                AppTheme.backgroundLight,
+                                                AppTheme.backgroundLight
+                                                    .withOpacity(0.8),
                                               ],
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.2,
-                                                ),
+                                                color: AppTheme.backgroundDark
+                                                    .withOpacity(0.2),
                                                 spreadRadius: 2,
                                                 blurRadius: 15,
                                                 offset: Offset(0, 5),
@@ -262,11 +265,13 @@ class _SplashScreenState extends State<SplashScreen>
                             style: TextStyle(
                               fontSize: 42,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: const Color(0xFFFFFFFF),
                               letterSpacing: -1,
                               shadows: [
                                 Shadow(
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: const Color(
+                                    0xFF000000,
+                                  ).withOpacity(0.3),
                                   offset: Offset(0, 4),
                                   blurRadius: 8,
                                 ),
@@ -276,10 +281,10 @@ class _SplashScreenState extends State<SplashScreen>
                           const SizedBox(height: 8),
                           Text(
                             'Inventory Management',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: AppStyles.custom(
+                              size: 16,
                               fontWeight: FontWeight.w400,
-                              color: Colors.white.withOpacity(0.9),
+                              color: const Color(0xFFFFFFFF).withOpacity(0.9),
                               letterSpacing: 2,
                             ),
                           ),
@@ -299,7 +304,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: CircularProgressIndicator(
                         strokeWidth: 3,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.white.withOpacity(0.8),
+                          AppTheme.backgroundLight.withOpacity(0.8),
                         ),
                       ),
                     ),
@@ -318,8 +323,8 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Text(
                   'Version 1.0.0',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                  style: AppStyles.custom(
+                    color: AppTheme.backgroundLight.withOpacity(0.7),
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
                   ),
@@ -352,10 +357,12 @@ class _SplashScreenState extends State<SplashScreen>
               height: 4 + (random * 8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.3 + (random * 0.4)),
+                color: AppTheme.backgroundLight.withOpacity(
+                  0.3 + (random * 0.4),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.2),
+                    color: AppTheme.backgroundLight.withOpacity(0.2),
                     spreadRadius: 1,
                     blurRadius: 5,
                   ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_stock_comtroller.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 class CompanyStockGrid extends StatefulWidget {
@@ -43,8 +44,9 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   'Company Stock Overview',
                   style: AppStyles.custom(
                     color: const Color(0xFF1A1A1A),
-                    size: 20,
-                    weight: FontWeight.w600,
+                    
+                    // size: 20,
+                    weight: FontWeight.w600, size: 20, 
                   ),
                 ),
               ),
@@ -59,10 +61,10 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                 ),
                 child: Text(
                   '${_getFilteredCompanies().length} Companies',
-                  style: const TextStyle(
+                  style:  AppStyles.custom(
                     color: Color(0xFF4CAF50),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    size: 12,
+                    weight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -73,9 +75,9 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
           // Search Bar
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.05),
+              color: AppTheme.greyOpacity05,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.1)),
+              border: Border.all(color: AppTheme.greyOpacity01),
             ),
             child: TextField(
               controller: searchController,
@@ -84,9 +86,9 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   searchQuery = value;
                 });
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Search companies...',
-                hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                hintStyle: AppStyles.custom(color: Color(0xFF9CA3AF), size: 14),
                 prefixIcon: Icon(
                   Icons.search,
                   color: Color(0xFF9CA3AF),
@@ -110,19 +112,19 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color:AppTheme.backgroundLight,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.greyOpacity02),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: selectedFilter,
                       isExpanded: true,
                       icon: const Icon(Icons.filter_list, size: 18),
-                      style: const TextStyle(
+                      style:  AppStyles.custom(
                         color: Color(0xFF374151),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        size: 13,
+                        weight: FontWeight.w500,
                       ),
                       items:
                           filterOptions.map((String value) {
@@ -153,19 +155,19 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color:AppTheme.backgroundLight,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.greyOpacity02),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: sortBy,
                       isExpanded: true,
                       icon: const Icon(Icons.sort, size: 18),
-                      style: const TextStyle(
+                      style:  AppStyles.custom(
                         color: Color(0xFF374151),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        size: 13,
+                        weight: FontWeight.w500,
                       ),
                       items:
                           sortOptions.map((String value) {
@@ -213,10 +215,10 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   Expanded(
                     child: Text(
                       _getFilterSummary(),
-                      style: const TextStyle(
+                      style:  AppStyles.custom(
                         color: Color(0xFF3B82F6),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        size: 12,
+                        weight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -363,17 +365,17 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color:AppTheme.backgroundLight,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: AppTheme.greyOpacity01,
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(color: AppTheme.greyOpacity01, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +391,7 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   ),
                   child: const Icon(
                     Icons.phone_android,
-                    color: Colors.white,
+                    color:AppTheme.backgroundLight,
                     size: 18,
                   ),
                 ),
@@ -397,10 +399,10 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                 Expanded(
                   child: Text(
                     company.company.toLowerCase(),
-                    style: const TextStyle(
+                    style:  AppStyles.custom(
                       color: Color(0xFF1A1A1A),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      size: 14,
+                      weight: FontWeight.w600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -430,12 +432,12 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                     width: 1,
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Low Stock Alert',
-                  style: TextStyle(
+                  style: AppStyles.custom(
                     color: Color(0xFFF59E0B),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    size: 10,
+                    weight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -452,12 +454,12 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                     width: 1,
                   ),
                 ),
-                child: const Text(
+                child:  Text(
                   'Stock OK',
-                  style: TextStyle(
+                  style: AppStyles.custom(
                     color: Color(0xFF10B981),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    size: 10,
+                    weight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -474,18 +476,18 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style:  AppStyles.custom(
             color: Color(0xFF6B7280),
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
+            size: 11,
+            weight: FontWeight.w500,
           ),
         ),
         Text(
           '$value $unit',
-          style: const TextStyle(
+          style:  AppStyles.custom(
             color: Color(0xFF1A1A1A),
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
+            size: 11,
+            weight: FontWeight.w600,
           ),
         ),
       ],

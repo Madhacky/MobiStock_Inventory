@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 Widget buildCustomAppBar(
   String title, {
@@ -13,20 +15,21 @@ Widget buildCustomAppBar(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: AppTheme.backgroundLight.withOpacity(0.2),
             shape: BoxShape.circle,
             border: Border.all(
               color:
                   isdark
-                      ? Colors.black.withOpacity(0.3)
-                      : Colors.white.withOpacity(0.3),
+                      ? AppTheme.backgroundDark.withOpacity(0.3)
+                      : AppTheme.backgroundLight.withOpacity(0.3),
               width: 1,
             ),
           ),
           child: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_rounded,
-              color: isdark ? Colors.black : Colors.white,
+              color:
+                  isdark ? AppTheme.backgroundDark : AppTheme.backgroundLight,
               size: 20,
             ),
             onPressed: () => Get.back(),
@@ -36,10 +39,10 @@ Widget buildCustomAppBar(
         const Spacer(),
         Text(
           title,
-          style: TextStyle(
-            color: isdark ? Colors.black : Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+          style: AppStyles.custom(
+            color: isdark ? AppTheme.backgroundDark : AppTheme.backgroundLight,
+            size: 20,
+            weight: FontWeight.w600,
           ),
         ),
         Spacer(),

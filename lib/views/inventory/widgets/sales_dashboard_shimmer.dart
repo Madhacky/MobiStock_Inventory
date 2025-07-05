@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 
 
@@ -35,18 +36,18 @@ class BusinessSummaryShimmer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
           ),
         ],
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: AppTheme.greyOpacity01,
           width: 1,
         ),
       ),
@@ -57,13 +58,13 @@ class BusinessSummaryShimmer extends StatelessWidget {
           Row(
             children: [
               Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: AppTheme.grey300,
+                highlightColor: AppTheme.grey100,
                 child: Container(
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -71,12 +72,12 @@ class BusinessSummaryShimmer extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: AppTheme.grey300,
+                  highlightColor: AppTheme.grey100,
                   child: Container(
                     height: 24,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: AppTheme.grey300,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -119,13 +120,13 @@ class BusinessSummaryShimmer extends StatelessWidget {
           
           // Button Shimmer
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               width: double.infinity,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -139,10 +140,10 @@ class BusinessSummaryShimmer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.05),
+        color: AppTheme.greyOpacity05,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: AppTheme.greyOpacity01,
           width: 1,
         ),
       ),
@@ -150,52 +151,52 @@ class BusinessSummaryShimmer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(6),
               ),
             ),
           ),
           const SizedBox(height: 8),
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               height: 16,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
           const SizedBox(height: 4),
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               height: 12,
               width: 60,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
           const SizedBox(height: 2),
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               height: 10,
               width: 40,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -215,18 +216,18 @@ class LowStockAlertsShimmer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
           ),
         ],
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: AppTheme.greyOpacity01,
           width: 1,
         ),
       ),
@@ -238,25 +239,25 @@ class LowStockAlertsShimmer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: AppTheme.grey300,
+                highlightColor: AppTheme.grey100,
                 child: Container(
                   height: 20,
                   width: 140,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
               Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: AppTheme.grey300,
+                highlightColor: AppTheme.grey100,
                 child: Container(
                   width: 30,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -272,13 +273,13 @@ class LowStockAlertsShimmer extends StatelessWidget {
           
           // Button Shimmer
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               width: double.infinity,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -293,23 +294,23 @@ class LowStockAlertsShimmer extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.05),
+        color: AppTheme.greyOpacity05,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: AppTheme.greyOpacity01,
           width: 1,
         ),
       ),
       child: Row(
         children: [
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               width: 16,
               height: 16,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -317,12 +318,12 @@ class LowStockAlertsShimmer extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: AppTheme.grey300,
+              highlightColor: AppTheme.grey100,
               child: Container(
                 height: 14,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -344,13 +345,13 @@ class CompanyStockGridShimmer extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: AppTheme.grey300,
+          highlightColor: AppTheme.grey100,
           child: Container(
             height: 20,
             width: 200,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.grey300,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -376,18 +377,18 @@ class CompanyStockGridShimmer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
           ),
         ],
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: AppTheme.greyOpacity01,
           width: 1,
         ),
       ),
@@ -398,13 +399,13 @@ class CompanyStockGridShimmer extends StatelessWidget {
           Row(
             children: [
               Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: AppTheme.grey300,
+                highlightColor: AppTheme.grey100,
                 child: Container(
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -412,12 +413,12 @@ class CompanyStockGridShimmer extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: AppTheme.grey300,
+                  highlightColor: AppTheme.grey100,
                   child: Container(
                     height: 14,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: AppTheme.grey300,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -434,13 +435,13 @@ class CompanyStockGridShimmer extends StatelessWidget {
           
           // Status Badge Shimmer
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               width: double.infinity,
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
@@ -457,25 +458,25 @@ class CompanyStockGridShimmer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               height: 11,
               width: 60,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: AppTheme.grey300,
+            highlightColor: AppTheme.grey100,
             child: Container(
               height: 11,
               width: 40,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.grey300,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),

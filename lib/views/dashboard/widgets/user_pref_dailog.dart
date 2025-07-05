@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/user_prefs_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class ViewPreferencesBottomSheet extends StatelessWidget {
   final UserPrefsController controller;
 
-  const ViewPreferencesBottomSheet({
-    Key? key,
-    required this.controller,
-  }) : super(key: key);
+  const ViewPreferencesBottomSheet({Key? key, required this.controller})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
             height: 4,
             width: 40,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.grey300,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -63,7 +63,9 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                     children: [
                       Text(
                         'View Preferences',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 22,
                         ),
@@ -72,7 +74,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                       Text(
                         'Customize your dashboard layout',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
+                          color: AppTheme.grey600,
                           fontSize: 14,
                         ),
                       ),
@@ -83,11 +85,11 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                   onPressed: () => Get.back(),
                   icon: Icon(
                     Icons.close_rounded,
-                    color: Colors.grey[600],
+                    color: AppTheme.grey600,
                     size: 24,
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey[100],
+                    backgroundColor: AppTheme.grey100,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -150,21 +152,21 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                           'Preferences Updated',
                           'Your view preferences have been saved successfully!',
                           snackPosition: SnackPosition.TOP,
-                          backgroundColor: Colors.green[600],
-                          colorText: Colors.white,
+                          backgroundColor: AppTheme.green600,
+                          colorText: AppTheme.backgroundLight,
                           duration: const Duration(seconds: 3),
                           margin: const EdgeInsets.all(16),
                           borderRadius: 16,
                           icon: const Icon(
                             Icons.check_circle_rounded,
-                            color: Colors.white,
+                            color: AppTheme.backgroundLight,
                           ),
                           animationDuration: const Duration(milliseconds: 300),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF6C5CE7),
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppTheme.backgroundLight,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -179,7 +181,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             'Apply Changes',
-                            style: const TextStyle(
+                            style: AppStyles.custom(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -211,10 +213,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.grey[200]!,
-          width: 1,
-        ),
+        border: Border.all(color: AppTheme.grey200!, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,21 +224,17 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.backgroundLight,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: AppTheme.backgroundDark.withOpacity(0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Icon(
-                  icon,
-                  color: const Color(0xFF6C5CE7),
-                  size: 24,
-                ),
+                child: Icon(icon, color: const Color(0xFF6C5CE7), size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -257,7 +252,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                     Text(
                       description,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppTheme.grey600,
                         fontSize: 14,
                       ),
                     ),
@@ -266,53 +261,55 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Toggle Options
-          Obx(() => Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildModernToggleOption(
-                    context: context,
-                    title: 'Grid View',
-                    subtitle: 'Side by side',
-                    icon: Icons.grid_view_rounded,
-                    isSelected: isGridView.value,
-                    onTap: () {
-                      if (!isGridView.value) onToggle();
-                    },
+          Obx(
+            () => Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppTheme.backgroundLight,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.backgroundDark.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: _buildModernToggleOption(
-                    context: context,
-                    title: 'List View',
-                    subtitle: 'Stacked',
-                    icon: Icons.view_agenda_rounded,
-                    isSelected: !isGridView.value,
-                    onTap: () {
-                      if (isGridView.value) onToggle();
-                    },
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildModernToggleOption(
+                      context: context,
+                      title: 'Grid View',
+                      subtitle: 'Side by side',
+                      icon: Icons.grid_view_rounded,
+                      isSelected: isGridView.value,
+                      onTap: () {
+                        if (!isGridView.value) onToggle();
+                      },
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: _buildModernToggleOption(
+                      context: context,
+                      title: 'List View',
+                      subtitle: 'Stacked',
+                      icon: Icons.view_agenda_rounded,
+                      isSelected: !isGridView.value,
+                      onTap: () {
+                        if (isGridView.value) onToggle();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -333,17 +330,19 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
         decoration: BoxDecoration(
-          color: isSelected 
-            ? const Color(0xFF6C5CE7)
-            : Colors.white,
+          color:
+              isSelected ? const Color(0xFF6C5CE7) : AppTheme.backgroundLight,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: const Color(0xFF6C5CE7).withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ] : null,
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -353,9 +352,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
               child: Icon(
                 icon,
                 key: ValueKey(isSelected),
-                color: isSelected 
-                  ? Colors.white
-                  : Colors.grey[600],
+                color: isSelected ? AppTheme.backgroundLight : AppTheme.grey600,
                 size: 22,
               ),
             ),
@@ -363,9 +360,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isSelected 
-                  ? Colors.white
-                  : Colors.grey[800],
+                color: isSelected ? AppTheme.backgroundLight : AppTheme.grey800,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -374,9 +369,10 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
             Text(
               subtitle,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: isSelected 
-                  ? Colors.white.withOpacity(0.9)
-                  : Colors.grey[600],
+                color:
+                    isSelected
+                        ? AppTheme.backgroundLight.withOpacity(0.9)
+                        : AppTheme.grey600,
                 fontSize: 12,
               ),
             ),
@@ -392,7 +388,7 @@ extension ViewPreferencesBottomSheetExtension on BuildContext {
   void showViewPreferencesBottomSheet(UserPrefsController controller) {
     Get.bottomSheet(
       ViewPreferencesBottomSheet(controller: controller),
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparent,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
@@ -407,7 +403,7 @@ class ViewPreferencesBottomSheetHelper {
   static void show(UserPrefsController controller) {
     Get.bottomSheet(
       ViewPreferencesBottomSheet(controller: controller),
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparent,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,

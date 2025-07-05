@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/image_uploader_widget.dart';
@@ -37,7 +38,7 @@ class MobileInventoryForm extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(InventoryController controller) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundLight,
       elevation: 0,
       centerTitle: true,
       leading: Padding(
@@ -57,7 +58,7 @@ class MobileInventoryForm extends StatelessWidget {
                 color: const Color(0xFF6366F1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.add_box, color: Colors.white, size: 20),
+              child: const Icon(Icons.add_box, color: AppTheme.backgroundLight, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -72,12 +73,12 @@ class MobileInventoryForm extends StatelessWidget {
                       weight: FontWeight.w600,
                     ),
                   ),
-                  const Text(
+                   Text(
                     'Fill details to add inventory',
-                    style: TextStyle(
+                    style: AppStyles.custom(
                       color: Color(0xFF6B7280),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
+                      size: 12,
+                      weight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -94,7 +95,7 @@ class MobileInventoryForm extends StatelessWidget {
       () => Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: Container(
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
@@ -137,18 +138,18 @@ class MobileInventoryForm extends StatelessWidget {
                   children: [
                     Text(
                       controller.formattedDeviceName,
-                      style: const TextStyle(
+                      style:  AppStyles.custom(
                         color: Color(0xFF1A1A1A),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        size: 16,
+                        weight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       controller.formattedDeviceSpecs,
-                      style: const TextStyle(
+                      style:  AppStyles.custom(
                         color: Color(0xFF6B7280),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
+                        size: 12,
+                        weight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -172,14 +173,14 @@ class MobileInventoryForm extends StatelessWidget {
                   ),
                   child: Text(
                     controller.selectedAddColor.value,
-                    style: TextStyle(
+                    style: AppStyles.custom(
                       color: controller.getCompanyColor(
                         controller.selectedAddCompany.value.isEmpty
                             ? null
                             : controller.selectedAddCompany.value,
                       ),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      size: 12,
+                      weight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -194,11 +195,11 @@ class MobileInventoryForm extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: AppTheme.greyOpacity08,
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -348,9 +349,9 @@ class MobileInventoryForm extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.05),
+                color: AppTheme.greyOpacity05,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                border: Border.all(color: AppTheme.greyOpacity01),
               ),
               child: ImageUploadWidget(
                 labelText: 'Mobile Logo/Image',
@@ -374,17 +375,17 @@ class MobileInventoryForm extends StatelessWidget {
                                 ? null
                                 : controller.cancelAddMobile,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                          side: BorderSide(color: AppTheme.greyOpacity03),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
+                        child:  Text(
                           'Cancel',
-                          style: TextStyle(
+                          style: AppStyles.custom(
                             color: Color(0xFF6B7280),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                            size: 12,
+                            weight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -414,25 +415,25 @@ class MobileInventoryForm extends StatelessWidget {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                                      AppTheme.backgroundLight,
                                     ),
                                   ),
                                 )
-                                : const Row(
+                                :  Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.add,
-                                      color: Colors.white,
+                                      color: AppTheme.backgroundLight,
                                       size: 18,
                                     ),
                                     SizedBox(width: 5),
                                     Text(
                                       'Add to Inventory',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
+                                      style: AppStyles.custom(
+                                        color: AppTheme.backgroundLight,
+                                        size: 12,
+                                        weight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
@@ -452,26 +453,26 @@ class MobileInventoryForm extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: AppTheme.redOpacity01,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.red.withOpacity(0.3),
+                            color: AppTheme.redOpacity03,
                           ),
                         ),
                         child: Row(
                           children: [
                             const Icon(
                               Icons.error_outline,
-                              color: Colors.red,
+                              color: AppTheme.primaryRed,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 controller.addMobileErrorMessage.value,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12,
+                                style:  AppStyles.custom(
+                                  color: AppTheme.primaryRed,
+                                  size: 12,
                                 ),
                               ),
                             ),
@@ -501,10 +502,10 @@ class MobileInventoryForm extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           title,
-          style: const TextStyle(
+          style: AppStyles.custom(
             color: Color(0xFF1A1A1A),
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+            size: 16,
+            weight: FontWeight.w600,
           ),
         ),
       ],

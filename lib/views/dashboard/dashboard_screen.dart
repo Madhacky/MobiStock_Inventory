@@ -7,13 +7,13 @@ import 'package:smartbecho/controllers/dashboard_controller.dart';
 import 'package:smartbecho/controllers/user_prefs_controller.dart';
 import 'package:smartbecho/models/dashboard_models/sales_summary_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
 import 'package:smartbecho/views/dashboard/widgets/dashboard_shimmers.dart';
 import 'package:smartbecho/views/dashboard/widgets/drawer.dart';
 import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
-import 'package:smartbecho/views/dashboard/widgets/user_pref_dailog.dart';
 
 class InventoryDashboard extends StatefulWidget {
   @override
@@ -33,7 +33,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
       canPop: false,
       child: Scaffold(
         drawer: ModernAppDrawer(),
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.backgroundLight,
         body: SafeArea(
           child: AnimatedBuilder(
             animation: controller.animationController,
@@ -44,11 +44,10 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                   position: controller.slideAnimation,
                   child: Column(
                     children: [
-                      _buildHeader(),
                       Expanded(
                         child: RefreshIndicator(
                           onRefresh: controller.refreshDashboardData,
-                          backgroundColor: Colors.white,
+                          backgroundColor: AppTheme.backgroundLight,
                           color: Color(0xFF6C5CE7),
                           child: SingleChildScrollView(
                             physics: AlwaysScrollableScrollPhysics(),
@@ -58,15 +57,17 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  height: controller.screenHeight * 0.02,
-                                ),
-                                _buildSearchBar(),
-                                SizedBox(
-                                  height: controller.screenHeight * 0.02,
-                                ),
-                                _buildTopStatsGrid(),
+                                dashboardAppBar(),
+                                buildDashboardHeader(),
 
+                                //     SizedBox(
+                                //       height: controller.screenHeight * 0.02,
+                                //     ),
+                                //  //   _buildSearchBar(),
+                                //     SizedBox(
+                                //       height: controller.screenHeight * 0.02,
+                                //     ),
+                                //  _buildTopStatsGrid(),
                                 SizedBox(
                                   height: controller.screenHeight * 0.03,
                                 ),
@@ -98,50 +99,201 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildCombinedProfileStatsCard() {
     return Container(
-      padding: EdgeInsets.all(controller.screenWidth * 0.05),
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        gradient: LinearGradient(
+          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
+            color: Color(0xFF667eea).withOpacity(0.3),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 8),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Builder(
-            builder:
-                (context) => _buildHeaderButton(
-                  Icons.menu_rounded,
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                ),
-          ),
-          SizedBox(width: 16),
-          Expanded(child: Image.asset('assets/applogo.png')),
+          // Profile Header Section
           Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildHeaderButton(
-                Icons.filter_alt_sharp,
-                onTap:
-                    () => context.showViewPreferencesBottomSheet(
-                      userPrefsController,
-                    ),
+              // Profile Avatar
+              Container(
+                padding: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: AppTheme.backgroundLight.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: CircleAvatar(
+                  radius: 35,
+                  backgroundColor: AppTheme.backgroundLight.withOpacity(0.9),
+                  child: Icon(
+                    Icons.person_2_sharp,
+                    size: 35,
+                    color: Color(0xFF667eea),
+                  ),
+                ),
               ),
-              SizedBox(width: 8),
 
-              _buildHeaderButton(
-                Icons.person_rounded,
-                onTap: () => Get.toNamed(AppRoutes.profile),
+              SizedBox(width: 16),
+
+              // Profile Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Carly Jones",
+                      style: AppStyles.custom(
+                        size: 24,
+                        weight: FontWeight.bold,
+                        color: AppTheme.backgroundLight,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.emoji_events,
+                          size: 18,
+                          color: AppTheme.primaryAmber,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          "Beginner Level",
+                          style: AppStyles.custom(
+                            color: AppTheme.backgroundLight.withOpacity(0.9),
+                            weight: FontWeight.w500,
+                            size: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(width: 8),
-              _buildHeaderButton(
-                Icons.logout,
-                onTap: () => authController.logout(),
+
+              // Working Hours Badge
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.backgroundLight.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  "120 hrs",
+                  style: AppStyles.custom(
+                    color: AppTheme.backgroundLight,
+                    weight: FontWeight.w600,
+                    size: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 24),
+
+          // Stats Grid Section
+          Row(
+            children: [
+              // Total Sales Card
+              Expanded(
+                child: _buildStatItem(
+                  icon: Icons.trending_up,
+                  title: "Total Sales",
+                  value: "₹12,850",
+                  subtitle: "+15% from last week",
+                  iconColor: const Color.from(
+                    alpha: 1,
+                    red: 0.298,
+                    green: 0.686,
+                    blue: 0.314,
+                  ),
+                ),
+              ),
+
+              SizedBox(width: 12),
+
+              // Units Sold Card
+              Expanded(
+                child: _buildStatItem(
+                  icon: Icons.inventory_2,
+                  title: "Units Sold",
+                  value: "2,380",
+                  subtitle: "This month",
+                  iconColor: AppTheme.primaryBlue,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 20),
+
+          // Stock Progress Section
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Available Stock",
+                    style: AppStyles.custom(
+                      color: AppTheme.backgroundLight.withOpacity(0.9),
+                      size: 14,
+                      weight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    "68,500 / 1,00,000",
+                    style: AppStyles.custom(
+                      color: AppTheme.backgroundLight,
+                      size: 14,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 8),
+
+              // Progress Bar
+              Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: AppTheme.backgroundLight.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: 0.685, // 68.5% of 100k
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppTheme.primaryAmber, AppTheme.primaryOrange],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 4),
+
+              Text(
+                "68.5% of total capacity",
+                style: AppStyles.custom(
+                  color: AppTheme.backgroundLight.withOpacity(0.7),
+                  size: 12,
+                ),
               ),
             ],
           ),
@@ -150,37 +302,553 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     );
   }
 
-  Widget _buildHeaderButton(IconData icon, {void Function()? onTap}) {
-    return InkWell(
+  Widget _buildStatItem({
+    required IconData icon,
+    required String title,
+    required String value,
+    required String subtitle,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundLight.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.backgroundLight.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppStyles.custom(
+                    color: AppTheme.backgroundLight.withOpacity(0.9),
+                    size: 12,
+                    weight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 8),
+
+          Text(
+            value,
+            style: AppStyles.custom(
+              color: AppTheme.backgroundLight,
+              size: 20,
+              weight: FontWeight.bold,
+            ),
+          ),
+
+          SizedBox(height: 4),
+
+          Text(
+            subtitle,
+            style: AppStyles.custom(
+              color: AppTheme.backgroundLight.withOpacity(0.7),
+              size: 10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getMonthAbbreviation(int month) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return months[month - 1];
+  }
+
+  Widget _buildHeaderButton(IconData icon, {required VoidCallback onTap}) {
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
       child: Container(
         padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey[300]!, width: 1),
+          color: AppTheme.grey100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.grey300, width: 0.5),
         ),
         child: Icon(
           icon,
-          color: Colors.grey[700],
-          size: controller.isSmallScreen ? 16 : 18,
+          size: controller.isSmallScreen ? 20 : 22,
+          color: AppTheme.grey700,
         ),
       ),
     );
   }
 
+  double _calculateStockProgress() {
+    if (controller.topStats.length > 2) {
+      try {
+        String stockValue = controller.topStats[2].value.replaceAll(
+          RegExp(r'[^\d.]'),
+          '',
+        );
+        double currentStock = double.tryParse(stockValue) ?? 0;
+        return (currentStock / 100000).clamp(0.0, 1.0);
+      } catch (e) {
+        return 0.0;
+      }
+    }
+    return 0.0;
+  }
+
+  //app bar
+  Widget dashboardAppBar() {
+    return Builder(
+      builder: (context) {
+        return Column(
+          children: [
+            Row(
+              children: [
+                _buildHeaderButton(
+                  Icons.menu_rounded,
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 85.0),
+                  child: Image.asset("assets/applogo.png", height: 50),
+                ),
+                Spacer(),
+
+                // Profile Avatar
+                CircleAvatar(
+                  radius: controller.isSmallScreen ? 22 : 24,
+                  backgroundColor: AppTheme.grey200,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.person_2_sharp,
+                      size: controller.isSmallScreen ? 22 : 24,
+                    ),
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.profile);
+                    },
+
+                    color: AppTheme.grey700,
+                  ),
+                ),
+                SizedBox(width: 5),
+                _buildHeaderButton(
+                  Icons.logout,
+                  onTap: () => authController.logout(),
+                ),
+              ],
+            ),
+            SizedBox(height: controller.isSmallScreen ? 2 : 30),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Welcome",
+                          style: AppStyles.custom(
+                            size: controller.isSmallScreen ? 14 : 30,
+                            color: AppTheme.black87,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Icon(Icons.waving_hand_rounded),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.store),
+                        SizedBox(width: 10),
+
+                        Text(
+                          "Ramu Mobile Accessories",
+                          style: AppStyles.custom(
+                            size: controller.isSmallScreen ? 14 : 20,
+                            color: AppTheme.black87,
+                            weight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildDashboardHeader() {
+    return Obx(
+      () =>
+          controller.isTodaysSalesCardLoading.value
+              ? TodaysSalesStatsShimmer(itemCount: 1)
+              : controller.hasTodaysSalesCardError.value
+              ? buildErrorCard(
+                controller.todaysSalesCarderrorMessage,
+                controller.screenWidth,
+                controller.screenHeight,
+                controller.isSmallScreen,
+              )
+              : Container(
+                margin: EdgeInsets.all(controller.screenWidth * 0.03),
+                // padding: EdgeInsets.all(controller.screenWidth * 0.05),
+                child: Column(
+                  children: [
+                    // Profile Header Section
+                    SizedBox(height: controller.isSmallScreen ? 2 : 35),
+
+                    // Stats Grid Section
+                    controller.isSmallScreen
+                        ? Column(
+                          children: [
+                            _buildDashboardStatItem(
+                              controller.topStats.isNotEmpty &&
+                                      controller.topStats.length > 0
+                                  ? controller.topStats[0]
+                                  : StatItem(
+                                    title: "Today's Sales",
+                                    value: "₹0",
+                                    icon: Icons.trending_up,
+                                    colors: [
+                                      AppTheme.primaryGreen,
+                                      AppTheme.green300,
+                                    ],
+                                  ),
+                              subtitle: "Today",
+                            ),
+                            SizedBox(height: 12),
+                            _buildDashboardStatItem(
+                              controller.topStats.isNotEmpty &&
+                                      controller.topStats.length > 1
+                                  ? controller.topStats[1]
+                                  : StatItem(
+                                    title: "Units Sold",
+                                    value: "0",
+                                    icon: Icons.inventory_2,
+                                    colors: [
+                                      AppTheme.primaryBlue,
+                                      AppTheme.blue300,
+                                    ],
+                                  ),
+                              subtitle: "Today",
+                            ),
+                          ],
+                        )
+                        : Row(
+                          children: [
+                            Expanded(
+                              child: _buildDashboardStatItem(
+                                controller.topStats.isNotEmpty &&
+                                        controller.topStats.length > 0
+                                    ? controller.topStats[0]
+                                    : StatItem(
+                                      title: "Today's Sales",
+                                      value: "₹0",
+                                      icon: Icons.trending_up,
+                                      colors: [
+                                        AppTheme.primaryGreen,
+                                        AppTheme.green300,
+                                      ],
+                                    ),
+                                subtitle: "Today",
+                              ),
+                            ),
+
+                            SizedBox(width: 12),
+
+                            Expanded(
+                              child: _buildDashboardStatItem(
+                                controller.topStats.isNotEmpty &&
+                                        controller.topStats.length > 1
+                                    ? controller.topStats[1]
+                                    : StatItem(
+                                      title: "Units Sold",
+                                      value: "0",
+                                      icon: Icons.inventory_2,
+                                      colors: [
+                                        AppTheme.primaryBlue,
+                                        AppTheme.blue300,
+                                      ],
+                                    ),
+                                subtitle: "Today",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                    SizedBox(height: controller.isSmallScreen ? 16 : 20),
+
+                    // Stock Progress Section (if you have stock data in controller)
+                    if (controller.topStats.length > 2) ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Available Stock",
+                                style: AppStyles.custom(
+                                  size: controller.isSmallScreen ? 12 : 14,
+                                  color: AppTheme.black87,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                "${controller.topStats.length > 2 ? controller.topStats[2].value : '0'} / 1,00,000",
+                                style: AppStyles.custom(
+                                  size: controller.isSmallScreen ? 12 : 14,
+                                  color: AppTheme.black87,
+                                  weight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 8),
+
+                          // Progress Bar
+                          Container(
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: AppTheme.grey200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: _calculateStockProgress(),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppTheme.primaryAmber,
+                                      AppTheme.primaryOrange,
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 4),
+
+                          Text(
+                            "${(_calculateStockProgress() * 100).toStringAsFixed(1)}% of total capacity",
+                            style: AppStyles.custom(
+                              size: controller.isSmallScreen ? 10 : 12,
+                              color: AppTheme.grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+    );
+  }
+
+  Widget _buildDashboardStatItem(StatItem stat, {required String subtitle}) {
+    return Container(
+      padding: EdgeInsets.all(controller.isSmallScreen ? 12 : 16),
+      decoration: BoxDecoration(
+        color: AppTheme.grey50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.grey200, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                stat.icon,
+                color: stat.colors[0],
+                size: controller.isSmallScreen ? 18 : 20,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  stat.title,
+                  style: AppStyles.custom(
+                    size: controller.isSmallScreen ? 10 : 12,
+                    color: AppTheme.grey700,
+                    weight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 8),
+
+          Text(
+            stat.value,
+            style: AppStyles.custom(
+              size: controller.isSmallScreen ? 18 : 20,
+              color: AppTheme.black87,
+              weight: FontWeight.bold,
+            ),
+          ),
+
+          SizedBox(height: 4),
+
+          Text(
+            subtitle,
+            style: AppStyles.custom(
+              size: controller.isSmallScreen ? 9 : 10,
+              color: AppTheme.grey600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // String _getMonthAbbreviation(int month) {
+  //   const months = [
+  //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  //   ];
+  //   return months[month - 1];
+  // }
+
+  // Widget _buildHeaderButton(IconData icon, {required VoidCallback onTap}) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
+  //       decoration: BoxDecoration(
+  //         color: AppTheme.grey100,
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(color: AppTheme.grey300, width: 0.5),
+  //       ),
+  //       child: Icon(
+  //         icon,
+  //         size: controller.isSmallScreen ? 20 : 22,
+  //         color: AppTheme.grey700,
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.all(controller.screenWidth * 0.05),
+      decoration: BoxDecoration(
+        color: AppTheme.grey50,
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.backgroundDark.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: _buildCombinedProfileStatsCard(),
+
+      //  Row(
+      //   children: [
+      //     Builder(
+      //       builder:
+      //           (context) => _buildHeaderButton(
+      //             Icons.menu_rounded,
+      //             onTap: () => Scaffold.of(context).openDrawer(),
+      //           ),
+      //     ),
+      //     SizedBox(width: 16),
+      //     Expanded(child: Image.asset('assets/applogo.png')),
+      //     Row(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         _buildHeaderButton(
+      //           Icons.filter_alt_sharp,
+      //           onTap:
+      //               () => context.showViewPreferencesBottomSheet(
+      //                 userPrefsController,
+      //               ),
+      //         ),
+      //         SizedBox(width: 8),
+
+      //         _buildHeaderButton(
+      //           Icons.person_rounded,
+
+      //           //onTap: () => Get.toNamed(AppRoutes.profile),
+      //         ),
+      //         SizedBox(width: 8),
+      //         _buildHeaderButton(
+      //           Icons.logout,
+      //           onTap: () => authController.logout(),
+      //         ),
+      //       ],
+      //     ),
+      //   ],
+      // ),
+    );
+  }
+
+  // Widget _buildHeaderButton(IconData icon, {void Function()? onTap}) {
+  //   return InkWell(
+  //     onTap: onTap,
+  //     borderRadius: BorderRadius.circular(10),
+  //     child: Container(
+  //       padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 10),
+  //       decoration: BoxDecoration(
+  //         color: AppTheme.grey100,
+  //         borderRadius: BorderRadius.circular(10),
+  //         border: Border.all(color: AppTheme.grey300!, width: 1),
+  //       ),
+  //       child: Icon(
+  //         icon,
+  //         color: AppTheme.grey700,
+  //         size: controller.isSmallScreen ? 16 : 18,
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildSearchBar() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppTheme.grey50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(color: AppTheme.grey300!, width: 1),
       ),
       child: TextField(
         onChanged: controller.updateSearchQuery,
         style: AppStyles.custom(
-          color: Colors.black87,
+          color: AppTheme.black87,
           size: controller.isSmallScreen ? 14 : 16,
           weight: FontWeight.w500,
         ),
@@ -190,18 +858,18 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                   ? 'Search products...'
                   : 'Search products, EMI records, sales...',
           hintStyle: AppStyles.custom(
-            color: Colors.grey[500],
+            color: AppTheme.grey500,
             size: controller.isSmallScreen ? 14 : 16,
             weight: FontWeight.w400,
           ),
           prefixIcon: Icon(
             Icons.search_outlined,
-            color: Colors.grey[500],
+            color: AppTheme.grey500,
             size: controller.isSmallScreen ? 20 : 22,
           ),
           suffixIcon: Icon(
             Icons.filter_list_outlined,
-            color: Colors.grey[500],
+            color: AppTheme.grey500,
             size: controller.isSmallScreen ? 20 : 22,
           ),
           border: InputBorder.none,
@@ -214,124 +882,124 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     );
   }
 
-  Widget _buildTopStatsGrid() {
-    return Column(
-      children: [
-        Obx(
-          () =>
-              controller.isTodaysSalesCardLoading.value
-                  ? TodaysSalesStatsShimmer(itemCount: 3)
-                  : controller.hasTodaysSalesCardError.value
-                  ? buildErrorCard(
-                    controller.todaysSalesCarderrorMessage,
-                    controller.screenWidth,
-                    controller.screenHeight,
-                    controller.isSmallScreen,
-                  )
-                  : userPrefsController.isTopStatGridView.value
-                  ? _buildTopStatsGridView()
-                  : _buildTopStatsListView(),
-        ),
-      ],
-    );
-  }
+  // Widget _buildTopStatsGrid() {
+  //   return Column(
+  //     children: [
+  //       Obx(
+  //         () =>
+  //             controller.isTodaysSalesCardLoading.value
+  //                 ? TodaysSalesStatsShimmer(itemCount: 3)
+  //                 : controller.hasTodaysSalesCardError.value
+  //                 ? buildErrorCard(
+  //                   controller.todaysSalesCarderrorMessage,
+  //                   controller.screenWidth,
+  //                   controller.screenHeight,
+  //                   controller.isSmallScreen,
+  //                 )
+  //                 : userPrefsController.isTopStatGridView.value
+  //                 ? _buildTopStatsGridView()
+  //                 : _buildTopStatsListView(),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   // Grid view widget
-  Widget _buildTopStatsGridView() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: controller.isSmallScreen ? 1 : 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 10,
-        childAspectRatio: controller.isSmallScreen ? 2.5 : 2,
-      ),
-      itemCount: controller.topStats.length,
-      itemBuilder:
-          (context, index) => _buildTopStatCard(controller.topStats[index]),
-    );
-  }
+  // Widget _buildTopStatsGridView() {
+  //   return GridView.builder(
+  //     shrinkWrap: true,
+  //     physics: NeverScrollableScrollPhysics(),
+  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: controller.isSmallScreen ? 1 : 2,
+  //       mainAxisSpacing: 12,
+  //       crossAxisSpacing: 10,
+  //       childAspectRatio: controller.isSmallScreen ? 2.5 : 2,
+  //     ),
+  //     itemCount: controller.topStats.length,
+  //     itemBuilder:
+  //         (context, index) => _buildTopStatCard(controller.topStats[index]),
+  //   );
+  // }
 
-  // List view widget
-  Widget _buildTopStatsListView() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => SizedBox(height: 10),
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: controller.topStats.length,
-      itemBuilder:
-          (context, index) => _buildTopStatCard(controller.topStats[index]),
-    );
-  }
+  // // List view widget
+  // Widget _buildTopStatsListView() {
+  //   return ListView.separated(
+  //     separatorBuilder: (context, index) => SizedBox(height: 10),
+  //     shrinkWrap: true,
+  //     physics: NeverScrollableScrollPhysics(),
+  //     itemCount: controller.topStats.length,
+  //     itemBuilder:
+  //         (context, index) => _buildTopStatCard(controller.topStats[index]),
+  //   );
+  // }
 
-  Widget _buildTopStatCard(StatItem stat) {
-    return Container(
-      padding: EdgeInsets.all(controller.screenWidth * 0.04),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: stat.colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: stat.colors[0].withOpacity(0.25),
-            spreadRadius: 0,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              stat.icon,
-              color: Colors.white,
-              size: controller.isSmallScreen ? 20 : 24,
-            ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  stat.title,
-                  style: AppStyles.custom(
-                    size: controller.isSmallScreen ? 10 : 12,
-                    color: Colors.white.withOpacity(0.9),
-                    weight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  stat.value,
-                  style: AppStyles.custom(
-                    size: controller.isSmallScreen ? 20 : 24,
-                    weight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTopStatCard(StatItem stat) {
+  //   return Container(
+  //     padding: EdgeInsets.all(controller.screenWidth * 0.04),
+  //     decoration: BoxDecoration(
+  //       gradient: LinearGradient(
+  //         colors: stat.colors,
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       ),
+  //       borderRadius: BorderRadius.circular(16),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: stat.colors[0].withOpacity(0.25),
+  //           spreadRadius: 0,
+  //           blurRadius: 12,
+  //           offset: Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Container(
+  //           padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 8),
+  //           decoration: BoxDecoration(
+  //             color: AppTheme.backgroundLight.withOpacity(0.2),
+  //             borderRadius: BorderRadius.circular(12),
+  //           ),
+  //           child: Icon(
+  //             stat.icon,
+  //             color: AppTheme.backgroundLight,
+  //             size: controller.isSmallScreen ? 20 : 24,
+  //           ),
+  //         ),
+  //         SizedBox(width: 16),
+  //         Expanded(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 stat.title,
+  //                 style: AppStyles.custom(
+  //                   size: controller.isSmallScreen ? 10 : 12,
+  //                   color: AppTheme.backgroundLight.withOpacity(0.9),
+  //                   weight: FontWeight.w500,
+  //                 ),
+  //                 maxLines: 1,
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //               SizedBox(height: 4),
+  //               Text(
+  //                 stat.value,
+  //                 style: AppStyles.custom(
+  //                   size: controller.isSmallScreen ? 20 : 24,
+  //                   weight: FontWeight.bold,
+  //                   color: AppTheme.backgroundLight,
+  //                 ),
+  //                 maxLines: 1,
+  //                 overflow: TextOverflow.ellipsis,
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildQuickActionsSection() {
     return Column(
@@ -344,7 +1012,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
             style: AppStyles.custom(
               size: controller.isSmallScreen ? 18 : 20,
               weight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppTheme.black87,
             ),
           ),
         ),
@@ -380,12 +1048,12 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
       child: Container(
         padding: EdgeInsets.all(controller.screenWidth * 0.04),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: AppTheme.grey50,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!, width: 1),
+          border: Border.all(color: AppTheme.grey200, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: AppTheme.backgroundDark.withOpacity(0.05),
               blurRadius: 8,
               offset: Offset(0, 2),
             ),
@@ -402,7 +1070,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               ),
               child: Icon(
                 action.icon,
-                color: Colors.white,
+                color: AppTheme.backgroundLight,
                 size: controller.isSmallScreen ? 16 : 18,
               ),
             ),
@@ -412,7 +1080,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                 action.title,
                 textAlign: TextAlign.center,
                 style: AppStyles.custom(
-                  color: Colors.black87,
+                  color: AppTheme.black87,
                   size: controller.isSmallScreen ? 10 : 12,
                   weight: FontWeight.w600,
                 ),
@@ -536,7 +1204,10 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, Colors.blue.shade50.withOpacity(0.3)],
+          colors: [
+            AppTheme.backgroundLight,
+            Colors.blue.shade50.withOpacity(0.3),
+          ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -551,7 +1222,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.backgroundLight.withOpacity(0.8),
             blurRadius: 10,
             offset: Offset(0, -2),
             spreadRadius: 0,
@@ -583,7 +1254,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                   style: AppStyles.custom(
                     size: controller.isSmallScreen ? 16 : 18,
                     weight: FontWeight.w700,
-                    color: Colors.grey.shade800,
+                    color: AppTheme.grey800,
                   ),
                 ),
               ),
@@ -617,7 +1288,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                   'Transactions',
                   '${controller.salesSummary!.value.totalTransactions}',
                   Icons.receipt_long_rounded,
-                  Colors.blue.shade400,
+                  AppTheme.blue400,
                 ),
               ),
             ],
@@ -627,7 +1298,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
             'Smartphones Sold',
             '${controller.salesSummary!.value.smartphonesSold}',
             Icons.smartphone_rounded,
-            Colors.purple.shade400,
+            AppTheme.purple400,
             isFullWidth: true,
           ),
           SizedBox(height: 20),
@@ -636,9 +1307,9 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50.withOpacity(0.7),
+              color: AppTheme.grey50.withOpacity(0.7),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200, width: 1),
+              border: Border.all(color: AppTheme.grey200, width: 1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -648,7 +1319,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                     Icon(
                       Icons.payment_rounded,
                       size: 18,
-                      color: Colors.grey.shade600,
+                      color: AppTheme.grey600,
                     ),
                     SizedBox(width: 8),
                     Text(
@@ -656,7 +1327,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                       style: AppStyles.custom(
                         size: controller.isSmallScreen ? 13 : 14,
                         weight: FontWeight.w600,
-                        color: Colors.grey.shade700,
+                        color: AppTheme.grey700,
                       ),
                     ),
                   ],
@@ -688,7 +1359,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
             style: AppStyles.custom(
               size: controller.isSmallScreen ? 11 : 12,
               weight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: AppTheme.grey700,
             ),
           ),
           SizedBox(height: 4),
@@ -703,7 +1374,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
             style: AppStyles.custom(
               size: controller.isSmallScreen ? 11 : 12,
               weight: FontWeight.w600,
-              color: Colors.red[600],
+              color: AppTheme.red600,
             ),
           ),
           SizedBox(height: 4),
@@ -738,7 +1409,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
             style: AppStyles.custom(
               size: controller.isSmallScreen ? 11 : 12,
               weight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: AppTheme.grey700,
             ),
           ),
           SizedBox(height: 4),
@@ -761,7 +1432,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               label,
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 10 : 11,
-                color: Colors.grey[600],
+                color: AppTheme.grey600,
                 weight: FontWeight.normal,
               ),
               maxLines: 1,
@@ -775,7 +1446,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               value,
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 10 : 11,
-                color: Colors.black87,
+                color: AppTheme.black87,
                 weight: FontWeight.w600,
               ),
               textAlign: TextAlign.end,
@@ -799,7 +1470,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               '$method:',
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 10 : 11,
-                color: Colors.grey[600],
+                color: AppTheme.grey600,
                 weight: FontWeight.normal,
               ),
               maxLines: 1,
@@ -813,7 +1484,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               '${detail.amount} (${detail.transactions})',
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 10 : 11,
-                color: Colors.black87,
+                color: AppTheme.black87,
                 weight: FontWeight.w600,
               ),
               textAlign: TextAlign.end,
@@ -833,7 +1504,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         children: [
           Icon(
             Icons.warning_amber_rounded,
-            color: Colors.red[600],
+            color: AppTheme.red600,
             size: controller.isSmallScreen ? 10 : 12,
           ),
           SizedBox(width: 4),
@@ -842,7 +1513,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               alert,
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 10 : 11,
-                color: Colors.red[600],
+                color: AppTheme.red600,
                 weight: FontWeight.w500,
               ),
               maxLines: 1,
@@ -874,11 +1545,11 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
       ),
       child: FloatingActionButton(
         onPressed: () => controller.handleQuickAction('Add Product'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.transparent,
         elevation: 0,
         child: Icon(
           Icons.add_rounded,
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           size: controller.isSmallScreen ? 24 : 28,
         ),
       ),
@@ -895,7 +1566,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: AppTheme.backgroundLight.withOpacity(0.8),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: accentColor.withOpacity(0.2), width: 1.5),
         boxShadow: [
@@ -930,7 +1601,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                         label,
                         style: AppStyles.custom(
                           size: controller.isSmallScreen ? 11 : 12,
-                          color: Colors.grey.shade600,
+                          color: AppTheme.grey600,
                           weight: FontWeight.w500,
                         ),
                       ),
@@ -939,7 +1610,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                         value,
                         style: AppStyles.custom(
                           size: controller.isSmallScreen ? 16 : 18,
-                          color: Colors.grey.shade800,
+                          color: AppTheme.grey800,
                           weight: FontWeight.w700,
                         ),
                       ),
@@ -954,7 +1625,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               label,
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 11 : 12,
-                color: Colors.grey.shade600,
+                color: AppTheme.grey600,
                 weight: FontWeight.w500,
               ),
             ),
@@ -963,7 +1634,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               value,
               style: AppStyles.custom(
                 size: controller.isSmallScreen ? 16 : 18,
-                color: Colors.grey.shade800,
+                color: AppTheme.grey800,
                 weight: FontWeight.w700,
               ),
             ),
@@ -1031,18 +1702,18 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         //monthly emi dues
         Obx(
           () =>
-              controller.isMonthlyEmiDuesChartLoading.value
-                  ? GenericBarChartShimmer(title: "EMI dues per month")
-                  : controller.hasmonthlyEmiDuesChartError.value
+              controller.isDuesCollectionStatusChartLoading.value
+                  ? GenericBarChartShimmer(title: "Dues Collection Status")
+                  : controller.hasDuesCollectionStatusChartError.value
                   ? buildErrorCard(
-                    controller.monthlyEmiDuesCharterrorMessage,
+                    controller.duesCollectionStatusCharterrorMessage,
                     controller.screenWidth,
                     controller.screenHeight,
                     controller.isSmallScreen,
                   )
                   : SwitchableChartWidget(
-                    payload: controller.monthlyEmiDuesChartPayload,
-                    title: "EMI dues per month",
+                    payload: controller.duesCollectionStatusChartPayload,
+                    title: "Dues Collection Status",
                     screenWidth: controller.screenWidth,
                     screenHeight: controller.screenHeight,
                     isSmallScreen: controller.isSmallScreen,

@@ -10,6 +10,7 @@ import 'package:smartbecho/services/route_services.dart';
 import 'package:smartbecho/services/secure_storage_service.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:smartbecho/utils/app_colors.dart';
 
 class OTPController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -185,7 +186,8 @@ class OTPController extends GetxController
 
     // All validations passed
     passwordError.value = '';
-    isFormValid.value = otpComplete && newPass.isNotEmpty && confirmPass.isNotEmpty;
+    isFormValid.value =
+        otpComplete && newPass.isNotEmpty && confirmPass.isNotEmpty;
   }
 
   void onOTPChanged(String value, int index) {
@@ -244,8 +246,8 @@ class OTPController extends GetxController
     Get.snackbar(
       'Code Sent',
       'A new verification code has been sent to $email',
-      backgroundColor: Colors.green.withOpacity(0.8),
-      colorText: Colors.white,
+      backgroundColor: AppTheme.primaryGreen.withOpacity(0.8),
+      colorText: AppTheme.backgroundLight,
       snackPosition: SnackPosition.TOP,
       duration: const Duration(seconds: 3),
     );
@@ -273,9 +275,10 @@ class OTPController extends GetxController
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data is String
-            ? json.decode(response.data)
-            : response.data;
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
 
         if (data is Map<String, dynamic>) {
           String status = data['status'] ?? '';
@@ -296,8 +299,8 @@ class OTPController extends GetxController
               message.isNotEmpty
                   ? message
                   : 'OTP verified and password reset successfully!',
-              backgroundColor: Colors.green.withOpacity(0.8),
-              colorText: Colors.white,
+              backgroundColor: AppTheme.primaryGreen.withOpacity(0.8),
+              colorText: AppTheme.backgroundLight,
               snackPosition: SnackPosition.TOP,
               duration: const Duration(seconds: 2),
             );
@@ -327,8 +330,8 @@ class OTPController extends GetxController
         e.toString().contains('Exception:')
             ? e.toString().replaceAll('Exception: ', '')
             : 'Invalid OTP. Please try again.',
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
+        backgroundColor: AppTheme.primaryRed.withOpacity(0.8),
+        colorText: AppTheme.backgroundLight,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
@@ -14,16 +16,13 @@ class ResetPasswordScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              buildCustomAppBar("Reset Password",isdark: false),
+              buildCustomAppBar("Reset Password", isdark: false),
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
@@ -40,7 +39,7 @@ class ResetPasswordScreen extends StatelessWidget {
                             const SizedBox(height: 40),
                             _buildResetForm(controller),
                             const SizedBox(height: 32),
-                            _buildResetButton(controller,context),
+                            _buildResetButton(controller, context),
                             const SizedBox(height: 24),
                             _buildBackToLoginHint(),
                           ],
@@ -57,8 +56,6 @@ class ResetPasswordScreen extends StatelessWidget {
     );
   }
 
-  
-  
   Widget _buildHeaderSection() {
     return Column(
       children: [
@@ -66,26 +63,26 @@ class ResetPasswordScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: AppTheme.backgroundLight.withOpacity(0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: AppTheme.backgroundLight.withOpacity(0.3),
               width: 2,
             ),
           ),
           child: Icon(
             Icons.lock_reset_rounded,
             size: 40,
-            color: Colors.white,
+            color: AppTheme.backgroundLight,
           ),
         ),
         const SizedBox(height: 24),
         Text(
           'Forgot Password?',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+          style: AppStyles.custom(
+            size: 32,
+            weight: FontWeight.bold,
+            color: AppTheme.backgroundLight,
             letterSpacing: -0.5,
           ),
         ),
@@ -95,27 +92,27 @@ class ResetPasswordScreen extends StatelessWidget {
           child: Text(
             'No worries! Enter your email address and we\'ll send you a secure link to reset your password.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
-              fontWeight: FontWeight.w400,
-              height: 1.5,
+            style: AppStyles.custom(
+              size: 16,
+              color: AppTheme.backgroundLight.withOpacity(0.8),
+              weight: FontWeight.w400,
+              // height: 1.5,
             ),
           ),
         ),
       ],
     );
   }
-  
+
   Widget _buildResetForm(AuthController controller) {
     return Form(
       key: controller.resetPasswordFormKey,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: AppTheme.backgroundLight.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: AppTheme.backgroundLight.withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -123,21 +120,21 @@ class ResetPasswordScreen extends StatelessWidget {
           controller: controller.emailController,
           keyboardType: TextInputType.emailAddress,
           validator: controller.validateEmail,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+          style: AppStyles.custom(
+            color: AppTheme.backgroundLight,
+            size: 16,
+            weight: FontWeight.w500,
           ),
           decoration: InputDecoration(
             hintText: 'Enter your email address',
-            hintStyle: TextStyle(
-              color: Colors.white.withOpacity(0.6),
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
+            hintStyle: AppStyles.custom(
+              color: AppTheme.backgroundLight.withOpacity(0.6),
+              size: 16,
+              weight: FontWeight.w400,
             ),
             prefixIcon: Icon(
               Icons.email_outlined,
-              color: Colors.white.withOpacity(0.7),
+              color: AppTheme.backgroundLight.withOpacity(0.7),
               size: 22,
             ),
             border: InputBorder.none,
@@ -150,90 +147,99 @@ class ResetPasswordScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildResetButton(AuthController controller, BuildContext context) {
-    return Obx(() => Container(
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFFF6B6B),
-            Color(0xFFFF8E8E),
+    return Obx(
+      () => Container(
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFF6B6B), Color(0xFFFF8E8E)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFFFF6B6B).withOpacity(0.3),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: Offset(0, 8),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFFFF6B6B).withOpacity(0.3),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap:() => controller.isLoading.value ? null : controller.resetPassword(context,controller.emailController.text),
-          child: Center(
-            child: controller.isLoading.value 
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        child: Material(
+          color: AppTheme.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap:
+                () =>
+                    controller.isLoading.value
+                        ? null
+                        : controller.resetPassword(
+                          context,
+                          controller.emailController.text,
+                        ),
+            child: Center(
+              child:
+                  controller.isLoading.value
+                      ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.backgroundLight,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Sending...',
+                            style: AppStyles.custom(
+                              color: AppTheme.backgroundLight,
+                              size: 16,
+                              weight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      )
+                      : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.send_rounded,
+                            color: AppTheme.backgroundLight,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Send Reset Link',
+                            style: AppStyles.custom(
+                              color: AppTheme.backgroundLight,
+                              size: 18,
+                              weight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Sending...',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.send_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Send Reset Link',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildBackToLoginHint() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppTheme.backgroundLight.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppTheme.backgroundLight.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -242,7 +248,7 @@ class ResetPasswordScreen extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.backgroundLight.withOpacity(0.8),
             size: 18,
           ),
           const SizedBox(width: 8),
@@ -250,10 +256,10 @@ class ResetPasswordScreen extends StatelessWidget {
             child: Text(
               'Check your email for the reset link. It may take a few minutes to arrive.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
+              style: AppStyles.custom(
+                color: AppTheme.backgroundLight.withOpacity(0.8),
+                size: 14,
+                weight: FontWeight.w400,
               ),
             ),
           ),

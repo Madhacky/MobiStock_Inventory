@@ -1,46 +1,38 @@
 // Model for Summary Cards
 class SummaryCardsModel {
+  final int totalStock;
+  final int lowStockCount;
   final int totalCompanies;
-  final int totalModelsAvailable;
-  final int totalStockAvailable;
-  final int totalUnitsSold;
-  final String topSellingBrandAndModel;
-  final double totalRevenue;
+  final int totalPhonesSold;
 
   SummaryCardsModel({
+    required this.totalStock,
+    required this.lowStockCount,
     required this.totalCompanies,
-    required this.totalModelsAvailable,
-    required this.totalStockAvailable,
-    required this.totalUnitsSold,
-    required this.topSellingBrandAndModel,
-    required this.totalRevenue,
+    required this.totalPhonesSold,
   });
 
   factory SummaryCardsModel.fromJson(Map<String, dynamic> json) {
     return SummaryCardsModel(
+      totalStock: json['totalStock'] ?? 0,
+      lowStockCount: json['lowStockCount'] ?? 0,
       totalCompanies: json['totalCompanies'] ?? 0,
-      totalModelsAvailable: json['totalModelsAvailable'] ?? 0,
-      totalStockAvailable: json['totalStockAvailable'] ?? 0,
-      totalUnitsSold: json['totalUnitsSold'] ?? 0,
-      topSellingBrandAndModel: json['topSellingBrandAndModel'] ?? '',
-      totalRevenue: (json['totalRevenue'] ?? 0.0).toDouble(),
+      totalPhonesSold: json['totalPhonesSold'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'totalStock': totalStock,
+      'lowStockCount': lowStockCount,
       'totalCompanies': totalCompanies,
-      'totalModelsAvailable': totalModelsAvailable,
-      'totalStockAvailable': totalStockAvailable,
-      'totalUnitsSold': totalUnitsSold,
-      'topSellingBrandAndModel': topSellingBrandAndModel,
-      'totalRevenue': totalRevenue,
+      'totalPhonesSold': totalPhonesSold,
     };
   }
 
   @override
   String toString() {
-    return 'SummaryCardsModel{totalCompanies: $totalCompanies, totalModelsAvailable: $totalModelsAvailable, totalStockAvailable: $totalStockAvailable, totalUnitsSold: $totalUnitsSold, topSellingBrandAndModel: $topSellingBrandAndModel, totalRevenue: $totalRevenue}';
+    return 'SummaryCardsModel{totalStock: $totalStock, lowStockCount: $lowStockCount, totalCompanies: $totalCompanies, totalPhonesSold: $totalPhonesSold}';
   }
 }
 

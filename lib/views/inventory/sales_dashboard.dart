@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_stock_comtroller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
-import 'package:smartbecho/views/inventory%20management/components/company_stock_grid.dart';
-import 'package:smartbecho/views/inventory%20management/components/low_stock_alert_card.dart';
-import 'package:smartbecho/views/inventory%20management/widgets/sales_dashboard_shimmer.dart';
+import 'package:smartbecho/views/inventory/components/company_stock_grid.dart';
+import 'package:smartbecho/views/inventory/components/low_stock_alert_card.dart';
+import 'package:smartbecho/views/inventory/widgets/sales_dashboard_shimmer.dart';
 
 class SalesStockDashboard extends StatelessWidget {
   final InventorySalesStockController controller = Get.find();
@@ -13,12 +14,12 @@ class SalesStockDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundLight,
 
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: controller.fetchInventoryData,
-          color: const Color(0xFF4CAF50),
+           color: AppTheme.green500,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -68,17 +69,17 @@ class BusinessSummaryCard extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: AppTheme.greyOpacity01,
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(color: AppTheme.greyOpacity01, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +90,7 @@ class BusinessSummaryCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4CAF50).withOpacity(0.1),
+                    color: AppTheme.green500.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
@@ -208,7 +209,7 @@ class BusinessSummaryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF4CAF50).withOpacity(0.3),
+                    color: AppTheme.green500.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -219,28 +220,28 @@ class BusinessSummaryCard extends StatelessWidget {
                   // Add your download/print functionality here
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
+                  backgroundColor: AppTheme.transparent,
+                  shadowColor: AppTheme.transparent,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Row(
+                child:  Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.download_outlined,
-                      color: Colors.white,
+                      color: AppTheme.backgroundLight,
                       size: 18,
                     ),
                     SizedBox(width: 8),
                     Text(
                       'Download Sales Report',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                      style: AppStyles.custom(
+                        color: AppTheme.backgroundLight,
+                        size: 14,
+                        weight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -283,10 +284,10 @@ class BusinessSummaryCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(
+            style: AppStyles.custom(
               color: const Color(0xFF1A1A1A),
-              fontSize: isTextValue ? 14 : 16,
-              fontWeight: FontWeight.w700,
+              size: isTextValue ? 14 : 16,
+              weight: FontWeight.w700,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -294,20 +295,20 @@ class BusinessSummaryCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             title,
-            style: const TextStyle(
+            style:  AppStyles.custom(
               color: Color(0xFF6B7280),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
+              size: 11,
+              weight: FontWeight.w500,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           Text(
             subtitle,
-            style: TextStyle(
+            style: AppStyles.custom(
               color: const Color(0xFF6B7280).withOpacity(0.7),
-              fontSize: 9,
-              fontWeight: FontWeight.w400,
+              size: 9,
+              weight: FontWeight.w400,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

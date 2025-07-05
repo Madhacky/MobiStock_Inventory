@@ -15,6 +15,8 @@ import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class InventoryController extends GetxController {
   // PlutoGrid Manager
@@ -165,8 +167,6 @@ class InventoryController extends GetxController {
     priceController.dispose();
     super.onClose();
   }
-
-  // ADD MOBILE FORM METHODS
 
   /// Get company brand color for UI theming
   Color getCompanyColor(String? company) {
@@ -339,8 +339,8 @@ class InventoryController extends GetxController {
           'Mobile added to inventory successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: const Color(0xFF10B981),
-          colorText: Colors.white,
-          icon: const Icon(Icons.check_circle, color: Colors.white),
+          colorText: AppTheme.backgroundLight,
+          icon: const Icon(Icons.check_circle, color: AppTheme.backgroundLight),
         );
 
         // Refresh inventory data if needed
@@ -359,9 +359,9 @@ class InventoryController extends GetxController {
         'Error',
         'Failed to add mobile to inventory. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        icon: const Icon(Icons.error, color: Colors.white),
+        backgroundColor: AppTheme.primaryRed,
+        colorText: AppTheme.backgroundLight,
+        icon: const Icon(Icons.error, color: AppTheme.backgroundLight),
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
       );
@@ -568,7 +568,7 @@ class InventoryController extends GetxController {
       Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.backgroundLight,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
@@ -576,7 +576,10 @@ class InventoryController extends GetxController {
           children: [
             Text(
               'Advanced Filters',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: AppStyles.custom(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -606,8 +609,8 @@ class InventoryController extends GetxController {
       middleText: 'Are you sure you want to delete this item?',
       textConfirm: 'Delete',
       textCancel: 'Cancel',
-      confirmTextColor: Colors.white,
-      buttonColor: Colors.red,
+      confirmTextColor: AppTheme.backgroundLight,
+      buttonColor: AppTheme.primaryRed,
       onConfirm: () {
         // Remove from both lists
         allFetchedItems.removeWhere((item) => item.id.toString() == itemId);
@@ -766,7 +769,6 @@ class InventoryController extends GetxController {
 
           log("Summary Cards loaded successfully");
           log("Total Companies: ${summaryCardsData.value?.totalCompanies}");
-          log("Total Revenue: ${summaryCardsData.value?.totalRevenue}");
         } else if (response.statusCode == 401 || response.statusCode == 403) {
           hasSummaryCardsError.value = true;
           summaryCardsErrorMessage.value =
@@ -797,26 +799,10 @@ class InventoryController extends GetxController {
   // Getter methods for easy access to summary data
   int get totalCompaniesAvailable =>
       summaryCardsData.value?.totalCompanies ?? 0;
-  int get totalModelsAvailable =>
-      summaryCardsData.value?.totalModelsAvailable ?? 0;
-  int get totalStockAvailable =>
-      summaryCardsData.value?.totalStockAvailable ?? 0;
-  int get totalUnitsSold => summaryCardsData.value?.totalUnitsSold ?? 0;
-  String get topSellingBrandAndModel =>
-      summaryCardsData.value?.topSellingBrandAndModel ?? '';
-  double get totalRevenue => summaryCardsData.value?.totalRevenue ?? 0.0;
 
-  // Formatted revenue for display
-  String get formattedTotalRevenue {
-    final revenue = totalRevenue;
-    if (revenue >= 1000000) {
-      return '₹${(revenue / 1000000).toStringAsFixed(1)}M';
-    } else if (revenue >= 1000) {
-      return '₹${(revenue / 1000).toStringAsFixed(1)}K';
-    } else {
-      return '₹${revenue.toStringAsFixed(0)}';
-    }
-  }
+  int get totalStockAvailable => summaryCardsData.value?.totalStock ?? 0;
+  int get lowStockAlert => summaryCardsData.value?.lowStockCount ?? 0;
+  int get monthlyPhoneSold => summaryCardsData.value?.totalPhonesSold ?? 0;
 
   //check session expiry
 

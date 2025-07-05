@@ -9,6 +9,8 @@ import 'package:smartbecho/models/customer%20management/top_stats_card_model.dar
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/views/customer/components/customer_card_view.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:dio/dio.dart' as dio;
@@ -99,7 +101,7 @@ class CustomerController extends GetxController {
             alignment: Alignment.center,
             child: Text(
               rendererContext.cell.value.toString(),
-              style: TextStyle(
+              style: AppStyles.custom(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF6C5CE7),
@@ -141,17 +143,20 @@ class CustomerController extends GetxController {
               children: [
                 Text(
                   rendererContext.cell.value.toString(),
-                  style: TextStyle(
+                  style: AppStyles.custom(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppTheme.black87,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (customer.id != 0)
                   Text(
                     customer.location,
-                    style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                    style: AppStyles.custom(
+                      fontSize: 10,
+                      color: AppTheme.grey600,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
               ],
@@ -171,7 +176,7 @@ class CustomerController extends GetxController {
             alignment: Alignment.centerLeft,
             child: Text(
               rendererContext.cell.value.toString(),
-              style: TextStyle(fontSize: 12, color: Colors.black87),
+              style: AppStyles.custom(fontSize: 12, color: AppTheme.black87),
             ),
           );
         },
@@ -194,7 +199,7 @@ class CustomerController extends GetxController {
               ),
               child: Text(
                 rendererContext.cell.value.toString(),
-                style: TextStyle(
+                style: AppStyles.custom(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF6C5CE7),
@@ -218,10 +223,10 @@ class CustomerController extends GetxController {
             alignment: Alignment.centerRight,
             child: Text(
               formatCurrency(amount.toInt()),
-              style: TextStyle(
+              style: AppStyles.custom(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: amount > 20000 ? Color(0xFF51CF66) : Colors.black87,
+                color: amount > 20000 ? Color(0xFF51CF66) : AppTheme.black87,
               ),
             ),
           );
@@ -241,10 +246,10 @@ class CustomerController extends GetxController {
             alignment: Alignment.centerRight,
             child: Text(
               formatCurrency(amount.toInt()),
-              style: TextStyle(
+              style: AppStyles.custom(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: amount > 0 ? Color(0xFFE74C3C) : Colors.black87,
+                color: amount > 0 ? Color(0xFFE74C3C) : AppTheme.black87,
               ),
             ),
           );
@@ -290,7 +295,7 @@ class CustomerController extends GetxController {
               ),
               child: Text(
                 type,
-                style: TextStyle(
+                style: AppStyles.custom(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: typeColor,

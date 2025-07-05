@@ -4,11 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
-
-
+import 'package:smartbecho/utils/app_colors.dart';
 
 class BillHistoryController extends GetxController {
-    final ApiServices _apiService = ApiServices();
+  final ApiServices _apiService = ApiServices();
 
   // App config instance
   final AppConfig _config = AppConfig.instance;
@@ -57,7 +56,7 @@ class BillHistoryController extends GetxController {
     };
 
     // if (searchQuery.value.isNotEmpty) {
-    //   query['search'] = searchQuery.value; 
+    //   query['search'] = searchQuery.value;
     // }
 
     final response = await _apiService.requestGetForApi(
@@ -72,8 +71,8 @@ class BillHistoryController extends GetxController {
         'Error',
         'Failed to load bills',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: AppTheme.primaryRed,
+        colorText: AppTheme.backgroundLight,
       );
     } else {
       try {
@@ -126,8 +125,8 @@ class BillHistoryController extends GetxController {
         'Error',
         'Failed to load more bills',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: AppTheme.primaryRed,
+        colorText: AppTheme.backgroundLight,
       );
     }
 
@@ -154,19 +153,19 @@ class BillHistoryController extends GetxController {
   }
 
   Color getStatusColor(Bill bill) {
-    return bill.paid ? Colors.green : Colors.orange;
+    return bill.paid ? AppTheme.primaryGreen : AppTheme.primaryOrange;
   }
 
   Color getCompanyColor(String company) {
     switch (company.toLowerCase()) {
       case 'apple':
-        return Colors.grey.shade800;
+        return AppTheme.grey800;
       case 'samsung':
-        return Colors.blue;
+        return AppTheme.primaryBlue;
       case 'xiaomi':
-        return Colors.orange;
+        return AppTheme.primaryOrange;
       default:
-        return Colors.purple;
+        return AppTheme.primaryPurple;
     }
   }
 

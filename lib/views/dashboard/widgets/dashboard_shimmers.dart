@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smartbecho/controllers/dashboard_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/shimmer_responsive_utils.dart';
 import 'package:shimmer/shimmer.dart';
 
-
-
-Widget buildSalesSummaryShimmer(BuildContext context, DashboardController controller) {
+Widget buildSalesSummaryShimmer(
+  BuildContext context,
+  DashboardController controller,
+) {
   return Column(
     children: [
       // Two metric cards in a row (Total Sales and Transactions)
@@ -15,11 +17,19 @@ Widget buildSalesSummaryShimmer(BuildContext context, DashboardController contro
         child: Row(
           children: [
             Expanded(
-              child: _buildShimmerMetricCard(context: context, controller: controller),
+              child: _buildShimmerMetricCard(
+                context: context,
+                controller: controller,
+              ),
             ),
-            SizedBox(width: ShimmerResponsiveUtils.getResponsiveMargin(context) * 3),
+            SizedBox(
+              width: ShimmerResponsiveUtils.getResponsiveMargin(context) * 3,
+            ),
             Expanded(
-              child: _buildShimmerMetricCard(context: context, controller: controller),
+              child: _buildShimmerMetricCard(
+                context: context,
+                controller: controller,
+              ),
             ),
           ],
         ),
@@ -31,71 +41,84 @@ Widget buildSalesSummaryShimmer(BuildContext context, DashboardController contro
         context: context,
         controller: controller,
         child: _buildShimmerMetricCard(
-          context: context, 
-          controller: controller, 
-          isFullWidth: true
+          context: context,
+          controller: controller,
+          isFullWidth: true,
         ),
       ),
       const SizedBox(height: 20),
 
       // Payment breakdown section
-_buildSummaryCardShimmer(
-  context: context,
-  controller: controller,
-  child: Container(
-    padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
-    decoration: BoxDecoration(
-      color: Colors.grey.shade50.withOpacity(0.7),
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.grey.shade200, width: 1),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Payment Methods title shimmer
-        Row(
-          children: [
-            Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                width: ShimmerResponsiveUtils.isSmallScreen(context) ? 16 : 18,
-                height: ShimmerResponsiveUtils.isSmallScreen(context) ? 16 : 18,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            // FIXED: Use Expanded to prevent overflow
-            Expanded(
-              child: Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  // FIXED: Remove fixed width, let Expanded handle it
-                  // width: ShimmerResponsiveUtils.getScreenWidth(context) * 0.3,
-                  height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
+      _buildSummaryCardShimmer(
+        context: context,
+        controller: controller,
+        child: Container(
+          padding: EdgeInsets.all(
+            ShimmerResponsiveUtils.getResponsivePadding(context),
+          ),
+          decoration: BoxDecoration(
+            color: AppTheme.grey50.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppTheme.grey200, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Payment Methods title shimmer
+              Row(
+                children: [
+                  Shimmer.fromColors(
+                    baseColor: AppTheme.grey300!,
+                    highlightColor: AppTheme.grey100!,
+                    child: Container(
+                      width:
+                          ShimmerResponsiveUtils.isSmallScreen(context)
+                              ? 16
+                              : 18,
+                      height:
+                          ShimmerResponsiveUtils.isSmallScreen(context)
+                              ? 16
+                              : 18,
+                      decoration: BoxDecoration(
+                        color: AppTheme.backgroundLight,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  // FIXED: Use Expanded to prevent overflow
+                  Expanded(
+                    child: Shimmer.fromColors(
+                      baseColor: AppTheme.grey300!,
+                      highlightColor: AppTheme.grey100!,
+                      child: Container(
+                        // FIXED: Remove fixed width, let Expanded handle it
+                        // width: ShimmerResponsiveUtils.getScreenWidth(context) * 0.3,
+                        height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                          context,
+                          baseSize: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.backgroundLight,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: ShimmerResponsiveUtils.getResponsiveMargin(context) * 3,
+              ),
+              // Payment items shimmer
+              ...List.generate(
+                ShimmerResponsiveUtils.isSmallScreen(context) ? 3 : 4,
+                (index) => _buildShimmerPaymentItem(context, controller),
+              ),
+            ],
+          ),
         ),
-        SizedBox(height: ShimmerResponsiveUtils.getResponsiveMargin(context) * 3),
-        // Payment items shimmer
-        ...List.generate(
-          ShimmerResponsiveUtils.isSmallScreen(context) ? 3 : 4,
-          (index) => _buildShimmerPaymentItem(context, controller),
-        ),
-      ],
-    ),
-  ),
-),
+      ),
     ],
   );
 }
@@ -110,27 +133,26 @@ Widget _buildSummaryCardShimmer({
       horizontal: ShimmerResponsiveUtils.getResponsiveMargin(context),
       vertical: ShimmerResponsiveUtils.getResponsiveMargin(context) * 1.5,
     ),
-    padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
+    padding: EdgeInsets.all(
+      ShimmerResponsiveUtils.getResponsivePadding(context),
+    ),
     decoration: BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.white, Colors.blue.shade50.withOpacity(0.3)],
+        colors: [AppTheme.backgroundLight, AppTheme.blue50Opacity30],
       ),
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(
-        color: Colors.blue.shade100.withOpacity(0.5),
-        width: 1.5,
-      ),
+      border: Border.all(color: AppTheme.blue100Opacity50, width: 1.5),
       boxShadow: [
         BoxShadow(
-          color: Colors.blue.shade100.withOpacity(0.2),
+          color: AppTheme.blue100Opacity20,
           blurRadius: 20,
           offset: const Offset(0, 8),
           spreadRadius: 0,
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.8),
+          color: AppTheme.backgroundLight.withOpacity(0.8),
           blurRadius: 10,
           offset: const Offset(0, -2),
           spreadRadius: 0,
@@ -138,8 +160,8 @@ Widget _buildSummaryCardShimmer({
       ],
     ),
     child: Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: AppTheme.grey300!,
+      highlightColor: AppTheme.grey100!,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -150,17 +172,20 @@ Widget _buildSummaryCardShimmer({
                 width: 4,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: AppTheme.grey300,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Container(
-                  height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 18),
+                  height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                    context,
+                    baseSize: 18,
+                  ),
                   width: ShimmerResponsiveUtils.getScreenWidth(context) * 0.4,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -181,17 +206,18 @@ Widget _buildShimmerMetricCard({
   bool isFullWidth = false,
 }) {
   return Container(
-    padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
+    padding: EdgeInsets.all(
+      ShimmerResponsiveUtils.getResponsivePadding(context),
+    ),
     decoration: BoxDecoration(
-      color: Colors.grey.shade50.withOpacity(0.7),
+      color: AppTheme.grey50.withOpacity(0.7),
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.grey.shade200, width: 1),
+      border: Border.all(color: AppTheme.grey200, width: 1),
     ),
     child: IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,25 +226,30 @@ Widget _buildShimmerMetricCard({
               children: [
                 // Title shimmer
                 Container(
-                  height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 14),
-                  constraints: BoxConstraints(
-                    maxWidth: double.infinity,
+                  height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                    context,
+                    baseSize: 14,
                   ),
+                  constraints: BoxConstraints(maxWidth: double.infinity),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                SizedBox(height: ShimmerResponsiveUtils.getResponsiveMargin(context) * 2),
+                SizedBox(
+                  height:
+                      ShimmerResponsiveUtils.getResponsiveMargin(context) * 2,
+                ),
                 // Value shimmer - FIXED: Remove explicit width since it's inside Expanded
                 Container(
-                  height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 20),
-                  // Removed: width: double.infinity * 0.7,
-                  constraints: BoxConstraints(
-                    maxWidth: double.infinity,
+                  height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                    context,
+                    baseSize: 20,
                   ),
+                  // Removed: width: double.infinity * 0.7,
+                  constraints: BoxConstraints(maxWidth: double.infinity),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -231,10 +262,13 @@ Widget _buildShimmerMetricCard({
   );
 }
 
-Widget _buildShimmerPaymentItem(BuildContext context, DashboardController controller) {
+Widget _buildShimmerPaymentItem(
+  BuildContext context,
+  DashboardController controller,
+) {
   return Padding(
     padding: EdgeInsets.symmetric(
-      vertical: ShimmerResponsiveUtils.getResponsiveMargin(context)
+      vertical: ShimmerResponsiveUtils.getResponsiveMargin(context),
     ),
     child: Row(
       children: [
@@ -242,9 +276,12 @@ Widget _buildShimmerPaymentItem(BuildContext context, DashboardController contro
         Expanded(
           flex: 2,
           child: Container(
-            height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 14),
+            height: ShimmerResponsiveUtils.getResponsiveFontSize(
+              context,
+              baseSize: 14,
+            ),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.grey300,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -254,9 +291,12 @@ Widget _buildShimmerPaymentItem(BuildContext context, DashboardController contro
         Expanded(
           flex: 3,
           child: Container(
-            height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 14),
+            height: ShimmerResponsiveUtils.getResponsiveFontSize(
+              context,
+              baseSize: 14,
+            ),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.grey300,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -270,22 +310,21 @@ Widget _buildShimmerPaymentItem(BuildContext context, DashboardController contro
 class TodaysSalesStatsShimmer extends StatelessWidget {
   final int itemCount;
 
-  const TodaysSalesStatsShimmer({
-    Key? key,
-    this.itemCount = 4,
-  }) : super(key: key);
+  const TodaysSalesStatsShimmer({Key? key, this.itemCount = 4})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = ShimmerResponsiveUtils.getScreenWidth(context);
     final isSmallScreen = ShimmerResponsiveUtils.isSmallScreen(context);
-    
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        mainAxisSpacing: ShimmerResponsiveUtils.getResponsiveMargin(context) * 3,
+        mainAxisSpacing:
+            ShimmerResponsiveUtils.getResponsiveMargin(context) * 3,
         childAspectRatio: _getResponsiveAspectRatio(context),
       ),
       itemCount: itemCount,
@@ -302,15 +341,17 @@ class TodaysSalesStatsShimmer extends StatelessWidget {
   Widget _buildShimmerCard(BuildContext context) {
     final screenWidth = ShimmerResponsiveUtils.getScreenWidth(context);
     final isSmallScreen = ShimmerResponsiveUtils.isSmallScreen(context);
-    
+
     return Container(
-      padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
+      padding: EdgeInsets.all(
+        ShimmerResponsiveUtils.getResponsivePadding(context),
+      ),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: AppTheme.grey100,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppTheme.greyOpacity01,
             spreadRadius: 0,
             blurRadius: 12,
             offset: const Offset(0, 4),
@@ -318,8 +359,8 @@ class TodaysSalesStatsShimmer extends StatelessWidget {
         ],
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+        baseColor: AppTheme.grey300!,
+        highlightColor: AppTheme.grey100!,
         period: const Duration(milliseconds: 1500),
         child: IntrinsicHeight(
           child: Row(
@@ -330,11 +371,14 @@ class TodaysSalesStatsShimmer extends StatelessWidget {
                 width: ShimmerResponsiveUtils.getResponsiveIconSize(context),
                 height: ShimmerResponsiveUtils.getResponsiveIconSize(context),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.backgroundLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              SizedBox(width: ShimmerResponsiveUtils.getResponsivePadding(context) * 0.8),
+              SizedBox(
+                width:
+                    ShimmerResponsiveUtils.getResponsivePadding(context) * 0.8,
+              ),
               // Text content shimmer
               Expanded(
                 child: Column(
@@ -344,25 +388,31 @@ class TodaysSalesStatsShimmer extends StatelessWidget {
                   children: [
                     // Title shimmer
                     Container(
-                      height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 14),
-                      constraints: BoxConstraints(
-                        maxWidth: double.infinity,
+                      height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                        context,
+                        baseSize: 14,
                       ),
+                      constraints: BoxConstraints(maxWidth: double.infinity),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppTheme.backgroundLight,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    SizedBox(height: ShimmerResponsiveUtils.getResponsiveMargin(context) * 2),
+                    SizedBox(
+                      height:
+                          ShimmerResponsiveUtils.getResponsiveMargin(context) *
+                          2,
+                    ),
                     // Value shimmer
                     Container(
-                      height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 20),
-                      width: double.infinity * 0.6,
-                      constraints: BoxConstraints(
-                        maxWidth: double.infinity,
+                      height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                        context,
+                        baseSize: 20,
                       ),
+                      width: double.infinity * 0.6,
+                      constraints: BoxConstraints(maxWidth: double.infinity),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppTheme.backgroundLight,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -381,10 +431,8 @@ class TodaysSalesStatsShimmer extends StatelessWidget {
 class GenericBarChartShimmer extends StatelessWidget {
   final String title;
 
-  const GenericBarChartShimmer({
-    Key? key,
-    required this.title,
-  }) : super(key: key);
+  const GenericBarChartShimmer({Key? key, required this.title})
+    : super(key: key);
 
   Color get primaryColor => const Color(0xFF6C5CE7);
   Color get primaryLight => const Color(0xFFA29BFE);
@@ -393,18 +441,20 @@ class GenericBarChartShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = ShimmerResponsiveUtils.getScreenWidth(context);
     final isSmallScreen = ShimmerResponsiveUtils.isSmallScreen(context);
-    
+
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: ShimmerResponsiveUtils.getResponsiveMargin(context),
         vertical: ShimmerResponsiveUtils.getResponsiveMargin(context) * 1.5,
       ),
-      padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
+      padding: EdgeInsets.all(
+        ShimmerResponsiveUtils.getResponsivePadding(context),
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, primaryLight.withOpacity(0.2)],
+          colors: [AppTheme.backgroundLight, primaryLight.withOpacity(0.2)],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: primaryLight.withOpacity(0.4), width: 1.5),
@@ -415,15 +465,15 @@ class GenericBarChartShimmer extends StatelessWidget {
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: AppTheme.backgroundLight.withOpacity(0.8),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
         ],
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+        baseColor: AppTheme.grey300!,
+        highlightColor: AppTheme.grey100!,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -433,17 +483,20 @@ class GenericBarChartShimmer extends StatelessWidget {
                   width: 4,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: AppTheme.grey300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Container(
-                    height: ShimmerResponsiveUtils.getResponsiveFontSize(context, baseSize: 18),
+                    height: ShimmerResponsiveUtils.getResponsiveFontSize(
+                      context,
+                      baseSize: 18,
+                    ),
                     width: screenWidth * 0.4,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: AppTheme.grey300,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -457,18 +510,23 @@ class GenericBarChartShimmer extends StatelessWidget {
                 builder: (context, constraints) {
                   final availableWidth = constraints.maxWidth;
                   final barCount = _getResponsiveBarCount(context);
-                  final barWidth = (availableWidth / barCount) * 0.5; // 50% of available space per bar
-                  
+                  final barWidth =
+                      (availableWidth / barCount) *
+                      0.5; // 50% of available space per bar
+
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: List.generate(
                       barCount,
                       (index) => Container(
-                        width: barWidth.clamp(8.0, 20.0), // Clamp bar width between 8-20px
+                        width: barWidth.clamp(
+                          8.0,
+                          20.0,
+                        ), // Clamp bar width between 8-20px
                         height: _getBarHeight(context, index),
                         decoration: BoxDecoration(
-                          color: Colors.grey[300],
+                          color: AppTheme.grey300,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -482,17 +540,22 @@ class GenericBarChartShimmer extends StatelessWidget {
               builder: (context, constraints) {
                 final availableWidth = constraints.maxWidth;
                 final barCount = _getResponsiveBarCount(context);
-                final labelWidth = (availableWidth / barCount) * 0.7; // 70% of available space per label
-                
+                final labelWidth =
+                    (availableWidth / barCount) *
+                    0.7; // 70% of available space per label
+
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
                     barCount,
                     (index) => Container(
-                      width: labelWidth.clamp(20.0, 50.0), // Clamp label width between 20-50px
+                      width: labelWidth.clamp(
+                        20.0,
+                        50.0,
+                      ), // Clamp label width between 20-50px
                       height: 12,
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: AppTheme.grey300,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -508,8 +571,10 @@ class GenericBarChartShimmer extends StatelessWidget {
 
   double _getResponsiveChartHeight(BuildContext context) {
     final screenHeight = ShimmerResponsiveUtils.getScreenHeight(context);
-    if (ShimmerResponsiveUtils.isSmallScreen(context)) return screenHeight * 0.25;
-    if (ShimmerResponsiveUtils.isMediumScreen(context)) return screenHeight * 0.28;
+    if (ShimmerResponsiveUtils.isSmallScreen(context))
+      return screenHeight * 0.25;
+    if (ShimmerResponsiveUtils.isMediumScreen(context))
+      return screenHeight * 0.28;
     return screenHeight * 0.3;
   }
 
@@ -522,14 +587,18 @@ class GenericBarChartShimmer extends StatelessWidget {
   double _getResponsiveBarWidth(BuildContext context) {
     final screenWidth = ShimmerResponsiveUtils.getScreenWidth(context);
     final barCount = _getResponsiveBarCount(context);
-    final availableWidth = screenWidth - (ShimmerResponsiveUtils.getResponsivePadding(context) * 4);
+    final availableWidth =
+        screenWidth -
+        (ShimmerResponsiveUtils.getResponsivePadding(context) * 4);
     return (availableWidth / barCount) * 0.6; // 60% of available space per bar
   }
 
   double _getResponsiveLabelWidth(BuildContext context) {
     final screenWidth = ShimmerResponsiveUtils.getScreenWidth(context);
-    if (ShimmerResponsiveUtils.isSmallScreen(context)) return screenWidth * 0.08;
-    if (ShimmerResponsiveUtils.isMediumScreen(context)) return screenWidth * 0.09;
+    if (ShimmerResponsiveUtils.isSmallScreen(context))
+      return screenWidth * 0.08;
+    if (ShimmerResponsiveUtils.isMediumScreen(context))
+      return screenWidth * 0.09;
     return screenWidth * 0.1;
   }
 

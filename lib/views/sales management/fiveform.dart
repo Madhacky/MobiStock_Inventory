@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/sales_managenment_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/views/sales%20management/sales_managenment_screen.dart';
 import 'package:smartbecho/views/sales%20management/widgets/sales_widgets.dart';
 
@@ -12,17 +14,18 @@ class Fiveform extends StatefulWidget {
 }
 
 class _FiveformState extends State<Fiveform> {
-    final SalesManagementController controller = Get.find<SalesManagementController>();
+  final SalesManagementController controller =
+      Get.find<SalesManagementController>();
 
-  
   // int currentStep = 0;
 
   List<Step> getSteps() {
     return [
       ///Step One
       Step(
-        state:controller.currentStep > 0 ? StepState.complete : StepState.indexed,
-        isActive:controller. currentStep >= 0,
+        state:
+            controller.currentStep > 0 ? StepState.complete : StepState.indexed,
+        isActive: controller.currentStep >= 0,
         title: Text("stepOne"),
         content: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -85,9 +88,10 @@ class _FiveformState extends State<Fiveform> {
 
       //Step two
       Step(
-        state:controller. currentStep > 1 ? StepState.complete : StepState.indexed,
+        state:
+            controller.currentStep > 1 ? StepState.complete : StepState.indexed,
 
-        isActive:controller. currentStep >= 1,
+        isActive: controller.currentStep >= 1,
 
         title: Text("Steptwo"),
         content: Form(
@@ -172,8 +176,8 @@ class _FiveformState extends State<Fiveform> {
 
               //     text: 'Submit',
               //     onPressed: controller.onButtonPressed,
-              //     color: Colors.green,
-              //     textColor: Colors.white,
+              //     color: AppTheme.primaryGreen,
+              //     textColor: AppTheme.backgroundLight,
               //     fontSize: 18,
               //     height: 50,
               //     width: 200,
@@ -184,9 +188,10 @@ class _FiveformState extends State<Fiveform> {
       ),
       // Step three
       Step(
-        state:controller. currentStep > 2 ? StepState.complete : StepState.indexed,
+        state:
+            controller.currentStep > 2 ? StepState.complete : StepState.indexed,
 
-        isActive:controller. currentStep >= 2,
+        isActive: controller.currentStep >= 2,
 
         title: Text("Step Three"),
         content: Form(
@@ -251,11 +256,11 @@ class _FiveformState extends State<Fiveform> {
                 children: [
                   Text(
                     "Fainal Total Amount",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    style: AppStyles.custom(size: 16, weight: FontWeight.w700),
                   ),
                   Text(
                     " ₹8397598374  ",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: AppStyles.custom(size: 16, weight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -266,9 +271,10 @@ class _FiveformState extends State<Fiveform> {
 
       //Step Four
       Step(
-        state:controller. currentStep > 3 ? StepState.complete : StepState.indexed,
+        state:
+            controller.currentStep > 3 ? StepState.complete : StepState.indexed,
 
-        isActive:controller. currentStep >= 3,
+        isActive: controller.currentStep >= 3,
 
         title: Text("Step Four"),
         content: Form(
@@ -328,7 +334,7 @@ class _FiveformState extends State<Fiveform> {
               SizedBox(height: 20),
               Text(
                 "Upload Bill/Invoice for Warranty Claimc(PDF, JPG, PNG)",
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                style: AppStyles.custom(size: 12, weight: FontWeight.bold),
               ),
             ],
           ),
@@ -337,9 +343,10 @@ class _FiveformState extends State<Fiveform> {
 
       // Step Five
       Step(
-        state:controller. currentStep > 4 ? StepState.complete : StepState.indexed,
+        state:
+            controller.currentStep > 4 ? StepState.complete : StepState.indexed,
 
-        isActive:controller. currentStep >= 4,
+        isActive: controller.currentStep >= 4,
 
         title: Text('Step Five '),
         content: Column(
@@ -348,7 +355,7 @@ class _FiveformState extends State<Fiveform> {
           children: [
             Text(
               "Preview",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: AppStyles.custom(size: 24, weight: FontWeight.bold),
             ),
             Divider(),
 
@@ -429,35 +436,37 @@ class _FiveformState extends State<Fiveform> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: AppTheme.primaryGreen,
       body: Stepper(
-        onStepTapped: (step) => setState(() {
-          controller.currentStep.value = step;
-        }),
+        onStepTapped:
+            (step) => setState(() {
+              controller.currentStep.value = step;
+            }),
         steps: getSteps(),
         currentStep: controller.currentStep.value,
         onStepContinue: () {
-          final isLastStep = controller.currentStep.value == getSteps().length - 1;
+          final isLastStep =
+              controller.currentStep.value == getSteps().length - 1;
           if (isLastStep) {
             // Validate all fields before finishing
-            bool allValid = 
-              controller.selectedCompany.value.isNotEmpty && 
-              controller.selectedModel.value.isNotEmpty &&
-              controller.selectedRam.value.isNotEmpty &&
-              controller.selectedColor.value.isNotEmpty &&
-              controller.quantity.text.isNotEmpty &&
-              controller.customerNameController.text.isNotEmpty &&
-              controller.customerAddressController.text.isNotEmpty &&
-              controller.customerPhoneController.text.isNotEmpty &&
-              controller.selectedEmi.value.isNotEmpty &&
-              controller.basePriceController.text.isNotEmpty &&
-              controller.gstController.text.isNotEmpty &&
-              controller.accessoriesController.text.isNotEmpty &&
-              controller.repairController.text.isNotEmpty &&
-              controller.discountController.text.isNotEmpty &&
-              controller.phoneNoController.text.isNotEmpty &&
-              controller.emailController.text.isNotEmpty &&
-              controller.addressController.text.isNotEmpty;
+            bool allValid =
+                controller.selectedCompany.value.isNotEmpty &&
+                controller.selectedModel.value.isNotEmpty &&
+                controller.selectedRam.value.isNotEmpty &&
+                controller.selectedColor.value.isNotEmpty &&
+                controller.quantity.text.isNotEmpty &&
+                controller.customerNameController.text.isNotEmpty &&
+                controller.customerAddressController.text.isNotEmpty &&
+                controller.customerPhoneController.text.isNotEmpty &&
+                controller.selectedEmi.value.isNotEmpty &&
+                controller.basePriceController.text.isNotEmpty &&
+                controller.gstController.text.isNotEmpty &&
+                controller.accessoriesController.text.isNotEmpty &&
+                controller.repairController.text.isNotEmpty &&
+                controller.discountController.text.isNotEmpty &&
+                controller.phoneNoController.text.isNotEmpty &&
+                controller.emailController.text.isNotEmpty &&
+                controller.addressController.text.isNotEmpty;
             if (allValid) {
               Get.to(SalesManagenmentScreen());
             } else {
@@ -466,7 +475,7 @@ class _FiveformState extends State<Fiveform> {
                 'Please fill all required fields before finishing',
                 snackPosition: SnackPosition.TOP,
                 backgroundColor: Colors.redAccent,
-                colorText: Colors.white,
+                colorText: AppTheme.backgroundLight,
               );
             }
           } else {
@@ -479,8 +488,8 @@ class _FiveformState extends State<Fiveform> {
           controller.currentStep.value == 0
               ? null
               : setState(() {
-                  controller.currentStep.value -= 1;
-                });
+                controller.currentStep.value -= 1;
+              });
         },
         controlsBuilder: (BuildContext context, ControlsDetails details) {
           return Row(
@@ -490,27 +499,34 @@ class _FiveformState extends State<Fiveform> {
                   bool isValid = false;
                   switch (controller.currentStep.value) {
                     case 0:
-                      isValid = controller.selectedCompany.value.isNotEmpty &&
+                      isValid =
+                          controller.selectedCompany.value.isNotEmpty &&
                           controller.selectedModel.value.isNotEmpty &&
                           controller.selectedRam.value.isNotEmpty &&
                           controller.selectedColor.value.isNotEmpty &&
                           controller.quantity.text.isNotEmpty;
                       break;
                     case 1:
-                      isValid = controller.customerNameController.text.isNotEmpty &&
-                          controller.customerAddressController.text.isNotEmpty &&
+                      isValid =
+                          controller.customerNameController.text.isNotEmpty &&
+                          controller
+                              .customerAddressController
+                              .text
+                              .isNotEmpty &&
                           controller.customerPhoneController.text.isNotEmpty &&
                           controller.selectedEmi.value.isNotEmpty;
                       break;
                     case 2:
-                      isValid = controller.basePriceController.text.isNotEmpty &&
+                      isValid =
+                          controller.basePriceController.text.isNotEmpty &&
                           controller.gstController.text.isNotEmpty &&
                           controller.accessoriesController.text.isNotEmpty &&
                           controller.repairController.text.isNotEmpty &&
                           controller.discountController.text.isNotEmpty;
                       break;
                     case 3:
-                      isValid = controller.customerNameController.text.isNotEmpty &&
+                      isValid =
+                          controller.customerNameController.text.isNotEmpty &&
                           controller.phoneNoController.text.isNotEmpty &&
                           controller.emailController.text.isNotEmpty &&
                           controller.addressController.text.isNotEmpty;
@@ -526,22 +542,27 @@ class _FiveformState extends State<Fiveform> {
                       'Please fill all required fields',
                       snackPosition: SnackPosition.TOP,
                       backgroundColor: Colors.redAccent,
-                      colorText: Colors.white,
+                      colorText: AppTheme.backgroundLight,
                     );
                   }
                 },
-                 style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(const Color(0xFFFF6B6B)),
-                    foregroundColor: MaterialStateProperty.all(const Color(0xffffffff)),
-                    
-
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    const Color(0xFFFF6B6B),
                   ),
-                child: Text(controller.currentStep.value == getSteps().length - 1 ? 'Finish' : 'Next'),
+                  foregroundColor: MaterialStateProperty.all(
+                    const Color(0xffffffff),
+                  ),
+                ),
+                child: Text(
+                  controller.currentStep.value == getSteps().length - 1
+                      ? 'Finish'
+                      : 'Next',
+                ),
               ),
               SizedBox(width: 8),
               if (controller.currentStep.value != 0)
                 ElevatedButton(
-                 
                   onPressed: details.onStepCancel,
                   child: const Text('Back'),
                 ),

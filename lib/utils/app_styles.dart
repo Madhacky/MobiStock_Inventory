@@ -33,10 +33,13 @@ class AppStyles {
 
   // Custom color styles
   static TextStyle custom({
+    
+    
+
      Color? color,
      double? size,
      FontWeight? weight,
-    double? letterSpacing
+    double? letterSpacing,  int ? fontSize,  FontWeight ? fontWeight,
   }) =>
       _roboto(color: color, size: size, weight: weight,letterSpacing: letterSpacing);
 }

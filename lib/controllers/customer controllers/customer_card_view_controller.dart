@@ -6,6 +6,8 @@ import 'package:smartbecho/models/customer%20management/customer_data_model.dart
 import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 class CustomerCardsController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -232,7 +234,7 @@ class CustomerCardsController extends GetxController {
       case 'New':
         return Color(0xFF00CEC9); // Teal
       default:
-        return Colors.grey;
+        return AppTheme.primarygrey;
     }
   }
 
@@ -305,11 +307,14 @@ class CustomerCardsController extends GetxController {
               Get.snackbar(
                 'Success',
                 'Customer deleted successfully',
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
+                backgroundColor: AppTheme.primaryGreen,
+                colorText: AppTheme.backgroundLight,
               );
             },
-            child: Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: AppStyles.custom(color: AppTheme.primaryRed),
+            ),
           ),
         ],
       ),
@@ -324,7 +329,7 @@ class CustomerCardsController extends GetxController {
       'Calling',
       'Calling $phoneNumber...',
       backgroundColor: Color(0xFF6C5CE7),
-      colorText: Colors.white,
+      colorText: AppTheme.backgroundLight,
     );
   }
 }
