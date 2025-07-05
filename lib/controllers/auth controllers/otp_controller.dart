@@ -116,17 +116,31 @@ class OTPController extends GetxController
     _timer?.cancel();
     animationController.dispose();
 
+    // for (var controller in otpControllers) {
+    //   controller.dispose();
+    // }
+    // for (var node in otpFocusNodes) {
+    //   node.dispose();
+    // }
+
+    // newPasswordController.dispose();
+    // confirmPasswordController.dispose();
+
+    super.onClose();
+  }
+
+  @override
+  void dispose() {
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
     for (var controller in otpControllers) {
       controller.dispose();
     }
     for (var node in otpFocusNodes) {
       node.dispose();
     }
-
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
-
-    super.onClose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   void setEmail(String userEmail) {

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
+import 'package:smartbecho/views/account%20management/components/commision%20received/add_commision_record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CommissionReceivedPage extends StatefulWidget {
@@ -73,13 +74,56 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
               children: [
-                Expanded(
+                SizedBox(width: 150,
                   child: Text(
                     'Commission Received',
                     style: AppStyles.custom(
                       color: const Color(0xFF1A1A1A),
                       size: 20,
                       weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                
+                Spacer(),
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => AddCommissionPage());
+                    },
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4ECDC4),
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4ECDC4).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.add, color: Colors.white, size: 18),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'Add Commission',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -94,8 +138,13 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
+<<<<<<< HEAD:lib/views/account management/components/commission_received.dart
                       '${controller.filteredCommissions.length} Commissions',
                       style: AppStyles.custom(
+=======
+                      '${controller.filteredCommissions.length}',
+                      style: const TextStyle(
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/commision received/commission_received.dart
                         color: Color(0xFF3B82F6),
                         size: 12,
                         weight: FontWeight.w600,

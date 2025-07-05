@@ -1,9 +1,22 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:flutter_secure_storage/test/test_flutter_secure_storage_platform.dart';
+=======
+import 'package:flutter/services.dart';
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
 import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
+<<<<<<< HEAD
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
+=======
+import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:url_launcher/url_launcher.dart';
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
 
 class CustomerDueDetailsScreen extends StatelessWidget {
   final CustomerDue due;
@@ -12,6 +25,8 @@ class CustomerDueDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<CustomerDuesController>();
+    log(due.partialPayments.length.toString());
     return Scaffold(
       backgroundColor: AppTheme.grey50,
       body: SafeArea(
@@ -21,23 +36,28 @@ class CustomerDueDetailsScreen extends StatelessWidget {
             children: [
               _buildCustomAppBar(),
               _buildCustomerHeaderCard(),
+              _buildQuickActionButtons(),
               _buildSummaryCards(),
-              _buildContactInformationSection(),
-              _buildApprovalInformationSection(),
-              _buildPaymentHistorySection(),
-              _buildNotesSection(),
-              _buildActionButtons(),
+              _buildPaymentProgressCard(),
+              _buildAmountDetailsCard(),
+              if (due.partialPayments.isNotEmpty) _buildPaymentHistorySection(),
+              _buildActionButtons(controller),
               SizedBox(height: 100), // Space for floating action button
             ],
           ),
         ),
       ),
       floatingActionButton:
+<<<<<<< HEAD
           due.remainingDue > 0 ? _buildFloatingActionButton() : null,
+=======
+          due.remainingDue > 0 ? _buildFloatingActionButton(controller) : null,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
     );
   }
 
   Widget _buildCustomAppBar() {
+<<<<<<< HEAD
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -81,6 +101,9 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         ],
       ),
     );
+=======
+    return buildCustomAppBar(due.name, isdark: true);
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   }
 
   Widget _buildCustomerHeaderCard() {
@@ -88,19 +111,136 @@ class CustomerDueDetailsScreen extends StatelessWidget {
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
+<<<<<<< HEAD
         color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppTheme.greyOpacity08,
+=======
+        gradient: LinearGradient(
+          colors: [Color(0xFF6C5CE7), Color(0xFF4C51BF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF6C5CE7).withOpacity(0.3),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
             spreadRadius: 0,
             blurRadius: 20,
-            offset: Offset(0, 4),
+            offset: Offset(0, 8),
           ),
         ],
       ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Text(
+                    _getInitials(due.name),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      due.name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'Sale ID: #${due.saleId}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      'Customer ID: ${due.customerId}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      'Date: ${_formatDate(due.creationDate)}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _buildStatusBadge(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge() {
+    Color badgeColor;
+    String statusText;
+
+    if (due.isOverpaid) {
+      badgeColor = Colors.green[300]!;
+      statusText = 'OVERPAID';
+    } else if (due.isFullyPaid) {
+      badgeColor = Colors.green[400]!;
+      statusText = 'PAID';
+    } else {
+      badgeColor = Colors.orange[300]!;
+      statusText = 'PENDING';
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.3)),
+      ),
+      child: Text(
+        statusText,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButtons() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
+<<<<<<< HEAD
           Container(
             width: 60,
             height: 60,
@@ -166,6 +306,32 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                 color:
                     due.remainingDue > 0 ? AppTheme.red700 : AppTheme.green700,
               ),
+=======
+          Expanded(
+            child: _buildQuickActionButton(
+              icon: Icons.call,
+              label: 'Call',
+              color: Color(0xFF4CAF50),
+              onTap: () => _makePhoneCall(),
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: _buildQuickActionButton(
+              icon: Icons.message,
+              label: 'WhatsApp',
+              color: Color(0xFF25D366),
+              onTap: () => _openWhatsApp(),
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: _buildQuickActionButton(
+              icon: Icons.share,
+              label: 'Share',
+              color: Color(0xFF2196F3),
+              onTap: () => _shareDetails(),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
             ),
           ),
         ],
@@ -173,9 +339,56 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildQuickActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSummaryCards() {
     return Container(
-      height: 120,
+      height: 130,
       margin: EdgeInsets.symmetric(vertical: 8),
       child: ListView(
         scrollDirection: Axis.horizontal,
@@ -197,11 +410,11 @@ class CustomerDueDetailsScreen extends StatelessWidget {
             'Remaining Due',
             '₹${_formatAmount(due.remainingDue)}',
             Icons.error_outline,
-            Color(0xFFFF6B6B),
+            due.remainingDue > 0 ? Color(0xFFFF6B6B) : Color(0xFF51CF66),
           ),
           _buildSummaryCard(
             'Payment\nProgress',
-            '${((due.totalPaid / due.totalDue) * 100).toStringAsFixed(0)}%',
+            '${due.paymentProgress.toStringAsFixed(0)}%',
             Icons.trending_up_outlined,
             Color(0xFF4ECDC4),
           ),
@@ -217,9 +430,9 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     Color color,
   ) {
     return Container(
-      width: 140,
+      width: 150,
       margin: EdgeInsets.only(right: 12),
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
@@ -236,31 +449,45 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: color, size: 18),
+            child: Icon(icon, color: color, size: 20),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 12),
           Text(
             value,
+<<<<<<< HEAD
             style: AppStyles.custom(
               size: 14,
               weight: FontWeight.bold,
               color: AppTheme.black87,
+=======
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 2),
+          SizedBox(height: 4),
           Text(
             title,
+<<<<<<< HEAD
             style: AppStyles.custom(
               size: 10,
               color: AppTheme.grey600,
               // height: 1.2,
+=======
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+              height: 1.2,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -270,7 +497,59 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactInformationSection() {
+  Widget _buildPaymentProgressCard() {
+    final progress = (due.paymentProgress / 100).clamp(0.0, 1.0);
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildSectionHeader('Payment Progress', Icons.trending_up),
+              Text(
+                '${due.paymentProgress.toStringAsFixed(1)}%',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[600],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.grey[200],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                due.isOverpaid ? Colors.green[500]! : Colors.blue[600]!,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAmountDetailsCard() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -286,20 +565,30 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader('Contact Information', Icons.contact_phone),
+            _buildSectionHeader('Amount Details', Icons.account_balance),
             SizedBox(height: 16),
-            _buildInfoRow(Icons.phone, 'Phone', '+91 98765 43210'),
+            _buildAmountRow('Total Due', due.totalDue, Colors.red[600]!),
             SizedBox(height: 12),
-            _buildInfoRow(Icons.email, 'Email', 'customer@example.com'),
+            _buildAmountRow('Total Paid', due.totalPaid, Colors.green[600]!),
             SizedBox(height: 12),
+<<<<<<< HEAD
             _buildInfoRow(
               Icons.location_on,
               'Address',
               '123 Main St, City, State',
+=======
+            Divider(thickness: 1),
+            SizedBox(height: 12),
+            _buildAmountRow(
+              'Remaining Due',
+              due.remainingDue,
+              due.remainingDue > 0 ? Colors.orange[600]! : Colors.green[600]!,
+              isTotal: true,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
             ),
           ],
         ),
@@ -307,6 +596,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildApprovalInformationSection() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -339,8 +629,34 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               _formatDate(DateTime.parse(due.creationDate)),
             ),
           ],
+=======
+  Widget _buildAmountRow(
+    String label,
+    double amount,
+    Color color, {
+    bool isTotal = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isTotal ? 16 : 15,
+            fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
+            color: Color(0xFF475569),
+          ),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
         ),
-      ),
+        Text(
+          '₹${_formatAmount(amount)}',
+          style: TextStyle(
+            fontSize: isTotal ? 20 : 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 
@@ -360,7 +676,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -368,6 +684,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildSectionHeader('Payment History', Icons.payment),
+<<<<<<< HEAD
                 if (due.remainingDue > 0)
                   Container(
                     height: 32,
@@ -392,25 +709,54 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+=======
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${due.partialPayments.length} payments',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue[700],
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                     ),
                   ),
+                ),
               ],
             ),
             SizedBox(height: 16),
-            _buildPaymentHistoryItem('₹500', '20/06/2025', 'Cash', true),
-            _buildPaymentHistoryItem('₹300', '19/06/2025', 'UPI', true),
-            _buildPaymentHistoryItem('₹200', '18/06/2025', 'Cash', true),
-            _buildPaymentHistoryItem('₹150', '17/06/2025', 'Card', false),
+            // Constrained height container for scrollable payment history
+            Container(
+              height: due.partialPayments.length > 3 ? 280 : null,
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics:
+                    due.partialPayments.length > 3
+                        ? AlwaysScrollableScrollPhysics()
+                        : NeverScrollableScrollPhysics(),
+                itemCount: due.partialPayments.length,
+                separatorBuilder: (context, index) => SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final payment = due.partialPayments[index];
+                  return _buildPaymentHistoryItem(payment, index);
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNotesSection() {
+  Widget _buildPaymentHistoryItem(PartialPayment payment, int index) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
+<<<<<<< HEAD
         color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -478,18 +824,92 @@ class CustomerDueDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+=======
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Color(0xFF51CF66).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(Icons.payment, color: Color(0xFF51CF66), size: 18),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Payment #${index + 1}',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'ID: ${payment.id}',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+                Text(
+                  _formatDate(payment.paidDate),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '₹${_formatAmount(payment.paidAmount)}',
+                style: TextStyle(
+                  color: Color(0xFF51CF66),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Color(0xFF51CF66).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Color(0xFF51CF66).withOpacity(0.3)),
+                ),
+                child: Text(
+                  'Paid',
+                  style: TextStyle(
+                    color: Color(0xFF51CF66),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(CustomerDuesController controller) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           Expanded(
             child: Container(
-              height: 48,
+              height: 50,
               child: ElevatedButton.icon(
+<<<<<<< HEAD
                 onPressed: () => _makeCall(),
                 icon: Icon(
                   Icons.call,
@@ -501,10 +921,22 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                   style: AppStyles.custom(
                     color: AppTheme.backgroundLight,
                     size: 14,
+=======
+                onPressed:
+                    due.remainingDue > 0 ? () => _showAddPaymentDialog(controller) : null,
+                icon: Icon(Icons.payment, color: Colors.white, size: 20),
+                label: Text(
+                  'Add Payment',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF51CF66),
+                  backgroundColor:
+                      due.remainingDue > 0 ? Color(0xFF6C5CE7) : Colors.grey,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -515,6 +947,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
           SizedBox(width: 12),
           Expanded(
             child: Container(
+<<<<<<< HEAD
               height: 48,
               child: ElevatedButton.icon(
                 onPressed: () => _sendReminder(),
@@ -532,6 +965,26 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFFF9500),
+=======
+              height: 50,
+              child: OutlinedButton.icon(
+                onPressed: () => _generateInvoice(),
+                icon: Icon(
+                  Icons.receipt_long,
+                  color: Color(0xFF6C5CE7),
+                  size: 20,
+                ),
+                label: Text(
+                  'Generate Invoice',
+                  style: TextStyle(
+                    color: Color(0xFF6C5CE7),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Color(0xFF6C5CE7), width: 1.5),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -540,6 +993,18 @@ class CustomerDueDetailsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFloatingActionButton(CustomerDuesController controller) {
+    return FloatingActionButton.extended(
+      onPressed: () => _showAddPaymentDialog(controller),
+      backgroundColor: Color(0xFF6C5CE7),
+      icon: Icon(Icons.payment, color: Colors.white),
+      label: Text(
+        'Add Payment',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -568,6 +1033,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
@@ -697,6 +1163,8 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
+=======
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   // Helper Methods
   String _getInitials(String name) {
     List<String> parts = name.split(' ');
@@ -710,20 +1178,16 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     return 'UN';
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatAmount(double amount) {
-    if (amount >= 100000) {
-      return '${(amount / 100000).toStringAsFixed(1)}L';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K';
-    } else {
-      return amount.toStringAsFixed(0);
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MMM dd, yyyy').format(date);
+    } catch (e) {
+      return dateString;
     }
   }
 
+<<<<<<< HEAD
   // Action Methods
   void _makeCall() {
     Get.snackbar(
@@ -735,8 +1199,13 @@ class CustomerDueDetailsScreen extends StatelessWidget {
       borderRadius: 8,
       margin: EdgeInsets.all(16),
     );
+=======
+  String _formatAmount(double amount) {
+    return NumberFormat('#,##,###.##').format(amount);
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   }
 
+  // Action Methods
   void _shareDetails() {
     Get.snackbar(
       'Share',
@@ -749,8 +1218,9 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  void _copyToClipboard(String text) {
+  void _generateInvoice() {
     Get.snackbar(
+<<<<<<< HEAD
       'Copied',
       'Copied to clipboard',
       backgroundColor: AppTheme.grey700,
@@ -768,12 +1238,19 @@ class CustomerDueDetailsScreen extends StatelessWidget {
       'Payment reminder sent to ${due.customerName}',
       backgroundColor: Color(0xFFFF9500),
       colorText: AppTheme.backgroundLight,
+=======
+      'Invoice',
+      'Generating invoice for ${due.name}...',
+      backgroundColor: Color(0xFF4ECDC4),
+      colorText: Colors.white,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
       snackPosition: SnackPosition.BOTTOM,
       borderRadius: 8,
       margin: EdgeInsets.all(16),
     );
   }
 
+<<<<<<< HEAD
   void _addNote() {
     TextEditingController noteController = TextEditingController();
 
@@ -842,9 +1319,52 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         ],
       ),
     );
+=======
+  void _makePhoneCall() async {
+    // Replace with actual phone number from your model
+    final phoneNumber = 'tel:+1234567890'; // due.phoneNumber
+    if (await canLaunch(phoneNumber)) {
+      await launch(phoneNumber);
+    } else {
+      Get.snackbar(
+        'Error',
+        'Could not make phone call',
+        backgroundColor: Color(0xFFFF6B6B),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 8,
+        margin: EdgeInsets.all(16),
+      );
+    }
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   }
 
-  void _showAddPaymentDialog() {
+  void _openWhatsApp() async {
+    // Replace with actual phone number from your model
+    final phoneNumber = '+1234567890'; // due.phoneNumber
+    final message =
+        'Hello ${due.name}, regarding your payment due of ₹${_formatAmount(due.remainingDue)}';
+    final whatsappUrl =
+        'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}';
+
+    if (await canLaunch(whatsappUrl)) {
+      await launch(whatsappUrl);
+    } else {
+      Get.snackbar(
+        'Error',
+        'WhatsApp is not installed on this device',
+        backgroundColor: Color(0xFFFF6B6B),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 8,
+        margin: EdgeInsets.all(16),
+      );
+    }
+  }
+
+  void _showAddPaymentDialog(CustomerDuesController controller) {
+    if (due.remainingDue <= 0) return;
+
     TextEditingController amountController = TextEditingController();
     String selectedMethod = 'Cash';
 
@@ -854,10 +1374,14 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Add Payment',
+<<<<<<< HEAD
           style: AppStyles.custom(
             color: AppTheme.black87,
             weight: FontWeight.bold,
           ),
+=======
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
         ),
         content: StatefulBuilder(
           builder: (context, setState) {
@@ -866,6 +1390,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+<<<<<<< HEAD
                   'Customer: ${due.customerName}',
                   style: AppStyles.custom(color: AppTheme.grey600),
                 ),
@@ -873,6 +1398,20 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                 Text(
                   'Remaining Due: ₹${due.remainingDue.toStringAsFixed(2)}',
                   style: AppStyles.custom(color: AppTheme.grey600),
+=======
+                  'Customer: ${due.name}',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Due ID: ${due.id}',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Remaining Due: ₹${_formatAmount(due.remainingDue)}',
+                  style: TextStyle(color: Colors.grey[600]),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                 ),
                 SizedBox(height: 16),
                 TextField(
@@ -884,7 +1423,13 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                     labelStyle: AppStyles.custom(color: AppTheme.grey600),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
+<<<<<<< HEAD
                       borderSide: BorderSide(color: AppTheme.greyOpacity03),
+=======
+                      borderSide: BorderSide(
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -895,6 +1440,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
+<<<<<<< HEAD
                 DropdownButtonFormField<String>(
                   value: selectedMethod,
                   style: AppStyles.custom(color: AppTheme.black87),
@@ -930,6 +1476,35 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                     });
                   },
                 ),
+=======
+                // DropdownButtonFormField<String>(
+                //   value: selectedMethod,
+                //   style: TextStyle(color: Colors.black87),
+                //   decoration: InputDecoration(
+                //     labelText: 'Payment Method',
+                //     labelStyle: TextStyle(color: Colors.grey[600]),
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //       borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                //     ),
+                //     focusedBorder: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //       borderSide: BorderSide(color: Color(0xFF6C5CE7)),
+                //     ),
+                //   ),
+                //   items: ['Cash', 'UPI', 'Card', 'Bank Transfer']
+                //       .map((method) => DropdownMenuItem(
+                //             value: method,
+                //             child: Text(method, style: TextStyle(color: Colors.black87)),
+                //           ))
+                //       .toList(),
+                //   onChanged: (value) {
+                //     setState(() {
+                //       selectedMethod = value!;
+                //     });
+                //   },
+                // ),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
               ],
             );
           },
@@ -942,6 +1517,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               style: AppStyles.custom(color: AppTheme.grey600),
             ),
           ),
+<<<<<<< HEAD
           ElevatedButton(
             onPressed: () {
               double amount = double.tryParse(amountController.text) ?? 0;
@@ -977,6 +1553,41 @@ class CustomerDueDetailsScreen extends StatelessWidget {
             child: Text(
               'Add Payment',
               style: AppStyles.custom(color: AppTheme.backgroundLight),
+=======
+          Obx(
+            () => ElevatedButton(
+              onPressed: () {
+                double amount = double.tryParse(amountController.text) ?? 0;
+                if (amount > 0 && amount <= due.remainingDue) {
+                  controller.addPartialPayment(due.saleId, amount);
+                } else {
+                  Get.snackbar(
+                    'Invalid Amount',
+                    'Please enter a valid amount (max ₹${_formatAmount(due.remainingDue)})',
+                    backgroundColor: Color(0xFFFF6B6B),
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.BOTTOM,
+                    borderRadius: 8,
+                    margin: EdgeInsets.all(16),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF6C5CE7),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child:
+                  controller.isPartialAddedloading.value
+                      ? Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      )
+                      : Text(
+                        'Record Payment',
+                        style: TextStyle(color: Colors.white),
+                      ),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
             ),
           ),
         ],

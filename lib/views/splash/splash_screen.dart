@@ -4,6 +4,7 @@ import 'package:smartbecho/services/route_services.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:smartbecho/services/validate_user.dart';
 import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 class SplashScreen extends StatefulWidget {

@@ -17,18 +17,21 @@ class InventoryManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       backgroundColor: AppTheme.grey50,
+=======
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.grey[50],
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
       floatingActionButton: buildFloatingActionButtons(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              buildCustomAppBar("Inventory Management", isdark: true),
-              _buildStatsCards(context),
-              _buildFiltersSection(),
-              _buildInventoryContent(),
-            ],
-          ),
+        child: Column(
+          children: [
+            buildCustomAppBar("Inventory Management", isdark: true),
+            _buildStatsCards(context),
+            _buildFiltersSection(),
+            Expanded(child: _buildInventoryContent()),
+          ],
         ),
       ),
     );
@@ -94,7 +97,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       margin: EdgeInsets.only(right: index == 4 ? 0 : 12),
                       child: _buildStatCard(
                         stats[index]['title'] as String,
-                        stats[index]['value'].toString() ,
+                        stats[index]['value'].toString(),
                         stats[index]['subtitle'] as String,
                         stats[index]['icon'] as IconData,
                         stats[index]['color'] as Color,
@@ -268,10 +271,9 @@ class InventoryManagementScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 4),
                 // Compact Search Bar
                 CustomSearchWidget(
-                  hintText: 'Search phones...',
+                  hintText: 'Search by company name...',
                   initialValue: controller.searchQuery.value,
                   onChanged: (value) => controller.searchQuery.value = value,
                   onClear: () => controller.searchQuery.value = '',
@@ -300,12 +302,6 @@ class InventoryManagementScreen extends StatelessWidget {
                               mainAxisSpacing: 12,
                               physics: NeverScrollableScrollPhysics(),
                               children: [
-                                _buildCompactFilterDropdown(
-                                  'Company',
-                                  controller.selectedCompany,
-                                  controller.filterCompanies,
-                                  onChanged: controller.onCompanyFilterChanged,
-                                ),
                                 _buildCompactFilterDropdown(
                                   'Model',
                                   controller.selectedModel,
@@ -343,6 +339,7 @@ class InventoryManagementScreen extends StatelessWidget {
                             Row(
                               children: [
                                 Expanded(
+<<<<<<< HEAD
                                   child: ElevatedButton.icon(
                                     onPressed: controller.applyFilters,
                                     icon: Icon(Icons.search, size: 16),
@@ -362,10 +359,12 @@ class InventoryManagementScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 12),
                                 Expanded(
+=======
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                                   child: OutlinedButton.icon(
                                     onPressed: controller.clearFilters,
                                     icon: Icon(Icons.refresh, size: 16),
-                                    label: Text('Clear'),
+                                    label: Text('Clear Filters'),
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: Color(0xFF6C5CE7),
                                       side: BorderSide(
@@ -462,9 +461,6 @@ class InventoryManagementScreen extends StatelessWidget {
   int _getActiveFiltersCount() {
     int count = 0;
     if (controller.searchQuery.value.isNotEmpty) count++;
-    if (controller.selectedCompany.value != 'All' &&
-        !controller.selectedCompany.value.startsWith('Select'))
-      count++;
     if (controller.selectedModel.value != 'All' &&
         !controller.selectedModel.value.startsWith('Select'))
       count++;
@@ -495,21 +491,49 @@ class InventoryManagementScreen extends StatelessWidget {
                 AppConfig.screenHeight,
                 AppConfig.isSmallScreen,
               )
-              : _buildInventoryCards(),
+              : _buildInventoryGrid(),
     );
+  }
+
+  // Helper method to determine grid count based on screen size
+  int _getGridCrossAxisCount() {
+    if (AppConfig.screenWidth < 600) {
+      return 2; // Phone - 2 columns
+    } else if (AppConfig.screenWidth < 900) {
+      return 3; // Small tablet - 3 columns
+    } else {
+      return 4; // Large tablet/desktop - 4 columns
+    }
+  }
+
+  // Helper method to determine aspect ratio based on screen size
+  double _getGridAspectRatio() {
+    if (AppConfig.screenWidth < 600) {
+      return 0.7; // Phone - taller cards
+    } else {
+      return 0.75; // Tablet - slightly different ratio
+    }
   }
 
   Widget _buildShimmerCards() {
     return Container(
       margin: EdgeInsets.all(16),
-      child: Column(children: List.generate(6, (index) => _buildShimmerCard())),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _getGridCrossAxisCount(),
+          childAspectRatio: _getGridAspectRatio(),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: 6,
+        itemBuilder: (context, index) => _buildShimmerCard(),
+      ),
     );
   }
 
   Widget _buildShimmerCard() {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.backgroundLight,
         borderRadius: BorderRadius.circular(16),
@@ -522,16 +546,19 @@ class InventoryManagementScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Image placeholder
           Container(
-            width: 60,
+            width: double.infinity,
             height: 60,
             decoration: BoxDecoration(
               color: AppTheme.grey300,
               borderRadius: BorderRadius.circular(12),
             ),
           ),
+<<<<<<< HEAD
           SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -566,56 +593,100 @@ class InventoryManagementScreen extends StatelessWidget {
               ],
             ),
           ),
+=======
+          SizedBox(height: 12),
+
+          // Title placeholder
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
           Container(
-            width: 30,
-            height: 30,
+            width: double.infinity,
+            height: 16,
             decoration: BoxDecoration(
               color: AppTheme.grey300,
               borderRadius: BorderRadius.circular(8),
             ),
+          ),
+          SizedBox(height: 8),
+
+          // Subtitle placeholder
+          Container(
+            width: 100,
+            height: 14,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+
+          Spacer(),
+
+          // Bottom row placeholder
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 60,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInventoryCards() {
+  Widget _buildInventoryGrid() {
     return Container(
       margin: EdgeInsets.all(16),
       child: Column(
         children: [
-          // Items count and pagination info
+          // Items count header
           _buildInventoryHeader(),
 
-          // Inventory items grid
-          Obx(() {
-            if (controller.inventoryItems.isEmpty) {
-              return _buildEmptyState();
-            }
+          // Scrollable inventory grid with lazy loading
+          Expanded(
+            child: Obx(() {
+              if (controller.inventoryItems.isEmpty) {
+                return _buildEmptyState();
+              }
 
-            return Column(
-              children: [
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio:
-                        0.75, // Adjust this to control card height
-                  ),
-                  itemCount: controller.inventoryItems.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.inventoryItems[index];
-                    return _buildInventoryCard(item, index);
-                  },
+              return GridView.builder(
+                controller: controller.scrollController,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _getGridCrossAxisCount(),
+                  childAspectRatio: _getGridAspectRatio(),
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
                 ),
-                SizedBox(height: 20),
-                _buildPaginationControls(),
-              ],
-            );
-          }),
+                itemCount:
+                    controller.inventoryItems.length +
+                    (controller.hasMoreData.value
+                        ? _getGridCrossAxisCount()
+                        : 0),
+                itemBuilder: (context, index) {
+                  // Show loading indicators at the end if there's more data
+                  if (index >= controller.inventoryItems.length) {
+                    return _buildLoadingMoreCard();
+                  }
+
+                  final item = controller.inventoryItems[index];
+                  return _buildInventoryCard(item, index);
+                },
+              );
+            }),
+          ),
         ],
       ),
     );
@@ -654,21 +725,20 @@ class InventoryManagementScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
+<<<<<<< HEAD
                   'Showing ${controller.inventoryItems.length} of ${controller.totalItems.value} items',
                   style: AppStyles.custom(size: 12, color: AppTheme.grey600),
+=======
+                  'Showing ${controller.inventoryItems.length} items',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                 ),
               ],
             ),
-            Row(
-              children: [
-                _buildItemsPerPageDropdown(),
-                SizedBox(width: 12),
-                IconButton(
-                  onPressed: controller.refreshData,
-                  icon: Icon(Icons.refresh, color: Color(0xFF6C5CE7)),
-                  tooltip: 'Refresh',
-                ),
-              ],
+            IconButton(
+              onPressed: controller.refreshData,
+              icon: Icon(Icons.refresh, color: Color(0xFF6C5CE7)),
+              tooltip: 'Refresh',
             ),
           ],
         ),
@@ -676,8 +746,9 @@ class InventoryManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildItemsPerPageDropdown() {
+  Widget _buildLoadingMoreCard() {
     return Obx(
+<<<<<<< HEAD
       () => Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -701,12 +772,38 @@ class InventoryManagementScreen extends StatelessWidget {
           },
         ),
       ),
+=======
+      () =>
+          controller.isLoadingMore.value
+              ? Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.08),
+                      spreadRadius: 0,
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF6C5CE7),
+                    strokeWidth: 2,
+                  ),
+                ),
+              )
+              : SizedBox.shrink(),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
     );
   }
 
   Widget _buildEmptyState() {
     return Container(
       padding: EdgeInsets.all(40),
+<<<<<<< HEAD
       child: Column(
         children: [
           Icon(Icons.inventory_2_outlined, size: 80, color: AppTheme.grey400),
@@ -725,6 +822,30 @@ class InventoryManagementScreen extends StatelessWidget {
             style: AppStyles.custom(size: 14, color: AppTheme.grey500),
           ),
         ],
+=======
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey[400]),
+            SizedBox(height: 16),
+            Text(
+              'No inventory items found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Try adjusting your filters or add new items',
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
       ),
     );
   }
@@ -752,12 +873,14 @@ class InventoryManagementScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top section with phone icon and stock badge
+          // Top section with icon and stock badge
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Phone icon with gradient
               Container(
-                width: 40,
-                height: 40,
+                width: 45,
+                height: 45,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
@@ -768,13 +891,14 @@ class InventoryManagementScreen extends StatelessWidget {
                 ),
                 child: Icon(Icons.phone_android, color: AppTheme.backgroundLight, size: 20),
               ),
-              Spacer(),
+
               _buildStockBadge(item.quantity),
             ],
           ),
 
           SizedBox(height: 12),
 
+<<<<<<< HEAD
           // Phone model and company
           Text(
             item.model,
@@ -836,24 +960,102 @@ class InventoryManagementScreen extends StatelessWidget {
           Spacer(),
 
           // Bottom section with price and stock
+=======
+          // Item details
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Model name
               Text(
+<<<<<<< HEAD
                 '₹${item.sellingPrice?.toStringAsFixed(0) ?? 'N/A'}',
                 style: AppStyles.custom(
                   size: 14,
                   weight: FontWeight.bold,
                   color: Color(0xFF51CF66),
+=======
+                item.model,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              SizedBox(height: 4),
+
+              // Company
+              Text(
+                item.company,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              SizedBox(height: 8),
+
+              // Specs
+              Row(
+                children: [
+                  Icon(Icons.memory, size: 10, color: Colors.grey[500]),
+                  SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      "${item.ram}/${item.rom}",
+                      style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
 
               SizedBox(height: 4),
 
               Row(
                 children: [
+<<<<<<< HEAD
                   Icon(Icons.inventory, size: 12, color: AppTheme.grey600),
+=======
+                  Icon(Icons.palette, size: 10, color: Colors.grey[500]),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
                   SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      item.color,
+                      style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          Spacer(),
+
+          // Bottom section with price and actions
+          Column(
+            children: [
+              // Price and stock
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '₹${item.sellingPrice?.toStringAsFixed(0) ?? 'N/A'}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF51CF66),
+                    ),
+                  ),
                   Text(
                     'Stock: ${item.quantity}',
                     style: AppStyles.custom(
@@ -883,9 +1085,9 @@ class InventoryManagementScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          padding: EdgeInsets.zero,
                         ),
-                        child: Icon(Icons.edit, size: 16),
+                        child: Icon(Icons.sell, size: 14),
                       ),
                     ),
                   ),
@@ -895,10 +1097,12 @@ class InventoryManagementScreen extends StatelessWidget {
                       height: 32,
                       child: ElevatedButton(
                         onPressed:
-                            () => controller.deleteItem(
-                              item.id.toString(),
-                              index,
-                            ),
+                            item.quantity == 0
+                                ? () => controller.deleteItem(
+                                  item.id.toString(),
+                                  index,
+                                )
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFFF6B6B).withOpacity(0.1),
                           foregroundColor: Color(0xFFFF6B6B),
@@ -906,9 +1110,9 @@ class InventoryManagementScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          padding: EdgeInsets.zero,
                         ),
-                        child: Icon(Icons.delete, size: 16),
+                        child: Icon(Icons.delete, size: 14),
                       ),
                     ),
                   ),
@@ -926,16 +1130,21 @@ class InventoryManagementScreen extends StatelessWidget {
     String status = _getStockStatusText(quantity);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
         color: badgeColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: badgeColor.withOpacity(0.3)),
       ),
       child: Text(
         status,
+<<<<<<< HEAD
         style: AppStyles.custom(
           size: 11,
+=======
+        style: TextStyle(
+          fontSize: 8,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
           color: badgeColor,
           weight: FontWeight.w600,
         ),
@@ -955,6 +1164,7 @@ class InventoryManagementScreen extends StatelessWidget {
     return 'In Stock';
   }
 
+<<<<<<< HEAD
   Widget _buildPaginationControls() {
     return Obx(() {
       if (controller.totalPages.value <= 1) return SizedBox.shrink();
@@ -1047,6 +1257,8 @@ class InventoryManagementScreen extends StatelessWidget {
     });
   }
 
+=======
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   Widget buildFloatingActionButtons() {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
@@ -1058,8 +1270,13 @@ class InventoryManagementScreen extends StatelessWidget {
         SpeedDialChild(
           child: Icon(Icons.add, color: AppTheme.backgroundLight),
           backgroundColor: Color(0xFF51CF66),
+<<<<<<< HEAD
           label: 'Add New Item',
           labelStyle: AppStyles.custom(size: 14, weight: FontWeight.w500),
+=======
+          label: 'Add New Mobile',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
           onTap: controller.addNewItem,
         ),
         SpeedDialChild(
@@ -1077,11 +1294,19 @@ class InventoryManagementScreen extends StatelessWidget {
           onTap: controller.exportData,
         ),
         SpeedDialChild(
+<<<<<<< HEAD
           child: Icon(Icons.tune, color: AppTheme.backgroundLight),
           backgroundColor: Color(0xFF6C5CE7),
           label: 'Advanced Filters',
           labelStyle: AppStyles.custom(size: 14, weight: FontWeight.w500),
           onTap: controller.showAdvancedFilters,
+=======
+          child: Icon(Icons.inventory_rounded, color: Colors.white),
+          backgroundColor: Color(0xFF6C5CE7),
+          label: 'Add New Stock',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          onTap: controller.addNewStocks,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
         ),
       ],
     );

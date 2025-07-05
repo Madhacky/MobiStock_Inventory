@@ -6,8 +6,12 @@ import 'package:smartbecho/models/customer%20management/customer_data_model.dart
 import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+<<<<<<< HEAD
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
+=======
+import 'package:smartbecho/services/launch_phone_dailer_service.dart';
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
 
 class CustomerCardsController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -272,13 +276,6 @@ class CustomerCardsController extends GetxController {
     }
   }
 
-  // View customer details
-  void viewCustomerDetails(Customer customer) {
-    // Navigate to customer details page
-    // Get.toNamed(AppRoutes.customerDetails, arguments: customer);
-    print('View customer details: ${customer.name}');
-  }
-
   // Edit customer
   void editCustomer(Customer customer) {
     // Navigate to edit customer page
@@ -296,10 +293,6 @@ class CustomerCardsController extends GetxController {
           TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
           TextButton(
             onPressed: () async {
-              // TODO: Call delete API here
-              // await _apiService.deleteCustomer(customer.id);
-
-              // For now, just remove from local list
               apiCustomers.removeWhere((c) => c.id == customer.id);
               _updateStatistics();
               filterCustomers();
@@ -322,6 +315,7 @@ class CustomerCardsController extends GetxController {
   }
 
   // Call customer
+<<<<<<< HEAD
   void callCustomer(String phoneNumber) {
     // Implement phone call functionality
     print('Calling: $phoneNumber');
@@ -331,5 +325,18 @@ class CustomerCardsController extends GetxController {
       backgroundColor: Color(0xFF6C5CE7),
       colorText: AppTheme.backgroundLight,
     );
+=======
+  void callCustomer(String phoneNumber) async {
+    try {
+      bool success = await PhoneDialerService.launchPhoneDialer(phoneNumber);
+      if (!success) {
+        print('Failed to launch phone dialer');
+      }
+    } catch (e) {
+      print('Error calling customer: $e');
+      
+      Get.snackbar('Error', 'Unable to make call: ${e.toString()}');
+    }
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   }
 }

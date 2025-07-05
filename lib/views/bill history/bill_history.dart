@@ -54,7 +54,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.addBill),
+        onPressed: () => Get.toNamed(AppRoutes.addNewStock),
         backgroundColor: Color(0xFF1E293B),
         child: Icon(Icons.add, color: AppTheme.backgroundLight),
       ),

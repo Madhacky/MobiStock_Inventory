@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+<<<<<<< HEAD:lib/views/bill history/components/add_bill.dart
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_operation_controller.dart';
 import 'package:smartbecho/utils/app_colors.dart';
+=======
+import 'package:smartbecho/controllers/bill%20history%20controllers/add_new_stock_operation_controller.dart';
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/bill history/components/add_new_stock.dart
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 
-class AddBillForm extends StatelessWidget {
-  const AddBillForm({Key? key}) : super(key: key);
+class AddNewStockForm extends StatelessWidget {
+  const AddNewStockForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final BillOperationController controller = Get.find();
+    final AddNewStockOperationController controller = Get.find();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -29,7 +33,7 @@ class AddBillForm extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BillOperationController controller) {
+  PreferredSizeWidget _buildAppBar(AddNewStockOperationController controller) {
     return AppBar(
       backgroundColor: AppTheme.backgroundLight,
       elevation: 0,
@@ -63,7 +67,7 @@ class AddBillForm extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ADD NEW BILL',
+                    'ADD NEW STOCK',
                     style: AppStyles.custom(
                       color: const Color(0xFF1A1A1A),
                       size: 16,
@@ -87,7 +91,7 @@ class AddBillForm extends StatelessWidget {
     );
   }
 
-  Widget _buildFormContent(BillOperationController controller) {
+  Widget _buildFormContent(AddNewStockOperationController controller) {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -128,15 +132,15 @@ class AddBillForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: buildStyledTextField(
-                    labelText: 'GST (%)',
+                    labelText: 'GST',
                     controller: controller.gstController,
-                    hintText: '18',
-                    suffixText: '%',
+                    hintText: '0.00',
+                    //suffixText: '%',
                     keyboardType: TextInputType.number,
                     validator: controller.validateGst,
-                    onChanged: (value) {
-                      controller.calculateTotals();
-                    },
+                    // onChanged: (value) {
+                    //   controller.calculateTotals();
+                    // },
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -147,7 +151,7 @@ class AddBillForm extends StatelessWidget {
                     hintText: '0.00',
                     prefixText: '₹ ',
                     keyboardType: TextInputType.number,
-                    //readOnly: true,
+                //    readOnly: true,
                   ),
                 ),
               ],
@@ -219,6 +223,13 @@ class AddBillForm extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 24),
+            _buildSectionTitle('Invoice File', Icons.attach_file),
+            const SizedBox(height: 16),
+
+            // File Upload Section
+            _buildFileUploadSection(controller),
 
             const SizedBox(height: 32),
 
@@ -347,7 +358,186 @@ class AddBillForm extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentStatusToggle(BillOperationController controller) {
+  Widget _buildFileUploadSection(AddNewStockOperationController controller) {
+    return Obx(() => Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.2),
+          style: BorderStyle.solid,
+        ),
+      ),
+      child: controller.selectedFile.value != null
+          ? _buildSelectedFileCard(controller)
+          : _buildFilePickerButton(controller),
+    ));
+  }
+
+  Widget _buildFilePickerButton(AddNewStockOperationController controller) {
+    return Obx(() => InkWell(
+      onTap: controller.isFileUploading.value ? null : controller.pickFile,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (controller.isFileUploading.value)
+              const SizedBox(
+                width: 32,
+                height: 32,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
+                ),
+              )
+            else
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.cloud_upload_rounded,
+                  color: Color(0xFF10B981),
+                  size: 24,
+                ),
+              ),
+            const SizedBox(height: 12),
+            Text(
+              controller.isFileUploading.value
+                  ? 'Selecting file...'
+                  : 'Upload Invoice',
+              style: const TextStyle(
+                color: Color(0xFF374151),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              controller.isFileUploading.value
+                  ? 'Please wait'
+                  : 'Click to select JPG, PNG, or PDF file',
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+
+  Widget _buildSelectedFileCard(AddNewStockOperationController controller) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              _getFileIcon(controller.fileName.value),
+              color: const Color(0xFF10B981),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  controller.fileName.value,
+                  style: const TextStyle(
+                    color: Color(0xFF374151),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'File selected successfully',
+                  style: TextStyle(
+                    color: Color(0xFF10B981),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Row(
+            children: [
+              // Change file button
+              InkWell(
+                onTap: controller.pickFile,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.edit,
+                    color: Color(0xFF10B981),
+                    size: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Remove file button
+              InkWell(
+                onTap: controller.removeFile,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getFileIcon(String fileName) {
+    String extension = fileName.toLowerCase().split('.').last;
+    switch (extension) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return Icons.image;
+      default:
+        return Icons.attach_file;
+    }
+  }
+
+  Widget _buildPaymentStatusToggle(AddNewStockOperationController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -443,11 +633,15 @@ class AddBillForm extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD:lib/views/bill history/components/add_bill.dart
   Widget _buildItemCard(
     BillOperationController controller,
     BillItem item,
     int index,
   ) {
+=======
+  Widget _buildItemCard(AddNewStockOperationController controller, BillItem item, int index) {
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/bill history/components/add_new_stock.dart
     // Set initial values for controllers if they are empty
     if (item.priceController.text.isEmpty && item.sellingPrice.isNotEmpty) {
       item.priceController.text = item.sellingPrice;

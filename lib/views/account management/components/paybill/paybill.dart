@@ -6,6 +6,7 @@ import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
+import 'package:smartbecho/views/account%20management/components/paybill/add_bill.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PayBillsPage extends StatefulWidget {
@@ -65,6 +66,7 @@ class _PayBillsPageState extends State<PayBillsPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header with count and current month/year
+<<<<<<< HEAD:lib/views/account management/components/paybill.dart
         Row(
           children: [
             Expanded(
@@ -125,11 +127,117 @@ class _PayBillsPageState extends State<PayBillsPage>
                       ),
                     ),
                   ],
+=======
+       Row(
+  children: [
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Payment Records',
+            style: AppStyles.custom(
+              color: const Color(0xFF1A1A1A),
+              size: 20,
+              weight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Obx(
+            () => Text(
+              '${controller.monthDisplayText} ${controller.selectedYear.value}',
+              style: const TextStyle(
+                color: Color(0xFF6B7280),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+    // Add Pay Bill Button
+    Container(
+      margin: const EdgeInsets.only(right: 12),
+      child: InkWell(
+        onTap: () {
+          Get.to(() => AddPayBillPage());
+        },
+        borderRadius: BorderRadius.circular(25),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF4CAF50),
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF4CAF50).withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 18,
+              ),
+              const SizedBox(width: 6),
+              const Text(
+                'Add Bill',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/paybill/paybill.dart
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    Obx(
+      () => Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xFF4CAF50).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: const Color(0xFF4CAF50).withOpacity(0.2),
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '${controller.filteredPayBills.length}',
+              style: const TextStyle(
+                color: Color(0xFF4CAF50),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const Text(
+              'Bills',
+              style: TextStyle(
+                color: Color(0xFF4CAF50),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
+      ),
+    ),
+  ],
+),
+
         const SizedBox(height: 16),
 
         // Search Bar with improved styling

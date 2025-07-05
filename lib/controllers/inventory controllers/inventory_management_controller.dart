@@ -1,3 +1,5 @@
+
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -28,10 +30,9 @@ class InventoryController extends GetxController {
 
   // Observable variables for API data
   final RxList<InventoryItem> inventoryItems = <InventoryItem>[].obs;
-  final RxList<InventoryItem> allFetchedItems =
-      <InventoryItem>[].obs; // For frontend filtering
+  final RxList<InventoryItem> allFetchedItems = <InventoryItem>[].obs;
 
-  // Search and filtering (frontend only)
+  // Search and filtering (API-based)
   final RxString searchQuery = ''.obs;
   final RxString selectedCompany = ''.obs;
   final RxString selectedModel = 'Select Model'.obs;
@@ -40,16 +41,18 @@ class InventoryController extends GetxController {
   final RxString selectedROM = 'Select ROM'.obs;
   final RxString selectedColor = 'Select Color'.obs;
   final RxBool isFiltersExpanded = false.obs;
+  
   // Sorting
   final RxString sortBy = 'id'.obs;
   final RxString sortDirection = 'asc'.obs;
 
-  // Pagination (API-based)
-  final RxInt itemsPerPage = 10.obs;
-  final RxInt currentPage = 0.obs;
+  // Lazy loading variables (replacing pagination)
+  final RxInt itemsPerPage = 20.obs;  // Items to load per batch
+  final RxInt currentPage = 0.obs;    // Current batch
   final RxInt totalItems = 0.obs;
-  final RxInt totalPages = 0.obs;
   final RxBool isLoadingMore = false.obs;
+  final RxBool hasMoreData = true.obs;
+  late ScrollController scrollController;
 
   // Loading states
   final RxBool isLoading = false.obs;
@@ -57,281 +60,108 @@ class InventoryController extends GetxController {
   final RxString inventoryDataerrorMessage = ''.obs;
   final RxBool hasInventoryDataError = false.obs;
 
-  // ADD MOBILE FORM CONTROLLERS AND VARIABLES
-  final GlobalKey<FormState> addMobileFormKey = GlobalKey<FormState>();
-
-  // Form Controllers
-  final TextEditingController quantityController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
-
-  // Form Values
-  final RxString selectedAddCompany = ''.obs;
-  final RxString selectedAddModel = ''.obs;
-  final RxString selectedAddRam = ''.obs;
-  final RxString selectedAddStorage = ''.obs;
-  final RxString selectedAddColor = ''.obs;
-  final Rx<File?> selectedImage = Rx<File?>(null);
-
-  // Form Loading States
-  final RxBool isAddingMobile = false.obs;
-  final RxBool hasAddMobileError = false.obs;
-  final RxString addMobileErrorMessage = ''.obs;
-
-  // Sample data for dropdowns
-  final RxList<String> companies =
-      [
-        'Apple',
-        'Samsung',
-        'Google',
-        'OnePlus',
-        'Xiaomi',
-        'Oppo',
-        'Vivo',
-        'Realme',
-      ].obs;
-  final Map<String, List<String>> models = {
-    'Apple': [
-      'iPhone 15 Pro',
-      'iPhone 15',
-      'iPhone 14 Pro',
-      'iPhone 14',
-      'iPhone 13',
-    ],
-    'Samsung': [
-      'Galaxy S24 Ultra',
-      'Galaxy S24',
-      'Galaxy S23',
-      'Galaxy A54',
-      'Galaxy A34',
-    ],
-    'Google': ['Pixel 8 Pro', 'Pixel 8', 'Pixel 7 Pro', 'Pixel 7', 'Pixel 6a'],
-    'OnePlus': [
-      'OnePlus 12',
-      'OnePlus 11',
-      'OnePlus Nord 3',
-      'OnePlus Nord CE 3',
-    ],
-    'Xiaomi': ['Xiaomi 14', 'Xiaomi 13', 'Redmi Note 13', 'Redmi Note 12'],
-  };
-  final RxList<String> ramOptions = ['4GB', '6GB', '8GB', '12GB', '16GB'].obs;
-  final RxList<String> storageOptions =
-      ['64GB', '128GB', '256GB', '512GB', '1TB'].obs;
-  final RxList<String> colorOptions =
-      [
-        'Black',
-        'White',
-        'Blue',
-        'Red',
-        'Green',
-        'Gold',
-        'Silver',
-        'Purple',
-        'Pink',
-      ].obs;
+  // Search debounce timer
+  Worker? _searchDebouncer;
 
   // Filter options
-  final RxList<String> filterCompanies =
-      ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Vivo', 'Oppo'].obs;
-  final RxList<String> filterModels =
-      ['iPhone 14', 'Galaxy S23', 'OnePlus 11', 'Mi 13', 'V27 Pro'].obs;
-  final RxList<String> stockOptions =
-      ['In Stock', 'Low Stock', 'Out of Stock'].obs;
-  final RxList<String> ramFilterOptions =
-      ['4GB', '6GB', '8GB', '12GB', '16GB'].obs;
-  final RxList<String> romFilterOptions =
-      ['64GB', '128GB', '256GB', '512GB', '1TB'].obs;
-  final RxList<String> colorFilterOptions =
-      ['Black', 'White', 'Blue', 'Red', 'Gold', 'Silver'].obs;
+  final RxList<String> filterCompanies = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Vivo', 'Oppo'].obs;
+  final RxList<String> filterModels = ['iPhone 14', 'Galaxy S23', 'OnePlus 11', 'Mi 13', 'V27 Pro'].obs;
+  final RxList<String> stockOptions = ['In Stock', 'Low Stock', 'Out of Stock'].obs;
+  final RxList<String> ramFilterOptions = ['4GB', '6GB', '8GB', '12GB', '16GB'].obs;
+  final RxList<String> romFilterOptions = ['64GB', '128GB', '256GB', '512GB', '1TB'].obs;
+  final RxList<String> colorFilterOptions = ['Black', 'White', 'Blue', 'Red', 'Gold', 'Silver'].obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Set up listeners for frontend filtering only
-    ever(searchQuery, (_) => _applyFrontendFilters());
-    ever(selectedCompany, (_) => _applyFrontendFilters());
-    ever(selectedModel, (_) => _applyFrontendFilters());
-    ever(selectedStockAvailability, (_) => _applyFrontendFilters());
-    ever(selectedRAM, (_) => _applyFrontendFilters());
-    ever(selectedROM, (_) => _applyFrontendFilters());
-    ever(selectedColor, (_) => _applyFrontendFilters());
+    
+    // Initialize scroll controller for lazy loading
+    scrollController = ScrollController();
+    scrollController.addListener(_onScroll);
+    
+    // Set up search debouncer for API calls
+    _searchDebouncer = debounce(
+      searchQuery,
+      (String query) => _onSearchChanged(query),
+      time: const Duration(milliseconds: 800),
+    );
+    
+    // Set up listeners for other filters
+    ever(selectedCompany, (_) => _onFiltersChanged());
+    ever(selectedModel, (_) => _onFiltersChanged());
+    ever(selectedStockAvailability, (_) => _onFiltersChanged());
+    ever(selectedRAM, (_) => _onFiltersChanged());
+    ever(selectedROM, (_) => _onFiltersChanged());
+    ever(selectedColor, (_) => _onFiltersChanged());
 
     // Initial data fetch
-    fetchInventoryData();
+    fetchInventoryData(isInitial: true);
     getSummaryCards();
   }
 
   @override
   void onClose() {
-    // Dispose form controllers
-    quantityController.dispose();
-    priceController.dispose();
+    // Dispose controllers and workers
+    scrollController.dispose();
+    _searchDebouncer?.dispose();
+
     super.onClose();
   }
 
-  /// Get company brand color for UI theming
-  Color getCompanyColor(String? company) {
-    switch (company?.toLowerCase()) {
-      case 'apple':
-        return const Color(0xFF1D1D1F);
-      case 'samsung':
-        return const Color(0xFF1428A0);
-      case 'google':
-        return const Color(0xFF4285F4);
-      case 'oneplus':
-        return const Color(0xFFEB0028);
-      case 'xiaomi':
-        return const Color(0xFFFF6900);
-      default:
-        return const Color(0xFF6B7280);
+  /// Handle scroll for lazy loading
+  void _onScroll() {
+    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200) {
+      if (!isLoadingMore.value && hasMoreData.value && !isInventoryDataLoading.value) {
+        loadMoreData();
+      }
     }
   }
 
-  /// Get available models for selected company
-  List<String> getModelsForCompany(String? company) {
-    if (company == null) {
-      return [];
+  /// Handle search query changes with API call
+  void _onSearchChanged(String query) {
+    if (query.trim().isNotEmpty) {
+      // Reset pagination for new search
+      _resetPagination();
+      _searchByCompany(query.trim());
+    } else {
+      // If search is cleared, fetch all data
+      _resetPagination();
+      fetchInventoryData(isInitial: true);
     }
-    return models[company] ?? [];
   }
 
-  /// Check if model selection is enabled
-  bool get isModelSelectionEnabled => selectedAddCompany.value.isNotEmpty;
-
-  /// Get formatted device name for display
-  String get formattedDeviceName {
-    if (selectedAddCompany.value.isNotEmpty &&
-        selectedAddModel.value.isNotEmpty) {
-      return '${selectedAddCompany.value} ${selectedAddModel.value}';
-    }
-    return 'Select Company & Model';
+  /// Handle other filter changes
+  void _onFiltersChanged() {
+    // Apply local filters to current data
+    _applyLocalFilters();
   }
 
-  /// Get formatted device specs for display
-  String get formattedDeviceSpecs {
-    if (selectedAddRam.value.isNotEmpty &&
-        selectedAddStorage.value.isNotEmpty) {
-      return '${selectedAddRam.value} RAM • ${selectedAddStorage.value} Storage';
-    }
-    return 'RAM & Storage will appear here';
-  }
-
-  /// Handle company selection
-  void onAddCompanyChanged(String company) {
-    selectedAddCompany.value = company;
-    selectedAddModel.value = ''; // Reset model when company changes
-  }
-
-  /// Handle model selection
-  void onAddModelChanged(String model) {
-    selectedAddModel.value = model;
-  }
-
-  /// Handle RAM selection
-  void onAddRamChanged(String ram) {
-    selectedAddRam.value = ram;
-  }
-
-  /// Handle storage selection
-  void onAddStorageChanged(String storage) {
-    selectedAddStorage.value = storage;
-  }
-
-  /// Handle color selection
-  void onAddColorChanged(String color) {
-    selectedAddColor.value = color;
-  }
-
-  /// Handle image selection
-  void onImageSelected(File? image) {
-    selectedImage.value = image;
-  }
-
-  /// Validate form fields
-  String? validateCompany(String? value) {
-    return value == null || value.isEmpty ? 'Please select a company' : null;
-  }
-
-  String? validateModel(String? value) {
-    return value == null || value.isEmpty ? 'Please select a model' : null;
-  }
-
-  String? validateRam(String? value) {
-    return value == null || value.isEmpty ? 'Please select RAM' : null;
-  }
-
-  String? validateStorage(String? value) {
-    return value == null || value.isEmpty ? 'Please select storage' : null;
-  }
-
-  String? validateColor(String? value) {
-    return value == null || value.isEmpty ? 'Please select a color' : null;
-  }
-
-  String? validatePrice(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter selling price';
-    }
-    if (double.tryParse(value) == null) {
-      return 'Please enter valid price';
-    }
-    return null;
-  }
-
-  String? validateQuantity(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter quantity';
-    }
-    if (int.tryParse(value) == null) {
-      return 'Please enter valid quantity';
-    }
-    return null;
-  }
-
-  /// Reset add mobile form
-  void resetAddMobileForm() {
-    addMobileFormKey.currentState?.reset();
-    selectedAddCompany.value = '';
-    selectedAddModel.value = '';
-    selectedAddRam.value = '';
-    selectedAddStorage.value = '';
-    selectedAddColor.value = '';
-    selectedImage.value = null;
-    quantityController.clear();
-    priceController.clear();
-    hasAddMobileError.value = false;
-    addMobileErrorMessage.value = '';
-  }
-
-  /// Add mobile to inventory
-  Future<void> addMobileToInventory() async {
-    if (!addMobileFormKey.currentState!.validate()) {
-      return;
-    }
-
+  /// Search by company using filter API
+  Future<void> _searchByCompany(String company) async {
     try {
-      isAddingMobile.value = true;
-      hasAddMobileError.value = false;
-      addMobileErrorMessage.value = '';
+      isInventoryDataLoading.value = true;
+      hasInventoryDataError.value = false;
+      inventoryDataerrorMessage.value = '';
 
-      // Prepare the data
-      final mobileData = {
-        'company': selectedAddCompany.value,
-        'model': selectedAddModel.value,
-        'ram': selectedAddRam.value,
-        'rom': selectedAddStorage.value,
-        'color': selectedAddColor.value,
-        'qty': int.parse(quantityController.text),
-        'sellingPrice': double.parse(priceController.text),
-        "logo":
-            "${selectedAddCompany + selectedAddColor.value + quantityController.text}.png",
-      };
+      final jsessionId = await SecureStorageHelper.getJSessionId();
+      log("jsessionId: $jsessionId");
 
-      dio.Response? response = await _apiService.requestPostForApi(
-        url: _config.addInventoryItem, // Add this endpoint to your config
-        dictParameter: mobileData,
+      if (jsessionId == null || jsessionId.isEmpty) {
+        hasInventoryDataError.value = true;
+        inventoryDataerrorMessage.value = 'No session found. Please login again.';
+        return;
+      }
+
+      // Use filter API for company search
+      String apiUrl = '${_config.baseUrl}/inventory/filter?company=${company.toLowerCase()}';
+      log("Searching company from URL: $apiUrl");
+
+      dio.Response? response = await _apiService.requestGetWithJSessionId(
+        url: apiUrl,
         authToken: true,
       );
 
+<<<<<<< HEAD
       if (response != null && response.statusCode == 201) {
         // Handle successful response
         Get.snackbar(
@@ -342,15 +172,38 @@ class InventoryController extends GetxController {
           colorText: AppTheme.backgroundLight,
           icon: const Icon(Icons.check_circle, color: AppTheme.backgroundLight),
         );
+=======
+      if (response != null) {
+        if (response.statusCode == 200) {
+          final data = InventoryResponse.fromJson(response.data);
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
 
-        // Refresh inventory data if needed
-        await fetchInventoryData();
-        // Reset form
-        resetAddMobileForm();
+
+          List<InventoryItem> fetchedItems = data.payload;
+
+          // Reset and update data
+          allFetchedItems.assignAll(fetchedItems);
+          totalItems.value = fetchedItems.length;
+          hasMoreData.value = false; // No pagination for search results
+          
+          log("Search results loaded: ${allFetchedItems.length}");
+          
+          // Apply other filters to search results
+          _applyLocalFilters();
+        } else if (response.statusCode == 401 || response.statusCode == 403) {
+          hasInventoryDataError.value = true;
+          inventoryDataerrorMessage.value = 'Session expired. Please login again.';
+          await _handleSessionExpired();
+        } else {
+          hasInventoryDataError.value = true;
+          inventoryDataerrorMessage.value = 'Failed to search. Status: ${response.statusCode}';
+        }
       } else {
-        throw Exception('Failed to add mobile to inventory');
+        hasInventoryDataError.value = true;
+        inventoryDataerrorMessage.value = 'Network error. Please try again.';
       }
     } catch (error) {
+<<<<<<< HEAD
       hasAddMobileError.value = true;
       addMobileErrorMessage.value = 'Error adding mobile: $error';
       log("❌ Error in addMobileToInventory: $error");
@@ -365,150 +218,170 @@ class InventoryController extends GetxController {
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
       );
+=======
+      hasInventoryDataError.value = true;
+      inventoryDataerrorMessage.value = 'Error: $error';
+      log("❌ Error in _searchByCompany: $error");
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
     } finally {
-      isAddingMobile.value = false;
+      isInventoryDataLoading.value = false;
     }
   }
 
-  /// Cancel add mobile form
-  void cancelAddMobile() {
-    resetAddMobileForm();
-    Get.back();
-  }
-
-  // EXISTING INVENTORY MANAGEMENT METHODS (unchanged)
-
-  // Apply frontend filters to currently loaded data
-  void _applyFrontendFilters() {
+  /// Apply local filters to current data (non-search filters)
+  void _applyLocalFilters() {
     List<InventoryItem> filtered = List.from(allFetchedItems);
 
-    // Apply search filter
-    if (searchQuery.value.isNotEmpty) {
-      String query = searchQuery.value.toLowerCase();
-      filtered =
-          filtered.where((item) {
-            return item.model.toLowerCase().contains(query) ||
-                item.company.toLowerCase().contains(query) ||
-                item.ram.toLowerCase().contains(query) ||
-                item.rom.toLowerCase().contains(query) ||
-                item.color.toLowerCase().contains(query);
-          }).toList();
-    }
-
-    // Apply company filter
-    if (selectedCompany.value.isNotEmpty &&
-        selectedCompany.value != 'All' &&
-        selectedCompany.value != 'Select Company') {
-      filtered =
-          filtered
-              .where(
-                (item) =>
-                    item.company.toLowerCase() ==
-                    selectedCompany.value.toLowerCase(),
-              )
-              .toList();
-    }
-
     // Apply model filter
-    if (selectedModel.value.isNotEmpty &&
-        selectedModel.value != 'Select Model') {
-      filtered =
-          filtered
-              .where(
-                (item) => item.model.toLowerCase().contains(
-                  selectedModel.value.toLowerCase(),
-                ),
-              )
-              .toList();
+    if (selectedModel.value.isNotEmpty && selectedModel.value != 'Select Model') {
+      filtered = filtered.where((item) => 
+        item.model.toLowerCase().contains(selectedModel.value.toLowerCase())
+      ).toList();
     }
 
     // Apply RAM filter
     if (selectedRAM.value.isNotEmpty && selectedRAM.value != 'Select RAM') {
-      filtered =
-          filtered
-              .where(
-                (item) => item.ram.toLowerCase().contains(
-                  selectedRAM.value.toLowerCase(),
-                ),
-              )
-              .toList();
+      filtered = filtered.where((item) => 
+        item.ram.toLowerCase().contains(selectedRAM.value.toLowerCase())
+      ).toList();
     }
 
     // Apply ROM filter
     if (selectedROM.value.isNotEmpty && selectedROM.value != 'Select ROM') {
-      filtered =
-          filtered
-              .where(
-                (item) => item.rom.toLowerCase().contains(
-                  selectedROM.value.toLowerCase(),
-                ),
-              )
-              .toList();
+      filtered = filtered.where((item) => 
+        item.rom.toLowerCase().contains(selectedROM.value.toLowerCase())
+      ).toList();
     }
 
     // Apply color filter
-    if (selectedColor.value.isNotEmpty &&
-        selectedColor.value != 'Select Color') {
-      filtered =
-          filtered
-              .where(
-                (item) => item.color.toLowerCase().contains(
-                  selectedColor.value.toLowerCase(),
-                ),
-              )
-              .toList();
+    if (selectedColor.value.isNotEmpty && selectedColor.value != 'Select Color') {
+      filtered = filtered.where((item) => 
+        item.color.toLowerCase().contains(selectedColor.value.toLowerCase())
+      ).toList();
     }
 
     // Apply stock availability filter
-    if (selectedStockAvailability.value.isNotEmpty &&
-        selectedStockAvailability.value != 'Stock Availa...') {
-      filtered =
-          filtered.where((item) {
-            int quantity = item.quantity;
-            switch (selectedStockAvailability.value) {
-              case 'In Stock':
-                return quantity > 20;
-              case 'Low Stock':
-                return quantity > 0 && quantity <= 20;
-              case 'Out of Stock':
-                return quantity == 0;
-              default:
-                return true;
-            }
-          }).toList();
+    if (selectedStockAvailability.value.isNotEmpty && selectedStockAvailability.value != 'Stock Availa...') {
+      filtered = filtered.where((item) {
+        int quantity = item.quantity;
+        switch (selectedStockAvailability.value) {
+          case 'In Stock':
+            return quantity > 20;
+          case 'Low Stock':
+            return quantity > 0 && quantity <= 20;
+          case 'Out of Stock':
+            return quantity == 0;
+          default:
+            return true;
+        }
+      }).toList();
     }
 
     // Update the displayed items
     inventoryItems.assignAll(filtered);
   }
 
-  // Pagination methods with API calls
-  Future<void> nextPage() async {
-    if (currentPage.value < totalPages.value - 1) {
-      currentPage.value++;
-      await fetchInventoryData();
-    }
-  }
-
-  Future<void> previousPage() async {
-    if (currentPage.value > 0) {
-      currentPage.value--;
-      await fetchInventoryData();
-    }
-  }
-
-  Future<void> goToPage(int page) async {
-    if (page >= 0 && page < totalPages.value) {
-      currentPage.value = page;
-      await fetchInventoryData();
-    }
-  }
-
-  Future<void> changeItemsPerPage(int newSize) async {
-    itemsPerPage.value = newSize;
+  /// Reset pagination variables
+  void _resetPagination() {
     currentPage.value = 0;
-    await fetchInventoryData();
+    hasMoreData.value = true;
+    allFetchedItems.clear();
+    inventoryItems.clear();
   }
+
+  /// Load more data for lazy loading
+  Future<void> loadMoreData() async {
+    if (searchQuery.value.trim().isNotEmpty) {
+      // Don't load more for search results
+      return;
+    }
+    
+    currentPage.value++;
+    await fetchInventoryData(isLoadMore: true);
+  }
+
+  /// Modified fetch inventory data for lazy loading
+  Future<void> fetchInventoryData({bool isInitial = false, bool isLoadMore = false}) async {
+    try {
+      if (isInitial) {
+        isInventoryDataLoading.value = true;
+        _resetPagination();
+      } else if (isLoadMore) {
+        isLoadingMore.value = true;
+      }
+      
+      hasInventoryDataError.value = false;
+      inventoryDataerrorMessage.value = '';
+
+      final jsessionId = await SecureStorageHelper.getJSessionId();
+      log("jsessionId: $jsessionId");
+
+      if (jsessionId == null || jsessionId.isEmpty) {
+        hasInventoryDataError.value = true;
+        inventoryDataerrorMessage.value = 'No session found. Please login again.';
+        return;
+      }
+
+      // Construct the paginated API URL
+      String apiUrl = '${_config.getInventoryData}?page=${currentPage.value}&size=${itemsPerPage.value}&sortBy=${sortBy.value}';
+      log("Fetching from URL: $apiUrl");
+
+      dio.Response? response = await _apiService.requestGetWithJSessionId(
+        url: apiUrl,
+        authToken: true,
+      );
+
+      if (response != null) {
+        if (response.statusCode == 200) {
+          final data = response.data is String ? json.decode(response.data) : response.data;
+          final payload = data['payload'];
+          final List<dynamic> jsonList = payload['content'];
+
+          // Extract pagination info
+          totalItems.value = payload['totalElements'] ?? 0;
+          int totalPages = payload['totalPages'] ?? 0;
+          
+          // Check if there's more data
+          hasMoreData.value = currentPage.value < totalPages - 1;
+
+          List<InventoryItem> fetchedItems = jsonList.map((item) => InventoryItem.fromJson(item)).toList();
+
+          if (isInitial) {
+            allFetchedItems.assignAll(fetchedItems);
+          } else if (isLoadMore) {
+            allFetchedItems.addAll(fetchedItems);
+          }
+
+          log("Items loaded: ${fetchedItems.length}, Total: ${allFetchedItems.length}");
+          log("Has more data: ${hasMoreData.value}");
+
+          // Apply local filters to the data
+          _applyLocalFilters();
+        } else if (response.statusCode == 401 || response.statusCode == 403) {
+          hasInventoryDataError.value = true;
+          inventoryDataerrorMessage.value = 'Session expired. Please login again.';
+          await _handleSessionExpired();
+        } else if (response.statusCode == 404) {
+          hasInventoryDataError.value = true;
+          inventoryDataerrorMessage.value = 'Data not found. Session may have expired.';
+        } else {
+          hasInventoryDataError.value = true;
+          inventoryDataerrorMessage.value = 'Failed to fetch data. Status: ${response.statusCode}';
+        }
+      } else {
+        hasInventoryDataError.value = true;
+        inventoryDataerrorMessage.value = 'Network error. Please try again.';
+      }
+    } catch (error) {
+      hasInventoryDataError.value = true;
+      inventoryDataerrorMessage.value = 'Error: $error';
+      log("❌ Error in fetchInventoryData: $error");
+    } finally {
+      isInventoryDataLoading.value = false;
+      isLoadingMore.value = false;
+    }
+  }
+
 
   // Filter methods for modern UI
   void onCompanyFilterChanged(String company) {
@@ -545,17 +418,20 @@ class InventoryController extends GetxController {
     selectedColor.value = 'Select Color';
     sortBy.value = 'id';
     sortDirection.value = 'asc';
+    
+    // Refresh data after clearing filters
+    refreshData();
   }
 
-  // Apply filters (just trigger frontend filtering)
+  // Apply filters (triggers local filtering)
   void applyFilters() {
-    _applyFrontendFilters();
+    _applyLocalFilters();
   }
 
   // Refresh data method
   Future<void> refreshData() async {
-    currentPage.value = 0;
-    await fetchInventoryData();
+    _resetPagination();
+    await fetchInventoryData(isInitial: true);
   }
 
   // Action methods for modern UI
@@ -563,6 +439,7 @@ class InventoryController extends GetxController {
     Get.toNamed(AppRoutes.addNewItem);
   }
 
+<<<<<<< HEAD
   void showAdvancedFilters() {
     Get.bottomSheet(
       Container(
@@ -593,6 +470,10 @@ class InventoryController extends GetxController {
         ),
       ),
     );
+=======
+  void addNewStocks() {
+   Get.toNamed(AppRoutes.addNewStock);
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
   }
 
   void exportData() {
@@ -621,13 +502,8 @@ class InventoryController extends GetxController {
     );
   }
 
-  void onPageSizeChanged(int pageSize) {
-    changeItemsPerPage(pageSize);
-  }
-
   // Legacy methods for compatibility
   List<InventoryItem> get filteredItems => inventoryItems;
-  int get totalPages_legacy => totalPages.value;
   int get totalItems_legacy => totalItems.value;
 
   List<InventoryItem> getPaginatedItems() {
@@ -646,88 +522,7 @@ class InventoryController extends GetxController {
     await retryFetchInventoryData();
   }
 
-  // API Methods
-  Future<void> fetchInventoryData() async {
-    try {
-      isInventoryDataLoading.value = true;
-      hasInventoryDataError.value = false;
-      inventoryDataerrorMessage.value = '';
-
-      final jsessionId = await SecureStorageHelper.getJSessionId();
-      log("jsessionId: $jsessionId");
-
-      if (jsessionId == null || jsessionId.isEmpty) {
-        hasInventoryDataError.value = true;
-        inventoryDataerrorMessage.value =
-            'No session found. Please login again.';
-        return;
-      }
-
-      // Construct the paginated API URL
-      String apiUrl =
-          '${_config.getInventoryData}?page=${currentPage.value}&size=${itemsPerPage.value}&sortBy=${sortBy.value}';
-      log("Fetching from URL: $apiUrl");
-
-      dio.Response? response = await _apiService.requestGetWithJSessionId(
-        url: apiUrl,
-        authToken: true,
-      );
-
-      if (response != null) {
-        if (response.statusCode == 200) {
-          final data =
-              response.data is String
-                  ? json.decode(response.data)
-                  : response.data;
-
-          final payload = data['payload'];
-          final List<dynamic> jsonList = payload['content'];
-
-          // Extract pagination info
-          totalItems.value = payload['totalElements'] ?? 0;
-          totalPages.value = payload['totalPages'] ?? 0;
-
-          List<InventoryItem> fetchedItems =
-              jsonList.map((item) => InventoryItem.fromJson(item)).toList();
-
-          // Store both raw data and filtered data
-          allFetchedItems.assignAll(fetchedItems);
-
-          log("Items loaded: ${allFetchedItems.length}");
-          log(
-            "Total items: ${totalItems.value}, Total pages: ${totalPages.value}",
-          );
-
-          // Apply frontend filters to the newly fetched data
-          _applyFrontendFilters();
-        } else if (response.statusCode == 401 || response.statusCode == 403) {
-          hasInventoryDataError.value = true;
-          inventoryDataerrorMessage.value =
-              'Session expired. Please login again.';
-          await _handleSessionExpired();
-        } else if (response.statusCode == 404) {
-          hasInventoryDataError.value = true;
-          inventoryDataerrorMessage.value =
-              'Data not found. Session may have expired.';
-        } else {
-          hasInventoryDataError.value = true;
-          inventoryDataerrorMessage.value =
-              'Failed to fetch data. Status: ${response.statusCode}';
-        }
-      } else {
-        hasInventoryDataError.value = true;
-        inventoryDataerrorMessage.value = 'Network error. Please try again.';
-      }
-    } catch (error) {
-      hasInventoryDataError.value = true;
-      inventoryDataerrorMessage.value = 'Error: $error';
-      log("❌ Error in fetchInventoryData: $error");
-    } finally {
-      isInventoryDataLoading.value = false;
-    }
-  }
-
-  //get summary cards
+  // Summary cards methods...
   final RxBool isSummaryCardsLoading = false.obs;
   final RxBool hasSummaryCardsError = false.obs;
   final RxString summaryCardsErrorMessage = ''.obs;
@@ -744,8 +539,7 @@ class InventoryController extends GetxController {
 
       if (jsessionId == null || jsessionId.isEmpty) {
         hasSummaryCardsError.value = true;
-        summaryCardsErrorMessage.value =
-            'No session found. Please login again.';
+        summaryCardsErrorMessage.value = 'No session found. Please login again.';
         return;
       }
 
@@ -756,32 +550,21 @@ class InventoryController extends GetxController {
 
       if (response != null) {
         if (response.statusCode == 200) {
-          final data =
-              response.data is String
-                  ? json.decode(response.data)
-                  : response.data;
-
-          // Parse the response using the model
+          final data = response.data is String ? json.decode(response.data) : response.data;
           final summaryResponse = SummaryCardsResponse.fromJson(data);
-
-          // Store the summary data
           summaryCardsData.value = summaryResponse.payload;
-
           log("Summary Cards loaded successfully");
           log("Total Companies: ${summaryCardsData.value?.totalCompanies}");
         } else if (response.statusCode == 401 || response.statusCode == 403) {
           hasSummaryCardsError.value = true;
-          summaryCardsErrorMessage.value =
-              'Session expired. Please login again.';
+          summaryCardsErrorMessage.value = 'Session expired. Please login again.';
           await _handleSessionExpired();
         } else if (response.statusCode == 404) {
           hasSummaryCardsError.value = true;
-          summaryCardsErrorMessage.value =
-              'Summary data not found. Session may have expired.';
+          summaryCardsErrorMessage.value = 'Summary data not found. Session may have expired.';
         } else {
           hasSummaryCardsError.value = true;
-          summaryCardsErrorMessage.value =
-              'Failed to fetch summary data. Status: ${response.statusCode}';
+          summaryCardsErrorMessage.value = 'Failed to fetch summary data. Status: ${response.statusCode}';
         }
       } else {
         hasSummaryCardsError.value = true;
@@ -797,6 +580,7 @@ class InventoryController extends GetxController {
   }
 
   // Getter methods for easy access to summary data
+<<<<<<< HEAD
   int get totalCompaniesAvailable =>
       summaryCardsData.value?.totalCompanies ?? 0;
 
@@ -805,7 +589,14 @@ class InventoryController extends GetxController {
   int get monthlyPhoneSold => summaryCardsData.value?.totalPhonesSold ?? 0;
 
   //check session expiry
+=======
+  int get totalCompaniesAvailable => summaryCardsData.value?.totalCompanies ?? 0;
+  int get totalStockAvailable => summaryCardsData.value?.totalStock ?? 0;
+  int get lowStockAlert => summaryCardsData.value?.lowStockCount ?? 0;
+  int get monthlyPhoneSold => summaryCardsData.value?.totalPhonesSold ?? 0;
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628
 
+  // Session handling
   Future<void> _handleSessionExpired() async {
     await SecureStorageHelper.deleteJSessionId();
     AuthController().logout();

@@ -5,6 +5,7 @@ import 'package:smartbecho/models/account%20management%20models/withdraw_history
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
+import 'package:smartbecho/views/account%20management/components/withdraw/add_withdraw.dart';
 
 class WithdrawHistoryPage extends StatefulWidget {
   @override
@@ -72,6 +73,47 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                   color: const Color(0xFF1A1A1A),
                   size: 20,
                   weight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 12),
+              child: InkWell(
+                onTap: () {
+                  Get.to(() => AddWithdrawPage());
+                },
+                borderRadius: BorderRadius.circular(25),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color:const Color(0xFFFF9500),
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF4CAF50).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, color: Colors.white, size: 18),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'Add Withdraw',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -498,11 +540,15 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                   color: controller.getWithdrawnByColor(withdrawal.withdrawnBy),
                   borderRadius: BorderRadius.circular(8),
                 ),
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                 child: const Icon(
                   Icons.person,
                   color: AppTheme.backgroundLight,
                   size: 18,
                 ),
+=======
+                child: const Icon(Icons.person, color: Colors.white, size: 18),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -651,7 +697,11 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               ),
               child: Text(
                 'View Details',
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                 style: AppStyles.custom(size: 12, weight: FontWeight.w600),
+=======
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
               ),
             ),
           ),
@@ -694,7 +744,11 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
             controller.hasActiveFilters
                 ? 'Try adjusting your filters to find what you\'re looking for'
                 : 'Withdrawals will appear here once they are recorded',
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
             style: AppStyles.custom(color: Color(0xFF6B7280), size: 14),
+=======
+            style: const TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
             textAlign: TextAlign.center,
           ),
           if (controller.hasActiveFilters) ...[
@@ -717,7 +771,11 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               ),
               child: Text(
                 'Clear Filters',
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                 style: AppStyles.custom(size: 14, weight: FontWeight.w600),
+=======
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
               ),
             ),
           ],
@@ -749,6 +807,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                         decoration: BoxDecoration(
                           color: controller.getWithdrawnByColor(
                             withdrawal.withdrawnBy,
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                           ),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -809,14 +868,85 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                             size: 12,
                             color: Color(0xFF6B7280),
                             weight: FontWeight.w500,
+=======
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
                           ),
+                          borderRadius: BorderRadius.circular(10),
                         ),
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                         const SizedBox(height: 4),
                         Text(
                           withdrawal.formattedAmount,
                           style: AppStyles.custom(
                             size: 24,
                             weight: FontWeight.w700,
+=======
+                        child: const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Withdrawal Details',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1A1A1A),
+                              ),
+                            ),
+                            Text(
+                              withdrawal.formattedDate.toString(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF6B7280),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.grey.withOpacity(0.1),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Amount
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEF4444).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Amount Withdrawn',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF6B7280),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          withdrawal.formattedAmount,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
                             color: Color(0xFFEF4444),
                           ),
                         ),
@@ -849,11 +979,19 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
 
                   if (withdrawal.notes.isNotEmpty) ...[
                     const SizedBox(height: 16),
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                     Text(
                       'Notes',
                       style: AppStyles.custom(
                         size: 14,
                         weight: FontWeight.w600,
+=======
+                    const Text(
+                      'Notes',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
                         color: Color(0xFF1A1A1A),
                       ),
                     ),
@@ -862,13 +1000,22 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                         color: AppTheme.greyOpacity05,
+=======
+                        color: Colors.grey.withOpacity(0.05),
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         withdrawal.notes,
+<<<<<<< HEAD:lib/views/account management/components/withdraw.dart
                         style: AppStyles.custom(
                           size: 13,
+=======
+                        style: const TextStyle(
+                          fontSize: 13,
+>>>>>>> f22fa2fa092f8d46ad80c2c3e4ec5206279ac628:lib/views/account management/components/withdraw/withdraw.dart
                           color: Color(0xFF6B7280),
                         ),
                       ),

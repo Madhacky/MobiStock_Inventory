@@ -214,8 +214,7 @@ class CustomerManagementScreen extends StatelessWidget {
               padding: EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Icon(Icons.search, color: Color(0xFF6C5CE7), size: 20),
-                  SizedBox(width: 8),
+                
                   Text(
                     'Search & Filters',
                     style: AppStyles.custom(
@@ -246,7 +245,6 @@ class CustomerManagementScreen extends StatelessWidget {
 
                   Spacer(),
 
-                  // Clear all button (only show when expanded or has active filters)
                   Obx(() {
                     bool hasActiveFilters =
                         controller.searchQuery.value.isNotEmpty ||

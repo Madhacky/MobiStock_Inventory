@@ -79,8 +79,7 @@ class CustomerDetailsPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.search, color: Color(0xFF6C5CE7), size: 18),
-              SizedBox(width: 8),
+          
               Expanded(
                 child: Container(
                   padding: EdgeInsets.all(2),
@@ -91,11 +90,13 @@ class CustomerDetailsPage extends StatelessWidget {
                     border: Border.all(color: AppTheme.greyOpacity02),
                   ),
                   child: TextField(
+                    
                     onChanged: controller.onSearchChanged,
                     decoration: InputDecoration(
+                      
                       hintText: 'Search customers...',
                       hintStyle: AppStyles.black_14_400,
-
+prefixIcon: Icon(Icons.search),
                       suffixIcon: Obx(
                         () =>
                             controller.searchQuery.value.isNotEmpty
@@ -655,17 +656,17 @@ class CustomerDetailsPage extends StatelessWidget {
                 child: Container(
                   height: 28,
                   child: ElevatedButton(
-                    onPressed: () => controller.deleteCustomer(customer),
+                    onPressed: () => _showCustomerDetailDialog(customer),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFF6B6B).withOpacity(0.1),
-                      foregroundColor: Color(0xFFFF6B6B),
+                      foregroundColor: Color.fromARGB(255, 160, 152, 152),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
                       padding: EdgeInsets.zero,
                     ),
-                    child: Icon(Icons.delete, size: 12),
+                    child: Icon(Icons.remove_red_eye, size: 12),
                   ),
                 ),
               ),
@@ -675,6 +676,24 @@ class CustomerDetailsPage extends StatelessWidget {
       ),
     );
   }
+
+void _showCustomerDetailDialog(Customer customer) {
+  showDialog(
+    context: Get.context!,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: CustomerDetailDialog(customer: customer),
+      );
+    },
+  );
+}
+
 
   Widget _buildCompactCustomerTypeBadge(String type) {
     return Container(
@@ -795,5 +814,429 @@ class CustomerDetailsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+
+class CustomerDetailDialog extends StatelessWidget {
+  final Customer customer;
+
+  const CustomerDetailDialog({Key? key, required this.customer}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header with close button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Customer Details',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icon(Icons.close, color: Colors.grey[600]),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey[100],
+                  shape: CircleBorder(),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 20),
+
+          // Profile section
+          _buildProfileSection(customer),
+
+          SizedBox(height: 20),
+
+          // Details sections
+          _buildContactSection(customer),
+          
+          SizedBox(height: 16),
+          
+          _buildAddressSection(customer),
+          
+          SizedBox(height: 16),
+          
+          _buildFinancialSection(customer),
+
+          SizedBox(height: 20),
+
+          // Action buttons
+          _buildActionButtons(customer, context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileSection(Customer customer) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          // Profile picture or avatar
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+            ),
+            child: customer.profilePhotoUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(13),
+                    child: Image.network(
+                      customer.profilePhotoUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.person, color: Colors.white, size: 30);
+                      },
+                    ),
+                  )
+                : Icon(Icons.person, color: Colors.white, size: 30),
+          ),
+          
+          SizedBox(width: 16),
+          
+          // Name and ID
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  customer.name,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'ID: ${customer.id}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white.withOpacity(0.8),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactSection(Customer customer) {
+    return _buildSection(
+      title: 'Contact Information',
+      icon: Icons.contact_phone,
+      iconColor: Color(0xFF51CF66),
+      children: [
+        _buildDetailRow(
+          icon: Icons.phone,
+          label: 'Primary Phone',
+          value: customer.primaryPhone,
+          isClickable: true,
+          onTap: () => _makePhoneCall(customer.primaryPhone),
+        ),
+        if (customer.alternatePhones.isNotEmpty) ...[
+          SizedBox(height: 8),
+          _buildDetailRow(
+            icon: Icons.phone_outlined,
+            label: 'Alternate Phones',
+            value: customer.alternatePhones.join(', '),
+            isMultiline: true,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildAddressSection(Customer customer) {
+    return _buildSection(
+      title: 'Address Information',
+      icon: Icons.location_on,
+      iconColor: Color(0xFFFF6B6B),
+      children: [
+        _buildDetailRow(
+          icon: Icons.home,
+          label: 'Primary Address',
+          value: customer.primaryAddress.isEmpty ? 'Not provided' : customer.primaryAddress,
+          isMultiline: true,
+        ),
+        SizedBox(height: 8),
+        _buildDetailRow(
+          icon: Icons.location_city,
+          label: 'Location',
+          value: customer.location.isEmpty ? 'Not provided' : customer.location,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFinancialSection(Customer customer) {
+    return _buildSection(
+      title: 'Financial Summary',
+      icon: Icons.account_balance_wallet,
+      iconColor: Color(0xFF6C5CE7),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildFinancialCard(
+                title: 'Total Purchase',
+                value: _formatCurrency(customer.totalPurchase),
+                color: Color(0xFF51CF66),
+                icon: Icons.shopping_cart,
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: _buildFinancialCard(
+                title: 'Total Dues',
+                value: _formatCurrency(customer.totalDues),
+                color: customer.totalDues > 0 ? Color(0xFFFF6B6B) : Colors.grey,
+                icon: Icons.account_balance_wallet,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, size: 16, color: iconColor),
+              ),
+              SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    bool isClickable = false,
+    bool isMultiline = false,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: isClickable ? onTap : null,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey[200]!),
+        ),
+        child: Row(
+          crossAxisAlignment: isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+          children: [
+            Icon(icon, size: 14, color: Colors.grey[600]),
+            SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey[500],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isClickable ? Color(0xFF6C5CE7) : Colors.black87,
+                      fontWeight: FontWeight.w500,
+                      decoration: isClickable ? TextDecoration.underline : null,
+                    ),
+                    maxLines: isMultiline ? null : 1,
+                    overflow: isMultiline ? null : TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            if (isClickable)
+              Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey[400]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFinancialCard({
+    required String title,
+    required String value,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 20, color: color),
+          SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(Customer customer, BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () => _makePhoneCall(customer.primaryPhone),
+            icon: Icon(Icons.call, size: 16),
+            label: Text('Call'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF51CF66),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Add your edit customer logic here
+              // controller.editCustomer(customer);
+            },
+            icon: Icon(Icons.edit, size: 16),
+            label: Text('Edit'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF6C5CE7),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatCurrency(double amount) {
+    if (amount == 0) return '₹0';
+    if (amount < 1000) return '₹${amount.toStringAsFixed(0)}';
+    if (amount < 100000) return '₹${(amount / 1000).toStringAsFixed(1)}K';
+    return '₹${(amount / 100000).toStringAsFixed(1)}L';
+  }
+
+  void _makePhoneCall(String phoneNumber) {
+    // Add your phone call logic here
+    // For example: launch('tel:$phoneNumber');
+    print('Calling: $phoneNumber');
   }
 }

@@ -1,3 +1,38 @@
+class InventoryResponse {
+  final String status;
+  final String message;
+  final int statusCode;
+  final List<InventoryItem> payload;
+
+  InventoryResponse({
+    required this.status,
+    required this.message,
+    required this.statusCode,
+    required this.payload,
+  });
+
+  factory InventoryResponse.fromJson(Map<String, dynamic> json) {
+    return InventoryResponse(
+      status: json['status'] ?? '',
+      message: json['message'] ?? '',
+      statusCode: json['statusCode'] ?? 0,
+      payload: (json['payload'] as List<dynamic>)
+          .map((item) => InventoryItem.fromJson(item))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status': status,
+      'message': message,
+      'statusCode': statusCode,
+      'payload': payload.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+
 class InventoryItem {
   final int id;
   final String logo;
