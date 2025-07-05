@@ -115,17 +115,31 @@ class OTPController extends GetxController
     _timer?.cancel();
     animationController.dispose();
 
+    // for (var controller in otpControllers) {
+    //   controller.dispose();
+    // }
+    // for (var node in otpFocusNodes) {
+    //   node.dispose();
+    // }
+
+    // newPasswordController.dispose();
+    // confirmPasswordController.dispose();
+
+    super.onClose();
+  }
+
+  @override
+  void dispose() {
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
     for (var controller in otpControllers) {
       controller.dispose();
     }
     for (var node in otpFocusNodes) {
       node.dispose();
     }
-
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
-
-    super.onClose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   void setEmail(String userEmail) {
@@ -185,7 +199,8 @@ class OTPController extends GetxController
 
     // All validations passed
     passwordError.value = '';
-    isFormValid.value = otpComplete && newPass.isNotEmpty && confirmPass.isNotEmpty;
+    isFormValid.value =
+        otpComplete && newPass.isNotEmpty && confirmPass.isNotEmpty;
   }
 
   void onOTPChanged(String value, int index) {
@@ -273,9 +288,10 @@ class OTPController extends GetxController
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data is String
-            ? json.decode(response.data)
-            : response.data;
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
 
         if (data is Map<String, dynamic>) {
           String status = data['status'] ?? '';

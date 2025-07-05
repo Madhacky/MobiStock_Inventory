@@ -3,9 +3,12 @@ import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 
 class RouteService {
-  // Authentication Navigation
-  static void toLogin() {
-    Get.toNamed(AppRoutes.login);
+  static void toLogin({bool clearStack = false}) {
+    if (clearStack) {
+      Get.offAllNamed(AppRoutes.login);
+    } else {
+      Get.toNamed(AppRoutes.login);
+    }
   }
 
   static void toSignup() {
@@ -17,7 +20,6 @@ class RouteService {
   }
 
   static void toVerifyEmail({Map<String, dynamic>? parameters}) {
-    // Convert to Map<String, String> by converting values to strings
     Map<String, String>? stringParameters;
     if (parameters != null) {
       stringParameters = parameters.map(

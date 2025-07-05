@@ -5,14 +5,17 @@ import 'package:smartbecho/bindings/auth%20bindings/auth_binding.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_history_bindings.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_operation_binding.dart';
 import 'package:smartbecho/bindings/customer%20dues%20bindings/customer_dues_management_binding.dart';
+import 'package:smartbecho/bindings/customer%20dues%20bindings/todays_retrieval_dues_binding.dart';
 import 'package:smartbecho/bindings/customer%20management%20bindings/customer_details_binding.dart';
 import 'package:smartbecho/bindings/customer%20management%20bindings/customer_management_binding.dart';
 import 'package:smartbecho/bindings/dashboard_binding.dart';
 import 'package:smartbecho/bindings/inventory%20management%20bindings/company_stock_details_binding.dart';
+import 'package:smartbecho/bindings/inventory%20management%20bindings/inventory_crud_operations_bindings.dart';
 import 'package:smartbecho/bindings/inventory%20management%20bindings/inventory_management_binding.dart';
 import 'package:smartbecho/bindings/inventory%20management%20bindings/sales_dashboard_binding.dart';
 import 'package:smartbecho/bindings/profile/profile_binding.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/company_stock_detail_controller.dart';
+import 'package:smartbecho/middlewares/auth_middleware.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/views/account%20management/account_management.dart';
 import 'package:smartbecho/views/auth/forgot_password_otp.dart';
@@ -21,8 +24,9 @@ import 'package:smartbecho/views/auth/reset_password.dart';
 import 'package:smartbecho/views/auth/signup_screen.dart';
 import 'package:smartbecho/views/auth/verify_email.dart';
 import 'package:smartbecho/views/bill%20history/bill_history.dart';
-import 'package:smartbecho/views/bill%20history/components/add_bill.dart';
+import 'package:smartbecho/views/bill%20history/components/add_new_stock.dart';
 import 'package:smartbecho/views/bill%20history/components/bill_details.dart';
+import 'package:smartbecho/views/customer%20dues/components/todays_due_retrieval.dart';
 import 'package:smartbecho/views/customer%20dues/customer_dues_management.dart';
 import 'package:smartbecho/views/customer/components/customer_card_view.dart';
 import 'package:smartbecho/views/customer/customer.dart';
@@ -99,6 +103,7 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: DashboardBinding(),
+      middlewares: [AuthMiddleware()]
     ),
 
     /// inventory management
@@ -125,9 +130,10 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.addNewItem,
-      page: () => MobileInventoryForm(),
+      page: () => AddNewMobileInventoryForm(),
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 500),
+      binding: InventoryCrudOperationsBindings()
     ),
 
     //customer analytics
@@ -169,11 +175,11 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
-      name: AppRoutes.addBill,
-      page: () => AddBillForm(),
+      name: AppRoutes.addNewStock,
+      page: () => AddNewStockForm(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
-      binding: BillOperationBinding(),
+      binding: AddNewStockOperationBinding(),
     ),
 
     //customer dues management
@@ -184,15 +190,23 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: CustomerDuesManagementBinding(),
     ),
+    GetPage(
+      name: AppRoutes.todaysRetrievalDues,
+      page: () => TodaysRetrievalDuesScreen(),
+      transition: Transition.downToUp,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: TodaysRetrievalDuesBinding(),
+    ),
 
     //account management
-        GetPage(
+    GetPage(
       name: AppRoutes.accountManagement,
       page: () => AccountManagementScreen(),
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 300),
       binding: AccountManagementBinding(),
     ),
+    
   ];
 
   //   // Main App Routes

@@ -9,6 +9,7 @@ Widget buildStyledDropdown({
     required Function(String?) onChanged,
     String? Function(String?)? validator,
     bool enabled = true,
+    Widget? suffixIcon
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,10 +31,12 @@ Widget buildStyledDropdown({
             border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: DropdownButtonFormField<String>(
+            
             value: value,
             isExpanded: true,
-            decoration: const InputDecoration(
+            decoration:  InputDecoration(
               border: InputBorder.none,
+              suffixIcon: suffixIcon,
               contentPadding: EdgeInsets.symmetric(vertical: 12),
             ),
             hint: Text(

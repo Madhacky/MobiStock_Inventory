@@ -3,6 +3,7 @@ import 'package:smartbecho/services/jwt_validator.dart';
 import 'package:smartbecho/services/route_services.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:smartbecho/services/validate_user.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

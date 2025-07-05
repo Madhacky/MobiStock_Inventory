@@ -168,47 +168,64 @@ Future<Response?> requestPutForApi({
 }
 
   /// MULTIPART
-  Future<Response?> requestMultipartApi({
-    required context,
-    String? url,
-    FormData? formData,
-    getx.RxDouble? percent,
-    required bool authToken,
-  }) async {
-    try {
-      log("Url:  $url");
-      log("formData fields: ${formData?.fields}");
+ Future<Response?> requestMultipartApi({
+  String? url,
+  FormData? formData,
+  getx.RxDouble? percent,
+  required bool authToken,
+}) async {
+  try {
+    log("Url: $url");
+    log("formData fields: ${formData?.fields}");
+    
+    // Safe logging for files
+    if (formData?.files.isNotEmpty == true) {
       log("formData files: ${formData?.files[0].value.filename}");
-
-      BaseOptions options = BaseOptions(
-        baseUrl: url!,
-        receiveTimeout: const Duration(minutes: 1),
-        connectTimeout: const Duration(minutes: 1),
-        headers: await getHeader(authToken),
-      );
-
-      _dio.options = options;
-      Response response = await _dio.post(
-        url,
-        onSendProgress: (count, total) {
-          percent!.value = (count / total) * 100;
-          print("$percent");
-        },
-        data: formData,
-        options: Options(
-          followRedirects: false,
-          validateStatus: (status) => true,
-          headers: await getHeader(authToken),
-        ),
-      );
-
-      log("Response: ${response.data}");
-      return response;
-    } catch (error) {
-      log("Exception_Main: $error");
-      return null;
     }
+
+    // Configure Dio options - don't set baseUrl, use empty string or remove it
+    BaseOptions options = BaseOptions(
+      receiveTimeout: const Duration(minutes: 1),
+      connectTimeout: const Duration(minutes: 1),
+      headers: await getHeader(authToken),
+    );
+
+    _dio.options = options;
+    
+    Response response = await _dio.post(
+      url!, // Use the full URL here
+      onSendProgress: percent != null ? (count, total) {
+        percent.value = (count / total) * 100;
+        print("Progress: ${percent.value}%");
+      } : null, // Only set callback if percent is not null
+      data: formData,
+      options: Options(
+        followRedirects: false,
+        validateStatus: (status) => true,
+        headers: await getHeader(authToken),
+      ),
+    );
+
+    log("Response Status: ${response.statusCode}");
+    log("Response: ${response.data}");
+    return response;
+  } catch (error) {
+    log("Exception_Main: $error");
+    log("Exception Type: ${error.runtimeType}");
+    
+    // More specific error handling
+    if (error is DioException) {
+      log("DioException Type: ${error.type}");
+      log("DioException Message: ${error.message}");
+      if (error.response != null) {
+        log("Error Response Status: ${error.response?.statusCode}");
+        log("Error Response Data: ${error.response?.data}");
+      }
+    }
+    
+    return null;
   }
+}
 
   //patch method
   Future<Response?> requestPatchForApi({

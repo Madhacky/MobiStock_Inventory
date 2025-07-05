@@ -10,7 +10,8 @@ Widget buildStyledTextField({
     String? suffixText,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
-    void Function(String)? onChanged
+    void Function(String)? onChanged,
+    int? maxLines
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,13 +33,14 @@ Widget buildStyledTextField({
           ),
           child: TextFormField(
             controller: controller,
-            keyboardType: keyboardType,
+            keyboardType: keyboardType,maxLines:maxLines ,
             style: const TextStyle(
               color: Color(0xFF374151),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
             decoration: InputDecoration(
+              
               hintText: hintText,
               hintStyle: const TextStyle(
                 color: Color(0xFF9CA3AF),

@@ -5,6 +5,7 @@ import 'package:smartbecho/models/account%20management%20models/withdraw_history
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
+import 'package:smartbecho/views/account%20management/components/withdraw/add_withdraw.dart';
 
 class WithdrawHistoryPage extends StatefulWidget {
   @override
@@ -72,6 +73,47 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                   color: const Color(0xFF1A1A1A),
                   size: 20,
                   weight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 12),
+              child: InkWell(
+                onTap: () {
+                  Get.to(() => AddWithdrawPage());
+                },
+                borderRadius: BorderRadius.circular(25),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color:const Color(0xFFFF9500),
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF4CAF50).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, color: Colors.white, size: 18),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'Add Withdraw',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -224,14 +266,18 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                         () => buildStyledDropdown(
                           labelText: 'Withdrawn By',
                           hintText: 'Select Person',
-                          value: controller.selectedWithdrawnBy.value == 'All'
-                              ? null
-                              : controller.selectedWithdrawnBy.value,
-                          items: controller.withdrawnByOptions
-                              .where((item) => item != 'All')
-                              .toList(),
-                          onChanged: (value) =>
-                              controller.onWithdrawnByChanged(value ?? 'All'),
+                          value:
+                              controller.selectedWithdrawnBy.value == 'All'
+                                  ? null
+                                  : controller.selectedWithdrawnBy.value,
+                          items:
+                              controller.withdrawnByOptions
+                                  .where((item) => item != 'All')
+                                  .toList(),
+                          onChanged:
+                              (value) => controller.onWithdrawnByChanged(
+                                value ?? 'All',
+                              ),
                         ),
                       ),
                     ),
@@ -241,14 +287,17 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                         () => buildStyledDropdown(
                           labelText: 'Purpose',
                           hintText: 'Select Purpose',
-                          value: controller.selectedPurpose.value == 'All'
-                              ? null
-                              : controller.selectedPurpose.value,
-                          items: controller.purposes
-                              .where((item) => item != 'All')
-                              .toList(),
-                          onChanged: (value) =>
-                              controller.onPurposeChanged(value ?? 'All'),
+                          value:
+                              controller.selectedPurpose.value == 'All'
+                                  ? null
+                                  : controller.selectedPurpose.value,
+                          items:
+                              controller.purposes
+                                  .where((item) => item != 'All')
+                                  .toList(),
+                          onChanged:
+                              (value) =>
+                                  controller.onPurposeChanged(value ?? 'All'),
                         ),
                       ),
                     ),
@@ -264,14 +313,18 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                         () => buildStyledDropdown(
                           labelText: 'Payment Mode',
                           hintText: 'Select Payment',
-                          value: controller.selectedPaymentMode.value == 'All'
-                              ? null
-                              : controller.selectedPaymentMode.value,
-                          items: controller.paymentModes
-                              .where((item) => item != 'All')
-                              .toList(),
-                          onChanged: (value) => controller
-                              .onPaymentModeChanged(value ?? 'All'),
+                          value:
+                              controller.selectedPaymentMode.value == 'All'
+                                  ? null
+                                  : controller.selectedPaymentMode.value,
+                          items:
+                              controller.paymentModes
+                                  .where((item) => item != 'All')
+                                  .toList(),
+                          onChanged:
+                              (value) => controller.onPaymentModeChanged(
+                                value ?? 'All',
+                              ),
                         ),
                       ),
                     ),
@@ -284,14 +337,16 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                               () => buildStyledDropdown(
                                 labelText: 'Month',
                                 hintText: 'Month',
-                                value: controller.selectedMonth.value.toString(),
+                                value:
+                                    controller.selectedMonth.value.toString(),
                                 items: List.generate(
                                   12,
                                   (index) => (index + 1).toString(),
                                 ),
-                                onChanged: (value) => controller.onMonthChanged(
-                                  int.parse(value ?? '1'),
-                                ),
+                                onChanged:
+                                    (value) => controller.onMonthChanged(
+                                      int.parse(value ?? '1'),
+                                    ),
                               ),
                             ),
                           ),
@@ -306,11 +361,12 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                                   final year = DateTime.now().year - index;
                                   return year.toString();
                                 }),
-                                onChanged: (value) => controller.onYearChanged(
-                                  int.parse(
-                                    value ?? DateTime.now().year.toString(),
-                                  ),
-                                ),
+                                onChanged:
+                                    (value) => controller.onYearChanged(
+                                      int.parse(
+                                        value ?? DateTime.now().year.toString(),
+                                      ),
+                                    ),
                               ),
                             ),
                           ),
@@ -431,7 +487,8 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
-                itemCount: controller.filteredWithdrawals.length +
+                itemCount:
+                    controller.filteredWithdrawals.length +
                     (controller.hasMoreData.value ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index >= controller.filteredWithdrawals.length) {
@@ -483,11 +540,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                   color: controller.getWithdrawnByColor(withdrawal.withdrawnBy),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 18,
-                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 18),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -525,7 +578,9 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: controller.getPurposeColor(withdrawal.purpose).withOpacity(0.1),
+                  color: controller
+                      .getPurposeColor(withdrawal.purpose)
+                      .withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
@@ -634,10 +689,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               ),
               child: const Text(
                 'View Details',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -666,8 +718,8 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
           ),
           const SizedBox(height: 24),
           Text(
-            controller.hasActiveFilters 
-                ? 'No withdrawals found' 
+            controller.hasActiveFilters
+                ? 'No withdrawals found'
                 : 'No withdrawals yet',
             style: const TextStyle(
               color: Color(0xFF1A1A1A),
@@ -680,10 +732,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
             controller.hasActiveFilters
                 ? 'Try adjusting your filters to find what you\'re looking for'
                 : 'Withdrawals will appear here once they are recorded',
-            style: const TextStyle(
-              color: Color(0xFF6B7280),
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Color(0xFF6B7280), fontSize: 14),
             textAlign: TextAlign.center,
           ),
           if (controller.hasActiveFilters) ...[
@@ -706,10 +755,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               ),
               child: const Text(
                 'Clear Filters',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -721,136 +767,155 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
   void _showWithdrawDetails(Withdraw withdrawal) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: controller.getWithdrawnByColor(withdrawal.withdrawnBy),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Withdrawal Details',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF1A1A1A),
+                  // Header
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: controller.getWithdrawnByColor(
+                            withdrawal.withdrawnBy,
                           ),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        Text(
-                          withdrawal.formattedDate.toString(),
-                          style: const TextStyle(
+                        child: const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Withdrawal Details',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1A1A1A),
+                              ),
+                            ),
+                            Text(
+                              withdrawal.formattedDate.toString(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF6B7280),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.grey.withOpacity(0.1),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Amount
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEF4444).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Amount Withdrawn',
+                          style: TextStyle(
                             fontSize: 12,
                             color: Color(0xFF6B7280),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          withdrawal.formattedAmount,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFFEF4444),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.grey.withOpacity(0.1),
-                      padding: const EdgeInsets.all(8),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
-              // Amount
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEF4444).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
+                  // Details
+                  _buildDetailRow(
+                    'Withdrawn By',
+                    withdrawal.withdrawnBy,
+                    Icons.person,
+                  ),
+                  _buildDetailRow(
+                    'Purpose',
+                    withdrawal.purpose,
+                    _getPurposeIcon(withdrawal.purpose),
+                  ),
+                  _buildDetailRow(
+                    'Payment Mode',
+                    withdrawal.paymentMode,
+                    _getPaymentModeIcon(withdrawal.paymentMode),
+                  ),
+                  _buildDetailRow(
+                    'Date',
+                    withdrawal.formattedDate.toString(),
+                    Icons.calendar_today,
+                  ),
+
+                  if (withdrawal.notes.isNotEmpty) ...[
+                    const SizedBox(height: 16),
                     const Text(
-                      'Amount Withdrawn',
+                      'Notes',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF6B7280),
-                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A1A1A),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      withdrawal.formattedAmount,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFEF4444),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        withdrawal.notes,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF6B7280),
+                        ),
                       ),
                     ),
                   ],
-                ),
+                ],
               ),
-              const SizedBox(height: 16),
-
-              // Details
-              _buildDetailRow('Withdrawn By', withdrawal.withdrawnBy, Icons.person),
-              _buildDetailRow('Purpose', withdrawal.purpose, _getPurposeIcon(withdrawal.purpose)),
-              _buildDetailRow('Payment Mode', withdrawal.paymentMode, _getPaymentModeIcon(withdrawal.paymentMode)),
-              _buildDetailRow('Date', withdrawal.formattedDate.toString(), Icons.calendar_today),
-              
-              if (withdrawal.notes.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                const Text(
-                  'Notes',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    withdrawal.notes,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF6B7280),
-                    ),
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -859,11 +924,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: const Color(0xFF6B7280),
-          ),
+          Icon(icon, size: 16, color: const Color(0xFF6B7280)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

@@ -292,7 +292,7 @@ class AuthController extends GetxController
             String refreshToken = loginResponse.payload!.refreshToken;
             List<int> loginDate = loginResponse.payload!.loginDate;
 
-            await SharedPreferencesHelper.setJwtToken(refreshToken);
+            await SharedPreferencesHelper.setJwtToken(userToken);
             await SharedPreferencesHelper.setLoginDate(loginDate);
             await SharedPreferencesHelper.setIsLoggedIn(true);
 

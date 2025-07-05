@@ -42,7 +42,7 @@ class AppConfig {
   String get getInventorySummaryCards => '$baseUrl/api/mobiles/shop-summary';
   String get getLowStockAlerts => '$baseUrl/inventory/low-stock-alerts';
   String get getCompanyStocks => '$baseUrl/inventory/summary';
-  String get addInventoryItem => '$baseUrl/api/mobiles/create';
+  String get addInventoryItem => '$baseUrl/inventory/add';
 
   //Bill History
   String get getAllBills => '$baseUrl/bill/all';
@@ -50,7 +50,10 @@ class AppConfig {
   //customer dues management
   String get getAllCustomerDues => '$baseUrl/api/dues/all';
   String get getCustomerDuesAnalytics => '$baseUrl/api/dues/monthly-summary';
-  // String get getCustomerDuesDetails => '$baseUrl/api/dues/customer';
+  String get getTodaysDueRetrievalDetails => '$baseUrl/api/customers/retriable-today';
+  String get addPartialPayment => '$baseUrl/api/dues/partial-payment';
+
+  
   // String get getCustomerDuesPayment => '$baseUrl/api/dues/pay';
   // String get getCustomerDuesReminder => '$baseUrl/api/dues/reminder';
   // String get getCustomerDuesReport => '$baseUrl/api/dues/report';

@@ -4,6 +4,7 @@ import 'package:smartbecho/controllers/account%20management%20controller/commiss
 import 'package:smartbecho/models/account%20management%20models/commission_received_model.dart';
 import 'package:intl/intl.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
+import 'package:smartbecho/views/account%20management/components/commision%20received/add_commision_record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CommissionReceivedPage extends StatefulWidget {
@@ -15,7 +16,8 @@ class CommissionReceivedPage extends StatefulWidget {
 
 class _CommissionReceivedPageState extends State<CommissionReceivedPage>
     with TickerProviderStateMixin {
-  final CommissionReceivedController controller = Get.find<CommissionReceivedController>();
+  final CommissionReceivedController controller =
+      Get.find<CommissionReceivedController>();
 
   bool isFilterExpanded = false;
   late AnimationController _animationController;
@@ -70,13 +72,56 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
               children: [
-                Expanded(
+                SizedBox(width: 150,
                   child: Text(
                     'Commission Received',
                     style: TextStyle(
                       color: const Color(0xFF1A1A1A),
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                
+                Spacer(),
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => AddCommissionPage());
+                    },
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4ECDC4),
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4ECDC4).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.add, color: Colors.white, size: 18),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'Add Commission',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -91,7 +136,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${controller.filteredCommissions.length} Commissions',
+                      '${controller.filteredCommissions.length}',
                       style: const TextStyle(
                         color: Color(0xFF3B82F6),
                         fontSize: 12,
@@ -583,14 +628,13 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
               children: [
                 Row(
                   children: [
-                    
                     const Icon(
                       Icons.calendar_today_outlined,
                       size: 12,
                       color: Color(0xFF6B7280),
                     ),
                     const SizedBox(width: 4),
-                     Text(
+                    Text(
                       "Date : ",
                       style: const TextStyle(
                         fontSize: 10,
@@ -612,7 +656,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                     ),
                   ],
                 ),
-                    const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 Row(
                   children: [
@@ -622,7 +666,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                       color: Color(0xFF6B7280),
                     ),
                     const SizedBox(width: 4),
-                     Text(
+                    Text(
                       "Received mode : ",
                       style: const TextStyle(
                         fontSize: 10,

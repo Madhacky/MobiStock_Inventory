@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/models/account%20management%20models/commission_received_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class CommissionReceivedController extends GetxController {
   
@@ -10,11 +13,30 @@ class CommissionReceivedController extends GetxController {
   void dispose() {
     scrollController.dispose();
     searchController.dispose();
+    // Form controllers
+    dateController.dispose();
+    companyController.dispose();
+    amountController.dispose();
+    confirmedByController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
   final ApiServices _apiService = ApiServices();
   final AppConfig _config = AppConfig.instance;
+
+  // Form controllers
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController companyController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController confirmedByController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  // Form state
+  var isFormLoading = false.obs;
+  var selectedReceivedModeForm = 'cash'.obs; // For form submission
+  var selectedFile = Rxn<File>();
 
   // Observable variables
   var isLoading = false.obs;
@@ -30,7 +52,7 @@ class CommissionReceivedController extends GetxController {
   var searchQuery = ''.obs;
   var selectedCompany = 'All'.obs;
   var selectedConfirmedBy = 'All'.obs;
-  var selectedReceivedMode = 'All'.obs;
+  var selectedReceivedMode = 'All'.obs; // For filtering
   var selectedMonth = DateTime.now().month.obs;
   var selectedYear = DateTime.now().year.obs;
 
@@ -62,6 +84,7 @@ class CommissionReceivedController extends GetxController {
   void onInit() {
     super.onInit();
     loadCommissions(refresh: true);
+    dateController.text = DateTime.now().toIso8601String().split('T')[0];
     
     // Setup scroll controller for pagination
     scrollController.addListener(() {
@@ -69,6 +92,178 @@ class CommissionReceivedController extends GetxController {
         loadNextPage();
       }
     });
+  }
+
+  // Form validation methods
+  String? validateRequired(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    return null;
+  }
+
+  String? validateAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Amount is required';
+    }
+    final amount = double.tryParse(value);
+    if (amount == null || amount <= 0) {
+      return 'Enter a valid amount';
+    }
+    return null;
+  }
+
+  // Date picker
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF10B981),
+              onPrimary: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      dateController.text = picked.toIso8601String().split('T')[0];
+    }
+  }
+
+  // File picker
+  Future<void> pickFile() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+      );
+
+      if (result != null) {
+        selectedFile.value = File(result.files.single.path!);
+        Get.snackbar(
+          'File Selected',
+          'File selected successfully: ${result.files.single.name}',
+          backgroundColor: const Color(0xFF10B981),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick file: ${e.toString()}',
+        backgroundColor: const Color(0xFFEF4444),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  // Save commission
+  Future<void> saveCommission() async {
+    if (!formKey.currentState!.validate()) return;
+
+    try {
+      isFormLoading.value = true;
+      
+      // Create form data
+      final formData = dio.FormData();
+      formData.fields.add(MapEntry('company', companyController.text));
+      formData.fields.add(MapEntry('amount', amountController.text));
+      formData.fields.add(MapEntry('receivedMode', selectedReceivedModeForm.value));
+      formData.fields.add(MapEntry('confirmedBy', confirmedByController.text));
+      formData.fields.add(MapEntry('description', descriptionController.text));
+      formData.fields.add(MapEntry('date', DateTime.parse(dateController.text).toUtc().toIso8601String()));
+
+      // Add file if selected
+      if (selectedFile.value != null) {
+        formData.files.add(MapEntry(
+          'file',
+          await dio.MultipartFile.fromFile(
+            selectedFile.value!.path,
+            filename: selectedFile.value!.path.split('/').last,
+          ),
+        ));
+      }
+
+      final response = await _apiService.requestMultipartApi(
+        url: '${_config.baseUrl}/api/commissions',
+        formData: formData,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 201) {
+        clearForm();
+        Get.snackbar(
+          'Success',
+          'Commission recorded successfully!',
+          backgroundColor: const Color(0xFF10B981),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        loadCommissions(refresh: true);
+      } else {
+        String errorMessage = 'Failed to record commission';
+        if (response?.data != null && response!.data['message'] != null) {
+          errorMessage = response.data['message'];
+        }
+        
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          backgroundColor: const Color(0xFFEF4444),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print('Error saving commission: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to record commission: ${e.toString()}',
+        backgroundColor: const Color(0xFFEF4444),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isFormLoading.value = false;
+    }
+  }
+
+  // Clear form
+  void clearForm() {
+    dateController.text = DateTime.now().toIso8601String().split('T')[0];
+    companyController.clear();
+    amountController.clear();
+    confirmedByController.clear();
+    descriptionController.clear();
+    selectedReceivedModeForm.value = 'cash';
+    selectedFile.value = null;
+  }
+
+  // Reset form
+  void resetForm() {
+    clearForm();
+    Get.snackbar(
+      'Reset',
+      'Form has been reset',
+      backgroundColor: const Color(0xFF6B7280),
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   Future<void> loadCommissions({bool refresh = false}) async {
@@ -285,6 +480,7 @@ class CommissionReceivedController extends GetxController {
       'oppo': const Color(0xFFEF4444),
       'apple': const Color(0xFF06B6D4),
       'xiaomi': const Color(0xFFF97316),
+      'realme': const Color(0xFF10B981),
     };
 
     return colors[company.toLowerCase()] ?? const Color(0xFF6366F1);
@@ -298,6 +494,7 @@ class CommissionReceivedController extends GetxController {
       'john doe': const Color(0xFFF59E0B),
       'praveen': const Color(0xFFEF4444),
       'ranmu': const Color(0xFF06B6D4),
+      'shahzad': const Color(0xFF8B5CF6),
     };
 
     return colors[confirmedBy.toLowerCase()] ?? const Color(0xFF6B7280);
@@ -310,6 +507,7 @@ class CommissionReceivedController extends GetxController {
       'upi': const Color(0xFF8B5CF6),
       'cheque': const Color(0xFFF59E0B),
       'rtgs': const Color(0xFFEF4444),
+      'account': const Color(0xFF3B82F6),
     };
 
     return colors[receivedMode.toLowerCase()] ?? const Color(0xFF6B7280);
@@ -322,6 +520,7 @@ class CommissionReceivedController extends GetxController {
       'upi': Icons.phone_android,
       'cheque': Icons.note,
       'rtgs': Icons.account_balance_wallet,
+      'account': Icons.account_balance,
     };
 
     return icons[receivedMode.toLowerCase()] ?? Icons.payments;

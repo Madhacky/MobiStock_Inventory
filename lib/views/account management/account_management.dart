@@ -4,11 +4,11 @@ import 'package:smartbecho/controllers/account%20management%20controller/account
 import 'package:smartbecho/models/account%20management%20models/account_summary_model.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
-import 'package:smartbecho/views/account%20management/components/commission_received.dart';
+import 'package:smartbecho/views/account%20management/components/commision%20received/commission_received.dart';
 import 'package:smartbecho/views/account%20management/components/emi_settlement.dart';
 import 'package:smartbecho/views/account%20management/components/history.dart';
-import 'package:smartbecho/views/account%20management/components/paybill.dart';
-import 'package:smartbecho/views/account%20management/components/withdraw.dart';
+import 'package:smartbecho/views/account%20management/components/paybill/paybill.dart';
+import 'package:smartbecho/views/account%20management/components/withdraw/withdraw.dart';
 import 'package:smartbecho/views/account%20management/widgets/header_widget.dart';
 
 class AccountManagementScreen extends StatelessWidget {
@@ -236,7 +236,7 @@ class AccountManagementScreen extends StatelessWidget {
       case 'emi-settlement':
         return Container(
           key: ValueKey('emi-settlement'),
-          child: EmiSettlement(),
+          child: EmiSettlementPage(),
         );
       default:
         return Container(
