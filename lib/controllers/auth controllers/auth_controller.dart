@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:smartbecho/models/auth/login_model.dart';
 import 'package:smartbecho/models/auth/signup_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
@@ -22,21 +24,44 @@ class AuthController extends GetxController
   // Separate GlobalKeys for each form
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> addressFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>();
 
-  // Text Controllers
+  // Multi-step signup
+  final RxInt currentStep = 1.obs;
+  final RxBool agreeToTerms = false.obs;
+  final RxBool subscribeToNewsletter = false.obs;
+
+  // Basic Information Controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController shopStoreNameController = TextEditingController();
+  final TextEditingController gstNumberController = TextEditingController();
+  final TextEditingController adhaarNumberController = TextEditingController();
 
   // Address Controllers
-  final TextEditingController streetController = TextEditingController();
+  final TextEditingController contactPersonController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController addressLine1Controller = TextEditingController();
+  final TextEditingController addressLine2Controller = TextEditingController();
+  final TextEditingController landmarkController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  final TextEditingController pincodeController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
+
+  // Legacy controllers for backward compatibility
+  final TextEditingController streetController = TextEditingController();
   final TextEditingController zipcodeController = TextEditingController();
+
+  // Social Media Links
+  final RxList<Map<String, dynamic>> socialMediaLinks = <Map<String, dynamic>>[].obs;
+
+  // Shop Images
+  final RxList<File?> shopImages = <File?>[].obs;
+  final ImagePicker _picker = ImagePicker();
 
   // Observables
   final RxBool isLoading = false.obs;
@@ -61,6 +86,7 @@ class AuthController extends GetxController
   void onInit() {
     super.onInit();
     _initializeAnimations();
+    _initializeDefaultValues();
     _config.printConfig();
   }
 
@@ -88,6 +114,17 @@ class AuthController extends GetxController
     );
   }
 
+  void _initializeDefaultValues() {
+    // Set default country
+    countryController.text = 'India';
+    
+    // Initialize with empty social media links
+    socialMediaLinks.clear();
+    
+    // Initialize with empty shop images
+    shopImages.clear();
+  }
+
   void resetAnimations() {
     if (!_isDisposed &&
         (animationController.isCompleted || animationController.isDismissed)) {
@@ -96,6 +133,93 @@ class AuthController extends GetxController
     }
   }
 
+  // Multi-step navigation methods
+  void nextStep() {
+    if (currentStep.value < 5) {
+      if (_validateCurrentStep()) {
+        currentStep.value++;
+        resetAnimations();
+      }
+    }
+  }
+
+  void previousStep() {
+    if (currentStep.value > 1) {
+      currentStep.value--;
+      resetAnimations();
+    }
+  }
+
+  bool _validateCurrentStep() {
+    switch (currentStep.value) {
+      case 1:
+        return signupFormKey.currentState?.validate() ?? false;
+      case 2:
+        return addressFormKey.currentState?.validate() ?? false;
+      case 3:
+        return true; // Social media links are optional
+      case 4:
+        return true; // Shop images are optional
+      case 5:
+        return agreeToTerms.value;
+      default:
+        return false;
+    }
+  }
+
+  // Social Media Links Methods
+  void addSocialMediaLink() {
+    if (socialMediaLinks.length < 5) {
+      socialMediaLinks.add({
+        'platform': 'Facebook',
+        'controller': TextEditingController(),
+        'url': '',
+      });
+    }
+  }
+
+  void removeSocialMediaLink(Map<String, dynamic> link) {
+    link['controller']?.dispose();
+    socialMediaLinks.remove(link);
+  }
+
+  // Shop Images Methods
+  Future<void> addShopImage() async {
+    if (shopImages.length < 5) {
+      try {
+        final XFile? pickedFile = await _picker.pickImage(
+          source: ImageSource.gallery,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 80,
+        );
+        
+        if (pickedFile != null) {
+          shopImages.add(File(pickedFile.path));
+        }
+      } catch (e) {
+        Get.snackbar(
+          'Error',
+          'Failed to pick image: ${e.toString()}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } else {
+      Get.snackbar(
+        'Limit Reached',
+        'You can only add up to 5 images',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  void removeShopImage(File? image) {
+    shopImages.remove(image);
+  }
+
+  // Navigation methods
   void goToLogin() {
     Get.offNamed('/login')!.then((_) {
       if (Get.isRegistered<AuthController>() && !_isDisposed) {
@@ -135,10 +259,33 @@ class AuthController extends GetxController
         confirmPasswordController.clear();
         nameController.clear();
         shopStoreNameController.clear();
-        streetController.clear();
+        gstNumberController.clear();
+        adhaarNumberController.clear();
+        contactPersonController.clear();
+        phoneNumberController.clear();
+        addressLine1Controller.clear();
+        addressLine2Controller.clear();
+        landmarkController.clear();
         cityController.clear();
         stateController.clear();
+        pincodeController.clear();
+        countryController.clear();
+        streetController.clear();
         zipcodeController.clear();
+        
+        // Clear social media links
+        for (var link in socialMediaLinks) {
+          link['controller']?.dispose();
+        }
+        socialMediaLinks.clear();
+        
+        // Clear shop images
+        shopImages.clear();
+        
+        // Reset step and checkboxes
+        currentStep.value = 1;
+        agreeToTerms.value = false;
+        subscribeToNewsletter.value = false;
       }
     } catch (e) {
       print('Controllers already disposed: $e');
@@ -179,8 +326,20 @@ class AuthController extends GetxController
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    // if (!value.contains(RegExp(r'[A-Z]'))) {
+    //   return 'Password must contain at least one uppercase letter';
+    // }
+    if (!value.contains(RegExp(r'[a-z]'))) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!value.contains(RegExp(r'[0-9]'))) {
+      return 'Password must contain at least one number';
+    }
+    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      return 'Password must contain at least one special character';
     }
     return null;
   }
@@ -215,13 +374,54 @@ class AuthController extends GetxController
     return null;
   }
 
-  // Address validation methods
-  String? validateStreet(String? value) {
+  String? validateGSTNumber(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Street address is required';
+      return 'GST number is required';
+    }
+    // GST number validation (15 characters)
+    if (!RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$').hasMatch(value)) {
+      return 'Please enter a valid GST number (e.g., 29ABCDE1234F1Z5)';
+    }
+    return null;
+  }
+
+  String? validateAdhaarNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Aadhaar number is required';
+    }
+    // Aadhaar number validation (12 digits)
+    if (!RegExp(r'^[0-9]{12}$').hasMatch(value)) {
+      return 'Please enter a valid 12-digit Aadhaar number';
+    }
+    return null;
+  }
+
+  String? validateContactPerson(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Contact person name is required';
+    }
+    if (value.length < 2) {
+      return 'Name must be at least 2 characters';
+    }
+    return null;
+  }
+
+  String? validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Phone number is required';
+    }
+    if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+      return 'Please enter a valid 10-digit phone number';
+    }
+    return null;
+  }
+
+  String? validateAddressLine1(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Address line 1 is required';
     }
     if (value.length < 5) {
-      return 'Street address must be at least 5 characters';
+      return 'Address must be at least 5 characters';
     }
     return null;
   }
@@ -246,22 +446,37 @@ class AuthController extends GetxController
     return null;
   }
 
-  String? validateZipcode(String? value) {
+  String? validatePincode(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Zipcode is required';
+      return 'Pincode is required';
     }
-    if (value.length < 5) {
-      return 'Zipcode must be at least 5 characters';
-    }
-    // Optional: Add regex validation for zipcode format
-    if (!RegExp(r'^\d{5,6}$').hasMatch(value)) {
-      return 'Please enter a valid zipcode';
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+      return 'Please enter a valid 6-digit pincode';
     }
     return null;
   }
 
+  String? validateCountry(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Country is required';
+    }
+    if (value.length < 2) {
+      return 'Country must be at least 2 characters';
+    }
+    return null;
+  }
+
+  // Legacy validation methods for backward compatibility
+  String? validateStreet(String? value) {
+    return validateAddressLine1(value);
+  }
+
+  String? validateZipcode(String? value) {
+    return validatePincode(value);
+  }
+
   // Auth methods
-  //login
+  // Login
   Future<void> login(BuildContext context) async {
     if (!loginFormKey.currentState!.validate()) return;
 
@@ -280,14 +495,11 @@ class AuthController extends GetxController
       );
 
       if (response != null) {
-        // After successful login
         try {
-          // After successful login
           await CookieExtractor.extractAndSaveJSessionId(response);
           LoginResponse loginResponse = LoginResponse.fromJson(response.data);
 
           if (loginResponse.isSuccess && loginResponse.payload != null) {
-            //meanwhile using refresh token
             String userToken = loginResponse.payload!.userToken;
             String refreshToken = loginResponse.payload!.refreshToken;
             List<int> loginDate = loginResponse.payload!.loginDate;
@@ -303,7 +515,6 @@ class AuthController extends GetxController
             }
 
             RouteService.toDashboard();
-
             ToastCustom.successToast(context, 'Login Successful');
           } else {
             ToastCustom.errorToast(
@@ -331,10 +542,8 @@ class AuthController extends GetxController
   // Logout method
   Future<void> logout() async {
     try {
-      // Clear all stored data
       await SharedPreferencesHelper.clearAll();
       await SecureStorageHelper.deleteJSessionId();
-      // Navigate back to login screen
       RouteService.logout();
 
       Get.snackbar(
@@ -354,98 +563,177 @@ class AuthController extends GetxController
       );
     }
   }
+// Signup - Fixed version with proper multipart file handling
+Future<void> signup(BuildContext context) async {
+  if (!agreeToTerms.value) {
+    ToastCustom.errorToast(context, 'Please agree to terms and conditions');
+    return;
+  }
 
-  //sign up - Updated to match the JSON payload structure with status check
-  Future<void> signup(BuildContext context) async {
-    if (!signupFormKey.currentState!.validate()) return;
+  try {
+    isLoading.value = true;
 
-    try {
-      isLoading.value = true;
+    var formData = dio.FormData();
 
-      Map<String, dynamic> signupParameters = {
-        'shopStoreName': shopStoreNameController.text.trim(),
-        'shopAddress': {
-          'street': streetController.text.trim(),
-          'city': cityController.text.trim(),
-          'state': stateController.text.trim(),
-          'zipcode': zipcodeController.text.trim(),
-        },
-        'email': emailController.text.trim(),
-        'password': passwordController.text.trim(),
-        'role': {'id': 1},
-        'Status': 1,
-      };
+    // Basic Information
+    formData.fields.add(MapEntry('shopStoreName', shopStoreNameController.text.trim()));
+    formData.fields.add(MapEntry('email', emailController.text.trim()));
+    formData.fields.add(MapEntry('password', passwordController.text.trim()));
+    formData.fields.add(MapEntry('Status', '1'));
+    formData.fields.add(MapEntry('role.id', '1'));
 
-      dio.Response? response = await _apiService.requestPostForApi(
-        url: _config.signupEndpoint,
-        dictParameter: signupParameters,
-        authToken: false,
-      );
+    // Address Information
+    formData.fields.add(MapEntry('shopAddress.label', 'Shop'));
+    formData.fields.add(MapEntry('shopAddress.city', cityController.text.trim()));
+    formData.fields.add(MapEntry('shopAddress.state', stateController.text.trim()));
+    formData.fields.add(MapEntry('shopAddress.pincode', pincodeController.text.trim()));
+    formData.fields.add(MapEntry('shopAddress.country', countryController.text.trim()));
 
-      if (response != null && response.statusCode == 200) {
-        try {
-          SignupResponse signupResponse = SignupResponse.fromJson(
-            response.data,
-          );
+    // Additional fields
+    formData.fields.add(MapEntry('GSTNumber', gstNumberController.text.trim()));
+    formData.fields.add(MapEntry('AdhaarNumber', adhaarNumberController.text.trim()));
 
-          // Check if signup was successful using status = 1 or isSuccess = true
-          if (response.statusCode == 200) {
-            // Store user information
-            if (signupResponse.payload?.email != null) {
-              await SharedPreferencesHelper.setUsername(
-                signupResponse.payload!.email!,
-              );
-            }
+    // Optional fields
+    if (contactPersonController.text.trim().isNotEmpty) {
+      formData.fields.add(MapEntry('contactPerson', contactPersonController.text.trim()));
+    }
+    if (phoneNumberController.text.trim().isNotEmpty) {
+      formData.fields.add(MapEntry('phoneNumber', phoneNumberController.text.trim()));
+    }
+    if (addressLine1Controller.text.trim().isNotEmpty) {
+      formData.fields.add(MapEntry('shopAddress.addressLine1', addressLine1Controller.text.trim()));
+    }
+    if (addressLine2Controller.text.trim().isNotEmpty) {
+      formData.fields.add(MapEntry('shopAddress.addressLine2', addressLine2Controller.text.trim()));
+    }
+    if (landmarkController.text.trim().isNotEmpty) {
+      formData.fields.add(MapEntry('shopAddress.landmark', landmarkController.text.trim()));
+    }
 
-            // Store shop information
-            if (signupResponse.payload?.shopId != null) {
-              await SharedPreferencesHelper.setShopId(
-                signupResponse.payload!.shopId!,
-              );
-            }
+    // Social Media Links
+    for (int i = 0; i < socialMediaLinks.length; i++) {
+      var link = socialMediaLinks[i];
+      String url = link['controller']?.text?.trim() ?? '';
+      if (url.isNotEmpty) {
+        formData.fields.add(MapEntry('socialMedia[$i].platform', link['platform']));
+        formData.fields.add(MapEntry('socialMedia[$i].url', url));
+      }
+    }
 
-            // Show success message from API or default message
-            String successMessage = 'Account created successfully!';
-            ToastCustom.successToast(context, successMessage);
+    if (shopImages.isNotEmpty) {
+      for (int i = 0; i < shopImages.length; i++) {
+        File? imageFile = shopImages[i];
+        if (imageFile != null && await imageFile.exists()) {
+          try {
+            // Get file extension
+            String extension = imageFile.path.split('.').last.toLowerCase();
+            String fileName = 'shop_image_${i + 1}.$extension';
+            
+            // Create multipart file with proper content type
+            String contentType = 'image/jpeg';
+            if (extension == 'png') contentType = 'image/png';
+            
+            formData.files.add(MapEntry(
+              'file', // This should match your backend parameter name
+              await dio.MultipartFile.fromFile(
+                imageFile.path,
+                filename: fileName,
+                contentType: dio.DioMediaType.parse(contentType),
+              ),
+            ));
+            
+            print('Added image file: $fileName, size: ${await imageFile.length()} bytes');
+          } catch (fileError) {
+            print('Error processing image file ${i + 1}: $fileError');
+            // Continue with other images even if one fails
+          }
+        }
+      }
+    }
 
-            // Clear the form after successful signup
-            clearControllers();
+    // Newsletter subscription
+    if (subscribeToNewsletter.value) {
+      formData.fields.add(MapEntry('subscribeToNewsletter', 'true'));
+    }
 
-            // Navigate back to login
-            RouteService.backToLogin();
-          } else {
-            ToastCustom.errorToast(
-              context,
-              "Signup failed or account already exists",
+    // Debug: Print FormData contents
+    print('FormData fields count: ${formData.fields.length}');
+    print('FormData files count: ${formData.files.length}');
+    
+    for (var field in formData.fields) {
+      print('Field: ${field.key} = ${field.value}');
+    }
+    
+    for (var file in formData.files) {
+      print('File: ${file.key} = ${file.value.filename}');
+    }
+
+    dio.Response? response = await _apiService.requestMultipartApi(
+      url: _config.signupEndpoint,
+      formData: formData,
+      authToken: false,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      try {
+        SignupResponse signupResponse = SignupResponse.fromJson(response.data);
+
+        if (response.statusCode == 200) {
+          if (signupResponse.payload?.email != null) {
+            await SharedPreferencesHelper.setUsername(
+              signupResponse.payload!.email!,
             );
           }
-        } catch (parseError) {
-          ToastCustom.errorToast(context, 'Invalid response format');
-          print('Parse error: $parseError');
-          print('Response data: ${response.data}');
-        }
-      } else {
-        if (response != null && response.statusCode == 400) {
+
+          if (signupResponse.payload?.shopId != null) {
+            await SharedPreferencesHelper.setShopId(
+              signupResponse.payload!.shopId!,
+            );
+          }
+
+          String successMessage = 'Account created successfully!';
+          ToastCustom.successToast(context, successMessage);
+
+          clearControllers();
+          RouteService.backToLogin();
+        } else {
           ToastCustom.errorToast(
             context,
             "Signup failed or account already exists",
           );
-        } else {
-          ToastCustom.errorToast(
-            context,
-            'Network error. Please check your connection.',
-          );
         }
+      } catch (parseError) {
+        ToastCustom.errorToast(context, 'Invalid response format');
+        print('Parse error: $parseError');
+        print('Response data: ${response.data}');
       }
-    } catch (e) {
-      ToastCustom.errorToast(context, 'Signup failed: ${e.toString()}');
-      print('Signup error: $e');
-    } finally {
-      isLoading.value = false;
+    } else {
+      if (response != null && response.statusCode == 400) {
+        ToastCustom.errorToast(
+          context,
+          "Signup failed or account already exists",
+        );
+      } else if (response != null && response.statusCode == 500) {
+        ToastCustom.errorToast(
+          context,
+          "Server error. Please try again later.",
+        );
+      } else {
+        ToastCustom.errorToast(
+          context,
+          'Network error. Please check your connection.',
+        );
+      }
     }
+  } catch (e) {
+    ToastCustom.errorToast(context, 'Signup failed: ${e.toString()}');
+    print('Signup error: $e');
+  } finally {
+    isLoading.value = false;
   }
+}
 
-//reset pass
+  // Reset password
   Future<void> resetPassword(BuildContext context, String email) async {
     if (!resetPasswordFormKey.currentState!.validate()) return;
 
@@ -479,7 +767,7 @@ class AuthController extends GetxController
     }
   }
 
-  //reset pass api
+  // Reset password API
   Future<bool> resetPasswordApi({required String email}) async {
     try {
       dio.Response? response = await _apiService.requestPostForApi(
@@ -490,12 +778,10 @@ class AuthController extends GetxController
 
       if (response != null) {
         if (response.statusCode == 200) {
-          final data =
-              response.data is String
-                  ? json.decode(response.data)
-                  : response.data;
+          final data = response.data is String
+              ? json.decode(response.data)
+              : response.data;
 
-          // Check if the response indicates success
           if (data is Map<String, dynamic>) {
             String status = data['status'] ?? '';
             int statusCode = data['statusCode'] ?? 0;
@@ -514,9 +800,7 @@ class AuthController extends GetxController
             return false;
           }
         } else {
-          log(
-            "❌ Reset password API failed with status code: ${response.statusCode}",
-          );
+          log("❌ Reset password API failed with status code: ${response.statusCode}");
           return false;
         }
       } else {
@@ -533,7 +817,6 @@ class AuthController extends GetxController
   void onClose() {
     _isDisposed = true;
 
-    // Safely dispose controllers
     try {
       animationController.dispose();
       emailController.dispose();
@@ -541,10 +824,24 @@ class AuthController extends GetxController
       confirmPasswordController.dispose();
       nameController.dispose();
       shopStoreNameController.dispose();
-      streetController.dispose();
+      gstNumberController.dispose();
+      adhaarNumberController.dispose();
+      contactPersonController.dispose();
+      phoneNumberController.dispose();
+      addressLine1Controller.dispose();
+      addressLine2Controller.dispose();
+      landmarkController.dispose();
       cityController.dispose();
       stateController.dispose();
+      pincodeController.dispose();
+      countryController.dispose();
+      streetController.dispose();
       zipcodeController.dispose();
+      
+      // Dispose social media controllers
+      for (var link in socialMediaLinks) {
+        link['controller']?.dispose();
+      }
     } catch (e) {
       print('Error disposing controllers: $e');
     }

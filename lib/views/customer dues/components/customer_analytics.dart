@@ -118,7 +118,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Summary Cards
-                    _buildSummaryCards(controller),
+                    // _buildSummaryCards(controller),
 
                     const SizedBox(height: 24),
 
@@ -152,29 +152,29 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCards(CustomerDuesController controller) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildSummaryCard(
-            'Total Collected',
-            '₹${_formatAmount(controller.totalCollected)}',
-            Colors.green,
-            Icons.account_balance_wallet,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildSummaryCard(
-            'Total Remaining',
-            '₹${_formatAmount(controller.totalRemaining)}',
-            Colors.red,
-            Icons.pending_actions,
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildSummaryCards(CustomerDuesController controller) {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: _buildSummaryCard(
+  //           'Total Collected',
+  //           '₹${_formatAmount(controller.totalCollected)}',
+  //           Colors.green,
+  //           Icons.account_balance_wallet,
+  //         ),
+  //       ),
+  //       const SizedBox(width: 12),
+  //       Expanded(
+  //         child: _buildSummaryCard(
+  //           'Total Remaining',
+  //           '₹${_formatAmount(controller.totalRemaining)}',
+  //           Colors.red,
+  //           Icons.pending_actions,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildSummaryCard(
     String title,

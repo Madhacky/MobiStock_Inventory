@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -29,7 +30,9 @@ class BillDetailsPage extends StatelessWidget {
                     _buildItemsSection(bill),
                     SizedBox(height: 16),
                     _buildAmountBreakdown(bill),
-                    SizedBox(height: 80), // Space for floating action buttons
+                    SizedBox(height: 16),
+                    _buildPaymentStatus(bill),
+                    SizedBox(height: 100), // Space for floating action buttons
                   ],
                 ),
               ),
@@ -87,12 +90,25 @@ class BillDetailsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Bill #${bill.billId}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    GestureDetector(
+                      onTap: () => _copyToClipboard(bill.billId.toString(), 'Bill ID'),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Bill #${bill.billId}',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.copy,
+                            color: Colors.white.withOpacity(0.7),
+                            size: 16,
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 4),
@@ -166,6 +182,13 @@ class BillDetailsPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: statusColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -203,13 +226,33 @@ class BillDetailsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Bill Summary',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
+          Row(
+            children: [
+              Text(
+                'Bill Summary',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Color(0xFF1E293B).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'ID: ${bill.billId}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 16),
           Row(
@@ -242,12 +285,24 @@ class BillDetailsPage extends StatelessWidget {
                 children: [
                   Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 20),
                   SizedBox(width: 8),
-                  Text(
-                    'Outstanding Dues: ${bill.formattedDues}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFFEF4444),
+                  Expanded(
+                    child: Text(
+                      'Outstanding Dues: ${bill.formattedDues}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFFEF4444),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _markAsPaid(bill),
+                    child: Text(
+                      'Mark Paid',
+                      style: TextStyle(
+                        color: Color(0xFFEF4444),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -364,8 +419,11 @@ class BillDetailsPage extends StatelessWidget {
   Widget _buildItemCard(BillItem item, int index) {
     Color companyColor = _getCompanyColor(item.company);
     
-    return Padding(
+    return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: index % 2 == 0 ? Colors.transparent : Colors.grey[50],
+      ),
       child: Row(
         children: [
           // Company logo/avatar
@@ -526,7 +584,7 @@ class BillDetailsPage extends StatelessWidget {
           SizedBox(height: 8),
           _buildAmountRow('GST', bill.formattedGst, false),
           SizedBox(height: 8),
-          Divider(),
+          Divider(thickness: 2),
           SizedBox(height: 8),
           _buildAmountRow('Total Amount', bill.formattedAmount, true),
           if (bill.dues > 0) ...[
@@ -535,6 +593,68 @@ class BillDetailsPage extends StatelessWidget {
             SizedBox(height: 8),
             _buildAmountRow('Outstanding Dues', bill.formattedDues, false, Colors.red),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentStatus(Bill bill) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Payment Status',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E293B),
+            ),
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(
+                bill.paid ? Icons.check_circle : Icons.pending,
+                color: bill.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
+                size: 24,
+              ),
+              SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    bill.paid ? 'Fully Paid' : 'Pending Payment',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: bill.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
+                    ),
+                  ),
+                  Text(
+                    bill.paid ? 'All dues have been cleared' : 'Outstanding amount: ${bill.formattedDues}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -565,51 +685,114 @@ class BillDetailsPage extends StatelessWidget {
   }
 
   Widget _buildFloatingActionButtons(Bill bill) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        FloatingActionButton.extended(
-          onPressed: () => _editBill(bill),
-          backgroundColor: Color(0xFF10B981),
-          foregroundColor: Colors.white,
-          icon: Icon(Icons.edit),
-          label: Text('Edit'),
-          heroTag: "edit",
-        ),
-        FloatingActionButton.extended(
-          onPressed: () => _shareBill(bill),
-          backgroundColor: Color(0xFF3B82F6),
-          foregroundColor: Colors.white,
-          icon: Icon(Icons.share),
-          label: Text('Share'),
-          heroTag: "share",
-        ),
-        FloatingActionButton.extended(
-          onPressed: () => _downloadBill(bill),
-          backgroundColor: Color(0xFF8B5CF6),
-          foregroundColor: Colors.white,
-          icon: Icon(Icons.download),
-          label: Text('Download'),
-          heroTag: "download",
-        ),
-      ],
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // Expanded(
+          //   child: FloatingActionButton.extended(
+          //     onPressed: () => _editBill(bill),
+          //     backgroundColor: Color(0xFF10B981),
+          //     foregroundColor: Colors.white,
+          //     icon: Icon(Icons.edit),
+          //     label: Text('Edit'),
+          //     heroTag: "edit",
+          //   ),
+          // ),
+          // SizedBox(width: 12),
+          Expanded(
+            child: FloatingActionButton.extended(
+              onPressed: () => _shareBill(bill),
+              backgroundColor: Color(0xFF3B82F6),
+              foregroundColor: Colors.white,
+              icon: Icon(Icons.share),
+              label: Text('Share'),
+              heroTag: "share",
+            ),
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: FloatingActionButton.extended(
+              onPressed: () => _downloadBill(bill),
+              backgroundColor: Color(0xFF8B5CF6),
+              foregroundColor: Colors.white,
+              icon: Icon(Icons.download),
+              label: Text('Download'),
+              heroTag: "download",
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Color _getCompanyColor(String company) {
-    final colors = [
-      Color(0xFF3B82F6), // Blue
-      Color(0xFF10B981), // Green
-      Color(0xFFF59E0B), // Yellow
-      Color(0xFFEF4444), // Red
-      Color(0xFF8B5CF6), // Purple
-      Color(0xFF06B6D4), // Cyan
-      Color(0xFFEC4899), // Pink
-      Color(0xFF84CC16), // Lime
-    ];
-    
-    int hash = company.hashCode;
-    return colors[hash.abs() % colors.length];
+    switch (company.toLowerCase()) {
+      case 'apple':
+        return Color(0xFF1E293B);
+      case 'samsung':
+        return Color(0xFF3B82F6);
+      case 'xiaomi':
+        return Color(0xFFF59E0B);
+      case 'mix':
+      case 'mixu':
+        return Color(0xFF8B5CF6);
+      case 'oppo':
+        return Color(0xFF10B981);
+      case 'vivo':
+        return Color(0xFFEF4444);
+      case 'oneplus':
+        return Color(0xFF06B6D4);
+      default:
+        return Color(0xFF6B7280);
+    }
+  }
+
+  void _copyToClipboard(String text, String label) {
+    Clipboard.setData(ClipboardData(text: text));
+    Get.snackbar(
+      'Copied',
+      '$label copied to clipboard',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: Duration(seconds: 2),
+      backgroundColor: Color(0xFF10B981),
+      colorText: Colors.white,
+      icon: Icon(Icons.copy, color: Colors.white),
+    );
+  }
+
+  void _markAsPaid(Bill bill) {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Mark as Paid'),
+        content: Text('Are you sure you want to mark this bill as fully paid?'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              Get.snackbar(
+                'Success',
+                'Bill marked as paid',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Color(0xFF10B981),
+                colorText: Colors.white,
+                icon: Icon(Icons.check_circle, color: Colors.white),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF10B981),
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Mark Paid'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _editBill(Bill bill) {

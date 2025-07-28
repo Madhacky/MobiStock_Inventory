@@ -28,73 +28,76 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
 
   Widget _buildSummaryCards(BuildContext context) {
     return Obx(
-      () => controller.isLoading.value
-          ? _buildShimmerSummaryCards()
-          : controller.hasError.value
+      () =>
+          controller.isLoading.value
+              ? _buildShimmerSummaryCards()
+              : controller.hasError.value
               ? buildErrorCard(
-                  controller.errorMessage,
-                  AppConfig.screenWidth,
-                  AppConfig.screenHeight,
-                  AppConfig.isSmallScreen,
-                )
+                controller.errorMessage,
+                AppConfig.screenWidth,
+                AppConfig.screenHeight,
+                AppConfig.isSmallScreen,
+              )
               : Container(
-                  height: 120,
-                  margin: EdgeInsets.symmetric(vertical: 16),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      final stats = [
-                        {
-                          'title': 'Total Customers',
-                          'value': controller.totalCount.toString(),
-                          'subtitle': 'Customers with dues',
-                          'icon': Icons.people,
-                          'color': Color(0xFF6C5CE7),
-                          'gradient': [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
-                        },
-                        {
-                          'title': 'Total Due Amount',
-                          'value': '₹${controller.totalDueAmount.value.toStringAsFixed(0)}',
-                          'subtitle': 'Total amount due',
-                          'icon': Icons.account_balance_wallet,
-                          'color': Color(0xFFFF9500),
-                          'gradient': [Color(0xFFFF9500), Color(0xFFFFB347)],
-                        },
-                        {
-                          'title': 'Remaining Due',
-                          'value': '₹${controller.totalRemainingAmount.value.toStringAsFixed(0)}',
-                          'subtitle': 'Amount pending',
-                          'icon': Icons.money_off,
-                          'color': Color(0xFFFF6B6B),
-                          'gradient': [Color(0xFFFF6B6B), Color(0xFFFF9A9A)],
-                        },
-                        {
-                          'title': 'Overdue Count',
-                          'value': controller.overdueCount.toString(),
-                          'subtitle': 'Overdue payments',
-                          'icon': Icons.warning,
-                          'color': Color(0xFFE74C3C),
-                          'gradient': [Color(0xFFE74C3C), Color(0xFFFF6B6B)],
-                        },
-                      ];
+                height: 120,
+                margin: EdgeInsets.symmetric(vertical: 16),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    final stats = [
+                      {
+                        'title': 'Total Customers',
+                        'value': controller.totalCount.toString(),
+                        'subtitle': 'Customers with dues',
+                        'icon': Icons.people,
+                        'color': Color(0xFF6C5CE7),
+                        'gradient': [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
+                      },
+                      {
+                        'title': 'Total Due Amount',
+                        'value':
+                            '₹${controller.totalDueAmount.value.toStringAsFixed(0)}',
+                        'subtitle': 'Total amount due',
+                        'icon': Icons.account_balance_wallet,
+                        'color': Color(0xFFFF9500),
+                        'gradient': [Color(0xFFFF9500), Color(0xFFFFB347)],
+                      },
+                      {
+                        'title': 'Remaining Due',
+                        'value':
+                            '₹${controller.totalRemainingAmount.value.toStringAsFixed(0)}',
+                        'subtitle': 'Amount pending',
+                        'icon': Icons.money_off,
+                        'color': Color(0xFFFF6B6B),
+                        'gradient': [Color(0xFFFF6B6B), Color(0xFFFF9A9A)],
+                      },
+                      {
+                        'title': 'Overdue Count',
+                        'value': controller.overdueCount.toString(),
+                        'subtitle': 'Overdue payments',
+                        'icon': Icons.warning,
+                        'color': Color(0xFFE74C3C),
+                        'gradient': [Color(0xFFE74C3C), Color(0xFFFF6B6B)],
+                      },
+                    ];
 
-                      return Container(
-                        width: 180,
-                        margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
-                        child: _buildStatCard(
-                          stats[index]['title'] as String,
-                          stats[index]['value'] as String,
-                          stats[index]['subtitle'] as String,
-                          stats[index]['icon'] as IconData,
-                          stats[index]['color'] as Color,
-                          stats[index]['gradient'] as List<Color>,
-                        ),
-                      );
-                    },
-                  ),
+                    return Container(
+                      width: 180,
+                      margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
+                      child: _buildStatCard(
+                        stats[index]['title'] as String,
+                        stats[index]['value'] as String,
+                        stats[index]['subtitle'] as String,
+                        stats[index]['icon'] as IconData,
+                        stats[index]['color'] as Color,
+                        stats[index]['gradient'] as List<Color>,
+                      ),
+                    );
+                  },
                 ),
+              ),
     );
   }
 
@@ -181,19 +184,18 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
     );
   }
 
- 
-
   Widget _buildDuesContent() {
     return Obx(
-      () => controller.isLoading.value
-          ? _buildShimmerGrid()
-          : controller.hasError.value
+      () =>
+          controller.isLoading.value
+              ? _buildShimmerGrid()
+              : controller.hasError.value
               ? buildErrorCard(
-                  controller.errorMessage,
-                  AppConfig.screenWidth,
-                  AppConfig.screenHeight,
-                  AppConfig.isSmallScreen,
-                )
+                controller.errorMessage,
+                AppConfig.screenWidth,
+                AppConfig.screenHeight,
+                AppConfig.isSmallScreen,
+              )
               : _buildDuesGrid(),
     );
   }
@@ -280,12 +282,14 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
   }
 
   Widget _buildDueCard(RetrievalDueCustomer customer) {
-    Color statusColor = Color(int.parse('0xFF${customer.statusColor.substring(1)}'));
-    
+    Color statusColor = Color(
+      int.parse('0xFF${customer.statusColor.substring(1)}'),
+    );
+
     return InkWell(
       onTap: () => _showCustomerDetails(customer),
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -297,10 +301,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               offset: Offset(0, 8),
             ),
           ],
-          border: Border.all(
-            color: statusColor.withOpacity(0.2),
-            width: 1,
-          ),
+          border: Border.all(color: statusColor.withOpacity(0.2), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,7 +323,9 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      customer.name.isNotEmpty ? customer.name[0].toUpperCase() : 'C',
+                      customer.name.isNotEmpty
+                          ? customer.name[0].toUpperCase()
+                          : 'C',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -350,7 +353,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 6),
-            
+
             // Customer name
             Text(
               customer.name,
@@ -363,7 +366,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 4),
-            
+
             // Phone number
             Row(
               children: [
@@ -372,10 +375,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     customer.primaryPhone,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -383,7 +383,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 4),
-            
+
             // Location
             Row(
               children: [
@@ -392,18 +392,15 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     customer.location,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12),
-            
+            SizedBox(height: 8),
+
             // Due amount section
             Container(
               padding: EdgeInsets.all(8),
@@ -418,10 +415,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                     children: [
                       Text(
                         'Total Due',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                       ),
                       Text(
                         '₹${customer.dues.totalDue.toStringAsFixed(0)}',
@@ -458,17 +452,14 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 8),
-            
+            SizedBox(height: 5),
+
             // Due date
             Text(
               'Due: ${customer.dues.formattedPaymentRetriableDate}',
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             ),
-            
+
             // Days overdue (if applicable)
             if (customer.dues.daysSinceDue > 0) ...[
               SizedBox(height: 4),
@@ -481,9 +472,9 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 ),
               ),
             ],
-            
+
             SizedBox(height: 12),
-            
+
             // Action buttons
             Row(
               children: [
@@ -491,10 +482,13 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                   child: SizedBox(
                     height: 32,
                     child: OutlinedButton(
-                      onPressed: () => controller.openDialer(customer.primaryPhone),
+                      onPressed:
+                          () => controller.openDialer(customer.primaryPhone),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Color(0xFF6C5CE7),
-                        side: BorderSide(color: Color(0xFF6C5CE7).withOpacity(0.3)),
+                        side: BorderSide(
+                          color: Color(0xFF6C5CE7).withOpacity(0.3),
+                        ),
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -506,27 +500,59 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                         children: [
                           Icon(Icons.phone, size: 14),
                           SizedBox(width: 4),
-                          Text(
-                            'Call',
-                            style: TextStyle(fontSize: 12),
-                          ),
+                          Text('Call', style: TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
+                // Expanded(
+                //   child: SizedBox(
+                //     height: 32,
+                //     child: ElevatedButton(
+                //       onPressed: customer.dues.remainingDue > 0
+                //           ? () => _showPaymentDialog(customer)
+                //           : null,
+                //       style: ElevatedButton.styleFrom(
+                //         backgroundColor: customer.dues.remainingDue > 0
+                //             ? Color(0xFF6C5CE7)
+                //             : Colors.grey[300],
+                //         foregroundColor: Colors.white,
+                //         padding: EdgeInsets.symmetric(horizontal: 8),
+                //         shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(8),
+                //         ),
+                //         elevation: 0,
+                //       ),
+                //       child: Text(
+                //         customer.dues.remainingDue > 0 ? 'Pay' : 'Paid',
+                //         style: TextStyle(
+                //           fontSize: 12,
+                //           fontWeight: FontWeight.w600,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Expanded(
                   child: SizedBox(
                     height: 32,
                     child: ElevatedButton(
-                      onPressed: customer.dues.remainingDue > 0
-                          ? () => _showPaymentDialog(customer)
-                          : null,
+                      onPressed:
+                          customer.dues.remainingDue > 0
+                              ? () {
+                                controller.notifyCustomer(
+                                  customer.id,
+                                  customer.name,
+                                );
+                              }
+                              : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: customer.dues.remainingDue > 0 
-                            ? Color(0xFF6C5CE7) 
-                            : Colors.grey[300],
+                        backgroundColor:
+                            customer.dues.remainingDue > 0
+                                ? Color(0xFF6C5CE7)
+                                : Colors.grey[300],
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         shape: RoundedRectangleBorder(
@@ -535,7 +561,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        customer.dues.remainingDue > 0 ? 'Pay' : 'Paid',
+                        "Notify",
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -582,13 +608,9 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             'Try adjusting your filters or search terms',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
-       
         ],
       ),
     );
@@ -779,7 +801,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                       Container(
                         height: 16,
                         width: double.infinity,
-                       decoration: BoxDecoration(
+                        decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(6),
                         ),
@@ -926,7 +948,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20),
-            
+
             // Customer Info
             Row(
               children: [
@@ -943,7 +965,9 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      customer.name.isNotEmpty ? customer.name[0].toUpperCase() : 'C',
+                      customer.name.isNotEmpty
+                          ? customer.name[0].toUpperCase()
+                          : 'C',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -968,10 +992,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                       SizedBox(height: 4),
                       Text(
                         customer.email,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -979,14 +1000,14 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20),
-            
+
             // Contact Info
             _buildDetailRow(Icons.phone, 'Phone', customer.primaryPhone),
             _buildDetailRow(Icons.location_on, 'Location', customer.location),
             _buildDetailRow(Icons.home, 'Address', customer.primaryAddress),
-            
+
             SizedBox(height: 20),
-            
+
             // Due Details
             Container(
               padding: EdgeInsets.all(16),
@@ -994,7 +1015,9 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Color(int.parse('0xFF${customer.statusColor.substring(1)}')).withOpacity(0.3),
+                  color: Color(
+                    int.parse('0xFF${customer.statusColor.substring(1)}'),
+                  ).withOpacity(0.3),
                 ),
               ),
               child: Column(
@@ -1009,23 +1032,39 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-                  _buildDueDetailRow('Total Due', '₹${customer.dues.totalDue.toStringAsFixed(0)}'),
-                  _buildDueDetailRow('Total Paid', '₹${customer.dues.totalPaid.toStringAsFixed(0)}'),
-                  _buildDueDetailRow('Remaining Due', '₹${customer.dues.remainingDue.toStringAsFixed(0)}'),
-                  _buildDueDetailRow('Due Date', customer.dues.formattedPaymentRetriableDate),
+                  _buildDueDetailRow(
+                    'Total Due',
+                    '₹${customer.dues.totalDue.toStringAsFixed(0)}',
+                  ),
+                  _buildDueDetailRow(
+                    'Total Paid',
+                    '₹${customer.dues.totalPaid.toStringAsFixed(0)}',
+                  ),
+                  _buildDueDetailRow(
+                    'Remaining Due',
+                    '₹${customer.dues.remainingDue.toStringAsFixed(0)}',
+                  ),
+                  _buildDueDetailRow(
+                    'Due Date',
+                    customer.dues.formattedPaymentRetriableDate,
+                  ),
                   if (customer.dues.daysSinceDue > 0)
-                    _buildDueDetailRow('Days Overdue', '${customer.dues.daysSinceDue} days'),
+                    _buildDueDetailRow(
+                      'Days Overdue',
+                      '${customer.dues.daysSinceDue} days',
+                    ),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            
+
             // Action Buttons
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => controller.openDialer(customer.primaryPhone),
+                    onPressed:
+                        () => controller.openDialer(customer.primaryPhone),
                     icon: Icon(Icons.phone),
                     label: Text('Call Customer'),
                     style: OutlinedButton.styleFrom(
@@ -1041,18 +1080,24 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: customer.dues.remainingDue > 0
-                        ? () {
-                            Get.back();
-                            _showPaymentDialog(customer);
-                          }
-                        : null,
+                    onPressed:
+                        customer.dues.remainingDue > 0
+                            ? () {
+                              Get.back();
+                              _showPaymentDialog(customer);
+                            }
+                            : null,
                     icon: Icon(Icons.payment),
-                    label: Text(customer.dues.remainingDue > 0 ? 'Record Payment' : 'Paid'),
+                    label: Text(
+                      customer.dues.remainingDue > 0
+                          ? 'Record Payment'
+                          : 'Paid',
+                    ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: customer.dues.remainingDue > 0 
-                          ? Color(0xFF6C5CE7) 
-                          : Colors.grey[300],
+                      backgroundColor:
+                          customer.dues.remainingDue > 0
+                              ? Color(0xFF6C5CE7)
+                              : Colors.grey[300],
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -1088,10 +1133,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.black87),
             ),
           ),
         ],
@@ -1105,13 +1147,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-            ),
-          ),
+          Text(title, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
           Text(
             value,
             style: TextStyle(
@@ -1127,12 +1163,10 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
 
   void _showPaymentDialog(RetrievalDueCustomer customer) {
     final TextEditingController amountController = TextEditingController();
-    
+
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -1150,10 +1184,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               SizedBox(height: 16),
               Text(
                 'Customer: ${customer.name}',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
               SizedBox(height: 8),
               Text(
@@ -1202,9 +1233,14 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (amountController.text.isNotEmpty) {
-                          double amount = double.tryParse(amountController.text) ?? 0;
-                          if (amount > 0 && amount <= customer.dues.remainingDue) {
-                            controller.markPaymentReceived(customer.dues.id, customer.id);
+                          double amount =
+                              double.tryParse(amountController.text) ?? 0;
+                          if (amount > 0 &&
+                              amount <= customer.dues.remainingDue) {
+                            controller.markPaymentReceived(
+                              customer.dues.id,
+                              customer.id,
+                            );
                             Get.back();
                           } else {
                             Get.snackbar(

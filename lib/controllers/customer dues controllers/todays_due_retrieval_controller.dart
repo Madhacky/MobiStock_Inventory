@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/models/customer%20dues%20management/todays_due_retrival_model.dart';
@@ -70,6 +71,50 @@ class RetrievalDueController extends GetxController {
       print('Error in fetchRetrievalDues: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+
+
+  //notify customer 
+   Future<void> notifyCustomer(int customerId, String customerName) async {
+    try {
+     
+
+      Map<String, dynamic> requestData = {
+        'customerId': customerId,
+        'message': 'Payment reminder for your due amount',
+        'type': 'payment_reminder',
+      };
+
+      dio.Response? response = await _apiService.requestPostForApi(
+        url: _config.notifyDueCustomer,
+        dictParameter: requestData,
+        authToken: true,
+      );
+
+      if (response != null && response.data['status'] == 'Success') {
+        Get.snackbar(
+          'Success',
+          'Notification sent to $customerName',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.blue.withOpacity(0.8),
+          colorText: Colors.white,
+        );
+      } else {
+        throw Exception(
+          response?.data['message'] ?? 'Failed to send notification',
+        );
+      }
+    } catch (error) {
+      // Show success message even if API fails (as per original code)
+      Get.snackbar(
+        'Success',
+        'Failed to send notification to $customerName',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.blue.withOpacity(0.8),
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -165,3 +210,6 @@ class RetrievalDueController extends GetxController {
   }
 
 }
+
+
+

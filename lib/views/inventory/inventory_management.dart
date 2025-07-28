@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
+import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_search_field.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/dashboard/widgets/error_cards.dart';
+import 'package:smartbecho/views/inventory/components/product_detail_page.dart';
 import 'package:smartbecho/views/inventory/widgets/inventory_shimmer.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:smartbecho/views/inventory/widgets/invenrtory_shimmers.dart';
@@ -90,7 +92,7 @@ class InventoryManagementScreen extends StatelessWidget {
 
                     return Container(
                       width: 180,
-                      margin: EdgeInsets.only(right: index == 4 ? 0 : 12),
+                      margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
                       child: _buildStatCard(
                         stats[index]['title'] as String,
                         stats[index]['value'].toString(),
@@ -192,266 +194,266 @@ class InventoryManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFiltersSection() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Compact Header with Search and Toggle
-          Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Header Row
-                Row(
-                  children: [
-                    Icon(Icons.filter_list, color: Color(0xFF6C5CE7), size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Filters',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+Widget _buildFiltersSection() {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.08),
+          spreadRadius: 0,
+          blurRadius: 20,
+          offset: Offset(0, 8),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.filter_list, color: Color(0xFF6C5CE7), size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'Filters',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  Spacer(),
+                  Obx(() {
+                    int activeFilters = _getActiveFiltersCount();
+                    return activeFilters > 0
+                        ? Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6C5CE7),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '$activeFilters',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                        : SizedBox.shrink();
+                  }),
+                  SizedBox(width: 8),
+                  Obx(
+                    () => IconButton(
+                      onPressed: () => controller.isFiltersExpanded.toggle(),
+                      icon: Icon(
+                        controller.isFiltersExpanded.value
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Color(0xFF6C5CE7),
                       ),
                     ),
-                    Spacer(),
-                    // Active filters count
-                    Obx(() {
-                      int activeFilters = _getActiveFiltersCount();
-                      return activeFilters > 0
-                          ? Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF6C5CE7),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '$activeFilters',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
+              CustomSearchWidget(
+                hintText: 'Search by company name...',
+                initialValue: controller.searchQuery.value,
+                onChanged: (value) => controller.searchQuery.value = value,
+                onClear: () => controller.searchQuery.value = '',
+                primaryColor: Color(0xFF6C5CE7),
+              ),
+            ],
+          ),
+        ),
+        Obx(
+          () => AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            height: controller.isFiltersExpanded.value ? null : 0,
+            child:
+                controller.isFiltersExpanded.value
+                    ? Container(
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Column(
+                        children: [
+                          GridView.count(
+                            shrinkWrap: true,
+                            crossAxisCount: 2,
+                            childAspectRatio: 3.5,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              _buildCompactFilterDropdown(
+                                'Category',
+                                controller.selectedCategory,
+                                controller.categoryFilterOptions,
+                                onChanged: controller.onCategoryFilterChanged,
                               ),
-                            ),
-                          )
-                          : SizedBox.shrink();
-                    }),
-                    SizedBox(width: 8),
-                    // Toggle button
-                    Obx(
-                      () => IconButton(
-                        onPressed: () => controller.isFiltersExpanded.toggle(),
-                        icon: Icon(
-                          controller.isFiltersExpanded.value
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: Color(0xFF6C5CE7),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                // Compact Search Bar
-                CustomSearchWidget(
-                  hintText: 'Search by company name...',
-                  initialValue: controller.searchQuery.value,
-                  onChanged: (value) => controller.searchQuery.value = value,
-                  onClear: () => controller.searchQuery.value = '',
-                  primaryColor: Color(0xFF6C5CE7),
-                ),
-              ],
-            ),
-          ),
-
-          // Collapsible Filters Section
-          Obx(
-            () => AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              height: controller.isFiltersExpanded.value ? null : 0,
-              child:
-                  controller.isFiltersExpanded.value
-                      ? Container(
-                        padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        child: Column(
-                          children: [
-                            GridView.count(
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              childAspectRatio: 3.5,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              physics: NeverScrollableScrollPhysics(),
-                              children: [
-                                _buildCompactFilterDropdown(
-                                  'Model',
-                                  controller.selectedModel,
-                                  controller.filterModels,
-                                  onChanged: controller.onModelFilterChanged,
-                                ),
-                                _buildCompactFilterDropdown(
-                                  'RAM',
-                                  controller.selectedRAM,
-                                  controller.ramFilterOptions,
-                                  onChanged: controller.onRAMFilterChanged,
-                                ),
-                                _buildCompactFilterDropdown(
-                                  'Storage',
-                                  controller.selectedROM,
-                                  controller.romFilterOptions,
-                                  onChanged: controller.onROMFilterChanged,
-                                ),
-                                _buildCompactFilterDropdown(
-                                  'Color',
-                                  controller.selectedColor,
-                                  controller.colorFilterOptions,
-                                  onChanged: controller.onColorFilterChanged,
-                                ),
-                                _buildCompactFilterDropdown(
-                                  'Stock',
-                                  controller.selectedStockAvailability,
-                                  controller.stockOptions,
-                                  onChanged: controller.onStockFilterChanged,
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 16),
-                            // Action Buttons
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton.icon(
-                                    onPressed: controller.clearFilters,
-                                    icon: Icon(Icons.refresh, size: 16),
-                                    label: Text('Clear Filters'),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: Color(0xFF6C5CE7),
-                                      side: BorderSide(
-                                        color: Color(
-                                          0xFF6C5CE7,
-                                        ).withOpacity(0.3),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
+                              _buildCompactFilterDropdown(
+                                'Model',
+                                controller.selectedModel,
+                                controller.filterModels,
+                                onChanged: controller.onModelFilterChanged,
+                              ),
+                              _buildCompactFilterDropdown(
+                                'RAM',
+                                controller.selectedRAM,
+                                controller.ramFilterOptions,
+                                onChanged: controller.onRAMFilterChanged,
+                              ),
+                              _buildCompactFilterDropdown(
+                                'Storage',
+                                controller.selectedROM,
+                                controller.romFilterOptions,
+                                onChanged: controller.onROMFilterChanged,
+                              ),
+                              _buildCompactFilterDropdown(
+                                'Color',
+                                controller.selectedColor,
+                                controller.colorFilterOptions,
+                                onChanged: controller.onColorFilterChanged,
+                              ),
+                              _buildCompactFilterDropdown(
+                                'Stock',
+                                controller.selectedStockAvailability,
+                                controller.stockOptions,
+                                onChanged: controller.onStockFilterChanged,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: controller.clearFilters,
+                                  icon: Icon(Icons.refresh, size: 16),
+                                  label: Text('Clear Filters'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Color(0xFF6C5CE7),
+                                    side: BorderSide(
+                                      color: Color(
+                                        0xFF6C5CE7,
+                                      ).withOpacity(0.3),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                      : SizedBox.shrink(),
-            ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                    : SizedBox.shrink(),
           ),
-        ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildCompactFilterDropdown(
+  String hint,
+  RxString selectedValue,
+  RxList<String> options, {
+  required Function(String) onChanged,
+}) {
+  return Obx(() {
+    final uniqueOptions = ['All', ...options.toSet().toList()];
+    final validSelectedValue =
+        uniqueOptions.contains(selectedValue.value) &&
+                selectedValue.value != hint &&
+                !selectedValue.value.startsWith('Select')
+            ? selectedValue.value
+            : null;
+
+    return Container(
+      height: 40,
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xFF6C5CE7).withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey[50],
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: validSelectedValue,
+          hint: Text(
+            hint,
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xFF6C5CE7),
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          items:
+              uniqueOptions.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(
+                    value,
+                    style: TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              onChanged(newValue);
+            }
+          },
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            color: Color(0xFF6C5CE7),
+            size: 16,
+          ),
+          isExpanded: true,
+        ),
       ),
     );
-  }
+  });
+}
 
-  Widget _buildCompactFilterDropdown(
-    String hint,
-    RxString selectedValue,
-    RxList<String> options, {
-    required Function(String) onChanged,
-  }) {
-    return Obx(() {
-      final uniqueOptions = ['All', ...options.toSet().toList()];
-      final validSelectedValue =
-          uniqueOptions.contains(selectedValue.value) &&
-                  selectedValue.value != hint &&
-                  !selectedValue.value.startsWith('Select')
-              ? selectedValue.value
-              : null;
-
-      return Container(
-        height: 40,
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFF6C5CE7).withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.grey[50],
-        ),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: validSelectedValue,
-            hint: Text(
-              hint,
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF6C5CE7),
-                fontWeight: FontWeight.w500,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            items:
-                uniqueOptions.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }).toList(),
-            onChanged: (String? newValue) {
-              if (newValue != null) {
-                onChanged(newValue);
-              }
-            },
-            icon: Icon(
-              Icons.keyboard_arrow_down,
-              color: Color(0xFF6C5CE7),
-              size: 16,
-            ),
-            isExpanded: true,
-          ),
-        ),
-      );
-    });
-  }
-
-  // Helper method to count active filters
-  int _getActiveFiltersCount() {
-    int count = 0;
-    if (controller.searchQuery.value.isNotEmpty) count++;
-    if (controller.selectedModel.value != 'All' &&
-        !controller.selectedModel.value.startsWith('Select'))
-      count++;
-    if (controller.selectedStockAvailability.value != 'All' &&
-        !controller.selectedStockAvailability.value.startsWith('Select'))
-      count++;
-    if (controller.selectedRAM.value != 'All' &&
-        !controller.selectedRAM.value.startsWith('Select'))
-      count++;
-    if (controller.selectedROM.value != 'All' &&
-        !controller.selectedROM.value.startsWith('Select'))
-      count++;
-    if (controller.selectedColor.value != 'All' &&
-        !controller.selectedColor.value.startsWith('Select'))
-      count++;
-    return count;
-  }
+int _getActiveFiltersCount() {
+  int count = 0;
+  if (controller.searchQuery.value.isNotEmpty) count++;
+  if (controller.selectedCategory.value != 'All' &&
+      !controller.selectedCategory.value.startsWith('Select'))
+    count++;
+  if (controller.selectedModel.value != 'All' &&
+      !controller.selectedModel.value.startsWith('Select'))
+    count++;
+  if (controller.selectedStockAvailability.value != 'All' &&
+      !controller.selectedStockAvailability.value.startsWith('Select'))
+    count++;
+  if (controller.selectedRAM.value != 'All' &&
+      !controller.selectedRAM.value.startsWith('Select'))
+    count++;
+  if (controller.selectedROM.value != 'All' &&
+      !controller.selectedROM.value.startsWith('Select'))
+    count++;
+  if (controller.selectedColor.value != 'All' &&
+      !controller.selectedColor.value.startsWith('Select'))
+    count++;
+  return count;
+}
 
   Widget _buildInventoryContent() {
     return Obx(
@@ -469,23 +471,21 @@ class InventoryManagementScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to determine grid count based on screen size
   int _getGridCrossAxisCount() {
     if (AppConfig.screenWidth < 600) {
-      return 2; // Phone - 2 columns
+      return 2;
     } else if (AppConfig.screenWidth < 900) {
-      return 3; // Small tablet - 3 columns
+      return 3;
     } else {
-      return 4; // Large tablet/desktop - 4 columns
+      return 4;
     }
   }
 
-  // Helper method to determine aspect ratio based on screen size
   double _getGridAspectRatio() {
     if (AppConfig.screenWidth < 600) {
-      return 0.7; // Phone - taller cards
+      return 0.7;
     } else {
-      return 0.75; // Tablet - slightly different ratio
+      return 0.75;
     }
   }
 
@@ -523,7 +523,6 @@ class InventoryManagementScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image placeholder
           Container(
             width: double.infinity,
             height: 60,
@@ -533,8 +532,6 @@ class InventoryManagementScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 12),
-
-          // Title placeholder
           Container(
             width: double.infinity,
             height: 16,
@@ -544,8 +541,6 @@ class InventoryManagementScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-
-          // Subtitle placeholder
           Container(
             width: 100,
             height: 14,
@@ -554,10 +549,7 @@ class InventoryManagementScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-
           Spacer(),
-
-          // Bottom row placeholder
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -589,10 +581,7 @@ class InventoryManagementScreen extends StatelessWidget {
       margin: EdgeInsets.all(16),
       child: Column(
         children: [
-          // Items count header
           _buildInventoryHeader(),
-
-          // Scrollable inventory grid with lazy loading
           Expanded(
             child: Obx(() {
               if (controller.inventoryItems.isEmpty) {
@@ -613,7 +602,6 @@ class InventoryManagementScreen extends StatelessWidget {
                         ? _getGridCrossAxisCount()
                         : 0),
                 itemBuilder: (context, index) {
-                  // Show loading indicators at the end if there's more data
                   if (index >= controller.inventoryItems.length) {
                     return _buildLoadingMoreCard();
                   }
@@ -735,202 +723,209 @@ class InventoryManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInventoryCard(item, int index) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
+  // Updated inventory card with proper InventoryItem model usage
+  Widget _buildInventoryCard(InventoryItem item, int index) {
+    return InkWell(
+      onTap: () => _navigateToDetailedView(item),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: Offset(0, 8),
+            ),
+          ],
+          border: Border.all(
+            color: _getStockStatusColor(item.quantity).withOpacity(0.2),
+            width: 1,
           ),
-        ],
-        border: Border.all(
-          color: _getStockStatusColor(item.quantity).withOpacity(0.2),
-          width: 1,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Company logo or phone icon
+                Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child:
+                      item.logo.isNotEmpty
+                          ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              item.logo,
+                              fit: BoxFit.cover,
+                              errorBuilder:
+                                  (context, error, stackTrace) => Icon(
+                                    Icons.phone_android,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                            ),
+                          )
+                          : Icon(
+                            Icons.phone_android,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                ),
+                _buildStockBadge(item.quantity),
+              ],
+            ),
+            SizedBox(height: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.model,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  item.company,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.memory, size: 10, color: Colors.grey[500]),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        "${item.ram}GB/${item.rom}GB",
+                        style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.palette, size: 10, color: Colors.grey[500]),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        item.color,
+                        style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Spacer(),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '₹${item.sellingPrice.toStringAsFixed(0)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF51CF66),
+                      ),
+                    ),
+                    Text(
+                      'Stock: ${item.quantity}',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 32,
+                        child: ElevatedButton(
+                          onPressed: () => controller.editItem(item),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF6C5CE7).withOpacity(0.1),
+                            foregroundColor: Color(0xFF6C5CE7),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: Icon(Icons.sell, size: 14),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        height: 32,
+                        child: ElevatedButton(
+                          onPressed:
+                              item.quantity == 0
+                                  ? () => controller.deleteItem(
+                                    item.id.toString(),
+                                    index,
+                                  )
+                                  : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFFF6B6B).withOpacity(0.1),
+                            foregroundColor: Color(0xFFFF6B6B),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: Icon(Icons.delete, size: 14),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Top section with icon and stock badge
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Phone icon with gradient
-              Container(
-                width: 45,
-                height: 45,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(Icons.phone_android, color: Colors.white, size: 20),
-              ),
-
-              _buildStockBadge(item.quantity),
-            ],
-          ),
-
-          SizedBox(height: 12),
-
-          // Item details
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Model name
-              Text(
-                item.model,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              SizedBox(height: 4),
-
-              // Company
-              Text(
-                item.company,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              SizedBox(height: 8),
-
-              // Specs
-              Row(
-                children: [
-                  Icon(Icons.memory, size: 10, color: Colors.grey[500]),
-                  SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      "${item.ram}/${item.rom}",
-                      style: TextStyle(fontSize: 10, color: Colors.grey[500]),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 4),
-
-              Row(
-                children: [
-                  Icon(Icons.palette, size: 10, color: Colors.grey[500]),
-                  SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      item.color,
-                      style: TextStyle(fontSize: 10, color: Colors.grey[500]),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          Spacer(),
-
-          // Bottom section with price and actions
-          Column(
-            children: [
-              // Price and stock
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '₹${item.sellingPrice?.toStringAsFixed(0) ?? 'N/A'}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF51CF66),
-                    ),
-                  ),
-                  Text(
-                    'Stock: ${item.quantity}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 8),
-
-              // Action buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 32,
-                      child: ElevatedButton(
-                        onPressed: () => controller.editItem(item),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF6C5CE7).withOpacity(0.1),
-                          foregroundColor: Color(0xFF6C5CE7),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                        child: Icon(Icons.sell, size: 14),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Container(
-                      height: 32,
-                      child: ElevatedButton(
-                        onPressed:
-                            item.quantity == 0
-                                ? () => controller.deleteItem(
-                                  item.id.toString(),
-                                  index,
-                                )
-                                : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6B6B).withOpacity(0.1),
-                          foregroundColor: Color(0xFFFF6B6B),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                        child: Icon(Icons.delete, size: 14),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
     );
+  }
+
+  // Navigate to detailed view
+  void _navigateToDetailedView(InventoryItem item) {
+    Get.to(() => InventoryDetailScreen(item: item));
   }
 
   Widget _buildStockBadge(int quantity) {

@@ -12,9 +12,11 @@ import 'package:smartbecho/models/dashboard_models/charts/top_selling_models.dar
 import 'package:smartbecho/models/dashboard_models/sales_summary_model.dart';
 import 'package:smartbecho/models/dashboard_models/stock_summary_model.dart';
 import 'package:smartbecho/models/dashboard_models/today_sales_header_model.dart';
+import 'package:smartbecho/models/profile/user_profile_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:smartbecho/services/user_preference.dart';
 
 class DashboardController extends GetxController
@@ -56,6 +58,7 @@ class DashboardController extends GetxController
     fetchMonthlyRevenueChart();
     fetchisTopSellingModelChart();
     fetchMonthlyEmiDuesChart();
+    loadProfileFromApi();
   }
 
   @override
@@ -479,5 +482,29 @@ class DashboardController extends GetxController
     } finally {
       isDuesCollectionStatusChartLoading.value = false;
     }
+  }
+
+  Future<void> loadProfileFromApi() async {
+    try {
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: _config.profile,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final profileResponse = ProfileResponse.fromJson(response.data);
+        await SharedPreferencesHelper.setShopStoreName(
+          profileResponse.payload.shopStoreName,
+        );
+        getShopName();
+      } else {}
+    } catch (e) {
+      log('Error loading profile: $e');
+    } finally {}
+  }
+
+  RxString shopName = RxString("");
+  getShopName() async {
+     shopName.value = (await SharedPreferencesHelper.getShopStoreName())!;
   }
 }

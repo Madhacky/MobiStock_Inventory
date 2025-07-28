@@ -5,13 +5,14 @@ import 'package:get/get.dart';
 import 'package:smartbecho/models/customer%20management/chart/montly_new_customer_model.dart';
 import 'package:smartbecho/models/customer%20management/chart/top_customer_model.dart';
 import 'package:smartbecho/models/customer%20management/customer_data_model.dart';
+import 'package:smartbecho/models/customer%20management/repeated_customer_response_model.dart';
 import 'package:smartbecho/models/customer%20management/top_stats_card_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
-import 'package:smartbecho/views/customer/components/customer_card_view.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:smartbecho/views/customer/components/repeated_customer_bottom_sheet.dart';
 
 class CustomerController extends GetxController {
   // API service instance
@@ -404,7 +405,7 @@ class CustomerController extends GetxController {
       // Add your actual API endpoint here
       dio.Response? response = await _apiService.requestGetForApi(
         url:
-            '${_config.baseUrl}/api/customers/all/paginated?page=${currentPage.value}&size=${pageSize.value}&sortBy=name&direction=asc',
+            '${_config.baseUrl}/api/customers/all/paginated?page=${currentPage.value}&size=${pageSize.value}&sortBy=id&direction=asc',
         authToken: true,
       );
 
@@ -534,120 +535,144 @@ class CustomerController extends GetxController {
   void refreshData() {
     loadCustomersFromApi();
   }
+// Monthly New Customer Chart API
+RxBool isMonthlyNewCustomerChartLoading = false.obs;
+var monthlyNewCustomerCharterrorMessage = ''.obs;
+var hasMonthlyNewCustomerChartError = false.obs;
+RxMap<String, double> monthlyNewCustomerPayload = RxMap<String, double>({});
 
-  // Existing API methods for charts...
-  RxBool isMonthlyNewCustomerChartLoading = false.obs;
-  var monthlyNewCustomerCharterrorMessage = ''.obs;
-  var hasMonthlyNewCustomerChartError = false.obs;
-  RxMap<String, double> monthlyNewCustomerPayload = RxMap<String, double>({});
+Future<void> fetchMonthlyNewCustomerChart({
+  int? year,
+  int? month,
+}) async {
+  try {
+    isMonthlyNewCustomerChartLoading.value = true;
+    hasMonthlyNewCustomerChartError.value = false;
+    monthlyNewCustomerCharterrorMessage.value = '';
 
-  Future<void> fetchMonthlyNewCustomerChart() async {
-    try {
-      isMonthlyNewCustomerChartLoading.value = true;
-      hasMonthlyNewCustomerChartError.value = false;
-      monthlyNewCustomerCharterrorMessage.value = '';
+    // Build query parameters
+    final queryParams = <String, dynamic>{};
+    if (year != null) queryParams['year'] = year;
+    if (month != null) queryParams['month'] = month;
 
-      dio.Response? response = await _apiService.requestGetForApi(
-        url: _config.getMonthlyNewCustomerEndpoint,
-        authToken: true,
+    dio.Response? response = await _apiService.requestGetForApi(
+      url: _config.getMonthlyNewCustomerEndpoint,
+      dictParameter: queryParams.isNotEmpty ? queryParams : null,
+      authToken: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      final responseData = CustomerMonthlyDataResponse.fromJson(
+        response.data,
       );
-
-      if (response != null && response.statusCode == 200) {
-        final responseData = CustomerMonthlyDataResponse.fromJson(
-          response.data,
-        );
-        monthlyNewCustomerPayload.value = Map<String, double>.from(
-          responseData.payload,
-        );
-      } else {
-        hasMonthlyNewCustomerChartError.value = true;
-        monthlyNewCustomerCharterrorMessage.value =
-            'Failed to fetch data. Status: ${response?.statusCode}';
-      }
-    } catch (error) {
+      monthlyNewCustomerPayload.value = Map<String, double>.from(
+        responseData.payload,
+      );
+    } else {
       hasMonthlyNewCustomerChartError.value = true;
-      monthlyNewCustomerCharterrorMessage.value = 'Error: $error';
-    } finally {
-      isMonthlyNewCustomerChartLoading.value = false;
+      monthlyNewCustomerCharterrorMessage.value =
+          'Failed to fetch data. Status: ${response?.statusCode}';
     }
+  } catch (error) {
+    hasMonthlyNewCustomerChartError.value = true;
+    monthlyNewCustomerCharterrorMessage.value = 'Error: $error';
+  } finally {
+    isMonthlyNewCustomerChartLoading.value = false;
   }
+}
 
-  // Village distribution
-  RxBool isVillageDistributionChartLoading = false.obs;
-  var villageDistributionChartErrorMessage = ''.obs;
-  var hasVillageDistributionChartError = false.obs;
-  RxMap<String, double> villageDistributionPayload = RxMap<String, double>({});
+// Village Distribution Chart API
+RxBool isVillageDistributionChartLoading = false.obs;
+var villageDistributionChartErrorMessage = ''.obs;
+var hasVillageDistributionChartError = false.obs;
+RxMap<String, double> villageDistributionPayload = RxMap<String, double>({});
 
-  Future<void> fetchVillageDistributionChart() async {
-    try {
-      isVillageDistributionChartLoading.value = true;
-      hasVillageDistributionChartError.value = false;
-      villageDistributionChartErrorMessage.value = '';
+Future<void> fetchVillageDistributionChart({
+  int? year,
+  int? month,
+}) async {
+  try {
+    isVillageDistributionChartLoading.value = true;
+    hasVillageDistributionChartError.value = false;
+    villageDistributionChartErrorMessage.value = '';
 
-      dio.Response? response = await _apiService.requestGetForApi(
-        url: _config.getVillageDistributionEndpoint,
-        authToken: true,
+    // Build query parameters
+    final queryParams = <String, dynamic>{};
+    if (year != null) queryParams['year'] = year;
+    if (month != null) queryParams['month'] = month;
+
+    dio.Response? response = await _apiService.requestGetForApi(
+      url: _config.getVillageDistributionEndpoint,
+      dictParameter: queryParams.isNotEmpty ? queryParams : null,
+      authToken: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      final responseData = CustomerMonthlyDataResponse.fromJson(
+        response.data,
       );
-
-      if (response != null && response.statusCode == 200) {
-        final responseData = CustomerMonthlyDataResponse.fromJson(
-          response.data,
-        );
-        villageDistributionPayload.value = Map<String, double>.from(
-          responseData.payload,
-        );
-      } else {
-        hasVillageDistributionChartError.value = true;
-        villageDistributionChartErrorMessage.value =
-            'Failed to fetch data. Status: ${response?.statusCode}';
-      }
-    } catch (error) {
+      villageDistributionPayload.value = Map<String, double>.from(
+        responseData.payload,
+      );
+    } else {
       hasVillageDistributionChartError.value = true;
-      villageDistributionChartErrorMessage.value = 'Error: $error';
-    } finally {
-      isVillageDistributionChartLoading.value = false;
+      villageDistributionChartErrorMessage.value =
+          'Failed to fetch data. Status: ${response?.statusCode}';
     }
+  } catch (error) {
+    hasVillageDistributionChartError.value = true;
+    villageDistributionChartErrorMessage.value = 'Error: $error';
+  } finally {
+    isVillageDistributionChartLoading.value = false;
   }
+}
 
-  // Monthly Repeat Customer
-  RxBool isMonthlyRepeatCustomerChartLoading = false.obs;
-  var monthlyRepeatCustomerChartErrorMessage = ''.obs;
-  var hasMonthlyRepeatCustomerChartError = false.obs;
-  RxMap<String, double> monthlyRepeatCustomerPayload = RxMap<String, double>(
-    {},
-  );
+// Monthly Repeat Customer Chart API
+RxBool isMonthlyRepeatCustomerChartLoading = false.obs;
+var monthlyRepeatCustomerChartErrorMessage = ''.obs;
+var hasMonthlyRepeatCustomerChartError = false.obs;
+RxMap<String, double> monthlyRepeatCustomerPayload = RxMap<String, double>({});
 
-  Future<void> fetchMonthlyRepeatCustomerChart() async {
-    try {
-      isMonthlyRepeatCustomerChartLoading.value = true;
-      hasMonthlyRepeatCustomerChartError.value = false;
-      monthlyRepeatCustomerChartErrorMessage.value = '';
+Future<void> fetchMonthlyRepeatCustomerChart({
+  int? year,
+  int? month,
+}) async {
+  
+  try {
+    isMonthlyRepeatCustomerChartLoading.value = true;
+    hasMonthlyRepeatCustomerChartError.value = false;
+    monthlyRepeatCustomerChartErrorMessage.value = '';
 
-      dio.Response? response = await _apiService.requestGetForApi(
-        url: _config.getMonthlyRepeatCustomerEndpoint,
-        authToken: true,
+    // Build query parameters
+    final queryParams = <String, dynamic>{};
+    if (year != null) queryParams['year'] = year;
+    if (month != null) queryParams['month'] = month;
+
+    dio.Response? response = await _apiService.requestGetForApi(
+      url: _config.getMonthlyRepeatCustomerEndpoint,
+      dictParameter: queryParams.isNotEmpty ? queryParams : null,
+      authToken: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      final responseData = CustomerMonthlyDataResponse.fromJson(
+        response.data,
       );
-
-      if (response != null && response.statusCode == 200) {
-        final responseData = CustomerMonthlyDataResponse.fromJson(
-          response.data,
-        );
-        monthlyRepeatCustomerPayload.value = Map<String, double>.from(
-          responseData.payload,
-        );
-      } else {
-        hasMonthlyRepeatCustomerChartError.value = true;
-        monthlyRepeatCustomerChartErrorMessage.value =
-            'Failed to fetch data. Status: ${response?.statusCode}';
-      }
-    } catch (error) {
+      monthlyRepeatCustomerPayload.value = Map<String, double>.from(
+        responseData.payload,
+      );
+    } else {
       hasMonthlyRepeatCustomerChartError.value = true;
-      monthlyRepeatCustomerChartErrorMessage.value = 'Error: $error';
-    } finally {
-      isMonthlyRepeatCustomerChartLoading.value = false;
+      monthlyRepeatCustomerChartErrorMessage.value =
+          'Failed to fetch data. Status: ${response?.statusCode}';
     }
+  } catch (error) {
+    hasMonthlyRepeatCustomerChartError.value = true;
+    monthlyRepeatCustomerChartErrorMessage.value = 'Error: $error';
+  } finally {
+    isMonthlyRepeatCustomerChartLoading.value = false;
   }
-
+}
   // Top Customer Overview
   RxBool isTopCustomerChartLoading = false.obs;
   var topCustomerChartErrorMessage = ''.obs;
@@ -959,4 +984,55 @@ class CustomerController extends GetxController {
     final customer = _getCustomerFromRow(event.row);
     viewCustomerDetails(customer);
   }
+
+
+
+
+  // Repeated Customers Modal
+RxBool isRepeatedCustomersLoading = false.obs;
+var repeatedCustomersErrorMessage = ''.obs;
+var hasRepeatedCustomersError = false.obs;
+RxList<RepeatedCustomer> repeatedCustomersList = <RepeatedCustomer>[].obs;
+
+// Add this method to your CustomerController class:
+
+Future<void> fetchRepeatedCustomers() async {
+  try {
+    isRepeatedCustomersLoading.value = true;
+    hasRepeatedCustomersError.value = false;
+    repeatedCustomersErrorMessage.value = '';
+
+    dio.Response? response = await _apiService.requestGetForApi(
+      url: '${_config.baseUrl}/api/customers/stats',
+      authToken: true,
+    );
+
+    if (response != null && response.statusCode == 200) {
+      final responseData = RepeatedCustomerResponse.fromJson(response.data);
+      repeatedCustomersList.value = responseData.payload.repeatedCustomerList;
+    } else {
+      hasRepeatedCustomersError.value = true;
+      repeatedCustomersErrorMessage.value =
+          'Failed to fetch repeated customers. Status: ${response?.statusCode}';
+    }
+  } catch (error) {
+    hasRepeatedCustomersError.value = true;
+    repeatedCustomersErrorMessage.value = 'Error: $error';
+    log('Error fetching repeated customers: $error');
+  } finally {
+    isRepeatedCustomersLoading.value = false;
+  }
+}
+
+// Method to show repeated customers modal
+void showRepeatedCustomersModal() {
+  fetchRepeatedCustomers();
+  
+  Get.bottomSheet(
+    RepeatedCustomersModal(),
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    enableDrag: true,
+  );
+}
 }

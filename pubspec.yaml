@@ -55,6 +55,9 @@ dependencies:
   image_cropper: ^9.1.0
   dotlottie_loader: ^0.0.5
   file_picker: ^10.2.0
+  cached_network_image: ^3.4.1
+  open_file: ^3.5.10
+  share_plus: ^11.0.0
 
 dev_dependencies:
   flutter_test:

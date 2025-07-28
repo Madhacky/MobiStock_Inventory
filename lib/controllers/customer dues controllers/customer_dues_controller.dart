@@ -5,7 +5,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
+import 'package:smartbecho/models/customer%20dues%20management/customer_due_detail_model.dart';
+import 'package:smartbecho/models/customer%20dues%20management/dues_summary_data_model.dart';
 import 'package:smartbecho/models/customer%20dues%20management/monthly_dues_analytics_model.dart';
+import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:dio/dio.dart' as dio;
@@ -52,7 +55,7 @@ class CustomerDuesController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCustomerDues(isRefresh: true);
-
+getSummaryData();
     // Listen to search changes
     debounce(
       searchQuery,
@@ -60,10 +63,6 @@ class CustomerDuesController extends GetxController {
       time: Duration(milliseconds: 500),
     );
   }
-
-  // Base URL for dues API
-  String get baseUrl =>
-      'https://backend-production-91e4.up.railway.app/api/dues/all';
 
   // Fetch customer dues from API with pagination
   Future<void> fetchCustomerDues({
@@ -99,7 +98,7 @@ class CustomerDuesController extends GetxController {
       log("Fetching dues with params: $queryParams");
 
       dio.Response? response = await _apiService.requestGetForApi(
-        url: baseUrl,
+        url: _config.getAllCustomerDues,
         authToken: true,
         dictParameter: queryParams,
       );
@@ -119,9 +118,6 @@ class CustomerDuesController extends GetxController {
           } else if (isLoadMore) {
             allDues.addAll(duesResponse.payload.content);
           }
-
-          // Generate summary data from all loaded dues
-          _generateSummaryData();
 
           // Apply filtering based on current tab
           filterDues();
@@ -161,52 +157,34 @@ class CustomerDuesController extends GetxController {
   }
 
   // Generate summary data from all loaded dues
-  void _generateSummaryData() {
-    if (allDues.isEmpty) {
-      summaryData.value = null;
-      return;
-    }
+  RxBool isSummaryDataLoading = false.obs;
+  MonthlyDueSummaryResponse? dueSummaryResponse;
+  Future getSummaryData() async {
+ 
+    try {
+      isSummaryDataLoading.value = true;
 
-    double totalGiven = 0;
-    double totalCollected = 0;
-    double totalRemaining = 0;
-    double thisMonthCollection = 0;
-    int totalCustomers = allDues.length;
-    int duesCustomers = 0;
-    int paidCustomers = 0;
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: _config.getSummaryData,
+        authToken: true,
+      );
 
-    final now = DateTime.now();
-    final thisMonth = DateTime(now.year, now.month);
-
-    for (var due in allDues) {
-      totalGiven += due.totalDue;
-      totalCollected += due.totalPaid;
-      totalRemaining += due.remainingDue;
-
-      if (due.remainingDue > 0) {
-        duesCustomers++;
+      if (response != null && response.statusCode == 200) {
+        dueSummaryResponse = MonthlyDueSummaryResponse.fromJson(response.data);
+        summaryData.value = DuesSummaryModel(
+          totalGiven: dueSummaryResponse!.payload.totalDue,
+          totalCollected: dueSummaryResponse!.payload.totalCollected,
+          totalRemaining: dueSummaryResponse!.payload.remainingDue,
+          thisMonthCollection: dueSummaryResponse!.payload.totalPaid,
+        );
       } else {
-        paidCustomers++;
+        throw Exception('Failed to load due summary');
       }
-
-      // Calculate this month's collection (if lastPaymentDate is available)
-      // if (due.lastPaymentDate != null) {
-      //   final paymentDate = due.lastPaymentDate!;
-      //   if (paymentDate.year == now.year && paymentDate.month == now.month) {
-      //     thisMonthCollection += due.totalPaid;
-      //   }
-      // }
+    } catch (error) {
+      log("❌ Error loading summary: $error");
+    } finally {
+      isSummaryDataLoading.value = false;
     }
-
-    summaryData.value = DuesSummaryModel(
-      totalGiven: totalGiven,
-      totalCollected: totalCollected,
-      totalRemaining: totalRemaining,
-      thisMonthCollection: thisMonthCollection,
-      totalCustomers: totalCustomers,
-      duesCustomers: duesCustomers,
-      paidCustomers: paidCustomers,
-    );
   }
 
   // Handle search with API call
@@ -275,10 +253,18 @@ class CustomerDuesController extends GetxController {
 
   // Customer Actions
   RxBool isPartialAddedloading = RxBool(false);
-  Future<void> addPartialPayment(int saleId, double amount) async {
+
+  Future<void> addPartialPayment(
+    int id,
+    double amount,
+    String paymentMode,
+  ) async {
     isPartialAddedloading.value = true;
     try {
-      final url = '${_config.addPartialPayment}?saleId=$saleId&amount=$amount';
+      String paymentMethod = paymentMode.toUpperCase();
+
+      final url =
+          '${_config.addPartialPayment}?Id=$id&amount=${amount.ceil()}&paymentMethod=$paymentMethod&remarks=';
 
       final response = await _apiService.requestPostForApi(
         url: url,
@@ -378,18 +364,14 @@ class CustomerDuesController extends GetxController {
 
   Future<void> notifyCustomer(int customerId, String customerName) async {
     try {
-      // Build API URL for notification
-      final url =
-          'https://backend-production-91e4.up.railway.app/api/notifications/send';
+      
 
       Map<String, dynamic> requestData = {
-        'customerId': customerId,
-        'message': 'Payment reminder for your due amount',
-        'type': 'payment_reminder',
+        'customerIds': [customerId],
       };
 
       dio.Response? response = await _apiService.requestPostForApi(
-        url: url,
+        url: _config.notifyDueCustomer,
         dictParameter: requestData,
         authToken: true,
       );
@@ -411,7 +393,7 @@ class CustomerDuesController extends GetxController {
       // Show success message even if API fails (as per original code)
       Get.snackbar(
         'Success',
-        'Notification sent to $customerName',
+        'Failed to send notification to $customerName',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.blue.withOpacity(0.8),
         colorText: Colors.white,
@@ -421,11 +403,11 @@ class CustomerDuesController extends GetxController {
 
   void viewCustomerDetails(CustomerDue due) {
     // Navigate to customer details screen
-    Get.to(() => CustomerDueDetailsScreen(due: due));
+    Get.to(() => CustomerDueDetailsScreen(dueId: due.id));
   }
 
   void createDueEntry() {
-    Get.toNamed('/create-due-entry');
+    Get.toNamed(AppRoutes.addCustomerDue);
   }
 
   void exportDues() {
@@ -485,10 +467,6 @@ class CustomerDuesController extends GetxController {
     fetchMonthlyAnalytics();
   }
 
-  // Getters for summary cards
-  int get duesCustomersCount => summaryData.value?.duesCustomers ?? 0;
-  int get paidCustomersCount => summaryData.value?.paidCustomers ?? 0;
-
   // Analytics getters
   Map<String, double> get collectedData {
     Map<String, double> data = {};
@@ -506,12 +484,55 @@ class CustomerDuesController extends GetxController {
     return data;
   }
 
-  double get totalCollected {
-    return analyticsData.fold(0.0, (sum, item) => sum + item.collected);
-  }
+  final RxBool isDetailsLoading = false.obs;
+  final Rx<CustomerDueDetailsModel?> customerDueDetails =
+      Rx<CustomerDueDetailsModel?>(null);
+  final RxString detailsErrorMessage = ''.obs;
+  final RxBool hasDetailsError = false.obs;
 
-  double get totalRemaining {
-    return analyticsData.fold(0.0, (sum, item) => sum + item.remaining);
+  Future<void> fetchCustomerDueDetails(int dueId) async {
+    try {
+      isDetailsLoading.value = true;
+      hasDetailsError.value = false;
+      detailsErrorMessage.value = '';
+
+      log("Fetching customer due details for ID: $dueId");
+
+      final url =
+          'https://backend-production-91e4.up.railway.app/api/dues/$dueId';
+
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: url,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final customerDueData = CustomerDueDetailsModel.fromJson(response.data);
+        customerDueDetails.value = customerDueData;
+
+        log("Customer due details loaded successfully");
+        log("Customer: ${customerDueData.customer.name}");
+        log("Total Due: ${customerDueData.totalDue}");
+        log("Remaining Due: ${customerDueData.remainingDue}");
+      } else {
+        throw Exception('Failed to load customer due details');
+      }
+    } catch (error) {
+      hasDetailsError.value = true;
+      detailsErrorMessage.value = 'Error: $error';
+      log("❌ Error in fetchCustomerDueDetails: $error");
+
+      // Show error snackbar
+      Get.snackbar(
+        'Error',
+        'Failed to load customer details: $error',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+    } finally {
+      isDetailsLoading.value = false;
+    }
   }
 }
 
@@ -521,18 +542,12 @@ class DuesSummaryModel {
   final double totalCollected;
   final double totalRemaining;
   final double thisMonthCollection;
-  final int totalCustomers;
-  final int duesCustomers;
-  final int paidCustomers;
 
   DuesSummaryModel({
     required this.totalGiven,
     required this.totalCollected,
     required this.totalRemaining,
     required this.thisMonthCollection,
-    required this.totalCustomers,
-    required this.duesCustomers,
-    required this.paidCustomers,
   });
 
   static DuesSummaryModel fromDuesList(List<CustomerDue> dues) {
@@ -540,40 +555,12 @@ class DuesSummaryModel {
     double totalCollected = 0;
     double totalRemaining = 0;
     double thisMonthCollection = 0;
-    int totalCustomers = dues.length;
-    int duesCustomers = 0;
-    int paidCustomers = 0;
-
-    final now = DateTime.now();
-
-    for (var due in dues) {
-      totalGiven += due.totalDue;
-      totalCollected += due.totalPaid;
-      totalRemaining += due.remainingDue;
-
-      if (due.remainingDue > 0) {
-        duesCustomers++;
-      } else {
-        paidCustomers++;
-      }
-
-      // Calculate this month's collection
-      // if (due.lastPaymentDate != null) {
-      //   final paymentDate = due.lastPaymentDate!;
-      //   if (paymentDate.year == now.year && paymentDate.month == now.month) {
-      //     thisMonthCollection += due.totalPaid;
-      //   }
-      // }
-    }
 
     return DuesSummaryModel(
       totalGiven: totalGiven,
       totalCollected: totalCollected,
       totalRemaining: totalRemaining,
       thisMonthCollection: thisMonthCollection,
-      totalCustomers: totalCustomers,
-      duesCustomers: duesCustomers,
-      paidCustomers: paidCustomers,
     );
   }
 }

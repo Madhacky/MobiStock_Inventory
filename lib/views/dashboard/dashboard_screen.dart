@@ -7,6 +7,7 @@ import 'package:smartbecho/controllers/dashboard_controller.dart';
 import 'package:smartbecho/controllers/user_prefs_controller.dart';
 import 'package:smartbecho/models/dashboard_models/sales_summary_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/animated_text.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
@@ -474,14 +475,19 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                         Icon(Icons.store),
                         SizedBox(width: 10),
 
-                        Text(
-                          "Ramu Mobile Accessories",
-                          style: AppStyles.custom(
-                            size: controller.isSmallScreen ? 14 : 20,
-                            color: Colors.black87,
-                            weight: FontWeight.w500,
-                          ),
-                        ),
+                      Obx(
+  () => controller.shopName.value.isNotEmpty
+      ? AnimatedText(
+          text: controller.shopName.value,
+          style: AppStyles.custom(
+            size: controller.isSmallScreen ? 14 : 20,
+            color: Colors.black87,
+            weight: FontWeight.w500,
+          ),
+          letterDelay: Duration(milliseconds: 100), 
+        )
+      : SizedBox.shrink(), 
+)
                       ],
                     ),
                   ],

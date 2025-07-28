@@ -21,7 +21,15 @@ class AppRoutes {
   //customer management
   static const String customerManagement = '/customer-management';
   static const String customerAnalytics = '/customer-analytics';
-  static const String customerDetails = '/customer-details';
+  static const String customerCardView = '/customer-card-view';
+  static const String customerDetails= '/customer-details';
+  static const String invoiceDetails= '/invoice-details';
+
+
+  static const String addCustomer = '/add-customer';
+
+
+
 
   //bill managemanet
   static const String billHistory = '/bill-history';
@@ -31,9 +39,20 @@ class AppRoutes {
   //customer dues management
   static const String customerDuesManagement = '/customer-dues-management';
   static const String todaysRetrievalDues = '/todays-Retrieval-Dues';
+  static const String addCustomerDue = '/add-customer-due';
+
 
   //account management\
   static const String accountManagement = '/account-management';
+
+
+  //sales management
+  static const String salesManagement = '/sales-management';
+  static const String salesDetails = '/sales-detail';
+
+  //generate inventory
+  static const String generateInventory = '/generate-inventory';
+
 
   static const String profile = '/profile';
   static const String settings = '/settings';

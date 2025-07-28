@@ -93,7 +93,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       title: 'Poster Generation',
       subtitle: 'Create marketing content',
       icon: Icons.campaign_rounded,
-      color: Color(0xFFffecd2),
+      color: Color.fromARGB(255, 184, 121, 33),
       category: 'Marketing',
       isNew: true,
     ),
@@ -103,6 +103,13 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       icon: Icons.analytics_rounded,
       color: Color(0xFF9c88ff),
       category: 'Reports',
+    ),
+    DrawerMenuItem(
+      title: 'Generate Inventory',
+      subtitle: 'App preferences',
+      icon: Icons.link,
+      color: Color(0xFFfa709a),
+      category: 'Marketing',
     ),
     DrawerMenuItem(
       title: 'Settings',
@@ -503,17 +510,21 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     });
     print(_selectedIndex);
     switch (_selectedIndex) {
+      case 1:
+        Get.toNamed(AppRoutes.salesManagement);
       case 2:
         Get.toNamed(AppRoutes.inventory_management);
       case 3:
         Get.toNamed(AppRoutes.customerManagement);
-            case 4:
+      case 4:
         Get.toNamed(AppRoutes.accountManagement);
       case 5:
         Get.toNamed(AppRoutes.billHistory);
       case 6:
         Get.toNamed(AppRoutes.customerDuesManagement);
-  
+      case 9:
+        Get.toNamed(AppRoutes.generateInventory);
+
       default:
         _showNavigationSnackbar(item.title, item.color);
     }

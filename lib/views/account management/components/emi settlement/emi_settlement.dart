@@ -5,6 +5,7 @@ import 'package:smartbecho/models/account%20management%20models/emi%20settlement
 import 'package:intl/intl.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
+import 'package:smartbecho/views/account%20management/components/emi%20settlement/add_emi_settlement.dart';
 import 'package:smartbecho/views/account%20management/widgets/emi_settlement_chart.dart';
 import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
 
@@ -80,6 +81,47 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                   ),
                 ),
               ),
+              Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => AddEmiSettlementPage());
+                    },
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4ECDC4),
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4ECDC4).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.add, color: Colors.white, size: 18),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'Add Emi settlement',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               Obx(
                 () => Container(
                   padding: const EdgeInsets.symmetric(
@@ -91,7 +133,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '${controller.filteredSettlements.length} Settlements',
+                    '${controller.filteredSettlements.length}',
                     style: const TextStyle(
                       color: Color(0xFF3B82F6),
                       fontSize: 12,
@@ -100,48 +142,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: const Color(0xFF10B981).withOpacity(0.2),
-                  ),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _showChartModal,
-                    borderRadius: BorderRadius.circular(20),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.analytics_outlined,
-                            color: Color(0xFF10B981),
-                            size: 16,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'Charts',
-                            style: TextStyle(
-                              color: Color(0xFF10B981),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              
             ],
           ),
         ),
@@ -149,30 +150,81 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
 
         // Search Bar
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 17),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.withOpacity(0.1)),
             ),
-            child: TextField(
-              controller: controller.searchController,
-              onChanged: controller.onSearchChanged,
-              decoration: const InputDecoration(
-                hintText: 'Search settlements...',
-                hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Color(0xFF9CA3AF),
-                  size: 20,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller.searchController,
+                    onChanged: controller.onSearchChanged,
+                    decoration: const InputDecoration(
+                      hintText: 'Search settlements...',
+                      hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Color(0xFF9CA3AF),
+                        size: 20,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
                 ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFF10B981).withOpacity(0.2),
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _showChartModal,
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.analytics_outlined,
+                              color: Color(0xFF10B981),
+                              size: 16,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Charts',
+                              style: TextStyle(
+                                color: Color(0xFF10B981),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
+              ],
             ),
           ),
         ),

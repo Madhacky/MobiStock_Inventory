@@ -45,20 +45,29 @@ class AppConfig {
   String get addInventoryItem => '$baseUrl/inventory/add';
 
   //Bill History
-  String get getAllBills => '$baseUrl/bill/all';
+  String get getAllBills => '$baseUrl/api/purchase-bills';
 
   //customer dues management
   String get getAllCustomerDues => '$baseUrl/api/dues/all';
   String get getCustomerDuesAnalytics => '$baseUrl/api/dues/monthly-summary';
   String get getTodaysDueRetrievalDetails => '$baseUrl/api/customers/retriable-today';
   String get addPartialPayment => '$baseUrl/api/dues/partial-payment';
+  String get addCustomerDue => '$baseUrl/api/dues/create';
+  String get getCustomerData => '$baseUrl/api/customers/shop?page=0&size=150&sort=id';
+  String get getCustomerDataDropdown => '$baseUrl/api/customers/dropdown';
 
-  
-  // String get getCustomerDuesPayment => '$baseUrl/api/dues/pay';
-  // String get getCustomerDuesReminder => '$baseUrl/api/dues/reminder';
-  // String get getCustomerDuesReport => '$baseUrl/api/dues/report';
-  // String get getCustomerDuesReportDetails => '$baseUrl/api/dues/report-details';
-  // String get getCustomerDuesReportSummary => '$baseUrl/api/dues/report-summary';
+
+  String get getSummaryData => '$baseUrl/api/dues/summary/current-month';
+  String get notifyDueCustomer => '$baseUrl/api/dues/notify';
+
+
+
+
+
+  // sales managment
+  String get saleDetail => '$baseUrl/api/sales';
+
+ 
 
   //customer management endpoints
   String get getMonthlyNewCustomerEndpoint =>
@@ -70,7 +79,12 @@ class AppConfig {
   String get getTopCustomerOverviewEndpoint =>
       '$baseUrl/api/sales/top-customers';
   String get getTopStatsCardsDataEndpoint => '$baseUrl/api/customers/stats';
+  String get addNewCustomer => '$baseUrl/api/customers/create';
+  String get getInvoiceDetails => '$baseUrl/api/sales/';
+String get notifyCustomer => "$baseUrl/api/dues/notify";
 
+
+  
   // Utility methods
   static bool get isSmallScreen => Get.width < 360;
   static bool get isMediumScreen => Get.width >= 360 && Get.width < 400;

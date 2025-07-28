@@ -10,11 +10,26 @@ class EmiSettlementController extends GetxController {
   void dispose() {
     scrollController.dispose();
     searchController.dispose();
+    // Form controllers
+    dateController.dispose();
+    companyNameController.dispose();
+    amountController.dispose();
+    confirmedByController.dispose();
     super.dispose();
   }
 
   final ApiServices _apiService = ApiServices();
   final AppConfig _config = AppConfig.instance;
+
+  // Form controllers
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController confirmedByController = TextEditingController();
+
+  // Form state
+  var isFormLoading = false.obs;
 
   // Observable variables
   var isLoading = false.obs;
@@ -28,7 +43,7 @@ class EmiSettlementController extends GetxController {
 
   // Chart data
   var isChartLoading = false.obs;
-final RxList<MonthlyEmiData> chartData = <MonthlyEmiData>[].obs;
+  final RxList<MonthlyEmiData> chartData = <MonthlyEmiData>[].obs;
   var chartYear = DateTime.now().year.obs;
 
   // Filter variables
@@ -65,6 +80,7 @@ final RxList<MonthlyEmiData> chartData = <MonthlyEmiData>[].obs;
   void onInit() {
     super.onInit();
     loadSettlements(refresh: true);
+    dateController.text = DateTime.now().toIso8601String().split('T')[0];
 
     // Setup scroll controller for pagination
     scrollController.addListener(() {
@@ -73,6 +89,132 @@ final RxList<MonthlyEmiData> chartData = <MonthlyEmiData>[].obs;
         loadNextPage();
       }
     });
+  }
+
+  // Form validation methods
+  String? validateRequired(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    return null;
+  }
+
+  String? validateAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Amount is required';
+    }
+    final amount = double.tryParse(value);
+    if (amount == null || amount <= 0) {
+      return 'Enter a valid amount';
+    }
+    return null;
+  }
+
+  // Date picker
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF3B82F6),
+              onPrimary: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      dateController.text = picked.toIso8601String().split('T')[0];
+    }
+  }
+
+  // Save EMI settlement
+  Future<void> saveEmiSettlement() async {
+    if (!formKey.currentState!.validate()) return;
+
+    try {
+      isFormLoading.value = true;
+      
+      // Create request body
+      final requestBody = {
+        'companyName': companyNameController.text,
+        'amount': double.parse(amountController.text),
+        'confirmedBy': confirmedByController.text,
+        'date': DateTime.parse(dateController.text).toUtc().toIso8601String().split('T')[0],
+      };
+
+      final response = await _apiService.requestPostForApi(
+        url: '${_config.baseUrl}/api/emi-settlements',
+        dictParameter: requestBody,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 201) {
+        clearForm();
+        Get.snackbar(
+          'Success',
+          'EMI settlement recorded successfully!',
+          backgroundColor: const Color(0xFF10B981),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        loadSettlements(refresh: true);
+      } else {
+        String errorMessage = 'Failed to record EMI settlement';
+        if (response?.data != null && response!.data['message'] != null) {
+          errorMessage = response.data['message'];
+        }
+        
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          backgroundColor: const Color(0xFFEF4444),
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print('Error saving EMI settlement: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to record EMI settlement: ${e.toString()}',
+        backgroundColor: const Color(0xFFEF4444),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isFormLoading.value = false;
+    }
+  }
+
+  // Clear form
+  void clearForm() {
+    dateController.text = DateTime.now().toIso8601String().split('T')[0];
+    companyNameController.clear();
+    amountController.clear();
+    confirmedByController.clear();
+  }
+
+  // Reset form
+  void resetForm() {
+    clearForm();
+    Get.snackbar(
+      'Reset',
+      'Form has been reset',
+      backgroundColor: const Color(0xFF6B7280),
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   Future<void> loadSettlements({bool refresh = false}) async {
@@ -143,7 +285,7 @@ final RxList<MonthlyEmiData> chartData = <MonthlyEmiData>[].obs;
   }
 
   //load chart
-Future<void> loadChartData({int? year}) async {
+  Future<void> loadChartData({int? year}) async {
     try {
       isChartLoading.value = true;
       final targetYear = year ?? chartYear.value;
@@ -270,8 +412,6 @@ Future<void> loadChartData({int? year}) async {
       loadSettlements(refresh: true);
     }
   }
-
- 
 
   void clearFilters() {
     searchQuery.value = '';

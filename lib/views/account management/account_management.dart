@@ -5,7 +5,7 @@ import 'package:smartbecho/models/account%20management%20models/account_summary_
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/account%20management/components/commision%20received/commission_received.dart';
-import 'package:smartbecho/views/account%20management/components/emi_settlement.dart';
+import 'package:smartbecho/views/account%20management/components/emi%20settlement/emi_settlement.dart';
 import 'package:smartbecho/views/account%20management/components/history.dart';
 import 'package:smartbecho/views/account%20management/components/paybill/paybill.dart';
 import 'package:smartbecho/views/account%20management/components/withdraw/withdraw.dart';

@@ -65,7 +65,7 @@ class RetrievalDueCustomer {
   final String primaryPhone;
   final String location;
   final String primaryAddress;
-  final DueDetails dues;
+  final List<DueDetails> duesList;
 
   RetrievalDueCustomer({
     required this.id,
@@ -74,7 +74,7 @@ class RetrievalDueCustomer {
     required this.primaryPhone,
     required this.location,
     required this.primaryAddress,
-    required this.dues,
+    required this.duesList,
   });
 
   factory RetrievalDueCustomer.fromJson(Map<String, dynamic> json) {
@@ -85,7 +85,55 @@ class RetrievalDueCustomer {
       primaryPhone: json['primaryPhone'] ?? '',
       location: json['location'] ?? '',
       primaryAddress: json['primaryAddress'] ?? '',
-      dues: DueDetails.fromJson(json['dues'] ?? {}),
+      duesList: (json['duesList'] as List<dynamic>?)
+              ?.map((item) => DueDetails.fromJson(item))
+              .toList() ??
+          [],
+    );
+  }
+
+  // Helper method to get aggregated dues (for backward compatibility)
+  DueDetails get dues {
+    if (duesList.isEmpty) {
+      return DueDetails(
+        id: 0,
+        totalDue: 0.0,
+        totalPaid: 0.0,
+        remainingDue: 0.0,
+        creationDate: [],
+        paymentRetriableDate: [],
+        paid: true,
+      );
+    }
+
+    // Aggregate all dues for this customer
+    double totalDue = duesList.fold(0.0, (sum, due) => sum + due.totalDue);
+    double totalPaid = duesList.fold(0.0, (sum, due) => sum + due.totalPaid);
+    double remainingDue = duesList.fold(0.0, (sum, due) => sum + due.remainingDue);
+    
+    // Find the earliest due date
+    DateTime? earliestDueDate;
+    List<int> earliestPaymentRetriableDate = [];
+    
+    for (var due in duesList) {
+      if (due.paymentRetriableDate.length >= 3) {
+        DateTime dueDate = DateTime(due.paymentRetriableDate[0], due.paymentRetriableDate[1], due.paymentRetriableDate[2]);
+        if (earliestDueDate == null || dueDate.isBefore(earliestDueDate)) {
+          earliestDueDate = dueDate;
+          earliestPaymentRetriableDate = due.paymentRetriableDate;
+        }
+      }
+    }
+
+    // Use the first due's creation date and ID for simplicity
+    return DueDetails(
+      id: duesList.first.id,
+      totalDue: totalDue,
+      totalPaid: totalPaid,
+      remainingDue: remainingDue,
+      creationDate: duesList.first.creationDate,
+      paymentRetriableDate: earliestPaymentRetriableDate,
+      paid: remainingDue <= 0,
     );
   }
 

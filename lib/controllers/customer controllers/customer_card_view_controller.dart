@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -24,6 +25,10 @@ class CustomerCardsController extends GetxController {
   var sortBy = 'Name'.obs;
   RxBool isFiltersExpanded = false.obs;
 
+  // Debounce timer for search
+  Timer? _debounceTimer;
+  static const Duration _debounceDuration = Duration(milliseconds: 500);
+
   void toggleFiltersExpanded() {
     isFiltersExpanded.value = !isFiltersExpanded.value;
   }
@@ -31,6 +36,7 @@ class CustomerCardsController extends GetxController {
   // Loading states
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
+  var isSearching = false.obs; // New loading state for search
   var hasError = false.obs;
   var errorMessage = ''.obs;
 
@@ -57,20 +63,43 @@ class CustomerCardsController extends GetxController {
     loadCustomersFromApi();
   }
 
+  @override
+  void onClose() {
+    _debounceTimer?.cancel();
+    super.onClose();
+  }
+
   // Load customers from API
-  Future<void> loadCustomersFromApi({bool loadMore = false}) async {
+  Future<void> loadCustomersFromApi({bool loadMore = false, String? keyword}) async {
     try {
       if (loadMore) {
         isLoadingMore.value = true;
       } else {
-        isLoading.value = true;
+        if (keyword != null && keyword.isNotEmpty) {
+          isSearching.value = true;
+        } else {
+          isLoading.value = true;
+        }
         hasError.value = false;
         currentPage.value = 0;
       }
 
+      // Build query parameters
+      Map<String, dynamic> queryParams = {
+        'page': currentPage.value,
+        'size': pageSize.value,
+        'sortBy': 'id',
+        'direction': 'asc',
+      };
+
+      // Add keyword if provided
+      if (keyword != null && keyword.isNotEmpty) {
+        queryParams['keyword'] = keyword;
+      }
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url:
-            '${_config.baseUrl}/api/customers/all/paginated?page=${currentPage.value}&size=${pageSize.value}&sortBy=name&direction=asc',
+        url: '${_config.baseUrl}/api/customers/all/paginated',
+        dictParameter: queryParams,
         authToken: true,
       );
 
@@ -90,29 +119,13 @@ class CustomerCardsController extends GetxController {
         // Update statistics
         _updateStatistics();
 
-        // Apply current filters
-        filterCustomers();
+        // Apply current filters (excluding search since it's handled by API)
+        _applyLocalFilters();
       } else {
         hasError.value = true;
         errorMessage.value =
             'Failed to load customers. Status: ${response?.statusCode}';
       }
-
-      if (loadMore) {
-        apiCustomers.addAll(customerResponse!.payload.content);
-      } else {
-        apiCustomers.assignAll(customerResponse!.payload.content);
-      }
-
-      // Update pagination info
-      totalPages.value = customerResponse!.payload.totalPages;
-      totalElements.value = customerResponse!.payload.totalElements;
-
-      // Update statistics
-      _updateStatistics();
-
-      // Apply current filters
-      filterCustomers();
     } catch (e) {
       hasError.value = true;
       errorMessage.value = 'Error loading customers: $e';
@@ -120,6 +133,7 @@ class CustomerCardsController extends GetxController {
     } finally {
       isLoading.value = false;
       isLoadingMore.value = false;
+      isSearching.value = false;
     }
   }
 
@@ -127,13 +141,18 @@ class CustomerCardsController extends GetxController {
   Future<void> loadMoreCustomers() async {
     if (currentPage.value < totalPages.value - 1 && !isLoadingMore.value) {
       currentPage.value++;
-      await loadCustomersFromApi(loadMore: true);
+      String keyword = searchQuery.value.trim();
+      await loadCustomersFromApi(
+        loadMore: true, 
+        keyword: keyword.isNotEmpty ? keyword : null
+      );
     }
   }
 
   // Refresh customers
   Future<void> refreshCustomers() async {
-    await loadCustomersFromApi();
+    String keyword = searchQuery.value.trim();
+    await loadCustomersFromApi(keyword: keyword.isNotEmpty ? keyword : null);
   }
 
   // Update statistics based on loaded customers
@@ -149,48 +168,59 @@ class CustomerCardsController extends GetxController {
         apiCustomers.where((c) => c.customerType == 'VIP').length;
   }
 
-  // Search functionality
+  // Debounced search functionality
   void onSearchChanged(String query) {
     searchQuery.value = query;
-    filterCustomers();
+    
+    // Cancel previous timer
+    _debounceTimer?.cancel();
+    
+    // Start new timer
+    _debounceTimer = Timer(_debounceDuration, () {
+      _performSearch(query.trim());
+    });
   }
 
-  // Filter functionality
+  // Perform actual search
+  Future<void> _performSearch(String keyword) async {
+    if (keyword.isEmpty) {
+      // If search is empty, load all customers
+      await loadCustomersFromApi();
+    } else {
+      // Perform API search with keyword
+      await loadCustomersFromApi(keyword: keyword);
+    }
+  }
+
+  // Filter functionality (now only for customer type, search is handled by API)
   void onFilterChanged(String filter) {
     selectedFilter.value = filter;
-    filterCustomers();
+    _applyLocalFilters();
   }
 
   // Sort functionality
   void onSortChanged(String sort) {
     sortBy.value = sort;
-    filterCustomers();
+    _applyLocalFilters();
   }
 
-  // Main filter method
-  void filterCustomers() {
-    filteredCustomers.value =
-        apiCustomers.where((customer) {
-          // Search filter
-          bool matchesSearch =
-              customer.name.toLowerCase().contains(
-                searchQuery.value.toLowerCase(),
-              ) ||
-              customer.primaryPhone.contains(searchQuery.value) ||
-              customer.location.toLowerCase().contains(
-                searchQuery.value.toLowerCase(),
-              );
+  // Apply local filters (excluding search which is handled by API)
+  void _applyLocalFilters() {
+    filteredCustomers.value = apiCustomers.where((customer) {
+      // Category filter only (search is handled by API)
+      bool matchesCategory = selectedFilter.value == 'All' ||
+          customer.customerType == selectedFilter.value;
 
-          // Category filter
-          bool matchesCategory =
-              selectedFilter.value == 'All' ||
-              customer.customerType == selectedFilter.value;
-
-          return matchesSearch && matchesCategory;
-        }).toList();
+      return matchesCategory;
+    }).toList();
 
     // Sort customers
     _sortCustomers();
+  }
+
+  // Legacy method for backward compatibility
+  void filterCustomers() {
+    _applyLocalFilters();
   }
 
   // Sort customers based on selected criteria
@@ -215,10 +245,15 @@ class CustomerCardsController extends GetxController {
 
   // Reset all filters
   void resetFilters() {
+    // Cancel any pending search
+    _debounceTimer?.cancel();
+    
     searchQuery.value = '';
     selectedFilter.value = 'All';
     sortBy.value = 'Name';
-    filterCustomers();
+    
+    // Load all customers without search
+    loadCustomersFromApi();
   }
 
   // Get customer type color
@@ -290,7 +325,7 @@ class CustomerCardsController extends GetxController {
             onPressed: () async {
               apiCustomers.removeWhere((c) => c.id == customer.id);
               _updateStatistics();
-              filterCustomers();
+              _applyLocalFilters();
               Get.back();
               Get.snackbar(
                 'Success',

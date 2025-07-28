@@ -37,70 +37,82 @@ class CustomerManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsCards() {
-    return Container(
-      height: 130,
-      margin: EdgeInsets.symmetric(vertical: 5),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return Obx(() {
-            final stats = [
-              {
-                'title': 'Total Customers',
-                'value': controller.totalCustomers.value.toString(),
-                'icon': Icons.people_outline,
-                'color': Color(0xFF6C5CE7),
-                'trend': '+12%',
-                'trendUp': true,
-              },
-              {
-                'title': 'Repeat Customers',
-                'value': controller.repeatedCustomers.value.toString(),
-                'icon': Icons.refresh_outlined,
-                'color': Color(0xFFFF9500),
-                'trend': '+8%',
-                'trendUp': true,
-              },
-              {
-                'title': 'New This Month',
-                'value': controller.newCustomersThisMonth.value.toString(),
-                'icon': Icons.person_add_outlined,
-                'color': Color(0xFF51CF66),
-                'trend': '+24%',
-                'trendUp': true,
-              },
-            ];
+ // Update your _buildStatsCards method in CustomerManagementScreen
 
-            return Container(
-              width: 200,
-              margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
-              child: _buildEnhancedStatCard(
-                stats[index]['title'] as String,
-                stats[index]['value'] as String,
-                stats[index]['icon'] as IconData,
-                stats[index]['color'] as Color,
-                stats[index]['trend'] as String,
-                stats[index]['trendUp'] as bool,
-              ),
-            );
-          });
-        },
-      ),
-    );
-  }
+Widget _buildStatsCards() {
+  return Container(
+    height: 130,
+    margin: EdgeInsets.symmetric(vertical: 5),
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Obx(() {
+          final stats = [
+            {
+              'title': 'Total Customers',
+              'value': controller.totalCustomers.value.toString(),
+              'icon': Icons.people_outline,
+              'color': Color(0xFF6C5CE7),
+              'trend': '+12%',
+              'trendUp': true,
+              'onTap': () => print('Total customers tapped'),
+            },
+            {
+              'title': 'Repeat Customers',
+              'value': controller.repeatedCustomers.value.toString(),
+              'icon': Icons.refresh_outlined,
+              'color': Color(0xFFFF9500),
+              'trend': '+8%',
+              'trendUp': true,
+              'onTap': () => controller.showRepeatedCustomersModal(),
+            },
+            {
+              'title': 'New This Month',
+              'value': controller.newCustomersThisMonth.value.toString(),
+              'icon': Icons.person_add_outlined,
+              'color': Color(0xFF51CF66),
+              'trend': '+24%',
+              'trendUp': true,
+              'onTap': () => print('New this month tapped'),
+            },
+          ];
 
-  Widget _buildEnhancedStatCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-    String trend,
-    bool trendUp,
-  ) {
-    return Container(
+          return Container(
+            width: 200,
+            margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
+            child: _buildEnhancedStatCard(
+              stats[index]['title'] as String,
+              stats[index]['value'] as String,
+              stats[index]['icon'] as IconData,
+              stats[index]['color'] as Color,
+              stats[index]['trend'] as String,
+              stats[index]['trendUp'] as bool,
+              stats[index]['onTap'] as VoidCallback,
+            ),
+          );
+        });
+      },
+    ),
+  );
+}
+
+// Update your _buildEnhancedStatCard method to include tap functionality
+
+Widget _buildEnhancedStatCard(
+  String title,
+  String value,
+  IconData icon,
+  Color color,
+  String trend,
+  bool trendUp,
+  VoidCallback onTap,
+) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(16),
+    child: Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -180,8 +192,9 @@ class CustomerManagementScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildAdvancedSearchAndFilters() {
     return Container(
@@ -490,7 +503,7 @@ class CustomerManagementScreen extends StatelessWidget {
           /// Right Section: Details
           Expanded(
             child: InkWell(
-              onTap: () => Get.toNamed(AppRoutes.customerDetails),
+              onTap: () => Get.toNamed(AppRoutes.customerCardView),
               borderRadius: BorderRadius.circular(16),
               child: Row(
                 children: [
@@ -868,7 +881,7 @@ class CustomerManagementScreen extends StatelessWidget {
           labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           backgroundColor: Color(0xFF6C5CE7),
           foregroundColor: Colors.white,
-          onTap: () => print('Add Customer'),
+          onTap: () => Get.toNamed(AppRoutes.addCustomer),
         ),
         SpeedDialChild(
           child: Icon(Icons.edit_outlined, size: 24),
@@ -906,3 +919,7 @@ class CustomerManagementScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+

@@ -1,40 +1,6 @@
-class InventoryResponse {
-  final String status;
-  final String message;
-  final int statusCode;
-  final List<InventoryItem> payload;
-
-  InventoryResponse({
-    required this.status,
-    required this.message,
-    required this.statusCode,
-    required this.payload,
-  });
-
-  factory InventoryResponse.fromJson(Map<String, dynamic> json) {
-    return InventoryResponse(
-      status: json['status'] ?? '',
-      message: json['message'] ?? '',
-      statusCode: json['statusCode'] ?? 0,
-      payload: (json['payload'] as List<dynamic>)
-          .map((item) => InventoryItem.fromJson(item))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'message': message,
-      'statusCode': statusCode,
-      'payload': payload.map((e) => e.toJson()).toList(),
-    };
-  }
-}
-
-
 class InventoryItem {
   final int id;
+  final String itemCategory;
   final String logo;
   final String model;
   final String ram;
@@ -43,13 +9,14 @@ class InventoryItem {
   final double sellingPrice;
   final int quantity;
   final String company;
-
-  // Optional fields
   final String? shopId;
   final DateTime? createdDate;
+  final String? description;
+  final int? lowStockQty;
 
   InventoryItem({
     required this.id,
+    required this.itemCategory,
     required this.logo,
     required this.model,
     required this.ram,
@@ -60,11 +27,14 @@ class InventoryItem {
     required this.company,
     this.shopId,
     this.createdDate,
+    this.description,
+    this.lowStockQty,
   });
 
   factory InventoryItem.fromJson(Map<String, dynamic> json) {
     return InventoryItem(
       id: json['id'],
+      itemCategory: json['itemCategory'] ?? '',
       logo: json['logo'] ?? '',
       model: json['model'] ?? '',
       ram: "${json['ram'] ?? ''}",
@@ -74,29 +44,16 @@ class InventoryItem {
       quantity: json['qty'] ?? 0,
       company: json['company'] ?? '',
       shopId: json['shopId'],
-      createdDate:
-          (() {
-            final date = json['createdDate'];
-            if (date is List &&
-                date.length >= 5 &&
-                date.every(
-                  (e) => e is int || int.tryParse(e.toString()) != null,
-                )) {
-              final year = int.parse(date[0].toString());
-              final month = int.parse(date[1].toString());
-              final day = int.parse(date[2].toString());
-              final hour = int.parse(date[3].toString());
-              final minute = int.parse(date[4].toString());
-              return DateTime(year, month, day, hour, minute);
-            }
-            return null;
-          })(),
+      createdDate: _parseDate(json['createdDate']),
+      description: json['description'],
+      lowStockQty: json['lowStockQty'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'itemCategory': itemCategory,
       'logo': logo,
       'model': model,
       'ram': ram,
@@ -113,7 +70,30 @@ class InventoryItem {
           createdDate!.day,
           createdDate!.hour,
           createdDate!.minute,
+          createdDate!.second,
+          createdDate!.microsecond * 1000,
         ],
+      if (description != null) 'description': description,
+      if (lowStockQty != null) 'lowStockQty': lowStockQty,
     };
+  }
+
+  static DateTime? _parseDate(dynamic date) {
+    if (date is List && date.length >= 5) {
+      try {
+        return DateTime(
+          int.parse(date[0].toString()),
+          int.parse(date[1].toString()),
+          int.parse(date[2].toString()),
+          int.parse(date[3].toString()),
+          int.parse(date[4].toString()),
+          date.length > 5 ? int.parse(date[5].toString()) : 0,
+          date.length > 6 ? (int.parse(date[6].toString()) ~/ 1000) : 0,
+        );
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
   }
 }

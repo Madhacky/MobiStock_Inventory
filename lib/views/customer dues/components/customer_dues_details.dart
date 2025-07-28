@@ -5,49 +5,193 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
-import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
+import 'package:smartbecho/models/customer%20dues%20management/customer_due_detail_model.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
+import 'package:smartbecho/services/whatsapp_chat_launcher.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/show_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CustomerDueDetailsScreen extends StatelessWidget {
-  final CustomerDue due;
+class CustomerDueDetailsScreen extends StatefulWidget {
+  final int dueId;
 
-  CustomerDueDetailsScreen({required this.due});
+  CustomerDueDetailsScreen({required this.dueId});
+
+  @override
+  _CustomerDueDetailsScreenState createState() =>
+      _CustomerDueDetailsScreenState();
+}
+
+class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
+  late CustomerDuesController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<CustomerDuesController>();
+    // Fetch customer due details when screen loads
+    controller.fetchCustomerDueDetails(widget.dueId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<CustomerDuesController>();
-    log(due.partialPayments.length.toString());
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              _buildCustomAppBar(),
-              _buildCustomerHeaderCard(),
-              _buildQuickActionButtons(),
-              _buildSummaryCards(),
-              _buildPaymentProgressCard(),
-              _buildAmountDetailsCard(),
-              if (due.partialPayments.isNotEmpty) _buildPaymentHistorySection(),
-              _buildActionButtons(controller),
-              SizedBox(height: 100), // Space for floating action button
-            ],
-          ),
-        ),
+        child: Obx(() {
+          if (controller.isDetailsLoading.value) {
+            return _buildLoadingState();
+          }
+
+          if (controller.hasDetailsError.value) {
+            return _buildErrorState();
+          }
+
+          if (controller.customerDueDetails.value == null) {
+            return _buildEmptyState();
+          }
+
+          final dueDetails = controller.customerDueDetails.value!;
+          return _buildContent(dueDetails);
+        }),
       ),
-      floatingActionButton:
-          due.remainingDue > 0 ? _buildFloatingActionButton(controller) : null,
     );
   }
 
-  Widget _buildCustomAppBar() {
-    return buildCustomAppBar(due.name, isdark: true);
+  Widget _buildLoadingState() {
+    return Column(
+      children: [
+        buildCustomAppBar('Loading...', isdark: true),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: Color(0xFF6C5CE7),
+                  strokeWidth: 3,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Loading customer details...',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _buildCustomerHeaderCard() {
+  Widget _buildErrorState() {
+    return Column(
+      children: [
+        buildCustomAppBar('Error', isdark: true),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
+                SizedBox(height: 16),
+                Text(
+                  'Failed to load customer details',
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  controller.detailsErrorMessage.value,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed:
+                      () => controller.fetchCustomerDueDetails(widget.dueId),
+                  icon: Icon(Icons.refresh, color: Colors.white),
+                  label: Text('Retry', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF6C5CE7),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Column(
+      children: [
+        buildCustomAppBar('Not Found', isdark: true),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                SizedBox(height: 16),
+                Text(
+                  'Customer details not found',
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'The requested customer due details could not be found.',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent(CustomerDueDetailsModel dueDetails) {
+    return RefreshIndicator(
+      onRefresh: () => controller.fetchCustomerDueDetails(widget.dueId),
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            _buildCustomAppBar(dueDetails.customer.name),
+            _buildCustomerHeaderCard(dueDetails),
+            _buildQuickActionButtons(dueDetails),
+            _buildSummaryCards(dueDetails),
+            _buildPaymentProgressCard(dueDetails),
+            _buildAmountDetailsCard(dueDetails),
+            _buildCustomerInfoCard(dueDetails),
+            if (dueDetails.partialPayments.isNotEmpty)
+              _buildPaymentHistorySection(dueDetails),
+            _buildActionButtons(dueDetails),
+            SizedBox(height: 100), // Space for floating action button
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomAppBar(String title) {
+    return buildCustomAppBar(title, isdark: true);
+  }
+
+  Widget _buildCustomerHeaderCard(CustomerDueDetailsModel dueDetails) {
     return Container(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(20),
@@ -80,7 +224,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    _getInitials(due.name),
+                    _getInitials(dueDetails.customer.name),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -95,7 +239,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      due.name,
+                      dueDetails.customer.name,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -104,21 +248,21 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      'Sale ID: #${due.saleId}',
+                      'Due ID: #${dueDetails.duesId}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 14,
                       ),
                     ),
                     Text(
-                      'Customer ID: ${due.customerId}',
+                      'Customer ID: ${dueDetails.customer.id}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 14,
                       ),
                     ),
                     Text(
-                      'Date: ${_formatDate(due.creationDate)}',
+                      'Date: ${_formatDate(dueDetails.creationDateTime)}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 14,
@@ -127,7 +271,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              _buildStatusBadge(),
+              _buildStatusBadge(dueDetails),
             ],
           ),
         ],
@@ -135,14 +279,14 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(CustomerDueDetailsModel dueDetails) {
     Color badgeColor;
     String statusText;
 
-    if (due.isOverpaid) {
+    if (dueDetails.isOverpaid) {
       badgeColor = Colors.green[300]!;
       statusText = 'OVERPAID';
-    } else if (due.isFullyPaid) {
+    } else if (dueDetails.isFullyPaid) {
       badgeColor = Colors.green[400]!;
       statusText = 'PAID';
     } else {
@@ -168,7 +312,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionButtons() {
+  Widget _buildQuickActionButtons(CustomerDueDetailsModel dueDetails) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -178,7 +322,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               icon: Icons.call,
               label: 'Call',
               color: Color(0xFF4CAF50),
-              onTap: () => _makePhoneCall(),
+              onTap: () => _makePhoneCall(dueDetails.customer.primaryPhone),
             ),
           ),
           SizedBox(width: 12),
@@ -187,7 +331,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               icon: Icons.message,
               label: 'WhatsApp',
               color: Color(0xFF25D366),
-              onTap: () => _openWhatsApp(),
+              onTap: () => _openWhatsApp(dueDetails),
             ),
           ),
           SizedBox(width: 12),
@@ -196,7 +340,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               icon: Icons.share,
               label: 'Share',
               color: Color(0xFF2196F3),
-              onTap: () => _shareDetails(),
+              onTap: () => _shareDetails(dueDetails),
             ),
           ),
         ],
@@ -251,9 +395,9 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCards() {
+  Widget _buildSummaryCards(CustomerDueDetailsModel dueDetails) {
     return Container(
-      height: 130,
+      height: 140,
       margin: EdgeInsets.symmetric(vertical: 8),
       child: ListView(
         scrollDirection: Axis.horizontal,
@@ -261,25 +405,25 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         children: [
           _buildSummaryCard(
             'Total Due',
-            '₹${_formatAmount(due.totalDue)}',
+            '₹${_formatAmount(dueDetails.totalDue)}',
             Icons.account_balance_wallet_outlined,
             Color(0xFF6C5CE7),
           ),
           _buildSummaryCard(
             'Total Paid',
-            '₹${_formatAmount(due.totalPaid)}',
+            '₹${_formatAmount(dueDetails.totalPaid)}',
             Icons.check_circle_outline,
             Color(0xFF51CF66),
           ),
           _buildSummaryCard(
             'Remaining Due',
-            '₹${_formatAmount(due.remainingDue)}',
+            '₹${_formatAmount(dueDetails.remainingDue)}',
             Icons.error_outline,
-            due.remainingDue > 0 ? Color(0xFFFF6B6B) : Color(0xFF51CF66),
+            dueDetails.remainingDue > 0 ? Color(0xFFFF6B6B) : Color(0xFF51CF66),
           ),
           _buildSummaryCard(
             'Payment\nProgress',
-            '${due.paymentProgress.toStringAsFixed(0)}%',
+            '${dueDetails.paymentProgress.toStringAsFixed(0)}%',
             Icons.trending_up_outlined,
             Color(0xFF4ECDC4),
           ),
@@ -348,8 +492,8 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentProgressCard() {
-    final progress = (due.paymentProgress / 100).clamp(0.0, 1.0);
+  Widget _buildPaymentProgressCard(CustomerDueDetailsModel dueDetails) {
+    final progress = (dueDetails.paymentProgress / 100).clamp(0.0, 1.0);
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -374,7 +518,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
             children: [
               _buildSectionHeader('Payment Progress', Icons.trending_up),
               Text(
-                '${due.paymentProgress.toStringAsFixed(1)}%',
+                '${dueDetails.paymentProgress.toStringAsFixed(1)}%',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -391,7 +535,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               minHeight: 10,
               backgroundColor: Colors.grey[200],
               valueColor: AlwaysStoppedAnimation<Color>(
-                due.isOverpaid ? Colors.green[500]! : Colors.blue[600]!,
+                dueDetails.isOverpaid ? Colors.green[500]! : Colors.blue[600]!,
               ),
             ),
           ),
@@ -400,7 +544,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAmountDetailsCard() {
+  Widget _buildAmountDetailsCard(CustomerDueDetailsModel dueDetails) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -422,16 +566,22 @@ class CustomerDueDetailsScreen extends StatelessWidget {
           children: [
             _buildSectionHeader('Amount Details', Icons.account_balance),
             SizedBox(height: 16),
-            _buildAmountRow('Total Due', due.totalDue, Colors.red[600]!),
+            _buildAmountRow('Total Due', dueDetails.totalDue, Colors.red[600]!),
             SizedBox(height: 12),
-            _buildAmountRow('Total Paid', due.totalPaid, Colors.green[600]!),
+            _buildAmountRow(
+              'Total Paid',
+              dueDetails.totalPaid,
+              Colors.green[600]!,
+            ),
             SizedBox(height: 12),
             Divider(thickness: 1),
             SizedBox(height: 12),
             _buildAmountRow(
               'Remaining Due',
-              due.remainingDue,
-              due.remainingDue > 0 ? Colors.orange[600]! : Colors.green[600]!,
+              dueDetails.remainingDue,
+              dueDetails.remainingDue > 0
+                  ? Colors.orange[600]!
+                  : Colors.green[600]!,
               isTotal: true,
             ),
           ],
@@ -440,36 +590,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAmountRow(
-    String label,
-    double amount,
-    Color color, {
-    bool isTotal = false,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: isTotal ? 16 : 15,
-            fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
-            color: Color(0xFF475569),
-          ),
-        ),
-        Text(
-          '₹${_formatAmount(amount)}',
-          style: TextStyle(
-            fontSize: isTotal ? 20 : 16,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPaymentHistorySection() {
+  Widget _buildCustomerInfoCard(CustomerDueDetailsModel dueDetails) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -489,68 +610,79 @@ class CustomerDueDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildSectionHeader('Payment History', Icons.payment),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${due.partialPayments.length} payments',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue[700],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _buildSectionHeader('Customer Information', Icons.person),
             SizedBox(height: 16),
-            // Constrained height container for scrollable payment history
-            Container(
-              height: due.partialPayments.length > 3 ? 280 : null,
-              child: ListView.separated(
-                shrinkWrap: true,
-                physics:
-                    due.partialPayments.length > 3
-                        ? AlwaysScrollableScrollPhysics()
-                        : NeverScrollableScrollPhysics(),
-                itemCount: due.partialPayments.length,
-                separatorBuilder: (context, index) => SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final payment = due.partialPayments[index];
-                  return _buildPaymentHistoryItem(payment, index);
-                },
+            _buildInfoRow('Name', dueDetails.customer.name),
+            SizedBox(height: 12),
+            _buildInfoRow('Email', dueDetails.customer.email),
+            SizedBox(height: 12),
+            _buildInfoRow('Phone', dueDetails.customer.primaryPhone),
+            SizedBox(height: 12),
+            _buildInfoRow('Address', dueDetails.customer.primaryAddress),
+            SizedBox(height: 12),
+            _buildInfoRow('Location', dueDetails.customer.location),
+            if (dueDetails.customer.alternatePhones.isNotEmpty) ...[
+              SizedBox(height: 12),
+              _buildInfoRow(
+                'Alternate Phones',
+                dueDetails.customer.alternatePhones.join(', '),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPaymentHistoryItem(PartialPayment payment, int index) {
+  Widget _buildPaymentHistorySection(CustomerDueDetailsModel dueDetails) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader('Payment History', Icons.history),
+            SizedBox(height: 16),
+            ...dueDetails.partialPayments
+                .map((payment) => _buildPaymentHistoryItem(payment))
+                .toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentHistoryItem(PartialPaymentDetail payment) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.green[50],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Colors.green[200]!),
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xFF51CF66).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.green[100],
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.payment, color: Color(0xFF51CF66), size: 18),
+            child: Icon(Icons.check_circle, color: Colors.green[600], size: 20),
           ),
           SizedBox(width: 12),
           Expanded(
@@ -558,114 +690,88 @@ class CustomerDueDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Payment #${index + 1}',
+                  '₹${_formatAmount(payment.paidAmount)}',
                   style: TextStyle(
-                    color: Colors.black87,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: Colors.green[700],
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'ID: ${payment.id}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-                Text(
-                  _formatDate(payment.paidDate),
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  'Paid on ${_formatDate(payment.paidDateTime)}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '₹${_formatAmount(payment.paidAmount)}',
-                style: TextStyle(
-                  color: Color(0xFF51CF66),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 4),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Color(0xFF51CF66).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFF51CF66).withOpacity(0.3)),
-                ),
-                child: Text(
-                  'Paid',
-                  style: TextStyle(
-                    color: Color(0xFF51CF66),
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons(CustomerDuesController controller) {
+  Widget _buildActionButtons(CustomerDueDetailsModel dueDetails) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Container(
-              height: 50,
+          if (dueDetails.remainingDue > 0) ...[
+            SizedBox(
+              width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed:
-                    due.remainingDue > 0 ? () => _showAddPaymentDialog(controller) : null,
-                icon: Icon(Icons.payment, color: Colors.white, size: 20),
+                onPressed: () => _showAddPaymentDialog(dueDetails),
+                icon: Icon(Icons.add_circle_outline, color: Colors.white),
                 label: Text(
                   'Add Payment',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      due.remainingDue > 0 ? Color(0xFF6C5CE7) : Colors.grey,
+                  backgroundColor: Color(0xFF6C5CE7),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              height: 50,
-              child: OutlinedButton.icon(
-                onPressed: () => _generateInvoice(),
-                icon: Icon(
-                  Icons.receipt_long,
-                  color: Color(0xFF6C5CE7),
-                  size: 20,
-                ),
-                label: Text(
-                  'Generate Invoice',
-                  style: TextStyle(
-                    color: Color(0xFF6C5CE7),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Color(0xFF6C5CE7), width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+            SizedBox(height: 12),
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: ElevatedButton.icon(
+            //     onPressed: () => _showMarkAsPaidDialog(dueDetails),
+            //     icon: Icon(Icons.check_circle_outline, color: Colors.white),
+            //     label: Text(
+            //       'Mark as Paid',
+            //       style: TextStyle(color: Colors.white, fontSize: 16),
+            //     ),
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: Color(0xFF51CF66),
+            //       padding: EdgeInsets.symmetric(vertical: 16),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+          ],
+          SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showNotifyDialog(dueDetails),
+              icon: Icon(
+                Icons.notifications_outlined,
+                color: Color(0xFF6C5CE7),
+              ),
+              label: Text(
+                'Send Reminder',
+                style: TextStyle(color: Color(0xFF6C5CE7), fontSize: 16),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Color(0xFF6C5CE7)),
+                padding: EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
@@ -675,18 +781,7 @@ class CustomerDueDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFloatingActionButton(CustomerDuesController controller) {
-    return FloatingActionButton.extended(
-      onPressed: () => _showAddPaymentDialog(controller),
-      backgroundColor: Color(0xFF6C5CE7),
-      icon: Icon(Icons.payment, color: Colors.white),
-      label: Text(
-        'Add Payment',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
+  // Helper widgets
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
       children: [
@@ -696,243 +791,263 @@ class CustomerDueDetailsScreen extends StatelessWidget {
             color: Color(0xFF6C5CE7).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Color(0xFF6C5CE7), size: 18),
+          child: Icon(icon, color: Color(0xFF6C5CE7), size: 20),
         ),
         SizedBox(width: 12),
         Text(
           title,
           style: TextStyle(
-            color: Colors.black87,
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
       ],
     );
   }
 
-  // Helper Methods
-  String _getInitials(String name) {
-    List<String> parts = name.split(' ');
-    if (parts.length >= 2) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    } else if (parts.length == 1) {
-      return parts[0].length >= 2
-          ? parts[0].substring(0, 2).toUpperCase()
-          : parts[0][0].toUpperCase();
-    }
-    return 'UN';
-  }
-
-  String _formatDate(String dateString) {
-    try {
-      final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd, yyyy').format(date);
-    } catch (e) {
-      return dateString;
-    }
-  }
-
-  String _formatAmount(double amount) {
-    return NumberFormat('#,##,###.##').format(amount);
-  }
-
-  // Action Methods
-  void _shareDetails() {
-    Get.snackbar(
-      'Share',
-      'Sharing customer due details...',
-      backgroundColor: Color(0xFF6C5CE7),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      borderRadius: 8,
-      margin: EdgeInsets.all(16),
-    );
-  }
-
-  void _generateInvoice() {
-    Get.snackbar(
-      'Invoice',
-      'Generating invoice for ${due.name}...',
-      backgroundColor: Color(0xFF4ECDC4),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      borderRadius: 8,
-      margin: EdgeInsets.all(16),
-    );
-  }
-
-  void _makePhoneCall() async {
-    // Replace with actual phone number from your model
-    final phoneNumber = 'tel:+1234567890'; // due.phoneNumber
-    if (await canLaunch(phoneNumber)) {
-      await launch(phoneNumber);
-    } else {
-      Get.snackbar(
-        'Error',
-        'Could not make phone call',
-        backgroundColor: Color(0xFFFF6B6B),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        borderRadius: 8,
-        margin: EdgeInsets.all(16),
-      );
-    }
-  }
-
-  void _openWhatsApp() async {
-    // Replace with actual phone number from your model
-    final phoneNumber = '+1234567890'; // due.phoneNumber
-    final message =
-        'Hello ${due.name}, regarding your payment due of ₹${_formatAmount(due.remainingDue)}';
-    final whatsappUrl =
-        'whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}';
-
-    if (await canLaunch(whatsappUrl)) {
-      await launch(whatsappUrl);
-    } else {
-      Get.snackbar(
-        'Error',
-        'WhatsApp is not installed on this device',
-        backgroundColor: Color(0xFFFF6B6B),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        borderRadius: 8,
-        margin: EdgeInsets.all(16),
-      );
-    }
-  }
-
-  void _showAddPaymentDialog(CustomerDuesController controller) {
-    if (due.remainingDue <= 0) return;
-
-    TextEditingController amountController = TextEditingController();
-    String selectedMethod = 'Cash';
-
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Add Payment',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+  Widget _buildAmountRow(
+    String label,
+    double amount,
+    Color color, {
+    bool isTotal = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isTotal ? 16 : 14,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
+            color: Colors.grey[700],
+          ),
         ),
-        content: StatefulBuilder(
-          builder: (context, setState) {
-            return Column(
+        Text(
+          '₹${_formatAmount(amount)}',
+          style: TextStyle(
+            fontSize: isTotal ? 18 : 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            value.isEmpty ? 'N/A' : value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Dialog methods
+  void _showAddPaymentDialog(CustomerDueDetailsModel dueDetails) {
+    final TextEditingController amountController = TextEditingController();
+    String selectedPaymentMode = 'CASH';
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Add Payment'),
+            content: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Customer: ${due.name}',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Due ID: ${due.id}',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Remaining Due: ₹${_formatAmount(due.remainingDue)}',
-                  style: TextStyle(color: Colors.grey[600]),
+                  'Remaining Due: ₹${_formatAmount(dueDetails.remainingDue)}',
                 ),
                 SizedBox(height: 16),
                 TextField(
                   controller: amountController,
                   keyboardType: TextInputType.number,
-                  style: TextStyle(color: Colors.black87),
                   decoration: InputDecoration(
                     labelText: 'Payment Amount',
-                    labelStyle: TextStyle(color: Colors.grey[600]),
+                    prefixText: '₹',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Colors.grey.withOpacity(0.3),
-                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Color(0xFF6C5CE7)),
-                    ),
-                    prefixText: '₹',
-                    prefixStyle: TextStyle(color: Colors.black87),
                   ),
                 ),
                 SizedBox(height: 16),
-                // DropdownButtonFormField<String>(
-                //   value: selectedMethod,
-                //   style: TextStyle(color: Colors.black87),
-                //   decoration: InputDecoration(
-                //     labelText: 'Payment Method',
-                //     labelStyle: TextStyle(color: Colors.grey[600]),
-                //     border: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //       borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
-                //     ),
-                //     focusedBorder: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //       borderSide: BorderSide(color: Color(0xFF6C5CE7)),
-                //     ),
-                //   ),
-                //   items: ['Cash', 'UPI', 'Card', 'Bank Transfer']
-                //       .map((method) => DropdownMenuItem(
-                //             value: method,
-                //             child: Text(method, style: TextStyle(color: Colors.black87)),
-                //           ))
-                //       .toList(),
-                //   onChanged: (value) {
-                //     setState(() {
-                //       selectedMethod = value!;
-                //     });
-                //   },
-                // ),
+                DropdownButtonFormField<String>(
+                  value: selectedPaymentMode,
+                  decoration: InputDecoration(
+                    labelText: 'Payment Mode',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  items:
+                      ['CASH', 'BANK CARD', 'UPI', 'BANK TRANSFER'].map((mode) {
+                        return DropdownMenuItem(
+                          value: mode,
+                          child: Text(mode.replaceAll('_', ' ')),
+                        );
+                      }).toList(),
+                  onChanged: (value) {
+                    selectedPaymentMode = value!;
+                  },
+                ),
               ],
-            );
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
-          ),
-          Obx(
-            () => ElevatedButton(
-              onPressed: () {
-                double amount = double.tryParse(amountController.text) ?? 0;
-                if (amount > 0 && amount <= due.remainingDue) {
-                  controller.addPartialPayment(due.saleId, amount);
-                } else {
-                  Get.snackbar(
-                    'Invalid Amount',
-                    'Please enter a valid amount (max ₹${_formatAmount(due.remainingDue)})',
-                    backgroundColor: Color(0xFFFF6B6B),
-                    colorText: Colors.white,
-                    snackPosition: SnackPosition.BOTTOM,
-                    borderRadius: 8,
-                    margin: EdgeInsets.all(16),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF6C5CE7),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel'),
+              ),
+              Obx(
+                () => ElevatedButton(
+                  onPressed:
+                      controller.isPartialAddedloading.value
+                          ? null
+                          : () async {
+                            final amount = double.tryParse(
+                              amountController.text,
+                            );
+                            if (amount != null && amount > 0) {
+                              await controller.addPartialPayment(
+                                dueDetails.duesId,
+                                amount,
+                                selectedPaymentMode,
+                              );
+                              Navigator.pop(context);
+                              // Refresh the details
+                              controller.fetchCustomerDueDetails(widget.dueId);
+                            }
+                          },
+                  child:
+                      controller.isPartialAddedloading.value
+                          ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : Text('Add Payment'),
                 ),
               ),
-              child:
-                  controller.isPartialAddedloading.value
-                      ? Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      )
-                      : Text(
-                        'Record Payment',
-                        style: TextStyle(color: Colors.white),
-                      ),
-            ),
+            ],
           ),
-        ],
-      ),
     );
+  }
+
+  
+
+  void _showNotifyDialog(CustomerDueDetailsModel dueDetails) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Send Reminder'),
+            content: Text(
+              'Send payment reminder to ${dueDetails.customer.name}?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await controller.notifyCustomer(
+                    dueDetails.customer.id,
+                    dueDetails.customer.name,
+                  );
+                  Navigator.pop(context);
+                },
+                child: Text('Send Reminder'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  // Action methods
+  void _makePhoneCall(String phoneNumber) {
+    controller.callCustomer(phoneNumber);
+  }
+
+  void _openWhatsApp(CustomerDueDetailsModel customerDue) async {
+    final businessName = await SharedPreferencesHelper.getShopStoreName();
+
+    // bool success = await WhatsAppService.openWhatsAppWithFallback(
+    //     phoneNumber: phoneNumber,
+    //     message: "hi"
+    //   );
+    bool success = await WhatsAppService.sendDueMessage(
+      customerDue: customerDue,
+      businessName: businessName ?? "N/A",
+      detailed: true,
+    );
+
+    if (success) {
+      print('WhatsApp opened successfully');
+    } else {
+      print('Failed to open WhatsApp');
+    }
+  }
+
+  void _shareDetails(CustomerDueDetailsModel dueDetails) {
+    final String shareText = '''
+Payment Details:
+Customer: ${dueDetails.customer.name}
+Due ID: #${dueDetails.duesId}
+Total Due: ₹${_formatAmount(dueDetails.totalDue)}
+Total Paid: ₹${_formatAmount(dueDetails.totalPaid)}
+Remaining Due: ₹${_formatAmount(dueDetails.remainingDue)}
+''';
+
+    Clipboard.setData(ClipboardData(text: shareText));
+    Get.snackbar(
+      'Success',
+      'Details copied to clipboard',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green.withOpacity(0.8),
+      colorText: Colors.white,
+    );
+  }
+
+  // Helper methods
+  String _getInitials(String name) {
+    List<String> nameParts = name.split(' ');
+    if (nameParts.length >= 2) {
+      return '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
+    } else if (nameParts.isNotEmpty) {
+      return nameParts[0][0].toUpperCase();
+    }
+    return 'U';
+  }
+
+  String _formatAmount(double amount) {
+    final formatter = NumberFormat('#,##,###');
+    return formatter.format(amount);
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
   }
 }

@@ -1,4 +1,5 @@
 class BillItem {
+  final String itemCategory;
   final String shopId;
   final String model;
   final double sellingPrice;
@@ -8,9 +9,12 @@ class BillItem {
   final int qty;
   final String company;
   final String logo;
+  final List<int> createdDate;
+  final String? description;
   final int billMobileItem;
 
   BillItem({
+    required this.itemCategory,
     required this.shopId,
     required this.model,
     required this.sellingPrice,
@@ -20,11 +24,14 @@ class BillItem {
     required this.qty,
     required this.company,
     required this.logo,
+    required this.createdDate,
+    this.description,
     required this.billMobileItem,
   });
 
   factory BillItem.fromJson(Map<String, dynamic> json) {
     return BillItem(
+      itemCategory: json['itemCategory'] ?? '',
       shopId: json['shopId'] ?? '',
       model: json['model'] ?? '',
       sellingPrice: (json['sellingPrice'] ?? 0).toDouble(),
@@ -34,6 +41,8 @@ class BillItem {
       qty: json['qty'] ?? 0,
       company: json['company'] ?? '',
       logo: json['logo'] ?? '',
+      createdDate: List<int>.from(json['createdDate'] ?? []),
+      description: json['description'],
       billMobileItem: json['billMobileItem'] ?? 0,
     );
   }
@@ -52,7 +61,7 @@ class Bill {
   final double gst;
   final double dues;
   final List<BillItem> items;
-  final bool paid;
+  final bool isPaid;
   final String? invoice;
 
   Bill({
@@ -65,7 +74,7 @@ class Bill {
     required this.gst,
     required this.dues,
     required this.items,
-    required this.paid,
+    required this.isPaid,
     this.invoice,
   });
 
@@ -83,7 +92,7 @@ class Bill {
               ?.map((item) => BillItem.fromJson(item))
               .toList() ??
           [],
-      paid: json['paid'] ?? false,
+      isPaid: json['isPaid'] ?? false,
       invoice: json['invoice'],
     );
   }
@@ -97,38 +106,49 @@ class Bill {
 
   String get formattedAmount => '₹${amount.toStringAsFixed(0)}';
   String get formattedDues => '₹${dues.toStringAsFixed(0)}';
-  String get formattedGst => '₹${gst.toStringAsFixed(0)}';
+  String get formattedGst => '${gst.toStringAsFixed(0)}%';
+  String get formattedWithoutGst => '₹${withoutGst.toStringAsFixed(0)}';
   
-  String get status => paid ? 'Paid' : 'Pending';
+  String get status => isPaid ? 'Paid' : 'Pending';
+  bool get paid => isPaid;
   
   int get totalItems => items.fold(0, (sum, item) => sum + item.qty);
 }
 
 class BillsResponse {
-  final List<Bill> content;
-  final int totalElements;
+  final double totalAmount;
+  final int totalQty;
   final int totalPages;
-  final bool last;
-  final bool first;
+  final List<Bill> bills;
+  final int currentPage;
+  final int totalElements;
 
   BillsResponse({
-    required this.content,
-    required this.totalElements,
+    required this.totalAmount,
+    required this.totalQty,
     required this.totalPages,
-    required this.last,
-    required this.first,
+    required this.bills,
+    required this.currentPage,
+    required this.totalElements,
   });
 
   factory BillsResponse.fromJson(Map<String, dynamic> json) {
+    final payload = json['payload'] ?? {};
+    
     return BillsResponse(
-      content: (json['content'] as List<dynamic>?)
+      totalAmount: (payload['totalAmount'] ?? 0).toDouble(),
+      totalQty: payload['totalQty'] ?? 0,
+      totalPages: payload['totalPages'] ?? 0,
+      bills: (payload['bills'] as List<dynamic>?)
               ?.map((bill) => Bill.fromJson(bill))
               .toList() ??
           [],
-      totalElements: json['totalElements'] ?? 0,
-      totalPages: json['totalPages'] ?? 0,
-      last: json['last'] ?? false,
-      first: json['first'] ?? false,
+      currentPage: payload['currentPage'] ?? 0,
+      totalElements: payload['totalElements'] ?? 0,
     );
   }
+
+  List<Bill> get content => bills;
+  bool get last => currentPage >= (totalPages - 1);
+  bool get first => currentPage == 0;
 }

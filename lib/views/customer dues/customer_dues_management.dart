@@ -4,6 +4,7 @@ import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_du
 import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/show_network_image.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_dues_details.dart';
 
 class CustomerDuesManagementScreen extends StatefulWidget {
@@ -82,7 +83,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
       height: 120,
       margin: EdgeInsets.symmetric(vertical: 8),
       child: Obx(() {
-        if (controller.summaryData.value == null) {
+        if (controller.isSummaryDataLoading.value == true) {
           return _buildSummaryCardsShimmer();
         }
 
@@ -111,14 +112,14 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               Color(0xFFFF6B6B),
             ),
             _buildSummaryCard(
-              'This Month\n₹${_formatAmount(summary.thisMonthCollection)}',
-              '${summary.totalCustomers} Customers',
+              'This Month\n',
+              '₹${_formatAmount(summary.thisMonthCollection)}',
               Icons.calendar_today_outlined,
               Color(0xFF4ECDC4),
             ),
             _buildSummaryCard(
+              'Tap to see',
               'Today\'s\nRetrieval',
-              '${controller.paidCustomersCount} Customers',
               Icons.people_outline,
               Color(0xFFFF9500),
               onTap: () => Get.toNamed(AppRoutes.todaysRetrievalDues),
@@ -515,10 +516,11 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.grey[200],
-                  // backgroundImage: customer.profileUrl != null 
-                  //     ? NetworkImage(customer.profileUrl!) 
-                  //     : null,
-                  child: Icon(Icons.person, color: Colors.grey[600]),
+                  child: customer.profileUrl != null 
+                      ? cachedImage(customer.profileUrl!) 
+                      : Icon(Icons.person, color: Colors.grey[600]),
+                      
+                 // child: Icon(Icons.person, color: Colors.grey[600]),
                   
                   //  customer.profileUrl == null
                   //     ? Icon(Icons.person, color: Colors.grey[600])

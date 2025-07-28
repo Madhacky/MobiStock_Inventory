@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 class GenericBarChart extends StatelessWidget {
@@ -348,8 +349,8 @@ class _GenericPieChartState extends State<GenericPieChart> {
           const SizedBox(height: 20),
           _buildChart(pieData),
           if (widget.showLegend) ...[
-            const SizedBox(height: 20),
-            _buildLegend(pieData),
+          //  const SizedBox(height: 20),
+          //  _buildLegend(pieData),
           ],
         ],
       ),
@@ -388,7 +389,7 @@ class _GenericPieChartState extends State<GenericPieChart> {
 
   Widget _buildChart(List<PieChartDataModel> pieData) {
     return SizedBox(
-      height: widget.chartRadius * 2 + 40,
+      height: widget.chartRadius * 3 + 60,
       child: PieChart(
         PieChartData(
           pieTouchData: PieTouchData(
@@ -407,7 +408,7 @@ class _GenericPieChartState extends State<GenericPieChart> {
           ),
           borderData: FlBorderData(show: false),
           sectionsSpace: 2,
-          centerSpaceRadius: 0,
+          centerSpaceRadius: 60,
           sections: _buildPieSections(pieData),
         ),
       ),
@@ -516,7 +517,7 @@ enum ChartLineDataType { revenue, users, orders, calories, steps, temperature }
 
 class GenericLineChart extends StatelessWidget {
   final String title;
-  final Map<String, double> payload;
+  final RxMap<String, double> payload;
   final double screenWidth;
   final bool isSmallScreen;
   final double chartHeight;
@@ -776,37 +777,6 @@ class GenericLineChart extends StatelessWidget {
       default:
         return value.toStringAsFixed(1);
     }
-  }
-}
-
-// Usage example:
-class LineChartExample extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final sampleData = {
-      'Mon': 1200.0,
-      'Tue': 1800.0,
-      'Wed': 1500.0,
-      'Thu': 2200.0,
-      'Fri': 1900.0,
-      'Sat': 2500.0,
-      'Sun': 1700.0,
-    };
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Line Chart Example')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GenericLineChart(
-          title: 'Weekly Calorie Consumption',
-          payload: sampleData,
-          screenWidth: MediaQuery.of(context).size.width,
-          isSmallScreen: MediaQuery.of(context).size.width < 600,
-          dataType: ChartLineDataType.calories,
-          chartHeight: 300,
-        ),
-      ),
-    );
   }
 }
 
