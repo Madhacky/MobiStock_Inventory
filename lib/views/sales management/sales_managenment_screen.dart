@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/sales%20hisrory%20controllers/sales_history_comtroller.dart';
@@ -6,6 +8,8 @@ import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/generic_charts.dart';
+import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
 
 class SalesManagementScreen extends GetView<SalesManagementController> {
   const SalesManagementScreen({Key? key}) : super(key: key);
@@ -37,12 +41,18 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-  onPressed: () => Get.toNamed('/sell-product'),
-  backgroundColor: Color(0xFF6C5CE7),
-  icon: Icon(Icons.add, color: Colors.white),
-  label: Text("Sell Product", style: AppStyles.custom(color: AppTheme.cardLight,size: 15,weight: FontWeight.bold)),
-),
-
+        onPressed: () => Get.toNamed('/sell-product'),
+        backgroundColor: Color(0xFF6C5CE7),
+        icon: Icon(Icons.add, color: Colors.white),
+        label: Text(
+          "Sell Product",
+          style: AppStyles.custom(
+            color: AppTheme.cardLight,
+            size: 15,
+            weight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 
@@ -93,7 +103,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected ? Color(0xFF6C5CE7): Colors.transparent,
+            color: isSelected ? Color(0xFF6C5CE7) : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -692,9 +702,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ),
             ],
           ),
-    
+
           SizedBox(height: 12),
-    
+
           // Invoice number
           Text(
             '#${sale.invoiceNumber}',
@@ -706,9 +716,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-    
+
           SizedBox(height: 6),
-    
+
           // Customer name
           Text(
             sale.customerName,
@@ -719,9 +729,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-    
+
           SizedBox(height: 4),
-    
+
           // Company and model
           Row(
             children: [
@@ -747,9 +757,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ),
             ],
           ),
-    
+
           SizedBox(height: 4),
-    
+
           // Date and time
           Row(
             children: [
@@ -761,9 +771,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ),
             ],
           ),
-    
+
           Spacer(),
-    
+
           // Amount section
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -793,9 +803,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ],
             ),
           ),
-    
+
           SizedBox(height: 8),
-    
+
           // Action buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -850,14 +860,105 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         children: [
           _buildInsightsHeader(),
           SizedBox(height: 16),
+
           _buildPaymentMethodInsights(),
           SizedBox(height: 16),
           _buildCompanyInsights(),
           SizedBox(height: 16),
+          _buildInsightsOverview(),
+          SizedBox(height: 16),
+
+          _buildInsightsOverviewChart(),
+          SizedBox(height: 16),
           _buildTopCustomers(),
+          SizedBox(height: 16),
         ],
       ),
     );
+  }
+
+  Widget _buildInsightsOverviewChart() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SwitchableChartWidget(
+        payload: {
+           "Monthly Revenue": controller.totalSaleAmount,
+          //  "Monthly Revenue": controller.totalUnitsSoldGrowth,
+          //  "Monthly Revenue": controller.totalSaleAmount,
+          //   "Monthly EMI Sales": controller.totalEmiSalesAmount,  
+          //   "Monthly EMI Sales": controller.totalEmiSalesAmount,  
+        },
+        title: "Monthly Revenue Performance",
+        screenWidth: controller.screenWidth,
+        screenHeight: controller.screenHeight,
+        isSmallScreen: controller.isSmallScreen,
+        initialChartType: "barchart", // Start with bar chart
+        chartDataType: ChartDataType.revenue,
+      ),
+    );
+  }
+
+  Widget _buildInsightsOverview() {
+    return Obx(() {
+      log(controller.insightsStatsData.string);
+
+      if (controller.hasError.value &&
+          controller.insightsStatsData.value == null) {
+        return _buildErrorState();
+      }
+
+      if (controller.isLoading.value &&
+          controller.insightsStatsData.value == null) {
+        return _buildLoadingState();
+      }
+
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                _buildStatCard(
+                  'Total Revenue',
+                  controller.formattedTotalSaleAmount,
+                  Icons.shopping_cart,
+                  Color(0xFF10B981),
+                  controller.isStatsLoading.value,
+                ),
+                SizedBox(width: 12),
+                _buildStatCard(
+                  'Units Sold',
+                  controller.formattedTotalUnitsSold,
+                  Icons.phone_android,
+                  Color(0xFFF59E0B),
+                  controller.isStatsLoading.value,
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Row(
+              children: [
+                _buildStatCard(
+                  'EMI Sales',
+                  controller.formattedTotalEmiSalesAmount,
+                  Icons.credit_card,
+                  Color(0xFF8B5CF6),
+                  controller.isStatsLoading.value,
+                ),
+                SizedBox(width: 12),
+                _buildStatCard(
+                  'Avg. Sale Value',
+                  controller.formattedAverageSaleAmount,
+                  Icons.money,
+                  Color(0xFF00BAD1),
+                  controller.isStatsLoading.value,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildInsightsHeader() {
