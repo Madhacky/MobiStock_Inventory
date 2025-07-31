@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_details_model.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_history_reponse_model.dart';
+import 'package:smartbecho/models/sales%20history%20models/sales_insights_stats_model.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_stats_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
@@ -13,6 +14,13 @@ import 'dart:developer';
 import 'package:smartbecho/services/pdf_downloader_service.dart';
 
 class SalesManagementController extends GetxController {
+  
+// Utility methods
+ bool get isSmallScreen => Get.width < 360;
+  bool get isMediumScreen => Get.width >= 360 && Get.width < 400;
+  double get screenWidth => Get.width;
+  double get screenHeight => Get.height;
+
   // API service instance
   final ApiServices _apiService = ApiServices();
   final AppConfig _config = AppConfig.instance;
@@ -33,8 +41,15 @@ class SalesManagementController extends GetxController {
   final RxBool hasNextPage = true.obs;
   final RxBool isLastPage = false.obs;
 
+
+
+/// Sales Insights Data
+  
   // Stats Data
   final Rx<SalesStats?> statsData = Rx<SalesStats?>(null);
+  final Rx<SalesInsightsStatsModel?> insightsStatsData = Rx<SalesInsightsStatsModel?>(null);
+
+ 
 
   // Search and Filters
   final RxString searchQuery = ''.obs;
@@ -56,6 +71,7 @@ final RxString detailErrorMessage = ''.obs;
   void onInit() {
     super.onInit();
     fetchSalesStats();
+    fetchSalesInsights();
     fetchSalesHistory(isRefresh: true);
 
     // Listen to search changes
@@ -75,7 +91,53 @@ final RxString detailErrorMessage = ''.obs;
   // Base URLs for sales API
   String get salesHistoryUrl => 'https://backend-production-91e4.up.railway.app/api/sales/shop-history';
   String get salesStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats/today';
+  String get salesInsightsStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats';
 
+
+
+
+// Fetch sales insights from API
+ Future<void> fetchSalesInsights() async {
+    try {
+      isStatsLoading.value = true;
+
+      log("Fetching sales insights...");
+
+      final response = await _apiService.requestGetForApi(
+        url: salesInsightsStatsUrl,
+        authToken: true,
+      );
+
+      if (response != null) {
+        final statsResponse = SalesInsightsStatsModel.fromJson(response.data);
+
+       
+
+        if (statsResponse.status == "Success") {
+          
+          insightsStatsData.value = statsResponse;
+       
+
+          log("Sales insights loaded successfully");
+        } else {
+          throw Exception(statsResponse.message);
+        }
+      } else {
+        throw Exception('No stats data received from server');
+      }
+    } catch (error) {
+      log("❌ Error in fetchSalesStats: $error");
+      Get.snackbar(
+        'Error',
+        'Failed to load sales stats: $error',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
+    } finally {
+      isStatsLoading.value = false;
+    }
+  }
   // Fetch sales stats from API
   Future<void> fetchSalesStats() async {
     try {
@@ -400,4 +462,25 @@ final RxString detailErrorMessage = ''.obs;
   String get formattedUpiAmount => '₹${upiAmount.toStringAsFixed(2)}';
   String get formattedCashAmount => '₹${cashAmount.toStringAsFixed(2)}';
   String get formattedCardAmount => '₹${cardAmount.toStringAsFixed(2)}';
+
+
+  double get totalSaleAmount => insightsStatsData.value?.payload.totalSaleAmount ?? 0.0;
+  double get averageSaleAmountGrowth => insightsStatsData.value?.payload.averageSaleAmountGrowth ?? 0.0;
+  double get averageSaleAmount =>insightsStatsData.value?.payload.averageSaleAmount ?? 0.0;
+  double get totalUnitsSoldGrowth =>insightsStatsData.value?.payload.totalUnitsSoldGrowth ?? 0.0;
+     int get totalUnitsSold => insightsStatsData.value?.payload.totalUnitsSold ?? 0;
+  double get totalSaleAmountGrowth => insightsStatsData.value?.payload.totalSaleAmountGrowth ?? 0.0;
+  double get totalEmiSalesAmount => insightsStatsData.value?.payload.totalEmiSalesAmount ?? 0.0;
+  double get totalEmiSalesAmountGrowth =>insightsStatsData.value?.payload.totalEmiSalesAmountGrowth ?? 0.0;
+
+  String get formattedTotalSaleAmount => '₹${totalSaleAmount.toStringAsFixed(2)}';
+  String get formattedAverageSaleAmountGrowth => '₹${averageSaleAmountGrowth.toStringAsFixed(2)}';
+  String get formattedAverageSaleAmount => '₹${averageSaleAmount.toStringAsFixed(2)}';
+  String get formattedTotalUnitsSoldGrowth => '₹${totalUnitsSoldGrowth.toStringAsFixed(2)}';
+  String get formattedTotalUnitsSold => totalUnitsSold.toStringAsFixed(0);
+  String get formattedTotalSaleAmountGrowth => '₹${totalSaleAmountGrowth.toStringAsFixed(2)}';
+  String get formattedTotalEmiSalesAmount => '₹${totalEmiSalesAmount.toStringAsFixed(2)}';
+  String get formattedTotalEmiSalesAmountGrowth => '₹${totalEmiSalesAmountGrowth.toStringAsFixed(2)}';
+  
+
 }
