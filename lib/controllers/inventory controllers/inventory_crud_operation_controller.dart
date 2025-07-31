@@ -337,7 +337,8 @@ Future<void> addMobileToInventory() async {
       'qty': quantityController.text,
       'sellingPrice': priceController.text,
       'purchasePrice': purchasePriceController.text,
-      'supplierDetails': supplierDetailsController.text, 
+      'supplierDetails': supplierDetailsController.text,
+      'itemCategory':"SMARTPHONE"
     });
 
     // Add file if selected
