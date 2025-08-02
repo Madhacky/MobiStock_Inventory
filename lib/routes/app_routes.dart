@@ -35,6 +35,10 @@ class AppRoutes {
   static const String billHistory = '/bill-history';
   static const String billDetails = '/bill-details';
   static const String addNewStock = '/add-bill';
+  static const String stockList = '/stock-list';
+  static const String billAnalytics = '/bill-Analytics';
+
+
 
   //customer dues management
   static const String customerDuesManagement = '/customer-dues-management';
@@ -49,6 +53,8 @@ class AppRoutes {
   //sales management
   static const String salesManagement = '/sales-management';
   static const String salesDetails = '/sales-detail';
+  static const String mobileSalesForm = '/mobiles-sales-form';
+
 
   //generate inventory
   static const String generateInventory = '/generate-inventory';

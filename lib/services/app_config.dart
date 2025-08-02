@@ -1,5 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/services/shared_preferences_services.dart';
 
 class AppConfig {
   // Private constructor
@@ -92,6 +93,13 @@ String get notifyCustomer => "$baseUrl/api/dues/notify";
   static bool get isMediumScreen => Get.width >= 360 && Get.width < 400;
   static double get screenWidth => Get.width;
   static double get screenHeight => Get.height;
+
+
+//app base requirements
+ static RxString shopName = RxString("");
+  getShopName() async {
+     shopName.value = (await SharedPreferencesHelper.getShopStoreName())!;
+  }
 
   // Debug print method
   void printConfig() {

@@ -41,7 +41,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed('/sell-product'),
+        onPressed: () => Get.toNamed(AppRoutes.mobileSalesForm),
         backgroundColor: Color(0xFF6C5CE7),
         icon: Icon(Icons.add, color: Colors.white),
         label: Text(

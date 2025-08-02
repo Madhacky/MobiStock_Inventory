@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
-import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
+import 'package:smartbecho/models/bill%20history/stock_history_item_response.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
-import 'package:smartbecho/views/bill%20history/components/show_stats_info.dart';
 
-class BillsHistoryPage extends GetView<BillHistoryController> {
-  const BillsHistoryPage({Key? key}) : super(key: key);
+class StockHistoryPage extends GetView<BillHistoryController> {
+  
+  const StockHistoryPage({Key? key}) : super(key: key);
+  
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +17,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar("Purchase Bills", isdark: true,actionItem: IconButton(
-        onPressed: controller.showAnalyticsModal,
-        icon: Icon(Icons.analytics_outlined),
-      ),),
+            buildCustomAppBar("Stock History", isdark: true),
             
             // Loading indicator
             Obx(
-              () => controller.isLoading.value && controller.bills.isEmpty
+              () => controller.isLoadingStock.value && controller.stockItems.isEmpty
                   ? LinearProgressIndicator(
                       backgroundColor: Colors.grey[200],
                       color: Color(0xFF1E293B),
@@ -32,57 +30,45 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             ),
             
             // Stats section
-            _buildStatsSection(context),
+            _buildStatsSection(),
+            
+            // Search bar
+            _buildSearchBar(),
             
             // Filter button
             _buildFilterButton(context),
             
-            // Bills grid with lazy loading
+            // Stock items grid with lazy loading
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
                   if (scrollInfo.metrics.pixels >=
                           scrollInfo.metrics.maxScrollExtent - 200 &&
-                      !controller.isLoadingMore.value &&
-                      !controller.isLoading.value) {
-                    controller.loadMoreBills();
+                      !controller.isLoadingMoreStock.value &&
+                      !controller.isLoadingStock.value) {
+                    controller.loadMoreStockItems();
                   }
                   return false;
                 },
-                child: _buildBillsGrid(),
+                child: _buildStockItemsGrid(),
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: "stock_list",
-            onPressed: () { 
-              Get.toNamed(AppRoutes.stockList);
-              },
-            backgroundColor: Color(0xFF3B82F6),
-            child: Icon(Icons.inventory_2, color: Colors.white),
-          ),
-          SizedBox(height: 12),
-          FloatingActionButton(
-            heroTag: "add_stock",
-            onPressed: () => Get.toNamed(AppRoutes.addNewStock),
-            backgroundColor: Color(0xFF1E293B),
-            child: Icon(Icons.add, color: Colors.white),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Get.toNamed(AppRoutes.addNewStock),
+        backgroundColor: Color(0xFF1E293B),
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildStatsSection(BuildContext context) {
+  Widget _buildStatsSection() {
     return Container(
       margin: EdgeInsets.all(16),
       child: Obx(() {
-        if (controller.isLoadingStats.value) {
+        if (controller.isLoadingStock.value && controller.stockItems.isEmpty) {
           return Container(
             height: 120,
             child: Center(
@@ -94,51 +80,45 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           );
         }
 
-        final stats = controller.stockStats.value;
-        if (stats == null) {
-          return SizedBox.shrink();
-        }
-
         return Column(
           children: [
             Row(
               children: [
                 Expanded(
                   child: _buildStatCard(
-                    'Last Month',
-                    stats.lastMonthStock.toString(),
-                    Icons.calendar_month,
+                    'Total Items',
+                    controller.totalStockItems.value.toString(),
+                    Icons.inventory_2,
+                    Color(0xFF3B82F6),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: _buildStatCard(
+                    'Total Qty',
+                    controller.totalQtyAdded.value.toString(),
+                    Icons.add_box,
+                    Color(0xFF10B981),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: _buildStatCard(
+                    'Companies',
+                    controller.totalDistinctCompanies.value.toString(),
+                    Icons.business,
                     Color(0xFF8B5CF6),
                   ),
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: _buildStatCard(
-                    'Today Added',
-                    stats.todayStock.toString(),
-                    Icons.today,
-                    Color(0xFF10B981),
-                    onTap: () => showStockItemsDialog(context,stats,StockWhenAdded.today),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'This Month',
-                    stats.thisMonthStock.toString(),
-                    Icons.date_range,
-                    Color(0xFF3B82F6),
-                    onTap: () => showStockItemsDialog(context,stats,StockWhenAdded.thisMonth),
-
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'Total Stock',
-                    stats.totalStocks.toString(),
-                    Icons.inventory_2,
-                    Color(0xFF1E293B),
+                    'Categories',
+                    controller.categoryOptions.length > 1 
+                        ? (controller.categoryOptions.length - 1).toString()
+                        : '0',
+                    Icons.category,
+                    Color(0xFFF59E0B),
                   ),
                 ),
               ],
@@ -149,45 +129,91 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color,{void Function()? onTap}) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
-              blurRadius: 8,
-              offset: Offset(0, 2),
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 20),
-            SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+          ),
+          SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
             ),
-            SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller.searchController,
+        onChanged: (value) {
+          // Debounce search
+          Future.delayed(Duration(milliseconds: 500), () {
+            if (controller.searchController.text == value) {
+              controller.onSearchChanged(value);
+            }
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Search by model, company, or description...',
+          hintStyle: TextStyle(
+            color: Colors.grey[400],
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
+          suffixIcon: Obx(() => controller.searchKeyword.value.isNotEmpty
+              ? IconButton(
+                  onPressed: () {
+                    controller.searchController.clear();
+                    controller.onSearchChanged('');
+                  },
+                  icon: Icon(Icons.clear, color: Colors.grey[400]),
+                )
+              : SizedBox.shrink()),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(vertical: 12),
         ),
       ),
     );
@@ -200,20 +226,24 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         children: [
           Expanded(
             child: ElevatedButton.icon(
-              onPressed:()=> _showFilterBottomSheet(context),
+              onPressed: () => _showFilterBottomSheet(context),
               icon: Icon(Icons.filter_list, size: 18),
               label: Obx(() {
                 String filterText = 'Filter & Sort';
                 List<String> activeFilters = [];
                 
-                if (controller.selectedCompany.value != 'All') {
-                  activeFilters.add(controller.selectedCompany.value);
+                if (controller.selectedStockCompany.value != 'All') {
+                  activeFilters.add(controller.selectedStockCompany.value);
                 }
                 
-                if (controller.timePeriodType.value == 'Month/Year') {
-                  activeFilters.add('${controller.getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}');
-                } else if (controller.timePeriodType.value == 'Custom Date' && 
-                           controller.startDate.value != null && controller.endDate.value != null) {
+                if (controller.selectedCategory.value != 'All') {
+                  activeFilters.add(controller.selectedCategory.value.replaceAll('_', ' '));
+                }
+                
+                if (controller.stockTimePeriodType.value == 'Month/Year') {
+                  activeFilters.add('${controller.getMonthName(controller.stockSelectedMonth.value)} ${controller.stockSelectedYear.value}');
+                } else if (controller.stockTimePeriodType.value == 'Custom Date' && 
+                           controller.stockStartDate.value != null && controller.stockEndDate.value != null) {
                   activeFilters.add('Custom Range');
                 }
                 
@@ -246,8 +276,8 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               border: Border.all(color: Colors.grey.withOpacity(0.2)),
             ),
             child: IconButton(
-              onPressed: () => controller.refreshBills(),
-              icon: Obx(() => controller.isLoading.value
+              onPressed: () => controller.refreshStockItems(),
+              icon: Obx(() => controller.isLoadingStock.value
                   ? SizedBox(
                       width: 20,
                       height: 20,
@@ -284,7 +314,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             Row(
               children: [
                 Text(
-                  'Filter & Sort',
+                  'Filter & Sort Stock',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -304,26 +334,26 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             
             SizedBox(height: 20),
             
-            // Company and Time Period Row
+            // Company and Category Row
             Row(
               children: [
                 Expanded(
                   child: Obx(() => _buildStyledDropdown(
                     labelText: 'Company',
                     hintText: 'Select Company',
-                    value: controller.selectedCompany.value == 'All' ? null : controller.selectedCompany.value,
-                    items: controller.companyOptions,
-                    onChanged: controller.onCompanyChanged,
+                    value: controller.selectedStockCompany.value == 'All' ? null : controller.selectedStockCompany.value,
+                    items: controller.stockCompanyOptions,
+                    onChanged: controller.onStockCompanyChanged,
                   )),
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: Obx(() => _buildStyledDropdown(
-                    labelText: 'Time Period',
-                    hintText: 'Select Period',
-                    value: controller.timePeriodType.value,
-                    items: controller.timePeriodOptions,
-                    onChanged: controller.onTimePeriodTypeChanged,
+                    labelText: 'Category',
+                    hintText: 'Select Category',
+                    value: controller.selectedCategory.value == 'All' ? null : controller.selectedCategory.value,
+                    items: controller.categoryOptions,
+                    onChanged: controller.onCategoryChanged,
                   )),
                 ),
               ],
@@ -331,12 +361,23 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             
             SizedBox(height: 16),
             
+            // Time Period Selection
+            Obx(() => _buildStyledDropdown(
+              labelText: 'Time Period',
+              hintText: 'Select Period',
+              value: controller.stockTimePeriodType.value,
+              items: controller.timePeriodOptions,
+              onChanged: controller.onStockTimePeriodTypeChanged,
+            )),
+            
+            SizedBox(height: 16),
+            
             // Date Selection based on Time Period Type
             Obx(() {
-              if (controller.timePeriodType.value == 'Month/Year') {
-                return _buildMonthYearSelection();
+              if (controller.stockTimePeriodType.value == 'Month/Year') {
+                return _buildStockMonthYearSelection();
               } else {
-                return _buildCustomDateSelection(context);
+                return _buildStockCustomDateSelection(context);
               }
             }),
             
@@ -346,11 +387,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             Obx(() => _buildStyledDropdown(
               labelText: 'Sort By',
               hintText: 'Select Sort Field',
-              value: controller.sortBy.value,
-              items: controller.sortOptions,
-              onChanged: (value) => controller.onSortChanged(value ?? 'billId'),
+              value: controller.stockSortBy.value,
+              items: controller.stockSortOptions,
+              onChanged: (value) => controller.onStockSortChanged(value ?? 'createdDate'),
               suffixIcon: Icon(
-                controller.sortDir.value == 'asc' 
+                controller.stockSortDir.value == 'asc' 
                     ? Icons.arrow_upward 
                     : Icons.arrow_downward,
                 size: 16,
@@ -365,7 +406,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _resetFilters,
+                    onPressed: controller.resetStockFilters,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Color(0xFF1E293B),
                       side: BorderSide(color: Color(0xFF1E293B)),
@@ -404,35 +445,22 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  void _resetFilters() {
-    controller.selectedCompany.value = 'All';
-    controller.timePeriodType.value = 'Month/Year';
-    controller.selectedMonth.value = DateTime.now().month;
-    controller.selectedYear.value = DateTime.now().year;
-    controller.startDate.value = null;
-    controller.endDate.value = null;
-    controller.startDateController.clear();
-    controller.endDateController.clear();
-    controller.sortBy.value = 'billId';
-    controller.sortDir.value = 'desc';
-    controller.loadBills(refresh: true);
-    Get.back();
-  }
 
-  Widget _buildMonthYearSelection() {
+
+  Widget _buildStockMonthYearSelection() {
     return Row(
       children: [
         Expanded(
           child: Obx(() => _buildStyledDropdown(
             labelText: 'Month',
             hintText: 'Select Month',
-            value: controller.getMonthName(controller.selectedMonth.value),
+            value: controller.getMonthName(controller.stockSelectedMonth.value),
             items: List.generate(12, (index) => controller.getMonthName(index + 1)),
             onChanged: (value) {
               if (value != null) {
                 final monthIndex = List.generate(12, (index) => controller.getMonthName(index + 1))
                     .indexOf(value) + 1;
-                controller.onMonthChanged(monthIndex);
+                controller.onStockMonthChanged(monthIndex);
               }
             },
           )),
@@ -442,31 +470,31 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           child: Obx(() => _buildStyledDropdown(
             labelText: 'Year',
             hintText: 'Select Year',
-            value: controller.selectedYear.value.toString(),
+            value: controller.stockSelectedYear.value.toString(),
             items: List.generate(6, (index) => (2020 + index).toString()).reversed.toList(),
-            onChanged: (value) => controller.onYearChanged(int.tryParse(value ?? '')),
+            onChanged: (value) => controller.onStockYearChanged(int.tryParse(value ?? '')),
           )),
         ),
       ],
     );
   }
 
-  Widget _buildCustomDateSelection(BuildContext context) {
+  Widget _buildStockCustomDateSelection(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: _buildDateField(
             labelText: 'Start Date',
-            controller: controller.startDateController,
-            onTap: () => _selectDate(context, true),
+            controller: controller.stockStartDateController,
+            onTap: () => _selectStockDate(context, true),
           ),
         ),
         SizedBox(width: 12),
         Expanded(
           child: _buildDateField(
             labelText: 'End Date',
-            controller: controller.endDateController,
-            onTap: () => _selectDate(context, false),
+            controller: controller.stockEndDateController,
+            onTap: () => _selectStockDate(context, false),
           ),
         ),
       ],
@@ -522,7 +550,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+  Future<void> _selectStockDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -545,9 +573,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
 
     if (picked != null) {
       if (isStartDate) {
-        controller.onStartDateChanged(picked);
+        controller.onStockStartDateChanged(picked);
       } else {
-        controller.onEndDateChanged(picked);
+        controller.onStockEndDateChanged(picked);
       }
     }
   }
@@ -605,7 +633,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 ? items.map((String item) {
                     return DropdownMenuItem<String>(
                       value: item,
-                      child: Text(item),
+                      child: Text(item == 'All' ? item : item.replaceAll('_', ' ')),
                     );
                   }).toList()
                 : [],
@@ -617,22 +645,22 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildBillsGrid() {
+  Widget _buildStockItemsGrid() {
     return Obx(() {
-      if (controller.error.value.isNotEmpty && controller.bills.isEmpty) {
+      if (controller.stockError.value.isNotEmpty && controller.stockItems.isEmpty) {
         return _buildErrorState();
       }
 
-      if (controller.isLoading.value && controller.bills.isEmpty) {
+      if (controller.isLoadingStock.value && controller.stockItems.isEmpty) {
         return _buildLoadingState();
       }
 
-      if (controller.bills.isEmpty) {
+      if (controller.stockItems.isEmpty) {
         return _buildEmptyState();
       }
 
       return RefreshIndicator(
-        onRefresh: controller.refreshBills,
+        onRefresh: controller.refreshStockItems,
         color: Color(0xFF1E293B),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -641,16 +669,16 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.7,
+              childAspectRatio: 0.75,
             ),
-            itemCount: controller.bills.length + (controller.isLoadingMore.value ? 1 : 0),
+            itemCount: controller.stockItems.length + (controller.isLoadingMoreStock.value ? 1 : 0),
             itemBuilder: (context, index) {
-              if (index == controller.bills.length) {
+              if (index == controller.stockItems.length) {
                 return _buildLoadingMoreIndicator();
               }
 
-              final bill = controller.bills[index];
-              return _buildBillCard(bill);
+              final stockItem = controller.stockItems[index];
+              return _buildStockItemCard(stockItem);
             },
           ),
         ),
@@ -658,250 +686,229 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     });
   }
 
-  Widget _buildBillCard(Bill bill) {
-    return GestureDetector(
-      onTap: () => controller.navigateToBillDetails(bill),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
-              spreadRadius: 0,
-              blurRadius: 12,
-              offset: Offset(0, 4),
-            ),
-          ],
-          border: Border.all(
-            color: controller.getStatusColor(bill).withOpacity(0.15),
-            width: 1,
+  Widget _buildStockItemCard(StockItem stockItem) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            spreadRadius: 0,
+            blurRadius: 12,
+            offset: Offset(0, 4),
           ),
+        ],
+        border: Border.all(
+          color: controller.getCategoryColor(stockItem.itemCategory).withOpacity(0.15),
+          width: 1,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header with company and status
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    controller.getCompanyColor(bill.companyName).withOpacity(0.1),
-                    controller.getCompanyColor(bill.companyName).withOpacity(0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: controller.getCompanyColor(bill.companyName),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      controller.getCompanyIcon(bill.companyName),
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          bill.companyName,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: controller.getCompanyColor(bill.companyName),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '#${bill.billId}',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  _buildStatusBadge(bill),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with category and company
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  controller.getCategoryColor(stockItem.itemCategory).withOpacity(0.1),
+                  controller.getCategoryColor(stockItem.itemCategory).withOpacity(0.05),
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
             ),
-
-            // Content
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Date
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today, size: 12, color: Colors.grey[500]),
-                        SizedBox(width: 4),
-                        Text(
-                          bill.formattedDate,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 8),
-
-                    // Items preview
-                    if (bill.items.isNotEmpty) ...[
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: controller.getCategoryColor(stockItem.itemCategory),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    controller.getCategoryIcon(stockItem.itemCategory),
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        'Items (${bill.totalItems})',
+                        stockItem.categoryDisplayName,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: controller.getCategoryColor(stockItem.itemCategory),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        stockItem.company.toUpperCase(),
                         style: TextStyle(
                           fontSize: 10,
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      ...bill.items.take(2).map((item) => Padding(
-                        padding: EdgeInsets.only(bottom: 2),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: controller.getCompanyColor(item.company),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                '${item.model} (${item.ramRomDisplay})',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[700],
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )).toList(),
-                      if (bill.items.length > 2)
-                        Text(
-                          '+${bill.items.length - 2} more',
-                          style: TextStyle(
-                            fontSize: 9,
-                            color: Colors.grey[500],
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
                     ],
+                  ),
+                ),
+                _buildQuantityBadge(stockItem),
+              ],
+            ),
+          ),
 
-                    Spacer(),
+          // Content
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Model name
+                  Text(
+                    stockItem.model,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E293B),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
 
-                    // Amount section
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(8),
+                  SizedBox(height: 8),
+
+                  // Specifications
+                  if (stockItem.ramRomDisplay.isNotEmpty) ...[
+                    _buildSpecRow(Icons.memory, stockItem.ramRomDisplay),
+                    SizedBox(height: 4),
+                  ],
+                  
+                  _buildSpecRow(Icons.palette, stockItem.color),
+                  SizedBox(height: 4),
+                  
+                  // Date
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today, size: 12, color: Colors.grey[500]),
+                      SizedBox(width: 4),
+                      Text(
+                        stockItem.formattedDate,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey[600],
+                        ),
                       ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.currency_rupee, size: 12, color: Colors.grey[600]),
-                              SizedBox(width: 4),
-                              Text(
-                                'Amount',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[600],
-                                ),
+                    ],
+                  ),
+
+                  Spacer(),
+
+                  // Price and bill reference
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.currency_rupee, size: 12, color: Colors.grey[600]),
+                            SizedBox(width: 4),
+                            Text(
+                              'Price',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
                               ),
-                              Spacer(),
-                              Text(
-                                bill.formattedAmount,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF10B981),
-                                ),
+                            ),
+                            Spacer(),
+                            Text(
+                              stockItem.formattedPrice,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF10B981),
                               ),
-                            ],
-                          ),
-                          if (bill.dues > 0) ...[
-                            SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(Icons.warning, size: 10, color: Colors.orange),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Dues',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  bill.formattedDues,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.receipt, size: 10, color: Colors.grey[500]),
+                            SizedBox(width: 4),
+                            Text(
+                              'Bill #${stockItem.billMobileItem}',
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildStatusBadge(Bill bill) {
+  Widget _buildSpecRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 12, color: Colors.grey[500]),
+        SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[700],
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuantityBadge(StockItem stockItem) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: controller.getStatusColor(bill),
+        color: stockItem.qty > 0 ? Color(0xFF10B981) : Color(0xFFEF4444),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            controller.getStatusIcon(bill),
+            stockItem.qty > 0 ? Icons.check_circle : Icons.warning,
             size: 8,
             color: Colors.white,
           ),
           SizedBox(width: 2),
           Text(
-            bill.isPaid ? 'Paid' : 'Pending',
+            'Qty: ${stockItem.qty}',
             style: TextStyle(
               fontSize: 8,
               color: Colors.white,
@@ -924,7 +931,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           ),
           SizedBox(height: 16),
           Text(
-            'Loading bills...',
+            'Loading stock items...',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,
@@ -941,13 +948,13 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.receipt_long_outlined,
+            Icons.inventory_2_outlined,
             size: 64,
             color: Colors.grey[300],
           ),
           SizedBox(height: 16),
           Text(
-            'No bills found',
+            'No stock items found',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -956,7 +963,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           ),
           SizedBox(height: 8),
           Text(
-            'Try adjusting your filters',
+            'Try adjusting your filters or search',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[500],
@@ -964,7 +971,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           ),
           SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () => controller.loadBills(refresh: true),
+            onPressed: () => controller.loadStockItems(refresh: true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF1E293B),
               foregroundColor: Colors.white,
@@ -1000,22 +1007,17 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             ),
           ),
           SizedBox(height: 8),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Obx(
-              () => Text(
-                controller.error.value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
-                ),
-                textAlign: TextAlign.center,
-              ),
+          Text(
+            controller.stockError.value,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
             ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () => controller.loadBills(refresh: true),
+            onPressed: () => controller.loadStockItems(refresh: true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF1E293B),
               foregroundColor: Colors.white,
@@ -1024,7 +1026,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('Retry'),
+            child: Text('Try Again'),
           ),
         ],
       ),
@@ -1035,26 +1037,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     return Container(
       padding: EdgeInsets.all(16),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: Color(0xFF1E293B),
-                strokeWidth: 2,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Loading more...',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+        child: CircularProgressIndicator(
+          color: Color(0xFF1E293B),
+          strokeWidth: 2,
         ),
       ),
     );

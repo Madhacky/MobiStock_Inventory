@@ -152,75 +152,9 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
     );
   }
 
-  // Widget _buildSummaryCards(CustomerDuesController controller) {
-  //   return Row(
-  //     children: [
-  //       Expanded(
-  //         child: _buildSummaryCard(
-  //           'Total Collected',
-  //           '₹${_formatAmount(controller.totalCollected)}',
-  //           Colors.green,
-  //           Icons.account_balance_wallet,
-  //         ),
-  //       ),
-  //       const SizedBox(width: 12),
-  //       Expanded(
-  //         child: _buildSummaryCard(
-  //           'Total Remaining',
-  //           '₹${_formatAmount(controller.totalRemaining)}',
-  //           Colors.red,
-  //           Icons.pending_actions,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+ 
 
-  Widget _buildSummaryCard(
-    String title,
-    String value,
-    Color color,
-    IconData icon,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: color.withOpacity(0.8),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+ 
 
   Widget _buildMonthlyDetails(CustomerDuesController controller) {
     return Column(

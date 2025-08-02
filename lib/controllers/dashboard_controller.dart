@@ -503,8 +503,7 @@ class DashboardController extends GetxController
     } finally {}
   }
 
-  RxString shopName = RxString("");
   getShopName() async {
-     shopName.value = (await SharedPreferencesHelper.getShopStoreName())!;
+     AppConfig. shopName.value = (await SharedPreferencesHelper.getShopStoreName())!;
   }
 }

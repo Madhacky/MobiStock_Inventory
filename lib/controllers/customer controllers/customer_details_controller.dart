@@ -259,7 +259,7 @@ class CustomerDetailsController extends GetxController {
 
       // Build the URL with query parameters as shown in the curl example
       String url =
-          '${_config.baseUrl}/api/dues/partial-payment?Id=$dueId&amount=$amount&paymentMethod=$paymentMethod&remarks=${Uri.encodeComponent(remarks)}';
+          '${_config.baseUrl}/api/dues/partial-payment?Id=$dueId&amount=${amount.toInt()}&paymentMethod=${paymentMethod.toUpperCase()}&remarks=$remarks';
 
       dio.Response? response = await _apiService.requestPostForApi(
         url: url,

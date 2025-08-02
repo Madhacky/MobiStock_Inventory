@@ -41,22 +41,17 @@ class SalesManagementController extends GetxController {
   final RxBool hasNextPage = true.obs;
   final RxBool isLastPage = false.obs;
 
-
-
 /// Sales Insights Data
   
   // Stats Data
   final Rx<SalesStats?> statsData = Rx<SalesStats?>(null);
   final Rx<SalesInsightsStatsModel?> insightsStatsData = Rx<SalesInsightsStatsModel?>(null);
 
- 
-
   // Search and Filters
   final RxString searchQuery = ''.obs;
   final RxString selectedTab = 'dashboard'.obs; // 'dashboard', 'history', 'insights'
   final RxString selectedSort = 'saleDate,desc'.obs;
   final TextEditingController searchController = TextEditingController();
-
 
 //sales detail 
 final Rx<SaleDetailResponse?> saleDetail = Rx<SaleDetailResponse?>(null);
@@ -74,11 +69,11 @@ final RxString detailErrorMessage = ''.obs;
     fetchSalesInsights();
     fetchSalesHistory(isRefresh: true);
 
-    // Listen to search changes
+    // Listen to search changes with debounce
     debounce(
       searchQuery,
       (_) => _handleSearch(),
-      time: Duration(milliseconds: 500),
+      time: Duration(milliseconds: 800), // Increased debounce time for API calls
     );
   }
 
@@ -92,9 +87,6 @@ final RxString detailErrorMessage = ''.obs;
   String get salesHistoryUrl => 'https://backend-production-91e4.up.railway.app/api/sales/shop-history';
   String get salesStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats/today';
   String get salesInsightsStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats';
-
-
-
 
 // Fetch sales insights from API
  Future<void> fetchSalesInsights() async {
@@ -111,13 +103,8 @@ final RxString detailErrorMessage = ''.obs;
       if (response != null) {
         final statsResponse = SalesInsightsStatsModel.fromJson(response.data);
 
-       
-
         if (statsResponse.status == "Success") {
-          
           insightsStatsData.value = statsResponse;
-       
-
           log("Sales insights loaded successfully");
         } else {
           throw Exception(statsResponse.message);
@@ -138,6 +125,7 @@ final RxString detailErrorMessage = ''.obs;
       isStatsLoading.value = false;
     }
   }
+
   // Fetch sales stats from API
   Future<void> fetchSalesStats() async {
     try {
@@ -176,7 +164,7 @@ final RxString detailErrorMessage = ''.obs;
     }
   }
 
-  // Fetch sales history from API with pagination
+  // Fetch sales history from API with pagination and search
   Future<void> fetchSalesHistory({
     bool isRefresh = false,
     bool isLoadMore = false,
@@ -195,16 +183,27 @@ final RxString detailErrorMessage = ''.obs;
         currentPage.value++;
       }
 
-      // Build query parameters
+      // Parse the sort parameter to match API format
+      String sortBy = 'saleDate';
+      String sortDir = 'desc';
+      
+      if (selectedSort.value.contains(',')) {
+        List<String> sortParts = selectedSort.value.split(',');
+        sortBy = sortParts[0];
+        sortDir = sortParts[1];
+      }
+
+      // Build query parameters according to API specification
       Map<String, dynamic> queryParams = {
         'page': currentPage.value,
         'size': pageSize,
-        'sort': selectedSort.value,
+        'sortBy': sortBy,
+        'sortDir': sortDir,
       };
 
-      // Add search query if present
+      // Add keyword parameter for search if present
       if (searchQuery.value.isNotEmpty) {
-        queryParams['search'] = searchQuery.value;
+        queryParams['keyword'] = searchQuery.value.trim();
       }
 
       log("Fetching sales history with params: $queryParams");
@@ -227,16 +226,16 @@ final RxString detailErrorMessage = ''.obs;
 
           if (isRefresh) {
             allSales.value = salesResponse.payload.content;
+            filteredSales.value = salesResponse.payload.content;
           } else if (isLoadMore) {
             allSales.addAll(salesResponse.payload.content);
+            filteredSales.addAll(salesResponse.payload.content);
           }
-
-          // Apply filtering
-          filterSales();
 
           log("Sales history loaded successfully");
           log("Page: ${currentPage.value}, Total Pages: ${totalPages.value}");
           log("Total sales loaded: ${allSales.length}");
+          log("Search query: '${searchQuery.value}'");
         } else {
           throw Exception(salesResponse.message);
         }
@@ -268,7 +267,6 @@ final RxString detailErrorMessage = ''.obs;
     isLoadingDetail.value = true;
     hasDetailError.value = false;
     detailErrorMessage.value = '';
-    
     
     log("Fetching sale detail for ID: $saleId");
     
@@ -307,41 +305,28 @@ final RxString detailErrorMessage = ''.obs;
     await fetchSalesHistory(isLoadMore: true);
   }
 
-  // Handle search with API call
+  // Handle search with API call (triggered by debounce)
   void _handleSearch() {
+    log("Search triggered with query: '${searchQuery.value}'");
     currentPage.value = 0;
     fetchSalesHistory(isRefresh: true);
   }
 
-  // Filter sales based on search (client-side filtering of loaded data)
+  // This method is no longer needed since search is handled by API
+  // Keeping it for backward compatibility but it won't do client-side filtering
   void filterSales() {
-    var filtered = allSales.where((sale) {
-      bool matchesSearch = true;
-
-      if (searchQuery.value.isNotEmpty) {
-        matchesSearch = sale.customerName.toLowerCase().contains(
-          searchQuery.value.toLowerCase(),
-        ) ||
-        sale.invoiceNumber.toLowerCase().contains(
-          searchQuery.value.toLowerCase(),
-        ) ||
-        sale.companName.toLowerCase().contains(
-          searchQuery.value.toLowerCase(),
-        ) ||
-        sale.companyModel.toLowerCase().contains(
-          searchQuery.value.toLowerCase(),
-        );
-      }
-
-      return matchesSearch;
-    }).toList();
-
-    filteredSales.value = filtered;
+    // Since search is now handled by API, this method is primarily for 
+    // any additional client-side filtering if needed in the future
+    filteredSales.value = allSales.toList();
   }
 
   // Event handlers
   void onSearchChanged() {
-    searchQuery.value = searchController.text;
+    String newQuery = searchController.text.trim();
+    if (searchQuery.value != newQuery) {
+      searchQuery.value = newQuery;
+      log("Search query changed to: '$newQuery'");
+    }
   }
 
   void onTabChanged(String tab) {
@@ -350,6 +335,7 @@ final RxString detailErrorMessage = ''.obs;
 
   void onSortChanged(String sort) {
     selectedSort.value = sort;
+    log("Sort changed to: $sort");
     fetchSalesHistory(isRefresh: true);
   }
 
@@ -357,6 +343,7 @@ final RxString detailErrorMessage = ''.obs;
   Future<void> refreshData() async {
     await Future.wait([
       fetchSalesStats(),
+      fetchSalesInsights(),
       fetchSalesHistory(isRefresh: true),
     ]);
   }
@@ -364,12 +351,14 @@ final RxString detailErrorMessage = ''.obs;
   void clearSearch() {
     searchController.clear();
     searchQuery.value = '';
+    log("Search cleared");
   }
 
   void resetFilters() {
     searchQuery.value = '';
     selectedSort.value = 'saleDate,desc';
     searchController.clear();
+    log("Filters reset");
     fetchSalesHistory(isRefresh: true);
   }
 
@@ -463,7 +452,6 @@ final RxString detailErrorMessage = ''.obs;
   String get formattedCashAmount => '₹${cashAmount.toStringAsFixed(2)}';
   String get formattedCardAmount => '₹${cardAmount.toStringAsFixed(2)}';
 
-
   double get totalSaleAmount => insightsStatsData.value?.payload.totalSaleAmount ?? 0.0;
   double get averageSaleAmountGrowth => insightsStatsData.value?.payload.averageSaleAmountGrowth ?? 0.0;
   double get averageSaleAmount =>insightsStatsData.value?.payload.averageSaleAmount ?? 0.0;
@@ -481,6 +469,4 @@ final RxString detailErrorMessage = ''.obs;
   String get formattedTotalSaleAmountGrowth => '₹${totalSaleAmountGrowth.toStringAsFixed(2)}';
   String get formattedTotalEmiSalesAmount => '₹${totalEmiSalesAmount.toStringAsFixed(2)}';
   String get formattedTotalEmiSalesAmountGrowth => '₹${totalEmiSalesAmountGrowth.toStringAsFixed(2)}';
-  
-
 }

@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
+import 'package:smartbecho/models/bill%20history/stock_history_item_response.dart';
+import 'package:smartbecho/models/bill%20history/stock_stats_reponse_model.dart';
+import 'package:smartbecho/models/inventory%20management/filter_response_model.dart';
+import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 
@@ -11,57 +16,438 @@ class BillHistoryController extends GetxController {
   final ApiServices _apiService = ApiServices();
   final AppConfig _config = AppConfig.instance;
 
-  // Original data from API
-  final RxList<Bill> allBills = <Bill>[].obs;
-  // Filtered data for display
+  // Bills data
   final RxList<Bill> bills = <Bill>[].obs;
-
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
+  final RxBool isLoadingStats = false.obs;
   final RxString error = ''.obs;
-  final RxString searchQuery = ''.obs;
   final RxInt currentPage = 0.obs;
   final RxBool hasMore = true.obs;
   final RxInt totalElements = 0.obs;
   final RxDouble totalAmount = 0.0.obs;
   final RxInt totalQty = 0.obs;
 
-  // Filter options
-  final RxString selectedCompany = ''.obs;
-  final RxString selectedStatus = 'All'.obs;
+  // Stock items data
+  final RxList<StockItem> stockItems = <StockItem>[].obs;
+  final RxBool isLoadingStock = false.obs;
+  final RxBool isLoadingMoreStock = false.obs;
+  final RxString stockError = ''.obs;
+  final RxInt stockCurrentPage = 0.obs;
+  final RxBool stockHasMore = true.obs;
+  final RxInt totalStockItems = 0.obs;
+  final RxInt totalQtyAdded = 0.obs;
+  final RxInt totalDistinctCompanies = 0.obs;
+
+  // Stats data
+  final Rx<StockStats?> stockStats = Rx<StockStats?>(null);
+
+  // Filter options for bills
+  final RxString selectedCompany = 'All'.obs;
+  final RxString timePeriodType =
+      'Month/Year'.obs; // 'Month/Year' or 'Custom Date'
+  final RxInt selectedMonth = DateTime.now().month.obs;
+  final RxInt selectedYear = DateTime.now().year.obs;
+  final Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  final Rx<DateTime?> endDate = Rx<DateTime?>(null);
   final RxString sortBy = 'billId'.obs;
   final RxString sortDir = 'asc'.obs;
 
-  final TextEditingController searchController = TextEditingController();
+  // Filter options for stocks
+  final RxString selectedStockCompany = 'All'.obs;
+  final RxString selectedCategory = 'All'.obs;
+  final RxString stockTimePeriodType = 'Month/Year'.obs;
+  final RxInt stockSelectedMonth = DateTime.now().month.obs;
+  final RxInt stockSelectedYear = DateTime.now().year.obs;
+  final Rx<DateTime?> stockStartDate = Rx<DateTime?>(null);
+  final Rx<DateTime?> stockEndDate = Rx<DateTime?>(null);
+  final RxString stockSortBy = 'createdDate'.obs;
+  final RxString stockSortDir = 'desc'.obs;
+  final RxString searchKeyword = ''.obs;
 
-  // Filter options
-  final List<String> statusOptions = ['All', 'Paid', 'Pending'];
+  // Dropdown options
   final RxList<String> companyOptions = <String>['All'].obs;
+  final RxList<String> stockCompanyOptions = <String>['All'].obs;
+  final RxList<String> categoryOptions = <String>['All'].obs;
+  final List<String> timePeriodOptions = ['Month/Year', 'Custom Date'];
+  final List<String> sortOptions = ['billId', 'date', 'amount', 'companyName'];
+  final List<String> stockSortOptions = [
+    'createdDate',
+    'model',
+    'sellingPrice',
+    'company',
+    'qty',
+  ];
+
+  // Date controllers for custom date picker
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+  final TextEditingController stockStartDateController =
+      TextEditingController();
+  final TextEditingController stockEndDateController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
-    loadBills();
-
-    debounce(
-      searchQuery,
-      (_) => onSearchChanged(),
-      time: Duration(milliseconds: 500),
-    );
+    loadInitialData();
+    loadStockHistoryData();
   }
 
   @override
   void onClose() {
+    startDateController.dispose();
+    endDateController.dispose();
+    stockStartDateController.dispose();
+    stockEndDateController.dispose();
     searchController.dispose();
     super.onClose();
+  }
+
+  Future<void> loadInitialData() async {
+    await Future.wait([
+      loadCompanyOptions(),
+      loadCategoryOptions(),
+      loadStats(),
+      loadBills(refresh: true),
+    ]);
+  }
+
+  Future<void> loadStockHistoryData() async {
+    await Future.wait([
+      loadStockItems(refresh: false),
+
+      loadStockCompanyOptions(),
+    ]);
+  }
+
+  // Stock-related methods
+  Future<void> loadCategoryOptions() async {
+    try {
+      final response = await _apiService.requestGetForApi(
+        url: '${_config.baseUrl}/inventory/item-types',
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final List<dynamic> categories = response.data ?? [];
+        categoryOptions.value = ['All', ...categories.cast<String>()];
+      }
+    } catch (e) {
+      log('Error loading category options: $e');
+    }
+  }
+
+  Future<void> loadStockCompanyOptions() async {
+    try {
+      final response = await _apiService.requestGetForApi(
+        url: _config.getInventoryFilters,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
+        final filterResponse = FilterResponse.fromJson(data);
+
+        stockCompanyOptions.value = ['All', ...filterResponse.companies];
+      }
+    } catch (e) {
+      log('Error loading stock company options: $e');
+    }
+  }
+
+  Future<void> loadStockItems({bool refresh = false}) async {
+    if (refresh) {
+      stockCurrentPage.value = 0;
+      stockHasMore.value = true;
+      stockItems.clear();
+    }
+
+    if (isLoadingStock.value) return;
+    isLoadingStock.value = true;
+    stockError.value = '';
+
+    try {
+      final queryParams = <String, String>{
+        'page': stockCurrentPage.value.toString(),
+        'size': '10',
+        'sortBy': stockSortBy.value,
+        'sortDir': stockSortDir.value,
+      };
+
+      // Add search keyword
+      if (searchKeyword.value.isNotEmpty) {
+        queryParams['keyword'] = searchKeyword.value;
+      }
+
+      // Add company filter
+      if (selectedStockCompany.value != 'All') {
+        queryParams['company'] = selectedStockCompany.value;
+      }
+
+      // Add category filter
+      if (selectedCategory.value != 'All') {
+        queryParams['itemCategory'] = selectedCategory.value;
+      }
+
+      // Add time period filters
+      if (selectedStockCompany.value.isEmpty) {
+        if (stockTimePeriodType.value == 'Month/Year') {
+          queryParams['month'] = stockSelectedMonth.value.toString();
+          queryParams['year'] = stockSelectedYear.value.toString();
+        } else if (stockTimePeriodType.value == 'Custom Date' &&
+            stockStartDate.value != null &&
+            stockEndDate.value != null) {
+          queryParams['startDate'] = _formatDate(stockStartDate.value!);
+          queryParams['endDate'] = _formatDate(stockEndDate.value!);
+        }
+      }
+
+      final response = await _apiService.requestGetForApi(
+        url: '${_config.baseUrl}/stock-items/all',
+        dictParameter: queryParams,
+        authToken: true,
+      );
+
+      if (response == null || response.statusCode != 200) {
+        stockError.value = 'Failed to load stock items';
+        _showErrorSnackbar('Failed to load stock items');
+      } else {
+        final parsed = StockItemsResponse.fromJson(response.data);
+
+        if (refresh) {
+          stockItems.clear();
+        }
+
+        stockItems.addAll(parsed.items);
+        totalStockItems.value = parsed.totalItems;
+        totalQtyAdded.value = parsed.totalQtyAdded;
+        totalDistinctCompanies.value = parsed.totalDistinctCompanies;
+        stockHasMore.value = !parsed.last;
+      }
+    } catch (e) {
+      stockError.value = 'Error: $e';
+      _showErrorSnackbar('Error loading stock items: $e');
+    } finally {
+      isLoadingStock.value = false;
+    }
+  }
+
+  Future<void> loadMoreStockItems() async {
+    if (isLoadingMoreStock.value || !stockHasMore.value || isLoadingStock.value)
+      return;
+
+    isLoadingMoreStock.value = true;
+    stockCurrentPage.value++;
+
+    try {
+      final queryParams = <String, String>{
+        'page': stockCurrentPage.value.toString(),
+        'size': '10',
+        'sortBy': stockSortBy.value,
+        'sortDir': stockSortDir.value,
+      };
+
+      // Add search keyword
+      if (searchKeyword.value.isNotEmpty) {
+        queryParams['keyword'] = searchKeyword.value;
+      }
+
+      // Add company filter
+      if (selectedStockCompany.value != 'All') {
+        queryParams['company'] = selectedStockCompany.value;
+      }
+
+      // Add category filter
+      if (selectedCategory.value != 'All') {
+        queryParams['itemCategory'] = selectedCategory.value;
+      }
+
+      // Add time period filters
+      if (stockTimePeriodType.value == 'Month/Year') {
+        queryParams['month'] = stockSelectedMonth.value.toString();
+        queryParams['year'] = stockSelectedYear.value.toString();
+      } else if (stockTimePeriodType.value == 'Custom Date' &&
+          stockStartDate.value != null &&
+          stockEndDate.value != null) {
+        queryParams['startDate'] = _formatDate(stockStartDate.value!);
+        queryParams['endDate'] = _formatDate(stockEndDate.value!);
+      }
+
+      final response = await _apiService.requestGetForApi(
+        url: '${_config.baseUrl}/stock-items/all',
+        dictParameter: queryParams,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final parsed = StockItemsResponse.fromJson(response.data);
+        stockItems.addAll(parsed.items);
+        stockHasMore.value = !parsed.last;
+      } else {
+        stockCurrentPage.value--;
+        _showErrorSnackbar('Failed to load more stock items');
+      }
+    } catch (e) {
+      stockCurrentPage.value--;
+      _showErrorSnackbar('Error loading more stock items: $e');
+    } finally {
+      isLoadingMoreStock.value = false;
+    }
+  }
+
+  // Stock filter methods
+  void onStockCompanyChanged(String? company) {
+    searchKeyword.value = '';
+
+    searchController.clear();
+
+    selectedStockCompany.value = company ?? 'All';
+    loadStockItems(refresh: true);
+  }
+
+  void onCategoryChanged(String? category) {
+    searchKeyword.value = '';
+
+    searchController.clear();
+
+    selectedCategory.value = category ?? 'All';
+    loadStockItems(refresh: true);
+  }
+
+  void onStockTimePeriodTypeChanged(String? type) {
+    searchKeyword.value = '';
+
+    searchController.clear();
+
+    stockTimePeriodType.value = type ?? 'Month/Year';
+    loadStockItems(refresh: true);
+  }
+
+  void onStockMonthChanged(int? month) {
+    searchKeyword.value = '';
+
+    searchController.clear();
+
+    stockSelectedMonth.value = month ?? DateTime.now().month;
+    if (stockTimePeriodType.value == 'Month/Year') {
+      loadStockItems(refresh: true);
+    }
+  }
+
+  void onStockYearChanged(int? year) {
+    searchKeyword.value = '';
+
+    searchController.clear();
+
+    stockSelectedYear.value = year ?? DateTime.now().year;
+    if (stockTimePeriodType.value == 'Month/Year') {
+      loadStockItems(refresh: true);
+    }
+  }
+
+  void onStockStartDateChanged(DateTime? date) {
+    searchKeyword.value = '';
+
+    searchController.clear();
+
+    stockStartDate.value = date;
+    stockStartDateController.text =
+        date != null ? _formatDisplayDate(date) : '';
+    if (stockTimePeriodType.value == 'Custom Date' &&
+        stockEndDate.value != null) {
+      loadStockItems(refresh: true);
+    }
+  }
+
+  void onStockEndDateChanged(DateTime? date) {
+    searchController.clear();
+    searchKeyword.value = '';
+
+    stockEndDate.value = date;
+    stockEndDateController.text = date != null ? _formatDisplayDate(date) : '';
+    if (stockTimePeriodType.value == 'Custom Date' &&
+        stockStartDate.value != null) {
+      loadStockItems(refresh: true);
+    }
+  }
+
+  void onStockSortChanged(String field) {
+    searchController.clear();
+
+    if (stockSortBy.value == field) {
+      stockSortDir.value = stockSortDir.value == 'asc' ? 'desc' : 'asc';
+    } else {
+      stockSortBy.value = field;
+      stockSortDir.value = 'desc';
+    }
+    loadStockItems(refresh: true);
+  }
+
+  void onSearchChanged(String keyword) {
+    selectedStockCompany.value = 'All';
+    selectedCategory.value = 'All';
+    stockTimePeriodType.value = 'Month/Year';
+    stockSelectedMonth.value = DateTime.now().month;
+    stockSelectedYear.value = DateTime.now().year;
+    stockStartDate.value = null;
+    stockEndDate.value = null;
+    stockStartDateController.clear();
+    stockEndDateController.clear();
+    searchKeyword.value = keyword;
+    loadStockItems(refresh: true);
+  }
+
+  Future<void> refreshStockItems() async {
+    await loadStockItems(refresh: true);
+  }
+
+  // Original bill methods remain unchanged...
+  Future<void> loadCompanyOptions() async {
+    try {
+      final response = await _apiService.requestGetForApi(
+        url: '${_config.baseUrl}/api/purchase-bills/company/dropdown',
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final List<dynamic> companies = response.data ?? [];
+        companyOptions.value = ['All', ...companies.cast<String>()];
+      }
+    } catch (e) {
+      log('Error loading company options: $e');
+    }
+  }
+
+  Future<void> loadStats() async {
+    isLoadingStats.value = true;
+    try {
+      final response = await _apiService.requestGetForApi(
+        url: '${_config.baseUrl}/stock-items/stats',
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        stockStats.value = StockStats.fromJson(response.data);
+      }
+    } catch (e) {
+      log('Error loading stats: $e');
+    } finally {
+      isLoadingStats.value = false;
+    }
   }
 
   Future<void> loadBills({bool refresh = false}) async {
     if (refresh) {
       currentPage.value = 0;
       hasMore.value = true;
+      bills.clear();
     }
 
+    if (isLoading.value) return;
     isLoading.value = true;
     error.value = '';
 
@@ -73,17 +459,24 @@ class BillHistoryController extends GetxController {
         'sortDir': sortDir.value,
       };
 
-      // Only apply search and company filter to API, not status
-      if (searchQuery.value.isNotEmpty) {
-        queryParams['search'] = searchQuery.value;
+      // Add company filter
+      if (selectedCompany.value != 'All') {
+        queryParams['companyName'] = selectedCompany.value;
       }
 
-      if (selectedCompany.value.isNotEmpty && selectedCompany.value != 'All') {
-        queryParams['company'] = selectedCompany.value;
+      // Add time period filters
+      if (timePeriodType.value == 'Month/Year') {
+        queryParams['month'] = selectedMonth.value.toString();
+        queryParams['year'] = selectedYear.value.toString();
+      } else if (timePeriodType.value == 'Custom Date' &&
+          startDate.value != null &&
+          endDate.value != null) {
+        queryParams['startDate'] = _formatDate(startDate.value!);
+        queryParams['endDate'] = _formatDate(endDate.value!);
       }
 
       final response = await _apiService.requestGetForApi(
-        url: _config.getAllBills,
+        url: '${_config.baseUrl}/api/purchase-bills',
         dictParameter: queryParams,
         authToken: true,
       );
@@ -95,20 +488,14 @@ class BillHistoryController extends GetxController {
         final parsed = BillsResponse.fromJson(response.data);
 
         if (refresh) {
-          allBills.clear();
+          bills.clear();
         }
 
-        allBills.addAll(parsed.content);
+        bills.addAll(parsed.bills);
         totalElements.value = parsed.totalElements;
         totalAmount.value = parsed.totalAmount;
         totalQty.value = parsed.totalQty;
         hasMore.value = !parsed.last;
-        log(totalAmount.value.toString());
-        // Apply local filters after loading data
-        _applyLocalFilters();
-
-        // Update company filter options
-        _updateCompanyOptions();
       }
     } catch (e) {
       error.value = 'Error: $e';
@@ -119,7 +506,7 @@ class BillHistoryController extends GetxController {
   }
 
   Future<void> loadMoreBills() async {
-    if (isLoadingMore.value || !hasMore.value) return;
+    if (isLoadingMore.value || !hasMore.value || isLoading.value) return;
 
     isLoadingMore.value = true;
     currentPage.value++;
@@ -132,30 +519,32 @@ class BillHistoryController extends GetxController {
         'sortDir': sortDir.value,
       };
 
-      if (searchQuery.value.isNotEmpty) {
-        queryParams['search'] = searchQuery.value;
+      // Add company filter
+      if (selectedCompany.value != 'All') {
+        queryParams['companyName'] = selectedCompany.value;
       }
 
-      if (selectedCompany.value.isNotEmpty && selectedCompany.value != 'All') {
-        queryParams['company'] = selectedCompany.value;
+      // Add time period filters
+      if (timePeriodType.value == 'Month/Year') {
+        queryParams['month'] = selectedMonth.value.toString();
+        queryParams['year'] = selectedYear.value.toString();
+      } else if (timePeriodType.value == 'Custom Date' &&
+          startDate.value != null &&
+          endDate.value != null) {
+        queryParams['startDate'] = _formatDate(startDate.value!);
+        queryParams['endDate'] = _formatDate(endDate.value!);
       }
 
       final response = await _apiService.requestGetForApi(
-        url: _config.getAllBills,
+        url: '${_config.baseUrl}/api/purchase-bills',
         dictParameter: queryParams,
         authToken: true,
       );
 
       if (response != null && response.statusCode == 200) {
         final parsed = BillsResponse.fromJson(response.data);
-        allBills.addAll(parsed.content);
-        totalElements.value = parsed.totalElements;
-        totalAmount.value = totalAmount.value + parsed.totalAmount;
-        totalQty.value =totalQty.value+ parsed.totalQty;
+        bills.addAll(parsed.bills);
         hasMore.value = !parsed.last;
-
-        // Apply local filters after loading more data
-        _applyLocalFilters();
       } else {
         currentPage.value--;
         _showErrorSnackbar('Failed to load more bills');
@@ -168,43 +557,50 @@ class BillHistoryController extends GetxController {
     }
   }
 
-  void onSearchChanged() {
-    searchQuery.value = searchController.text;
-    loadBills(refresh: true);
+
+  void showAnalyticsModal() {
+    Get.toNamed(AppRoutes.billAnalytics);
   }
 
-  void clearSearch() {
-    searchController.clear();
-    searchQuery.value = '';
-    loadBills(refresh: true);
-  }
-
-  void onCompanyFilterChanged(String? company) {
+  // Filter methods for bills
+  void onCompanyChanged(String? company) {
     selectedCompany.value = company ?? 'All';
     loadBills(refresh: true);
   }
 
-  void onStatusFilterChanged(String? status) {
-    selectedStatus.value = status ?? 'All';
-    _applyLocalFilters();
+  void onTimePeriodTypeChanged(String? type) {
+    timePeriodType.value = type ?? 'Month/Year';
+    loadBills(refresh: true);
   }
 
-  // New method to apply local filters
-  void _applyLocalFilters() {
-    List<Bill> filteredList = List.from(allBills);
-
-    // Apply status filter locally
-    if (selectedStatus.value != 'All') {
-      if (selectedStatus.value == 'Paid') {
-        filteredList =
-            filteredList.where((bill) => bill.isPaid == true).toList();
-      } else if (selectedStatus.value == 'Pending') {
-        filteredList =
-            filteredList.where((bill) => bill.isPaid == false).toList();
-      }
+  void onMonthChanged(int? month) {
+    selectedMonth.value = month ?? DateTime.now().month;
+    if (timePeriodType.value == 'Month/Year') {
+      loadBills(refresh: true);
     }
+  }
 
-    bills.value = filteredList;
+  void onYearChanged(int? year) {
+    selectedYear.value = year ?? DateTime.now().year;
+    if (timePeriodType.value == 'Month/Year') {
+      loadBills(refresh: true);
+    }
+  }
+
+  void onStartDateChanged(DateTime? date) {
+    startDate.value = date;
+    startDateController.text = date != null ? _formatDisplayDate(date) : '';
+    if (timePeriodType.value == 'Custom Date' && endDate.value != null) {
+      loadBills(refresh: true);
+    }
+  }
+
+  void onEndDateChanged(DateTime? date) {
+    endDate.value = date;
+    endDateController.text = date != null ? _formatDisplayDate(date) : '';
+    if (timePeriodType.value == 'Custom Date' && startDate.value != null) {
+      loadBills(refresh: true);
+    }
   }
 
   void onSortChanged(String field) {
@@ -212,23 +608,26 @@ class BillHistoryController extends GetxController {
       sortDir.value = sortDir.value == 'asc' ? 'desc' : 'asc';
     } else {
       sortBy.value = field;
-      sortDir.value = 'asc';
+      sortDir.value = 'desc';
     }
     loadBills(refresh: true);
   }
 
+  // Utility methods
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  String _formatDisplayDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
   Future<void> refreshBills() async {
-    await loadBills(refresh: true);
+    await Future.wait([loadStats(), loadBills(refresh: true)]);
   }
 
   void navigateToBillDetails(Bill bill) {
     Get.toNamed('/bill-details', arguments: bill);
-  }
-
-  void _updateCompanyOptions() {
-    final companies = allBills.map((bill) => bill.companyName).toSet().toList();
-    companies.sort();
-    companyOptions.value = ['All', ...companies];
   }
 
   void _showErrorSnackbar(String message) {
@@ -242,8 +641,9 @@ class BillHistoryController extends GetxController {
     );
   }
 
+  // UI Helper methods
   Color getStatusColor(Bill bill) {
-    return bill.paid ? Color(0xFF10B981) : Color(0xFFF59E0B);
+    return bill.isPaid ? Color(0xFF10B981) : Color(0xFFF59E0B);
   }
 
   Color getCompanyColor(String company) {
@@ -253,17 +653,42 @@ class BillHistoryController extends GetxController {
       case 'samsung':
         return Color(0xFF3B82F6);
       case 'xiaomi':
+      case 'redmi':
         return Color(0xFFF59E0B);
+      case 'oneplus':
+        return Color(0xFFEF4444);
       case 'mix':
       case 'mixu':
         return Color(0xFF8B5CF6);
+      case 'vivo':
+        return Color(0xFF4338CA);
+      case 'oppo':
+        return Color(0xFF059669);
+      default:
+        return Color(0xFF6B7280);
+    }
+  }
+
+  Color getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'smartphone':
+        return Color(0xFF3B82F6);
+      case 'charger':
+        return Color(0xFF10B981);
+      case 'earphones':
+      case 'headphones':
+        return Color(0xFF8B5CF6);
+      case 'cover':
+        return Color(0xFFF59E0B);
+      case 'power_bank':
+        return Color(0xFFEF4444);
       default:
         return Color(0xFF6B7280);
     }
   }
 
   IconData getStatusIcon(Bill bill) {
-    return bill.paid ? Icons.check_circle : Icons.pending;
+    return bill.isPaid ? Icons.check_circle : Icons.pending;
   }
 
   IconData getCompanyIcon(String company) {
@@ -273,9 +698,81 @@ class BillHistoryController extends GetxController {
       case 'samsung':
         return Icons.smartphone;
       case 'xiaomi':
+      case 'redmi':
+        return Icons.phone_android;
+      case 'oneplus':
         return Icons.phone_android;
       default:
         return Icons.devices;
     }
+  }
+
+  IconData getCategoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'smartphone':
+      case 'feature_phone':
+        return Icons.smartphone;
+      case 'tablet':
+        return Icons.tablet;
+      case 'charger':
+      case 'car_charger':
+      case 'wireless_charger':
+        return Icons.battery_charging_full;
+      case 'earphones':
+      case 'headphones':
+        return Icons.headphones;
+      case 'bluetooth_speaker':
+        return Icons.speaker;
+      case 'cover':
+        return Icons.phone_android;
+      case 'screen_guard':
+        return Icons.shield;
+      case 'power_bank':
+        return Icons.battery_std;
+      case 'memory_card':
+        return Icons.sd_card;
+      case 'smart_watch':
+        return Icons.watch;
+      case 'fitness_band':
+        return Icons.fitness_center;
+      default:
+        return Icons.devices_other;
+    }
+  }
+
+  String getMonthName(int month) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return months[month - 1];
+  }
+
+  void resetStockFilters() {
+    selectedStockCompany.value = 'All';
+    selectedCategory.value = 'All';
+    stockTimePeriodType.value = 'Month/Year';
+    stockSelectedMonth.value = DateTime.now().month;
+    stockSelectedYear.value = DateTime.now().year;
+    stockStartDate.value = null;
+    stockEndDate.value = null;
+    stockStartDateController.clear();
+    stockEndDateController.clear();
+    stockSortBy.value = 'createdDate';
+    stockSortDir.value = 'desc';
+    searchController.clear();
+    searchKeyword.value = '';
+    loadStockItems(refresh: true);
+    Get.back();
   }
 }

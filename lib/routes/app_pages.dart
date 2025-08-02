@@ -30,6 +30,8 @@ import 'package:smartbecho/views/auth/reset_password.dart';
 import 'package:smartbecho/views/auth/signup_screen.dart';
 import 'package:smartbecho/views/auth/verify_email.dart';
 import 'package:smartbecho/views/bill%20history/bill_history.dart';
+import 'package:smartbecho/views/bill%20history/components/bill_analytics.dart';
+import 'package:smartbecho/views/bill%20history/components/stock_history.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_dues_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_invoice_details.dart';
@@ -49,6 +51,7 @@ import 'package:smartbecho/views/inventory/inventory_management.dart';
 import 'package:smartbecho/views/inventory/sales_dashboard.dart';
 import 'package:smartbecho/views/inventory/components/company_stock_info.dart';
 import 'package:smartbecho/views/profile/profile.dart';
+import 'package:smartbecho/views/sales%20management/components/add_mobile_sales_form.dart';
 import 'package:smartbecho/views/sales%20management/components/sales_details.dart';
 import 'package:smartbecho/views/sales%20management/sales_managenment_screen.dart';
 import 'package:smartbecho/views/splash/splash_screen.dart';
@@ -216,7 +219,20 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: AddNewStockOperationBinding(),
     ),
-
+      GetPage(
+      name: AppRoutes.stockList,
+      page: () => StockHistoryPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      
+    ),
+      GetPage(
+      name: AppRoutes.billAnalytics,
+      page: () => BillAnalyticsScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      
+    ),
     //customer dues management
     GetPage(
       name: AppRoutes.customerDuesManagement,
@@ -259,6 +275,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.salesDetails,
       page: () => SaleDetailsPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+       GetPage(
+      name: AppRoutes.mobileSalesForm,
+      page: () => MobileSalesForm(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
