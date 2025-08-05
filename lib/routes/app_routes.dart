@@ -54,6 +54,8 @@ class AppRoutes {
   static const String salesManagement = '/sales-management';
   static const String salesDetails = '/sales-detail';
   static const String mobileSalesForm = '/mobiles-sales-form';
+  static const String salesInsightsAnalytics = '/sales-insights-analytics';
+
 
 
   //generate inventory

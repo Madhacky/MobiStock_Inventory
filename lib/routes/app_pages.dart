@@ -52,6 +52,7 @@ import 'package:smartbecho/views/inventory/sales_dashboard.dart';
 import 'package:smartbecho/views/inventory/components/company_stock_info.dart';
 import 'package:smartbecho/views/profile/profile.dart';
 import 'package:smartbecho/views/sales%20management/components/add_mobile_sales_form.dart';
+import 'package:smartbecho/views/sales%20management/components/sales_Insights_analytics.dart';
 import 'package:smartbecho/views/sales%20management/components/sales_details.dart';
 import 'package:smartbecho/views/sales%20management/sales_managenment_screen.dart';
 import 'package:smartbecho/views/splash/splash_screen.dart';
@@ -284,6 +285,17 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
+
+  //sales insights analytics
+  GetPage(
+      name: AppRoutes.salesInsightsAnalytics,
+      page: () => SalesInsightsAnalytics(),
+      binding: SalesManagementBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+
+
 
     //generate inventory
        GetPage(

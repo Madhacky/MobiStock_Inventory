@@ -137,3 +137,161 @@ class MonthYearDropdown extends StatelessWidget {
     return items.reversed.toList(); 
   }
 }
+
+
+
+
+class MonthDropdown extends StatelessWidget {
+  final int? selectedMonth;
+  final Function(int?) onMonthChanged;
+  final bool showAllOption;
+  final String monthLabel;
+
+  const MonthDropdown({
+    Key? key,
+    this.selectedMonth,
+    required this.onMonthChanged,
+    this.showAllOption = true,
+    this.monthLabel = 'Month',
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return // Month Dropdown
+    Expanded(
+      child: Container(
+        height: 44,
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<int?>(
+            value: selectedMonth,
+            hint: Text(
+              monthLabel,
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            ),
+            items: _buildMonthItems(),
+            onChanged: onMonthChanged,
+            icon: Icon(Icons.keyboard_arrow_down, size: 20),
+            isExpanded: true,
+            style: TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<DropdownMenuItem<int?>> _buildMonthItems() {
+    List<DropdownMenuItem<int?>> items = [];
+
+    if (showAllOption) {
+      items.add(
+        DropdownMenuItem<int?>(
+          value: null,
+          child: Text('All Months', style: TextStyle(fontSize: 14)),
+        ),
+      );
+    }
+
+    final months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    for (int i = 0; i < months.length; i++) {
+      items.add(
+        DropdownMenuItem<int?>(
+          value: i + 1,
+          child: Text(months[i], style: TextStyle(fontSize: 14)),
+        ),
+      );
+    }
+
+    return items;
+  }
+}
+
+class YearDropdown extends StatelessWidget {
+  final int? selectedYear;
+  final Function(int?) onYearChanged;
+  final bool showAllOption;
+  final String yearLabel;
+
+  const YearDropdown({
+    Key? key,
+    this.selectedYear,
+    required this.onYearChanged,
+    this.showAllOption = true,
+    this.yearLabel = 'Year',
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 44,
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int?>(
+          value: selectedYear,
+          hint: Text(
+            yearLabel,
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]
+            
+            ),
+          ),
+          items: _buildYearItems(),
+          onChanged: onYearChanged,
+          icon: Icon(Icons.keyboard_arrow_down, size: 20),
+          isExpanded: true,
+          style: TextStyle(fontSize: 14, color: Colors.black87),
+        ),
+      ),
+    );
+  }
+  
+  List<DropdownMenuItem<int?>> _buildYearItems() {
+    List<DropdownMenuItem<int?>> items = [];
+
+    if (showAllOption) {
+      items.add(
+        DropdownMenuItem<int?>(
+          value: null,
+          child: Text('All Years', style: TextStyle(fontSize: 14)),
+        ),
+      );
+    }
+
+    final currentYear = DateTime.now().year;
+
+    // Generate years from 2020 to current year + 2
+    for (int year = 2020; year <= currentYear + 2; year++) {
+      items.add(
+        DropdownMenuItem<int?>(
+          value: year,
+          child: Text(year.toString(), style: TextStyle(fontSize: 14)),
+        ),
+      );
+    }
+
+    return items.reversed.toList();
+  }
+
+}

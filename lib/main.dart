@@ -10,13 +10,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final apiService = ApiServices(); // This sets up the interceptors
   await dotenv.load(fileName: ".env");
-  runApp(MyApp());
+  runApp(MyApp()); 
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return GetMaterialApp(    
       builder: (context, child) {
         return GestureDetector(
           behavior:

@@ -1133,6 +1133,34 @@ Future<void> _selectDate(BuildContext context, bool isStartDate) async {
           _buildInsightsOverview(),
           SizedBox(height: 16),
 
+          SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => Get.toNamed(AppRoutes.salesInsightsAnalytics),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                'View All Insights',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
           _buildInsightsOverviewChart(),
           SizedBox(height: 16),
           _buildTopCustomers(),
