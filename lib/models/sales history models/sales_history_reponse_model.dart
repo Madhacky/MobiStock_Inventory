@@ -93,9 +93,9 @@ class SalesHistoryPayload {
   factory SalesHistoryPayload.fromJson(Map<String, dynamic> json) {
     return SalesHistoryPayload(
       content: (json['page']['content'] as List).map((item) => Sale.fromJson(item)).toList(),
-      totalElements: json['totalElements'] ?? 0,
-      totalPages: json['totalPages'] ?? 1,
-      last: json['last'] ?? true,
+      totalElements: json['page']['totalElements'] ?? 0,
+      totalPages: json['page']['totalPages'] ?? 1,
+      last: json['page']['last'] ?? true,
     );
   }
 }
