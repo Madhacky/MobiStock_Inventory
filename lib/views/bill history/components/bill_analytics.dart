@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_analytics_controller.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
 import 'package:smartbecho/models/bill%20history/monthly_purchase_chart_reponse_model.dart';
+import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 
@@ -185,7 +186,7 @@ class BillAnalyticsScreen extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _buildDateField(
+          child: buildDateField(
             labelText: 'Start Date',
             controller: controller.startDateController,
             onTap: () => _selectDate(context, controller, true),
@@ -193,7 +194,7 @@ class BillAnalyticsScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildDateField(
+          child: buildDateField(
             labelText: 'End Date',
             controller: controller.endDateController,
             onTap: () => _selectDate(context, controller, false),
@@ -203,55 +204,7 @@ class BillAnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDateField({
-    required String labelText,
-    required TextEditingController controller,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          labelText,
-          style: const TextStyle(
-            color: Color(0xFF374151),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
-          ),
-          child: TextFormField(
-            controller: controller,
-            readOnly: true,
-            onTap: onTap,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Select Date',
-              hintStyle: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-              ),
-              suffixIcon: Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-              contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-            style: const TextStyle(
-              color: Color(0xFF374151),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
+  
   Future<void> _selectDate(BuildContext context, BillAnalyticsController controller, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -474,7 +427,7 @@ class BillAnalyticsScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -491,7 +444,7 @@ class BillAnalyticsScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 16),
@@ -553,7 +506,7 @@ class BillAnalyticsScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -576,7 +529,7 @@ class BillAnalyticsScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(paymentPercentage.toDouble()).withOpacity(0.1),
+                  color: _getStatusColor(paymentPercentage.toDouble()).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

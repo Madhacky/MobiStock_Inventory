@@ -44,8 +44,8 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF6C5CE7).withOpacity(0.1),
-                        const Color(0xFFA29BFE).withOpacity(0.1),
+                        const Color(0xFF6C5CE7).withValues(alpha:0.1),
+                        const Color(0xFFA29BFE).withValues(alpha:0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -112,8 +112,8 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                     icon: Icons.analytics_rounded,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF6C5CE7).withOpacity(0.1),
-                        const Color(0xFFA29BFE).withOpacity(0.05),
+                        const Color(0xFF6C5CE7).withValues(alpha:0.1),
+                        const Color(0xFFA29BFE).withValues(alpha:0.05),
                       ],
                     ),
                     isGridView: controller.isTopStatGridView,
@@ -130,8 +130,8 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                     icon: Icons.inventory_2_rounded,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFFA29BFE).withOpacity(0.1),
-                        const Color(0xFF6C5CE7).withOpacity(0.05),
+                        const Color(0xFFA29BFE).withValues(alpha:0.1),
+                        const Color(0xFF6C5CE7).withValues(alpha:0.05),
                       ],
                     ),
                     isGridView: controller.isInventorySummaryGridView,
@@ -170,7 +170,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 0,
-                        shadowColor: const Color(0xFF6C5CE7).withOpacity(0.3),
+                        shadowColor: const Color(0xFF6C5CE7).withValues(alpha:0.3),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -229,7 +229,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha:0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -277,7 +277,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha:0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -339,7 +339,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: const Color(0xFF6C5CE7).withOpacity(0.3),
+              color: const Color(0xFF6C5CE7).withValues(alpha:0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -375,7 +375,7 @@ class ViewPreferencesBottomSheet extends StatelessWidget {
               subtitle,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: isSelected 
-                  ? Colors.white.withOpacity(0.9)
+                  ? Colors.white.withValues(alpha:0.9)
                   : Colors.grey[600],
                 fontSize: 12,
               ),

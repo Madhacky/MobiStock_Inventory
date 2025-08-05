@@ -72,13 +72,13 @@ class BusinessSummaryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha:0.1),
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +89,7 @@ class BusinessSummaryCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4CAF50).withOpacity(0.1),
+                    color: const Color(0xFF4CAF50).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
@@ -208,7 +208,7 @@ class BusinessSummaryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF4CAF50).withOpacity(0.3),
+                    color: const Color(0xFF4CAF50).withValues(alpha:0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -264,9 +264,9 @@ class BusinessSummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha:0.05),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.1), width: 1),
+        border: Border.all(color: color.withValues(alpha:0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +275,7 @@ class BusinessSummaryCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, color: color, size: 16),
@@ -305,7 +305,7 @@ class BusinessSummaryCard extends StatelessWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: const Color(0xFF6B7280).withOpacity(0.7),
+              color: const Color(0xFF6B7280).withValues(alpha:0.7),
               fontSize: 9,
               fontWeight: FontWeight.w400,
             ),

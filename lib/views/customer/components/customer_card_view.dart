@@ -69,7 +69,7 @@ class CustomerCardViewPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha:0.05),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -88,7 +88,7 @@ class CustomerCardViewPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.grey[50],
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
                   ),
                   child: TextFormField(
                     onChanged: controller.onSearchChanged,
@@ -175,7 +175,7 @@ class CustomerCardViewPage extends StatelessWidget {
                                 color: Colors.grey[100],
                                 borderRadius: BorderRadius.circular(6),
                                 border: Border.all(
-                                  color: Colors.grey.withOpacity(0.3),
+                                  color: Colors.grey.withValues(alpha:0.3),
                                 ),
                               ),
                               child: Row(
@@ -324,7 +324,7 @@ class CustomerCardViewPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8), // Smaller radius
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha:0.05),
               blurRadius: 6,
               offset: Offset(0, 1),
             ),
@@ -416,7 +416,7 @@ class CustomerCardViewPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.06),
+            color: Colors.grey.withValues(alpha:0.06),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -425,7 +425,7 @@ class CustomerCardViewPage extends StatelessWidget {
         border: Border.all(
           color: controller
               .getCustomerTypeColor(customer.customerType)
-              .withOpacity(0.15),
+              .withValues(alpha:0.15),
           width: 1,
         ),
       ),
@@ -445,7 +445,7 @@ class CustomerCardViewPage extends StatelessWidget {
                             controller.getCustomerTypeColor(customer.customerType),
                             controller
                                 .getCustomerTypeColor(customer.customerType)
-                                .withOpacity(0.7),
+                                .withValues(alpha:0.7),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -615,7 +615,7 @@ class CustomerCardViewPage extends StatelessWidget {
                     onPressed:
                         () => controller.callCustomer(customer.primaryPhone),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF51CF66).withOpacity(0.1),
+                      backgroundColor: Color(0xFF51CF66).withValues(alpha:0.1),
                       foregroundColor: Color(0xFF51CF66),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -634,7 +634,7 @@ class CustomerCardViewPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => controller.editCustomer(customer),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF6C5CE7).withOpacity(0.1),
+                      backgroundColor: Color(0xFF6C5CE7).withValues(alpha:0.1),
                       foregroundColor: Color(0xFF6C5CE7),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -653,7 +653,7 @@ class CustomerCardViewPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => Get.toNamed(AppRoutes.customerDetails, arguments: customer.id),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFFF6B6B).withOpacity(0.1),
+                      backgroundColor: Color(0xFFFF6B6B).withValues(alpha:0.1),
                       foregroundColor: Color.fromARGB(255, 160, 152, 152),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -676,10 +676,10 @@ class CustomerCardViewPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: controller.getCustomerTypeColor(type).withOpacity(0.1),
+        color: controller.getCustomerTypeColor(type).withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: controller.getCustomerTypeColor(type).withOpacity(0.3),
+          color: controller.getCustomerTypeColor(type).withValues(alpha:0.3),
         ),
       ),
       child: Row(

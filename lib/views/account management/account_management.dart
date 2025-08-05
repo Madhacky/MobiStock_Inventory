@@ -121,21 +121,21 @@ class AccountManagementScreen extends StatelessWidget {
               color: isActive ? item.color : Colors.white,
               borderRadius: BorderRadius.circular(25),
               border: Border.all(
-                color: isActive ? item.color : Colors.grey.withOpacity(0.3),
+                color: isActive ? item.color : Colors.grey.withValues(alpha:0.3),
                 width: 1.5,
               ),
               boxShadow:
                   isActive
                       ? [
                         BoxShadow(
-                          color: item.color.withOpacity(0.3),
+                          color: item.color.withValues(alpha:0.3),
                           blurRadius: 8,
                           offset: Offset(0, 4),
                         ),
                       ]
                       : [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withValues(alpha:0.1),
                           blurRadius: 4,
                           offset: Offset(0, 2),
                         ),
@@ -330,7 +330,7 @@ class AccountManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -343,7 +343,7 @@ class AccountManagementScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -462,7 +462,7 @@ class AccountManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -475,7 +475,7 @@ class AccountManagementScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, color: color, size: 18),
@@ -504,7 +504,7 @@ class AccountManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),

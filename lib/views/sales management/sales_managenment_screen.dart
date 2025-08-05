@@ -7,7 +7,10 @@ import 'package:smartbecho/models/sales%20history%20models/sales_history_reponse
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
+import 'package:smartbecho/utils/common_date_feild.dart';
+import 'package:smartbecho/utils/common_month_year_dropdown.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
 
@@ -76,7 +79,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -229,7 +232,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha:0.08),
               blurRadius: 10,
               offset: Offset(0, 2),
             ),
@@ -243,7 +246,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: color, size: 20),
@@ -347,125 +350,387 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
     );
   }
 
-  Widget _buildHistoryTab() {
-    return Column(
-      children: [
-        _buildSearchAndFilters(),
-        _buildHistoryStats(),
-        Expanded(
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.pixels >=
-                      scrollInfo.metrics.maxScrollExtent &&
-                  !controller.isLoadingMore.value &&
-                  !controller.isLoading.value) {
-                controller.loadMoreSales();
-              }
-              return false;
-            },
-            child: _buildSalesGrid(),
-          ),
+ Widget _buildHistoryTab() {
+  return Column(
+    children: [
+      _buildSearchAndFilters(),
+      _buildHistoryStats(),
+      Expanded(
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent &&
+                !controller.isLoadingMore.value &&
+                !controller.isLoading.value) {
+              controller.loadMoreSales();
+            }
+            return false;
+          },
+          child: _buildSalesGrid(),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildSearchAndFilters() {
+  return Container(
+    margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha:0.05),
+          spreadRadius: 0,
+          blurRadius: 10,
+          offset: Offset(0, 2),
         ),
       ],
-    );
-  }
-
-  Widget _buildSearchAndFilters() {
-    return Container(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
-            spreadRadius: 0,
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
-              SizedBox(width: 8),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                  ),
-                  child: TextField(
-                    controller: controller.searchController,
-                    onChanged: (_) => controller.onSearchChanged(),
-                    decoration: InputDecoration(
-                      hintText: 'Search sales by customer, invoice...',
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w400,
-                      ),
-                      suffixIcon: Obx(
-                        () =>
-                            controller.searchQuery.value.isNotEmpty
-                                ? IconButton(
-                                  onPressed: controller.clearSearch,
-                                  icon: Icon(
-                                    Icons.clear,
-                                    size: 16,
-                                    color: Colors.grey[400],
-                                  ),
-                                )
-                                : SizedBox(),
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
+            SizedBox(width: 8),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(2),
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+                ),
+                child: TextField(
+                  controller: controller.searchController,
+                  onChanged: (_) => controller.onSearchChanged(),
+                  decoration: InputDecoration(
+                    hintText: 'Search sales by customer, invoice...',
+                    hintStyle: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w400,
                     ),
+                    suffixIcon: Obx(
+                      () => controller.searchQuery.value.isNotEmpty
+                          ? IconButton(
+                              onPressed: controller.clearSearch,
+                              icon: Icon(
+                                Icons.clear,
+                                size: 16,
+                                color: Colors.grey[400],
+                              ),
+                            )
+                          : SizedBox(),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
-              SizedBox(width: 8),
-              // PopupMenuButton<String>(
-              //   onSelected: (value) => controller.onSortChanged(value),
-              //   itemBuilder:
-              //       (context) => [
-              //         PopupMenuItem(
-              //           value: 'saleDate,desc',
-              //           child: Text('Latest First'),
-              //         ),
-              //         PopupMenuItem(
-              //           value: 'saleDate,asc',
-              //           child: Text('Oldest First'),
-              //         ),
-              //         PopupMenuItem(
-              //           value: 'amount,desc',
-              //           child: Text('Highest Amount'),
-              //         ),
-              //         PopupMenuItem(
-              //           value: 'amount,asc',
-              //           child: Text('Lowest Amount'),
-              //         ),
-              //       ],
-              //   child: Icon(Icons.sort, size: 18, color: Color(0xFF1E293B)),
-              // ),
-              SizedBox(width: 8),
+            ),
+            SizedBox(width: 8),
+            // Filter Button
+            Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: controller.hasActiveFilters 
+                    ? Color(0xFF1E293B) 
+                    : Colors.grey[50],
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+              ),
+              child: IconButton(
+                onPressed: () => _showFilterBottomSheet(Get.context!),
+                icon: Obx(() => Icon(
+                  Icons.tune,
+                  size: 18,
+                  color: controller.hasActiveFilters 
+                      ? Colors.white 
+                      : Color(0xFF1E293B),
+                )),
+                tooltip: 'Filter',
+              ),
+            ),
+            SizedBox(width: 8),
+            IconButton(
+              onPressed: () => controller.refreshData(),
+              icon: Icon(Icons.refresh, size: 18, color: Color(0xFF1E293B)),
+              tooltip: 'Refresh',
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+// Filter Bottom Sheet Modal
+void _showFilterBottomSheet(BuildContext context) {
+  Get.bottomSheet(
+    Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Text(
+                'Filter & Sort',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              Spacer(),
               IconButton(
-                onPressed: () => controller.refreshData(),
-                icon: Icon(Icons.refresh, size: 18, color: Color(0xFF1E293B)),
-                tooltip: 'Refresh',
+                onPressed: () => Get.back(),
+                icon: Icon(Icons.close),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey.withValues(alpha:0.1),
+                ),
               ),
             ],
           ),
+          SizedBox(height: 20),
+
+          // Company and Payment Method Row
+          Row(
+            children: [
+              Expanded(
+                child: Obx(
+                  () => buildStyledDropdown(
+                    labelText: 'Company',
+                    hintText: 'Select Company',
+                    value: controller.selectedCompany.value?.isEmpty == true 
+                        ? null 
+                        : controller.selectedCompany.value,
+                    items: controller.companyOptions,
+                    onChanged: controller.onCompanyChanged,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Obx(
+                  () => buildStyledDropdown(
+                    labelText: 'Payment Method',
+                    hintText: 'Select Method',
+                    value: controller.selectedPaymentMethod.value?.isEmpty == true 
+                        ? null 
+                        : controller.selectedPaymentMethod.value,
+                    items: controller.paymentMethodOptions,
+                    onChanged: controller.onPaymentMethodChanged,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 16),
+
+          // Item Category and Payment Mode Row
+          Row(
+            children: [
+              Expanded(
+                child: Obx(
+                  () => buildStyledDropdown(
+                    labelText: 'Item Category',
+                    hintText: 'Select Category',
+                    value: controller.selectedItemCategory.value?.isEmpty == true 
+                        ? null 
+                        : controller.selectedItemCategory.value,
+                    items: controller.itemCategoryOptions,
+                    onChanged: controller.onItemCategoryChanged,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Obx(
+                  () => buildStyledDropdown(
+                    labelText: 'Payment Mode',
+                    hintText: 'Select Mode',
+                    value: controller.selectedPaymentMode.value?.isEmpty == true 
+                        ? null 
+                        : controller.selectedPaymentMode.value,
+                    items: controller.paymentModeOptions,
+                    onChanged: controller.onPaymentModeChanged,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 16),
+
+          // Date Period Type Selector
+          Obx(
+            () => buildStyledDropdown(
+              labelText: 'Date Filter Type',
+              hintText: 'Select Date Type',
+              value: controller.dateFilterType.value,
+              items: ['Month/Year', 'Date Range'],
+              onChanged: controller.onDateFilterTypeChanged,
+            ),
+          ),
+
+          SizedBox(height: 16),
+
+          // Date Selection based on Date Filter Type
+          Obx(() {
+            if (controller.dateFilterType.value == 'Month/Year') {
+              return _buildMonthYearSelection();
+            } else {
+              return _buildCustomDateSelection(context);
+            }
+          }),
+
+          SizedBox(height: 16),
+
+          // Sort Option
+          Obx(
+            () => buildStyledDropdown(
+              labelText: 'Sort By',
+              hintText: 'Select Sort Field',
+              value: controller.selectedSortBy.value,
+              items: controller.sortByOptions,
+              onChanged: controller.onSortByChanged,
+              suffixIcon: GestureDetector(
+                onTap: controller.toggleSortDirection,
+                child: Icon(
+                  controller.selectedSortDir.value == 'asc'
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward,
+                  size: 16,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 24),
+
+          // Action Buttons
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _resetFilters,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Color(0xFF1E293B),
+                    side: BorderSide(color: Color(0xFF1E293B)),
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text('Reset'),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.applyFilters();
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF1E293B),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text('Apply'),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
         ],
       ),
-    );
+    ),
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+  );
+}
+
+void _resetFilters() {
+  controller.resetAllFilters();
+  Get.back();
+}
+
+Widget _buildMonthYearSelection() {
+  return Obx(
+    () => MonthYearDropdown(
+      selectedMonth: controller.selectedMonth.value,
+      selectedYear: controller.selectedYear.value,
+      onMonthChanged: controller.onMonthChanged,
+      onYearChanged: controller.onYearChanged,
+      showAllOption: true,
+      monthLabel: 'Month',
+      yearLabel: 'Year',
+    ),
+  );
+}
+
+Widget _buildCustomDateSelection(BuildContext context) {
+  return Row(
+    children: [
+      Expanded(
+        child: buildDateField(
+          labelText: 'Start Date',
+          controller: controller.startDateController,
+          onTap: () => _selectDate(context, true),
+        ),
+      ),
+      SizedBox(width: 12),
+      Expanded(
+        child: buildDateField(
+          labelText: 'End Date',
+          controller: controller.endDateController,
+          onTap: () => _selectDate(context, false),
+        ),
+      ),
+    ],
+  );
+}
+
+
+
+
+Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2020),
+    lastDate: DateTime.now().add(Duration(days: 365)),
+  );
+  
+  if (picked != null) {
+    if (isStartDate) {
+      controller.onStartDateChanged(picked);
+    } else {
+      controller.onEndDateChanged(picked);
+    }
   }
+}
 
   Widget _buildHistoryStats() {
     return Container(
@@ -525,7 +790,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha:0.05),
               blurRadius: 6,
               offset: Offset(0, 1),
             ),
@@ -627,14 +892,14 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.06),
+            color: Colors.grey.withValues(alpha:0.06),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: controller.getCompanyColor(sale.companName).withOpacity(0.15),
+          color: controller.getCompanyColor(sale.companName).withValues(alpha:0.15),
           width: 1,
         ),
       ),
@@ -653,7 +918,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                       controller.getCompanyColor(sale.companName),
                       controller
                           .getCompanyColor(sale.companName)
-                          .withOpacity(0.7),
+                          .withValues(alpha:0.7),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -668,12 +933,12 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                 decoration: BoxDecoration(
                   color: controller
                       .getPaymentMethodColor(sale.paymentMethod)
-                      .withOpacity(0.1),
+                      .withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: controller
                         .getPaymentMethodColor(sale.paymentMethod)
-                        .withOpacity(0.3),
+                        .withValues(alpha:0.3),
                   ),
                 ),
                 child: Row(
@@ -816,7 +1081,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                   child: ElevatedButton(
                     onPressed: () => controller.navigateToSaleDetails(sale),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1E293B).withOpacity(0.1),
+                      backgroundColor: Color(0xFF1E293B).withValues(alpha:0.1),
                       foregroundColor: Color(0xFF1E293B),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -835,7 +1100,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                   child: ElevatedButton(
                     onPressed: () => controller.downloadInvoice(sale),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF3B82F6).withOpacity(0.1),
+                      backgroundColor: Color(0xFF3B82F6).withValues(alpha:0.1),
                       foregroundColor: Color(0xFF3B82F6),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -993,7 +1258,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                 Text(
                   'Performance analytics and trends',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha:0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -1014,7 +1279,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -1120,7 +1385,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -1225,7 +1490,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -1272,7 +1537,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                       decoration: BoxDecoration(
                         color: Colors.grey[50],
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                        border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
                       ),
                       child: Row(
                         children: [
@@ -1356,7 +1621,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.06),
+                color: Colors.grey.withValues(alpha:0.06),
                 blurRadius: 10,
                 offset: Offset(0, 4),
               ),

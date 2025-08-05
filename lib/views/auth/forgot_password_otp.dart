@@ -73,10 +73,10 @@ class OTPVerificationScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha:0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha:0.3),
               width: 2,
             ),
           ),
@@ -95,7 +95,7 @@ class OTPVerificationScreen extends StatelessWidget {
             text: TextSpan(
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontWeight: FontWeight.w400,
                 height: 1.5,
               ),
@@ -143,20 +143,20 @@ class OTPVerificationScreen extends StatelessWidget {
       width: 45,
       height: 55,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: controller.otpFocusIndex.value == index
               ? Colors.white
               : controller.otpControllers[index].text.isNotEmpty
-                  ? const Color(0xFF4CAF50).withOpacity(0.8)
-                  : Colors.white.withOpacity(0.3),
+                  ? const Color(0xFF4CAF50).withValues(alpha:0.8)
+                  : Colors.white.withValues(alpha:0.3),
           width: controller.otpFocusIndex.value == index ? 2 : 1.5,
         ),
         boxShadow: controller.otpFocusIndex.value == index
             ? [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   spreadRadius: 0,
                   blurRadius: 8,
                   offset: const Offset(0, 2),
@@ -232,10 +232,10 @@ class OTPVerificationScreen extends StatelessWidget {
             ? Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.red.withOpacity(0.3),
+                    color: Colors.red.withValues(alpha:0.3),
                     width: 1,
                   ),
                 ),
@@ -273,10 +273,10 @@ class OTPVerificationScreen extends StatelessWidget {
   }) {
     return Obx(() => Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha:0.3),
           width: 1.5,
         ),
       ),
@@ -291,18 +291,18 @@ class OTPVerificationScreen extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha:0.6),
             fontSize: 16,
           ),
           prefixIcon: Icon(
             Icons.lock_outline,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha:0.7),
             size: 20,
           ),
           suffixIcon: IconButton(
             icon: Icon(
               obscureText.value ? Icons.visibility_off : Icons.visibility,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha:0.7),
               size: 20,
             ),
             onPressed: onToggleVisibility,
@@ -330,7 +330,7 @@ class OTPVerificationScreen extends StatelessWidget {
         boxShadow: controller.isFormValid.value
             ? [
                 BoxShadow(
-                  color: const Color(0xFF4CAF50).withOpacity(0.3),
+                  color: const Color(0xFF4CAF50).withValues(alpha:0.3),
                   spreadRadius: 0,
                   blurRadius: 20,
                   offset: const Offset(0, 8),
@@ -399,10 +399,10 @@ class OTPVerificationScreen extends StatelessWidget {
     return Obx(() => Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -411,7 +411,7 @@ class OTPVerificationScreen extends StatelessWidget {
           Text(
             'Didn\'t receive the code?',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha:0.8),
               fontSize: 14,
               fontWeight: FontWeight.w400,
             ),
@@ -423,10 +423,10 @@ class OTPVerificationScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF6B6B).withOpacity(0.2),
+                      color: const Color(0xFFFF6B6B).withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: const Color(0xFFFF6B6B).withOpacity(0.5),
+                        color: const Color(0xFFFF6B6B).withValues(alpha:0.5),
                         width: 1,
                       ),
                     ),
@@ -443,7 +443,7 @@ class OTPVerificationScreen extends StatelessWidget {
               : Text(
                   'Resend in ${controller.resendTimer.value}s',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha:0.6),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -457,10 +457,10 @@ class OTPVerificationScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -468,7 +468,7 @@ class OTPVerificationScreen extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             size: 18,
           ),
           const SizedBox(width: 12),
@@ -476,7 +476,7 @@ class OTPVerificationScreen extends StatelessWidget {
             child: Text(
               'Password must be at least 8 characters long with letters and numbers.',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
                 height: 1.4,

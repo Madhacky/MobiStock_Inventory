@@ -31,7 +31,7 @@ class CustomerDuesController extends GetxController {
 
   // Pagination Data
   final RxList<CustomerDue> allDues = <CustomerDue>[].obs;
-  final RxList<CustomerDue> filteredDues = <CustomerDue>[].obs;
+  final RxList<CustomerDue> paidDues = <CustomerDue>[].obs;
   final RxInt currentPage = 0.obs;
   final RxInt totalPages = 1.obs;
   final RxInt totalElements = 0.obs;
@@ -45,7 +45,32 @@ class CustomerDuesController extends GetxController {
   // Filters and Search
   final RxString searchQuery = ''.obs;
   final RxString selectedTab = 'dues'.obs; // 'dues' or 'paid'
-  final RxString selectedSort = 'creationDate,desc'.obs;
+  final RxBool isPaidFilter = false.obs;
+  
+  // Filter Parameters
+  final RxnInt selectedYear = RxnInt(null);
+  final RxnInt selectedMonth = RxnInt(null);
+  final Rxn<DateTime> startDate = Rxn<DateTime>(null);
+  final Rxn<DateTime> endDate = Rxn<DateTime>(null);
+  final RxString sortBy = 'id'.obs; // Changed from 'creationDate' to match cURL
+  final RxString sortDir = 'asc'.obs; // Changed from 'desc' to match cURL
+  final RxString timePeriodType = 'Month/Year'.obs; // 'Month/Year' or 'Custom Range'
+
+  // Controllers for date fields
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+
+  // Filter options
+  final List<String> timePeriodOptions = ['Month/Year', 'Custom Range'];
+  final List<String> sortOptions = [
+    'id', // Added id as first option to match cURL
+    'creationDate',
+    'totalDue', 
+    'totalPaid',
+    'remainingDue',
+    'name'
+  ];
+
   final RxBool isFiltersExpanded = false.obs;
 
   // Constants
@@ -54,8 +79,13 @@ class CustomerDuesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Initialize with only current year, no month initially
+    selectedYear.value = DateTime.now().year;
+    // Don't set selectedMonth initially - let it be null
+    
     fetchCustomerDues(isRefresh: true);
-getSummaryData();
+    getSummaryData();
+    
     // Listen to search changes
     debounce(
       searchQuery,
@@ -64,7 +94,14 @@ getSummaryData();
     );
   }
 
-  // Fetch customer dues from API with pagination
+  @override
+  void onClose() {
+    startDateController.dispose();
+    endDateController.dispose();
+    super.onClose();
+  }
+
+  // Fetch customer dues from API with pagination and filters
   Future<void> fetchCustomerDues({
     bool isRefresh = false,
     bool isLoadMore = false,
@@ -73,8 +110,11 @@ getSummaryData();
       if (isRefresh) {
         isLoading.value = true;
         currentPage.value = 0;
-        allDues.clear();
-        filteredDues.clear();
+        if (isPaidFilter.value) {
+          paidDues.clear();
+        } else {
+          allDues.clear();
+        }
         hasError.value = false;
         errorMessage.value = '';
       } else if (isLoadMore) {
@@ -83,22 +123,43 @@ getSummaryData();
         currentPage.value++;
       }
 
-      // Build query parameters
+      // Build query parameters - match the cURL structure
       Map<String, dynamic> queryParams = {
         'page': currentPage.value,
         'size': pageSize,
-        'sort': selectedSort.value,
+        'isPaid': isPaidFilter.value,
+        'sortBy': sortBy.value,
+        'sortDir': sortDir.value,
       };
 
       // Add search query if present
       if (searchQuery.value.isNotEmpty) {
-        queryParams['search'] = searchQuery.value;
+        queryParams['keyword'] = searchQuery.value;
+      }
+
+      // Add date filters
+      if (timePeriodType.value == 'Month/Year') {
+        // Always add year if available
+        if (selectedYear.value != null) {
+          queryParams['year'] = selectedYear.value;
+        }
+        // Only add month if specifically selected (not on initial load)
+        if (selectedMonth.value != null) {
+          queryParams['month'] = selectedMonth.value;
+        }
+      } else if (timePeriodType.value == 'Custom Range') {
+        if (startDate.value != null) {
+          queryParams['start'] = _formatDateForAPI(startDate.value!);
+        }
+        if (endDate.value != null) {
+          queryParams['end'] = _formatDateForAPI(endDate.value!);
+        }
       }
 
       log("Fetching dues with params: $queryParams");
 
       dio.Response? response = await _apiService.requestGetForApi(
-        url: _config.getAllCustomerDues,
+        url: 'https://backend-production-91e4.up.railway.app/api/dues/all',
         authToken: true,
         dictParameter: queryParams,
       );
@@ -114,17 +175,22 @@ getSummaryData();
           hasNextPage.value = !duesResponse.payload.last;
 
           if (isRefresh) {
-            allDues.value = duesResponse.payload.content;
+            if (isPaidFilter.value) {
+              paidDues.value = duesResponse.payload.content;
+            } else {
+              allDues.value = duesResponse.payload.content;
+            }
           } else if (isLoadMore) {
-            allDues.addAll(duesResponse.payload.content);
+            if (isPaidFilter.value) {
+              paidDues.addAll(duesResponse.payload.content);
+            } else {
+              allDues.addAll(duesResponse.payload.content);
+            }
           }
-
-          // Apply filtering based on current tab
-          filterDues();
 
           log("Customer dues loaded successfully");
           log("Page: ${currentPage.value}, Total Pages: ${totalPages.value}");
-          log("Total dues loaded: ${allDues.length}");
+          log("Total dues loaded: ${isPaidFilter.value ? paidDues.length : allDues.length}");
         } else {
           throw Exception(duesResponse.message);
         }
@@ -141,7 +207,7 @@ getSummaryData();
         'Error',
         'Failed to load dues: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -160,7 +226,6 @@ getSummaryData();
   RxBool isSummaryDataLoading = false.obs;
   MonthlyDueSummaryResponse? dueSummaryResponse;
   Future getSummaryData() async {
- 
     try {
       isSummaryDataLoading.value = true;
 
@@ -194,36 +259,6 @@ getSummaryData();
     fetchCustomerDues(isRefresh: true);
   }
 
-  // Filter dues based on search and tab selection (client-side filtering of loaded data)
-  void filterDues() {
-    var filtered =
-        allDues.where((due) {
-          bool matchesSearch = true;
-          bool matchesTab = true;
-
-          // Search filter (client-side for loaded data)
-          if (searchQuery.value.isNotEmpty) {
-            matchesSearch =
-                due.customerName.toLowerCase().contains(
-                  searchQuery.value.toLowerCase(),
-                ) ||
-                due.id.toString().contains(searchQuery.value) ||
-                due.customerId.toString().contains(searchQuery.value);
-          }
-
-          // Tab filter
-          if (selectedTab.value == 'dues') {
-            matchesTab = due.remainingDue > 0;
-          } else if (selectedTab.value == 'paid') {
-            matchesTab = due.remainingDue <= 0;
-          }
-
-          return matchesSearch && matchesTab;
-        }).toList();
-
-    filteredDues.value = filtered;
-  }
-
   // Event handlers
   void onSearchChanged(String query) {
     searchQuery.value = query;
@@ -231,12 +266,84 @@ getSummaryData();
 
   void onTabChanged(String tab) {
     selectedTab.value = tab;
-    filterDues();
+    isPaidFilter.value = (tab == 'paid');
+    currentPage.value = 0;
+    fetchCustomerDues(isRefresh: true);
   }
 
-  void onSortChanged(String sort) {
-    selectedSort.value = sort;
+  // Filter handlers
+  void onTimePeriodTypeChanged(String? value) {
+    if (value != null) {
+      timePeriodType.value = value;
+      // Clear date filters when switching
+      if (value == 'Month/Year') {
+        startDate.value = null;
+        endDate.value = null;
+        startDateController.clear();
+        endDateController.clear();
+      } else {
+        selectedMonth.value = null;
+        selectedYear.value = null;
+      }
+      // Refresh data after changing filter type
+      currentPage.value = 0;
+      fetchCustomerDues(isRefresh: true);
+    }
+  }
+
+  void onMonthChanged(int? month) {
+    selectedMonth.value = month;
+    currentPage.value = 0;
     fetchCustomerDues(isRefresh: true);
+  }
+
+  void onYearChanged(int? year) {
+    selectedYear.value = year;
+    currentPage.value = 0;
+    fetchCustomerDues(isRefresh: true);
+  }
+
+  void onStartDateChanged(DateTime date) {
+    startDate.value = date;
+    startDateController.text = _formatDateForDisplay(date);
+    currentPage.value = 0;
+    fetchCustomerDues(isRefresh: true);
+  }
+
+  void onEndDateChanged(DateTime date) {
+    endDate.value = date;
+    endDateController.text = _formatDateForDisplay(date);
+    currentPage.value = 0;
+    fetchCustomerDues(isRefresh: true);
+  }
+
+  void onSortChanged(String field) {
+    if (sortBy.value == field) {
+      // Toggle sort direction if same field
+      sortDir.value = sortDir.value == 'asc' ? 'desc' : 'asc';
+    } else {
+      sortBy.value = field;
+      sortDir.value = 'desc'; // Default to desc for new field
+    }
+    currentPage.value = 0;
+    fetchCustomerDues(isRefresh: true);
+  }
+
+  // Helper methods
+  String _formatDateForAPI(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+
+  String _formatDateForDisplay(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+  }
+
+  String getMonthName(int month) {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return months[month - 1];
   }
 
   // Actions
@@ -246,8 +353,15 @@ getSummaryData();
 
   void resetFilters() {
     searchQuery.value = '';
-    selectedTab.value = 'dues';
-    selectedSort.value = 'creationDate,desc';
+    selectedYear.value = DateTime.now().year; // Keep year
+    selectedMonth.value = null; // Reset month to null
+    startDate.value = null;
+    endDate.value = null;
+    startDateController.clear();
+    endDateController.clear();
+    sortBy.value = 'id'; // Reset to default
+    sortDir.value = 'asc'; // Reset to default
+    timePeriodType.value = 'Month/Year';
     fetchCustomerDues(isRefresh: true);
   }
 
@@ -280,9 +394,11 @@ getSummaryData();
             'Success',
             model.message,
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green.withOpacity(0.8),
+            backgroundColor: Colors.green.withValues(alpha:0.8),
             colorText: Colors.white,
           );
+          // Refresh data after successful payment
+          await refreshData();
         } else {
           throw Exception(model.message);
         }
@@ -294,7 +410,7 @@ getSummaryData();
         'Error',
         'Failed to add payment: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -319,7 +435,7 @@ getSummaryData();
           'Success',
           'Due marked as paid successfully',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha:0.8),
           colorText: Colors.white,
         );
 
@@ -332,7 +448,7 @@ getSummaryData();
         'Error',
         'Failed to mark as paid: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     }
@@ -347,7 +463,7 @@ getSummaryData();
           'Error',
           'Unable to make call',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha:0.8),
           colorText: Colors.white,
         );
       }
@@ -356,7 +472,7 @@ getSummaryData();
         'Error',
         'Unable to make call: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     }
@@ -364,8 +480,6 @@ getSummaryData();
 
   Future<void> notifyCustomer(int customerId, String customerName) async {
     try {
-      
-
       Map<String, dynamic> requestData = {
         'customerIds': [customerId],
       };
@@ -381,7 +495,7 @@ getSummaryData();
           'Success',
           'Notification sent to $customerName',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.blue.withOpacity(0.8),
+          backgroundColor: Colors.blue.withValues(alpha:0.8),
           colorText: Colors.white,
         );
       } else {
@@ -395,7 +509,7 @@ getSummaryData();
         'Success',
         'Failed to send notification to $customerName',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blue.withOpacity(0.8),
+        backgroundColor: Colors.blue.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     }
@@ -416,7 +530,7 @@ getSummaryData();
       'Success',
       'Dues exported successfully',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.withOpacity(0.8),
+      backgroundColor: Colors.green.withValues(alpha:0.8),
       colorText: Colors.white,
     );
   }
@@ -450,7 +564,7 @@ getSummaryData();
         'Error',
         'Failed to load analytics: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -527,7 +641,7 @@ getSummaryData();
         'Error',
         'Failed to load customer details: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -555,6 +669,25 @@ class DuesSummaryModel {
     double totalCollected = 0;
     double totalRemaining = 0;
     double thisMonthCollection = 0;
+
+    for (var due in dues) {
+      totalGiven += due.totalDue;
+      totalCollected += due.totalPaid;
+      totalRemaining += due.remainingDue;
+      
+      // Calculate this month's collection
+      final now = DateTime.now();
+      for (var payment in due.partialPayments) {
+        try {
+          final paymentDate = DateTime.parse(payment.paidDate);
+          if (paymentDate.year == now.year && paymentDate.month == now.month) {
+            thisMonthCollection += payment.paidAmount;
+          }
+        } catch (e) {
+          // Skip if date parsing fails
+        }
+      }
+    }
 
     return DuesSummaryModel(
       totalGiven: totalGiven,

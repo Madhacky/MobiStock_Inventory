@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_stock_comtroller.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 class CompanyStockGrid extends StatefulWidget {
+  const CompanyStockGrid({super.key});
+
   @override
   _CompanyStockGridState createState() => _CompanyStockGridState();
 }
@@ -16,6 +19,7 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
   String selectedFilter = 'All';
   String sortBy = 'Company Name';
   String searchQuery = '';
+  String selectedCategory = 'CHARGER'; // Default category
   final TextEditingController searchController = TextEditingController();
 
   List<String> filterOptions = ['All', 'Low Stock', 'Good Stock', 'High Stock'];
@@ -27,6 +31,17 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
     'Models Count',
     'Low Stock Priority',
   ];
+
+  // Static list of categories
+
+  @override
+  void initState() {
+    super.initState();
+    // Load initial data with default category
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchCompanyStocksByCategory(selectedCategory);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +63,23 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${_getFilteredCompanies().length} Companies',
-                  style: const TextStyle(
-                    color: Color(0xFF4CAF50),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+              Obx(
+                () => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${_getFilteredCompanies().length} Companies',
+                    style: const TextStyle(
+                      color: Color(0xFF4CAF50),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -70,12 +87,88 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
           ),
           const SizedBox(height: 16),
 
+          // Category Dropdown
+          controller.itemCategory.isEmpty
+              ? Container(
+                height: 40,
+                width: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              )
+              : Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedCategory,
+                    isExpanded: true,
+                    icon: const Icon(Icons.category, size: 18),
+                    hint: const Text('Select Category'),
+                    style: const TextStyle(
+                      color: Color(0xFF374151),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    items:
+                        controller.itemCategory.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Row(
+                              children: [
+                                _getCategoryIcon(value),
+                                const SizedBox(width: 8),
+                                Text(
+                                  value
+                                      .replaceAll('_', ' ')
+                                      .toLowerCase()
+                                      .split(' ')
+                                      .map(
+                                        (word) =>
+                                            word[0].toUpperCase() +
+                                            word.substring(1),
+                                      )
+                                      .join(' '),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                    onChanged: (String? newValue) {
+                      if (newValue != null && newValue != selectedCategory) {
+                        setState(() {
+                          selectedCategory = newValue;
+                        });
+                        // Call API with new category
+                        controller.fetchCompanyStocksByCategory(
+                          selectedCategory,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+          const SizedBox(height: 16),
+
           // Search Bar
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.1)),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
             ),
             child: TextField(
               controller: searchController,
@@ -112,7 +205,9 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -155,7 +250,9 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -196,10 +293,10 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.05),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF3B82F6).withOpacity(0.1),
+                  color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                 ),
               ),
               child: Row(
@@ -239,25 +336,83 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
               ),
             ),
 
+          // Loading indicator
+          Obx(() {
+            if (controller.isLoading.value) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+
           // Grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.85,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+          Obx(
+            () => GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.85,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: _getFilteredCompanies().length,
+              itemBuilder: (context, index) {
+                final company = _getFilteredCompanies()[index];
+                return _buildCompanyCard(company);
+              },
             ),
-            itemCount: _getFilteredCompanies().length,
-            itemBuilder: (context, index) {
-              final company = _getFilteredCompanies()[index];
-              return _buildCompanyCard(company);
-            },
           ),
         ],
       ),
     );
+  }
+
+  Widget _getCategoryIcon(String category) {
+    switch (category) {
+      case 'CHARGER':
+        return const Icon(
+          Icons.battery_charging_full,
+          size: 16,
+          color: Color(0xFF10B981),
+        );
+      case 'MOBILE':
+        return const Icon(
+          Icons.phone_android,
+          size: 16,
+          color: Color(0xFF3B82F6),
+        );
+      case 'HEADPHONE':
+        return const Icon(Icons.headset, size: 16, color: Color(0xFF8B5CF6));
+      case 'SPEAKER':
+        return const Icon(Icons.speaker, size: 16, color: Color(0xFFF59E0B));
+      case 'POWERBANK':
+        return const Icon(Icons.power, size: 16, color: Color(0xFFEF4444));
+      case 'CABLE':
+        return const Icon(Icons.cable, size: 16, color: Color(0xFF6B7280));
+      case 'ADAPTER':
+        return const Icon(Icons.power, size: 16, color: Color(0xFF059669));
+      case 'CASE':
+        return const Icon(
+          Icons.phone_in_talk,
+          size: 16,
+          color: Color(0xFFDC2626),
+        );
+      case 'SCREEN_GUARD':
+        return const Icon(Icons.shield, size: 16, color: Color(0xFF7C3AED));
+      case 'BATTERY':
+        return const Icon(
+          Icons.battery_std,
+          size: 16,
+          color: Color(0xFFEC4899),
+        );
+      default:
+        return const Icon(Icons.category, size: 16, color: Color(0xFF6B7280));
+    }
   }
 
   Widget _getFilterIcon(String filter) {
@@ -367,13 +522,16 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(
+            color: Colors.grey.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,11 +545,7 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                     color: _getCompanyColor(company.company),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.phone_android,
-                    color: Colors.white,
-                    size: 18,
-                  ),
+                  child: _getCategoryIcon(selectedCategory),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -423,10 +577,10 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF59E0B).withOpacity(0.1),
+                  color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFFF59E0B).withOpacity(0.2),
+                    color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -445,10 +599,10 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFF10B981).withOpacity(0.2),
+                    color: const Color(0xFF10B981).withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),

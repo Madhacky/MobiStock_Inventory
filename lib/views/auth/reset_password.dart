@@ -66,10 +66,10 @@ class ResetPasswordScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha:0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha:0.3),
               width: 2,
             ),
           ),
@@ -97,7 +97,7 @@ class ResetPasswordScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha:0.8),
               fontWeight: FontWeight.w400,
               height: 1.5,
             ),
@@ -112,10 +112,10 @@ class ResetPasswordScreen extends StatelessWidget {
       key: controller.resetPasswordFormKey,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha:0.2),
             width: 1,
           ),
         ),
@@ -131,13 +131,13 @@ class ResetPasswordScreen extends StatelessWidget {
           decoration: InputDecoration(
             hintText: 'Enter your email address',
             hintStyle: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha:0.6),
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
             prefixIcon: Icon(
               Icons.email_outlined,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha:0.7),
               size: 22,
             ),
             border: InputBorder.none,
@@ -164,7 +164,7 @@ class ResetPasswordScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFFFF6B6B).withOpacity(0.3),
+            color: Color(0xFFFF6B6B).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -230,10 +230,10 @@ class ResetPasswordScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -242,7 +242,7 @@ class ResetPasswordScreen extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             size: 18,
           ),
           const SizedBox(width: 8),
@@ -251,7 +251,7 @@ class ResetPasswordScreen extends StatelessWidget {
               'Check your email for the reset link. It may take a few minutes to arrive.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),

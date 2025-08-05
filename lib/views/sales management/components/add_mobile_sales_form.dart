@@ -184,7 +184,7 @@ class MobileSalesForm extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -322,7 +322,7 @@ class MobileSalesForm extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -438,7 +438,7 @@ class MobileSalesForm extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.08),
+                color: Colors.grey.withValues(alpha:0.08),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
                 spreadRadius: 1,
@@ -509,7 +509,7 @@ class MobileSalesForm extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -818,7 +818,7 @@ class MobileSalesForm extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () => Get.back(),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -877,7 +877,7 @@ class MobileSalesForm extends StatelessWidget {
                       ? null
                       : controller.goToStep1,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                    side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -942,7 +942,7 @@ class MobileSalesForm extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            color: const Color(0xFF6366F1).withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF6366F1), size: 16),

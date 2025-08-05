@@ -57,7 +57,7 @@ class GenerateInventoryController extends GetxController {
             'Success',
             'Inventory link generated successfully',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green.withOpacity(0.8),
+            backgroundColor: Colors.green.withValues(alpha:0.8),
             colorText: Colors.white,
             duration: Duration(seconds: 2),
           );
@@ -78,7 +78,7 @@ class GenerateInventoryController extends GetxController {
         'Error',
         'Failed to generate inventory link: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
         duration: Duration(seconds: 3),
       );
@@ -94,7 +94,7 @@ class GenerateInventoryController extends GetxController {
         'Error',
         'No link to share. Please generate a link first.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withOpacity(0.8),
+        backgroundColor: Colors.orange.withValues(alpha:0.8),
         colorText: Colors.white,
       );
       return;
@@ -114,7 +114,7 @@ class GenerateInventoryController extends GetxController {
         'Error',
         'Failed to share link: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     }
@@ -127,7 +127,7 @@ class GenerateInventoryController extends GetxController {
         'Error',
         'No link to copy. Please generate a link first.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withOpacity(0.8),
+        backgroundColor: Colors.orange.withValues(alpha:0.8),
         colorText: Colors.white,
       );
       return;
@@ -140,7 +140,7 @@ class GenerateInventoryController extends GetxController {
         'Success',
         'Link copied to clipboard',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blue.withOpacity(0.8),
+        backgroundColor: Colors.blue.withValues(alpha:0.8),
         colorText: Colors.white,
         duration: Duration(seconds: 2),
       );
@@ -153,7 +153,7 @@ class GenerateInventoryController extends GetxController {
         'Error',
         'Failed to copy link: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     }

@@ -196,7 +196,7 @@ Widget _buildCustomerHeader() {
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha:0.05),
           blurRadius: 10,
           offset: Offset(0, 2),
         ),
@@ -352,7 +352,7 @@ Widget _buildCustomerHeader() {
   return ElevatedButton(
     onPressed: onPressed,
     style: ElevatedButton.styleFrom(
-      backgroundColor: onPressed == null ? color.withOpacity(0.6) : color,
+      backgroundColor: onPressed == null ? color.withValues(alpha:0.6) : color,
       foregroundColor: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 12),
       shape: RoundedRectangleBorder(
@@ -436,7 +436,7 @@ Widget _buildCustomerHeader() {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -508,7 +508,7 @@ Widget _buildCustomerHeader() {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha:0.05),
               blurRadius: 10,
               offset: Offset(0, 2),
             ),
@@ -528,7 +528,7 @@ Widget _buildCustomerHeader() {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withOpacity(0.2) : Color(0xFF6C5CE7),
+                color: isSelected ? Colors.white.withValues(alpha:0.2) : Color(0xFF6C5CE7),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -615,7 +615,7 @@ Widget _buildCustomerHeader() {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha:0.05),
                 blurRadius: 10,
                 offset: Offset(0, 2),
               ),
@@ -634,7 +634,7 @@ Widget _buildCustomerHeader() {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Color(0xFF6C5CE7).withOpacity(0.1),
+                            color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -744,7 +744,7 @@ Widget _buildCustomerHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -804,7 +804,7 @@ Widget _buildCustomerHeader() {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: Color(0xFF6C5CE7).withOpacity(0.1),
+                        color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -970,7 +970,7 @@ Widget _buildCustomerHeader() {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha:0.05),
                 blurRadius: 10,
                 offset: Offset(0, 2),
               ),
@@ -989,7 +989,7 @@ Widget _buildCustomerHeader() {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: controller.getDueStatusColor(due).withOpacity(0.1),
+                            color: controller.getDueStatusColor(due).withValues(alpha:0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -1099,7 +1099,7 @@ Widget _buildCustomerHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1198,7 +1198,7 @@ Widget _buildCustomerHeader() {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: Color(0xFF51CF66).withOpacity(0.1),
+                          color: Color(0xFF51CF66).withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -1266,21 +1266,21 @@ Widget _buildCustomerHeader() {
                 ),
                 SizedBox(width: 12),
               ],
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => controller.viewDueDetails(due),
-                  icon: Icon(Icons.info_outline, size: 16),
-                  label: Text('View Details'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Color(0xFF6C5CE7),
-                    side: BorderSide(color: Color(0xFF6C5CE7)),
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: OutlinedButton.icon(
+              //     onPressed: () => controller.viewDueDetails(due),
+              //     icon: Icon(Icons.info_outline, size: 16),
+              //     label: Text('View Details'),
+              //     style: OutlinedButton.styleFrom(
+              //       foregroundColor: Color(0xFF6C5CE7),
+              //       side: BorderSide(color: Color(0xFF6C5CE7)),
+              //       padding: EdgeInsets.symmetric(vertical: 8),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(8),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

@@ -37,18 +37,18 @@ class GenericBarChart extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, primaryLight.withOpacity(0.2)],
+          colors: [Colors.white, primaryLight.withValues(alpha:0.2)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: primaryLight.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: primaryLight.withValues(alpha:0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: primaryLight.withOpacity(0.2),
+            color: primaryLight.withValues(alpha:0.2),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -325,18 +325,18 @@ class _GenericPieChartState extends State<GenericPieChart> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, primaryLight.withOpacity(0.2)],
+          colors: [Colors.white, primaryLight.withValues(alpha:0.2)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: primaryLight.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: primaryLight.withValues(alpha:0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: primaryLight.withOpacity(0.2),
+            color: primaryLight.withValues(alpha:0.2),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -495,7 +495,7 @@ class _GenericPieChartState extends State<GenericPieChart> {
           color: Colors.white,
           shadows: [
             Shadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha:0.3),
               offset: const Offset(1, 1),
               blurRadius: 2,
             ),
@@ -547,18 +547,18 @@ class GenericLineChart extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, primaryLight.withOpacity(0.2)],
+          colors: [Colors.white, primaryLight.withValues(alpha:0.2)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: primaryLight.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: primaryLight.withValues(alpha:0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: primaryLight.withOpacity(0.2),
+            color: primaryLight.withValues(alpha:0.2),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -632,8 +632,8 @@ class GenericLineChart extends StatelessWidget {
         show: true,
         gradient: LinearGradient(
           colors: [
-            gradientStart.withOpacity(0.3),
-            gradientEnd.withOpacity(0.1),
+            gradientStart.withValues(alpha:0.3),
+            gradientEnd.withValues(alpha:0.1),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -648,7 +648,7 @@ class GenericLineChart extends StatelessWidget {
     return LineTouchData(
       enabled: true,
       touchTooltipData: LineTouchTooltipData(
-        getTooltipColor: (touchedSpot) => primaryColor.withOpacity(0.9),
+        getTooltipColor: (touchedSpot) => primaryColor.withValues(alpha:0.9),
         // tooltipRoundedRadius: 12,
         tooltipPadding: const EdgeInsets.all(12),
         tooltipMargin: 8,
@@ -683,7 +683,7 @@ class GenericLineChart extends StatelessWidget {
       horizontalInterval: _getMaxY() / 5,
       getDrawingHorizontalLine: (value) {
         return FlLine(
-          color: primaryLight.withOpacity(0.2),
+          color: primaryLight.withValues(alpha:0.2),
           strokeWidth: 1,
           dashArray: [5, 5],
         );
@@ -709,7 +709,7 @@ class GenericLineChart extends StatelessWidget {
                 child: Text(
                   _formatBottomTitle(key),
                   style: TextStyle(
-                    color: primaryColor.withOpacity(0.7),
+                    color: primaryColor.withValues(alpha:0.7),
                     fontWeight: FontWeight.w600,
                     fontSize: isSmallScreen ? 10 : 12,
                   ),
@@ -729,7 +729,7 @@ class GenericLineChart extends StatelessWidget {
             return Text(
               _formatValue(value),
               style: TextStyle(
-                color: primaryColor.withOpacity(0.7),
+                color: primaryColor.withValues(alpha:0.7),
                 fontWeight: FontWeight.w500,
                 fontSize: isSmallScreen ? 10 : 11,
               ),
@@ -815,9 +815,9 @@ class GenericDoubleBarChart extends StatelessWidget {
   }) : super(key: key);
 
   Color get primaryColor => primaryBarColor ?? const Color(0xFFE74C3C);
-  Color get primaryLight => primaryColor.withOpacity(0.3);
+  Color get primaryLight => primaryColor.withValues(alpha:0.3);
   Color get secondaryColor => secondaryBarColor ?? const Color(0xFF27AE60);
-  Color get secondaryLight => secondaryColor.withOpacity(0.3);
+  Color get secondaryLight => secondaryColor.withValues(alpha:0.3);
 
   @override
   Widget build(BuildContext context) {
@@ -839,7 +839,7 @@ class GenericDoubleBarChart extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha:0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -986,7 +986,7 @@ class GenericDoubleBarChart extends StatelessWidget {
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (group) {
-              return Colors.grey.shade800.withOpacity(0.9);
+              return Colors.grey.shade800.withValues(alpha:0.9);
             },
             tooltipBorderRadius: BorderRadius.all(Radius.circular(8)),
             tooltipPadding: const EdgeInsets.all(8),

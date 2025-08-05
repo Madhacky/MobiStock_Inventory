@@ -75,7 +75,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 30,
             spreadRadius: 0,
             offset: Offset(0, 10),
@@ -176,7 +176,7 @@ class InventoryDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFF6C5CE7).withOpacity(0.3),
+                          color: Color(0xFF6C5CE7).withValues(alpha:0.3),
                           blurRadius: 10,
                           spreadRadius: 0,
                         ),
@@ -202,7 +202,7 @@ class InventoryDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha:0.2),
                           blurRadius: 10,
                           spreadRadius: 0,
                         ),
@@ -242,7 +242,7 @@ class InventoryDetailScreen extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Color(0xFF6C5CE7).withOpacity(0.1),
+                        color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -335,7 +335,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             spreadRadius: 0,
             offset: Offset(0, 5),
@@ -347,7 +347,7 @@ class InventoryDetailScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -384,7 +384,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 25,
             spreadRadius: 0,
             offset: Offset(0, 8),
@@ -399,7 +399,7 @@ class InventoryDetailScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xFF6C5CE7).withOpacity(0.1),
+                  color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(Icons.phone_android, color: Color(0xFF6C5CE7)),
@@ -446,16 +446,16 @@ class InventoryDetailScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha:0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.1)),
+        border: Border.all(color: color.withValues(alpha:0.1)),
       ),
       child: Column(
         children: [
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -492,7 +492,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 25,
             spreadRadius: 0,
             offset: Offset(0, 8),
@@ -507,7 +507,7 @@ class InventoryDetailScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xFF51CF66).withOpacity(0.1),
+                  color: Color(0xFF51CF66).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(Icons.currency_rupee, color: Color(0xFF51CF66)),
@@ -536,7 +536,7 @@ class InventoryDetailScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF51CF66).withOpacity(0.3),
+                  color: Color(0xFF51CF66).withValues(alpha:0.3),
                   blurRadius: 15,
                   spreadRadius: 0,
                   offset: Offset(0, 5),
@@ -548,13 +548,13 @@ class InventoryDetailScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.sell, color: Colors.white.withOpacity(0.8), size: 20),
+                    Icon(Icons.sell, color: Colors.white.withValues(alpha:0.8), size: 20),
                     SizedBox(width: 8),
                     Text(
                       'Current Selling Price',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha:0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -587,7 +587,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 25,
             spreadRadius: 0,
             offset: Offset(0, 8),
@@ -602,7 +602,7 @@ class InventoryDetailScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _getStockStatusColor(item.quantity).withOpacity(0.1),
+                  color: _getStockStatusColor(item.quantity).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(Icons.inventory, color: _getStockStatusColor(item.quantity)),
@@ -622,10 +622,10 @@ class InventoryDetailScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: _getStockStatusColor(item.quantity).withOpacity(0.05),
+              color: _getStockStatusColor(item.quantity).withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _getStockStatusColor(item.quantity).withOpacity(0.2),
+                color: _getStockStatusColor(item.quantity).withValues(alpha:0.2),
               ),
             ),
             child: Row(
@@ -705,7 +705,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 25,
             spreadRadius: 0,
             offset: Offset(0, 8),
@@ -720,7 +720,7 @@ class InventoryDetailScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color(0xFF6C5CE7).withOpacity(0.1),
+                  color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(Icons.description, color: Color(0xFF6C5CE7)),
@@ -777,7 +777,7 @@ class InventoryDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 0,
-                    shadowColor: Color(0xFF51CF66).withOpacity(0.3),
+                    shadowColor: Color(0xFF51CF66).withValues(alpha:0.3),
                   ),
                 ),
               ),
@@ -840,7 +840,7 @@ class InventoryDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: badgeColor.withOpacity(0.3),
+            color: badgeColor.withValues(alpha:0.3),
             blurRadius: 8,
             spreadRadius: 0,
           ),

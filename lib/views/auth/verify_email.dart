@@ -61,10 +61,10 @@ class VerifyEmailScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha:0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha:0.3),
               width: 2,
             ),
           ),
@@ -92,7 +92,7 @@ class VerifyEmailScreen extends StatelessWidget {
             text: TextSpan(
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontWeight: FontWeight.w400,
                 height: 1.5,
               ),
@@ -158,7 +158,7 @@ class VerifyEmailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFFFF6B6B).withOpacity(0.3),
+            color: Color(0xFFFF6B6B).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -205,10 +205,10 @@ class VerifyEmailScreen extends StatelessWidget {
       width: double.infinity,
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -236,10 +236,10 @@ class VerifyEmailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -247,7 +247,7 @@ class VerifyEmailScreen extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             size: 18,
           ),
           const SizedBox(width: 12),
@@ -255,7 +255,7 @@ class VerifyEmailScreen extends StatelessWidget {
             child: Text(
               'Didn\'t receive the email? Check your spam folder or try resending.',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 height: 1.4,

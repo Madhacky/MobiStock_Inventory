@@ -97,10 +97,10 @@ class AddEmiSettlementPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.1),
+                color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF3B82F6).withOpacity(0.2),
+                  color: const Color(0xFF3B82F6).withValues(alpha:0.2),
                 ),
               ),
               child: const Icon(
@@ -146,7 +146,7 @@ class AddEmiSettlementPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -209,7 +209,7 @@ class AddEmiSettlementPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF3B82F6).withOpacity(0.1),
+            color: const Color(0xFF3B82F6).withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF3B82F6), size: 16),
@@ -244,7 +244,7 @@ class AddEmiSettlementPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
           ),
           child: TextFormField(
             controller: controller.dateController,

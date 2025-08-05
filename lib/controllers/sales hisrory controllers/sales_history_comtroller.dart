@@ -15,8 +15,8 @@ import 'package:smartbecho/services/pdf_downloader_service.dart';
 
 class SalesManagementController extends GetxController {
   
-// Utility methods
- bool get isSmallScreen => Get.width < 360;
+  // Utility methods
+  bool get isSmallScreen => Get.width < 360;
   bool get isMediumScreen => Get.width >= 360 && Get.width < 400;
   double get screenWidth => Get.width;
   double get screenHeight => Get.height;
@@ -29,6 +29,7 @@ class SalesManagementController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool isStatsLoading = false.obs;
+  final RxBool isLoadingFilters = false.obs;
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
 
@@ -41,7 +42,7 @@ class SalesManagementController extends GetxController {
   final RxBool hasNextPage = true.obs;
   final RxBool isLastPage = false.obs;
 
-/// Sales Insights Data
+  /// Sales Insights Data
   
   // Stats Data
   final Rx<SalesStats?> statsData = Rx<SalesStats?>(null);
@@ -53,18 +54,69 @@ class SalesManagementController extends GetxController {
   final RxString selectedSort = 'saleDate,desc'.obs;
   final TextEditingController searchController = TextEditingController();
 
-//sales detail 
-final Rx<SaleDetailResponse?> saleDetail = Rx<SaleDetailResponse?>(null);
-final RxBool isLoadingDetail = false.obs;
-final RxBool hasDetailError = false.obs;
-final RxString detailErrorMessage = ''.obs;
+  // Sales detail 
+  final Rx<SaleDetailResponse?> saleDetail = Rx<SaleDetailResponse?>(null);
+  final RxBool isLoadingDetail = false.obs;
+  final RxBool hasDetailError = false.obs;
+  final RxString detailErrorMessage = ''.obs;
+
+  // Filter Parameters
+  final RxString selectedCompany = RxString('');
+  final RxString selectedItemCategory = RxString('');
+  final RxString selectedPaymentMethod = RxString('');
+  final RxString selectedPaymentMode = RxString('');
+  final RxString dateFilterType = 'Month/Year'.obs;
+  final RxnInt selectedMonth = RxnInt(null);
+  final RxnInt selectedYear = RxnInt(null);
+  final Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  final Rx<DateTime?> endDate = Rx<DateTime?>(null);
+  final RxString selectedSortBy = 'saleDate'.obs;
+  final RxString selectedSortDir = 'desc'.obs;
+
+  // Date Controllers
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+
+  // Dynamic Filter Options (fetched from API)
+  final RxList<String> companyOptions = <String>[].obs;
+  final RxList<String> itemCategoryOptions = <String>[].obs;
+  final RxList<String> paymentMethodOptions = <String>[].obs;
+
+  // Static Filter Options
+  final List<String> paymentModeOptions = [
+    'All Modes',
+    'FULL',
+    'EMI'
+  ];
+
+  final List<String> sortByOptions = [
+    'saleDate',
+    'saleAmount',
+    'customerName',
+    'invoiceNumber',
+    'paymentMethod',
+    'company'
+  ];
 
   // Constants
   static const int pageSize = 10;
 
+  // Computed property to check if any filters are active
+  bool get hasActiveFilters {
+    return (selectedCompany.value.isNotEmpty && selectedCompany.value != 'All Companies') ||
+           (selectedItemCategory.value.isNotEmpty && selectedItemCategory.value != 'All Categories') ||
+           (selectedPaymentMethod.value.isNotEmpty && selectedPaymentMethod.value != 'All Methods') ||
+           (selectedPaymentMode.value.isNotEmpty && selectedPaymentMode.value != 'All Modes') ||
+           (selectedMonth.value != null) ||
+           (selectedYear.value != null) ||
+           (dateFilterType.value == 'Date Range' && (startDate.value != null || endDate.value != null));
+  }
+
   @override
   void onInit() {
     super.onInit();
+    // Initialize filter options first, then fetch data
+    _initializeFilterOptions();
     fetchSalesStats();
     fetchSalesInsights();
     fetchSalesHistory(isRefresh: true);
@@ -80,6 +132,8 @@ final RxString detailErrorMessage = ''.obs;
   @override
   void onClose() {
     searchController.dispose();
+    startDateController.dispose();
+    endDateController.dispose();
     super.onClose();
   }
 
@@ -87,9 +141,226 @@ final RxString detailErrorMessage = ''.obs;
   String get salesHistoryUrl => 'https://backend-production-91e4.up.railway.app/api/sales/shop-history';
   String get salesStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats/today';
   String get salesInsightsStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats';
+  String get mobilesFiltersUrl => 'https://backend-production-91e4.up.railway.app/api/mobiles/filters';
+  String get paymentAccountTypesUrl => 'https://backend-production-91e4.up.railway.app/api/v1/dropdown/payment-account-types';
 
-// Fetch sales insights from API
- Future<void> fetchSalesInsights() async {
+  // Initialize filter options by fetching from APIs
+  Future<void> _initializeFilterOptions() async {
+    await Future.wait([
+      fetchMobilesFilters(),
+      fetchPaymentMethods(),
+    ]);
+  }
+
+  // Fetch mobiles filters (companies and categories)
+  Future<void> fetchMobilesFilters() async {
+    try {
+      isLoadingFilters.value = true;
+      log("Fetching mobiles filters...");
+
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: mobilesFiltersUrl,
+        authToken: true,
+      );
+
+      if (response != null && response.data != null) {
+        final filtersData = response.data as Map<String, dynamic>;
+        
+        // Extract companies
+        if (filtersData.containsKey('companies')) {
+          List<String> companies = ['All Companies'];
+          List<dynamic> apiCompanies = filtersData['companies'] as List<dynamic>;
+          companies.addAll(apiCompanies.map((company) => company.toString()).toList());
+          companyOptions.value = companies;
+          log("Companies loaded: ${companies.length}");
+        }
+
+        // Extract item categories
+        if (filtersData.containsKey('itemCategories')) {
+          List<String> categories = ['All Categories'];
+          List<dynamic> apiCategories = filtersData['itemCategories'] as List<dynamic>;
+          categories.addAll(apiCategories.map((category) => category.toString()).toList());
+          itemCategoryOptions.value = categories;
+          log("Item categories loaded: ${categories.length}");
+        }
+
+        log("Mobiles filters loaded successfully");
+      } else {
+        throw Exception('No filters data received from server');
+      }
+    } catch (error) {
+      log("❌ Error in fetchMobilesFilters: $error");
+      // Fallback to default options if API fails
+      _setDefaultFilterOptions();
+      Get.snackbar(
+        'Warning',
+        'Failed to load filter options, using defaults',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.withValues(alpha:0.8),
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingFilters.value = false;
+    }
+  }
+
+  // Fetch payment methods
+  Future<void> fetchPaymentMethods() async {
+    try {
+      log("Fetching payment methods...");
+
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: paymentAccountTypesUrl,
+        authToken: true,
+      );
+
+      if (response != null && response.data != null) {
+        List<String> methods = ['All Methods'];
+        List<dynamic> apiMethods = response.data as List<dynamic>;
+        methods.addAll(apiMethods.map((method) => method.toString()).toList());
+        paymentMethodOptions.value = methods;
+        log("Payment methods loaded: ${methods.length}");
+      } else {
+        throw Exception('No payment methods data received from server');
+      }
+    } catch (error) {
+      log("❌ Error in fetchPaymentMethods: $error");
+      // Fallback to default payment methods
+      paymentMethodOptions.value = [
+        'All Methods',
+        'CASH',
+        'BANK',
+        'UPI',
+        'CARD',
+        'CHEQUE',
+        'OTHERS'
+      ];
+      Get.snackbar(
+        'Warning',
+        'Failed to load payment methods, using defaults',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.withValues(alpha:0.8),
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Set default filter options as fallback
+  void _setDefaultFilterOptions() {
+    companyOptions.value = [
+      'All Companies',
+      'Samsung',
+      'Apple',
+      'Vivo',
+      'Oppo',
+      'Xiaomi',
+      'Realme',
+      'OnePlus',
+      'Others'
+    ];
+
+    itemCategoryOptions.value = [
+      'All Categories',
+      'SMARTPHONE',
+      'TABLET',
+      'SMARTWATCH',
+      'EARPHONE',
+      'CHARGER',
+      'POWER_BANK',
+      'MOBILE_COVER',
+      'TEMPERED_GLASS',
+      'OTHERS'
+    ];
+  }
+
+  // Refresh filter options
+  Future<void> refreshFilterOptions() async {
+    await _initializeFilterOptions();
+  }
+
+  // Filter event handlers
+  void onCompanyChanged(String? company) {
+    selectedCompany.value = company ?? '';
+  }
+
+  void onItemCategoryChanged(String? category) {
+    selectedItemCategory.value = category ?? '';
+  }
+
+  void onPaymentMethodChanged(String? method) {
+    selectedPaymentMethod.value = method ?? '';
+  }
+
+  void onPaymentModeChanged(String? mode) {
+    selectedPaymentMode.value = mode ?? '';
+  }
+
+  void onDateFilterTypeChanged(String? type) {
+    dateFilterType.value = type ?? 'Month/Year';
+    // Clear opposite filter type data
+    if (type == 'Month/Year') {
+      startDate.value = null;
+      endDate.value = null;
+      startDateController.clear();
+      endDateController.clear();
+    } else {
+      selectedMonth.value = null;
+      selectedYear.value = null;
+    }
+  }
+
+  void onMonthChanged(int? month) {
+    selectedMonth.value = month;
+  }
+
+  void onYearChanged(int? year) {
+    selectedYear.value = year;
+  }
+
+  void onStartDateChanged(DateTime date) {
+    startDate.value = date;
+    startDateController.text = '${date.day}/${date.month}/${date.year}';
+  }
+
+  void onEndDateChanged(DateTime date) {
+    endDate.value = date;
+    endDateController.text = '${date.day}/${date.month}/${date.year}';
+  }
+
+  void onSortByChanged(String? sortBy) {
+    selectedSortBy.value = sortBy ?? 'saleDate';
+  }
+
+  void toggleSortDirection() {
+    selectedSortDir.value = selectedSortDir.value == 'asc' ? 'desc' : 'asc';
+  }
+
+  void applyFilters() {
+    log("Applying filters...");
+    fetchSalesHistory(isRefresh: true);
+  }
+
+  void resetAllFilters() {
+    selectedCompany.value = '';
+    selectedItemCategory.value = '';
+    selectedPaymentMethod.value = '';
+    selectedPaymentMode.value = '';
+    dateFilterType.value = 'Month/Year';
+    selectedMonth.value = null;
+    selectedYear.value = null;
+    startDate.value = null;
+    endDate.value = null;
+    startDateController.clear();
+    endDateController.clear();
+    selectedSortBy.value = 'saleDate';
+    selectedSortDir.value = 'desc';
+    
+    log("Filters reset");
+    fetchSalesHistory(isRefresh: true);
+  }
+
+  // Fetch sales insights from API
+  Future<void> fetchSalesInsights() async {
     try {
       isStatsLoading.value = true;
 
@@ -118,7 +389,7 @@ final RxString detailErrorMessage = ''.obs;
         'Error',
         'Failed to load sales stats: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -156,7 +427,7 @@ final RxString detailErrorMessage = ''.obs;
         'Error',
         'Failed to load sales stats: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -164,7 +435,7 @@ final RxString detailErrorMessage = ''.obs;
     }
   }
 
-  // Fetch sales history from API with pagination and search
+  // Fetch sales history from API with pagination, search, and filters
   Future<void> fetchSalesHistory({
     bool isRefresh = false,
     bool isLoadMore = false,
@@ -183,27 +454,53 @@ final RxString detailErrorMessage = ''.obs;
         currentPage.value++;
       }
 
-      // Parse the sort parameter to match API format
-      String sortBy = 'saleDate';
-      String sortDir = 'desc';
-      
-      if (selectedSort.value.contains(',')) {
-        List<String> sortParts = selectedSort.value.split(',');
-        sortBy = sortParts[0];
-        sortDir = sortParts[1];
-      }
-
       // Build query parameters according to API specification
       Map<String, dynamic> queryParams = {
         'page': currentPage.value,
         'size': pageSize,
-        'sortBy': sortBy,
-        'sortDir': sortDir,
+        'sortBy': selectedSortBy.value,
+        'sortDir': selectedSortDir.value,
       };
 
-      // Add keyword parameter for search if present
+      // Add search keyword parameter if present
       if (searchQuery.value.isNotEmpty) {
         queryParams['keyword'] = searchQuery.value.trim();
+      }
+
+      // Add filter parameters
+      if (selectedCompany.value.isNotEmpty && selectedCompany.value != 'All Companies') {
+        queryParams['company'] = selectedCompany.value;
+      }
+
+      if (selectedItemCategory.value.isNotEmpty && selectedItemCategory.value != 'All Categories') {
+        queryParams['itemCategory'] = selectedItemCategory.value;
+      }
+
+      if (selectedPaymentMethod.value.isNotEmpty && selectedPaymentMethod.value != 'All Methods') {
+        // Map UI payment method to API format
+        String apiPaymentMethod = _mapPaymentMethodToApi(selectedPaymentMethod.value);
+        queryParams['paymentMethod'] = apiPaymentMethod;
+      }
+
+      if (selectedPaymentMode.value.isNotEmpty && selectedPaymentMode.value != 'All Modes') {
+        queryParams['paymentMode'] = selectedPaymentMode.value;
+      }
+
+      // Add date parameters based on filter type
+      if (dateFilterType.value == 'Month/Year') {
+        if (selectedYear.value != null) {
+          queryParams['year'] = selectedYear.value;
+        }
+        if (selectedMonth.value != null) {
+          queryParams['month'] = selectedMonth.value;
+        }
+      } else if (dateFilterType.value == 'Date Range') {
+        if (startDate.value != null) {
+          queryParams['startDate'] = '${startDate.value!.year}-${startDate.value!.month.toString().padLeft(2, '0')}-${startDate.value!.day.toString().padLeft(2, '0')}';
+        }
+        if (endDate.value != null) {
+          queryParams['endDate'] = '${endDate.value!.year}-${endDate.value!.month.toString().padLeft(2, '0')}-${endDate.value!.day.toString().padLeft(2, '0')}';
+        }
       }
 
       log("Fetching sales history with params: $queryParams");
@@ -235,7 +532,7 @@ final RxString detailErrorMessage = ''.obs;
           log("Sales history loaded successfully");
           log("Page: ${currentPage.value}, Total Pages: ${totalPages.value}");
           log("Total sales loaded: ${allSales.length}");
-          log("Search query: '${searchQuery.value}'");
+          log("Applied filters: ${queryParams.toString()}");
         } else {
           throw Exception(salesResponse.message);
         }
@@ -252,7 +549,7 @@ final RxString detailErrorMessage = ''.obs;
         'Error',
         'Failed to load sales history: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -261,43 +558,55 @@ final RxString detailErrorMessage = ''.obs;
     }
   }
 
+  // Map UI payment method to API format
+  String _mapPaymentMethodToApi(String uiMethod) {
+    switch (uiMethod.toUpperCase()) {
+      case 'CARD':
+        return 'BANK_CARD';
+      case 'BANK':
+        return 'BANK_TRANSFER';
+      default:
+        return uiMethod.toUpperCase();
+    }
+  }
+
   //fetch sales details
   Future<void> fetchSaleDetail(int saleId) async {
-  try {
-    isLoadingDetail.value = true;
-    hasDetailError.value = false;
-    detailErrorMessage.value = '';
-    
-    log("Fetching sale detail for ID: $saleId");
-    
-    dio.Response? response = await _apiService.requestGetForApi(
-      url:"${_config.saleDetail}/$saleId",
-      authToken: true,
-    );
+    try {
+      isLoadingDetail.value = true;
+      hasDetailError.value = false;
+      detailErrorMessage.value = '';
+      
+      log("Fetching sale detail for ID: $saleId");
+      
+      dio.Response? response = await _apiService.requestGetForApi(
+        url:"${_config.saleDetail}/$saleId",
+        authToken: true,
+      );
 
-    if (response != null) {
-      log("Sale detail response: ${response.data}");
-      saleDetail.value = SaleDetailResponse.fromJson(response.data);
-      log("Sale detail loaded successfully");
-    } else {
-      throw Exception('No sale detail data received from server');
+      if (response != null) {
+        log("Sale detail response: ${response.data}");
+        saleDetail.value = SaleDetailResponse.fromJson(response.data);
+        log("Sale detail loaded successfully");
+      } else {
+        throw Exception('No sale detail data received from server');
+      }
+    } catch (error) {
+      hasDetailError.value = true;
+      detailErrorMessage.value = 'Error: $error';
+      log("❌ Error in fetchSaleDetail: $error");
+      
+      Get.snackbar(
+        'Error',
+        'Failed to load sale details: $error',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha:0.8),
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingDetail.value = false;
     }
-  } catch (error) {
-    hasDetailError.value = true;
-    detailErrorMessage.value = 'Error: $error';
-    log("❌ Error in fetchSaleDetail: $error");
-    
-    Get.snackbar(
-      'Error',
-      'Failed to load sale details: $error',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red.withOpacity(0.8),
-      colorText: Colors.white,
-    );
-  } finally {
-    isLoadingDetail.value = false;
   }
-}
 
   // Load more data for pagination
   Future<void> loadMoreSales() async {
@@ -345,6 +654,7 @@ final RxString detailErrorMessage = ''.obs;
       fetchSalesStats(),
       fetchSalesInsights(),
       fetchSalesHistory(isRefresh: true),
+      refreshFilterOptions(),
     ]);
   }
 
@@ -358,8 +668,8 @@ final RxString detailErrorMessage = ''.obs;
     searchQuery.value = '';
     selectedSort.value = 'saleDate,desc';
     searchController.clear();
+    resetAllFilters();
     log("Filters reset");
-    fetchSalesHistory(isRefresh: true);
   }
 
   // Helper methods
@@ -391,9 +701,17 @@ final RxString detailErrorMessage = ''.obs;
       case 'cash':
         return Color(0xFF3B82F6);
       case 'card':
+      case 'bank_card':
         return Color(0xFF8B5CF6);
       case 'emi':
         return Color(0xFFF59E0B);
+      case 'cheque':
+        return Color(0xFF06B6D4);
+      case 'bank':
+      case 'bank_transfer':
+        return Color(0xFFEF4444);
+      case 'others':
+        return Color(0xFF64748B);
       default:
         return Color(0xFF6B7280);
     }
@@ -406,9 +724,17 @@ final RxString detailErrorMessage = ''.obs;
       case 'cash':
         return Icons.money;
       case 'card':
+      case 'bank_card':
         return Icons.credit_card;
       case 'emi':
         return Icons.schedule;
+      case 'cheque':
+        return Icons.receipt;
+      case 'bank':
+      case 'bank_transfer':
+        return Icons.account_balance;
+      case 'others':
+        return Icons.more_horiz;
       default:
         return Icons.payment;
     }
@@ -420,23 +746,23 @@ final RxString detailErrorMessage = ''.obs;
   }
 
   void downloadInvoice(Sale sale) {
-  log(sale.invoicePdfUrl);
-  
-  // Extract filename from URL or create a custom one
-  String fileName = 'invoice_${sale.invoiceNumber}.pdf';
-  
-  // Download the PDF
-  PDFDownloadService.downloadPDF(
-    url: sale.invoicePdfUrl,
-    fileName: fileName,
-    customPath: 'Invoices',
-    openAfterDownload: true,
-    onDownloadComplete: () {
-      // Optional: Additional actions after download
-      print('Invoice ${sale.invoiceNumber} downloaded successfully');
-    },
-  );
-}
+    log(sale.invoicePdfUrl);
+    
+    // Extract filename from URL or create a custom one
+    String fileName = 'invoice_${sale.invoiceNumber}.pdf';
+    
+    // Download the PDF
+    PDFDownloadService.downloadPDF(
+      url: sale.invoicePdfUrl,
+      fileName: fileName,
+      customPath: 'Invoices',
+      openAfterDownload: true,
+      onDownloadComplete: () {
+        // Optional: Additional actions after download
+        print('Invoice ${sale.invoiceNumber} downloaded successfully');
+      },
+    );
+  }
 
   // Getters for stats
   double get totalSales => statsData.value?.totalSaleAmount ?? 0.0;
@@ -456,7 +782,7 @@ final RxString detailErrorMessage = ''.obs;
   double get averageSaleAmountGrowth => insightsStatsData.value?.payload.averageSaleAmountGrowth ?? 0.0;
   double get averageSaleAmount =>insightsStatsData.value?.payload.averageSaleAmount ?? 0.0;
   double get totalUnitsSoldGrowth =>insightsStatsData.value?.payload.totalUnitsSoldGrowth ?? 0.0;
-     int get totalUnitsSold => insightsStatsData.value?.payload.totalUnitsSold ?? 0;
+  int get totalUnitsSold => insightsStatsData.value?.payload.totalUnitsSold ?? 0;
   double get totalSaleAmountGrowth => insightsStatsData.value?.payload.totalSaleAmountGrowth ?? 0.0;
   double get totalEmiSalesAmount => insightsStatsData.value?.payload.totalEmiSalesAmount ?? 0.0;
   double get totalEmiSalesAmountGrowth =>insightsStatsData.value?.payload.totalEmiSalesAmountGrowth ?? 0.0;

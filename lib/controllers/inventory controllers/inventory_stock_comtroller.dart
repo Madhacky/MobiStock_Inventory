@@ -20,10 +20,13 @@ class InventorySalesStockController extends GetxController {
   var lowStockAlerts = Rx<LowStockAlertModel?>(null);
   var companyStocks = <CompanyStockModel>[].obs;
   var businessSummary = Rx<BusinessSummaryModel?>(null);
+  var currentCategory = 'CHARGER'.obs; // Track current category
+  RxList<String> itemCategory = RxList();
 
   @override
   void onInit() {
     super.onInit();
+    itemCategory = Get.arguments["itemCategory"];
     fetchInventoryData();
   }
 
@@ -31,7 +34,10 @@ class InventorySalesStockController extends GetxController {
     try {
       isLoading.value = true;
       // Simulate API calls
-      await Future.wait([fetchLowStockAlerts(), fetchCompanyStocks()]);
+      await Future.wait([
+        fetchLowStockAlerts(),
+        fetchCompanyStocksByCategory(currentCategory.value),
+      ]);
 
       calculateBusinessSummary();
     } catch (e) {
@@ -75,11 +81,16 @@ class InventorySalesStockController extends GetxController {
     }
   }
 
-  //get company stocks
-  Future<void> fetchCompanyStocks() async {
+  // Updated method to fetch company stocks by category
+  Future<void> fetchCompanyStocksByCategory(String itemCategory) async {
     try {
+      isLoading.value = true;
+      currentCategory.value = itemCategory;
+
+      log("🔄 Fetching company stocks for category: $itemCategory");
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url: _config.getCompanyStocks,
+        url: "${_config.getCompanyStocks}?itemCategory=$itemCategory",
         authToken: true,
       );
 
@@ -89,6 +100,7 @@ class InventorySalesStockController extends GetxController {
               response.data is String
                   ? json.decode(response.data)
                   : response.data;
+
           List<dynamic> stockList;
           if (data is Map<String, dynamic> && data.containsKey('payload')) {
             stockList = data['payload'] as List<dynamic>;
@@ -103,18 +115,52 @@ class InventorySalesStockController extends GetxController {
                   .map((json) => CompanyStockModel.fromJson(json))
                   .toList();
 
-          log("Company Stocks loaded successfully");
+          log("✅ Company Stocks loaded successfully for $itemCategory");
           log("Total companies: ${companyStocks.length}");
           log("Companies: ${companyStocks.map((e) => e.company).join(', ')}");
+
+          // Recalculate business summary after fetching new data
+          calculateBusinessSummary();
+        } else {
+          log(
+            "❌ Failed to fetch company stocks. Status: ${response.statusCode}",
+          );
+          Get.snackbar(
+            'Error',
+            'Failed to fetch company stocks for $itemCategory',
+            snackPosition: SnackPosition.BOTTOM,
+          );
         }
+      } else {
+        log("❌ No response received for company stocks");
+        Get.snackbar(
+          'Error',
+          'No response from server',
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } catch (error) {
-      log("❌ Error in fetchCompanyStocks: $error");
+      log("❌ Error in fetchCompanyStocksByCategory: $error");
+      Get.snackbar(
+        'Error',
+        'Failed to fetch company stocks: ${error.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  // Legacy method for backward compatibility
+  Future<void> fetchCompanyStocks() async {
+    await fetchCompanyStocksByCategory(currentCategory.value);
+  }
+
   void calculateBusinessSummary() {
-    if (companyStocks.isEmpty) return;
+    if (companyStocks.isEmpty) {
+      businessSummary.value = null;
+      return;
+    }
 
     final totalCompanies = companyStocks.length;
     final totalModels = companyStocks.fold<int>(
@@ -135,10 +181,25 @@ class InventorySalesStockController extends GetxController {
       totalCompanies: totalCompanies,
       totalModelsAvailable: totalModels,
       totalStockAvailable: totalStock,
-      totalSoldUnits: 67, // Mock data
+      totalSoldUnits:
+          67, // Mock data - you can calculate this based on your logic
       topSellingBrand: topBrand.company,
-      totalRevenue: 3982500.0, // Mock data
+      totalRevenue:
+          3982500.0, // Mock data - you can calculate this based on your logic
     );
+
+    log("📊 Business Summary calculated for ${currentCategory.value}:");
+    log("Total Companies: $totalCompanies");
+    log("Total Models: $totalModels");
+    log("Total Stock: $totalStock");
+    log("Top Brand: ${topBrand.company}");
+  }
+
+  // Method to change category and refresh data
+  Future<void> changeCategoryAndRefresh(String newCategory) async {
+    if (newCategory != currentCategory.value) {
+      await fetchCompanyStocksByCategory(newCategory);
+    }
   }
 
   // Helper methods
@@ -150,9 +211,30 @@ class InventorySalesStockController extends GetxController {
   int get totalAlerts =>
       totalCriticalAlerts + totalLowStockAlerts + totalOutOfStockAlerts;
 
+  // Get companies with low stock for current category
+  List<CompanyStockModel> get lowStockCompanies =>
+      companyStocks.where((company) => company.lowStockModels > 0).toList();
+
+  // Get companies with good stock for current category
+  List<CompanyStockModel> get goodStockCompanies =>
+      companyStocks
+          .where(
+            (company) => company.lowStockModels == 0 && company.totalStock > 50,
+          )
+          .toList();
+
+  // Get companies with high stock for current category
+  List<CompanyStockModel> get highStockCompanies =>
+      companyStocks.where((company) => company.totalStock > 100).toList();
+
   void refreshData() {
-    isLoading.value=false;
-businessSummary.value = null;
+    isLoading.value = false;
+    businessSummary.value = null;
     fetchInventoryData();
+  }
+
+  // Method to refresh data for current category
+  void refreshCurrentCategory() {
+    fetchCompanyStocksByCategory(currentCategory.value);
   }
 }

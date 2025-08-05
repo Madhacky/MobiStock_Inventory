@@ -33,8 +33,8 @@ Widget buildStyledTextField({
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: enabled 
-                ? Colors.grey.withOpacity(0.2) 
-                : Colors.grey.withOpacity(0.1),
+                ? Colors.grey.withValues(alpha:0.2) 
+                : Colors.grey.withValues(alpha:0.1),
           ),
         ),
         child: TextFormField(

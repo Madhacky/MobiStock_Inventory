@@ -62,7 +62,7 @@ class SignupScreen extends StatelessWidget {
             'Let\'s get your business online in just a few steps',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha:0.8),
             ),
           ),
           const SizedBox(height: 24),
@@ -81,14 +81,14 @@ class SignupScreen extends StatelessWidget {
             Text(
               'Step ${controller.currentStep.value} of 5',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontSize: 14,
               ),
             ),
             Text(
               '${(controller.currentStep.value * 20).toInt()}%',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontSize: 14,
               ),
             ),
@@ -97,7 +97,7 @@ class SignupScreen extends StatelessWidget {
         const SizedBox(height: 8),
         LinearProgressIndicator(
           value: controller.currentStep.value / 5.0,
-          backgroundColor: Colors.white.withOpacity(0.2),
+          backgroundColor: Colors.white.withValues(alpha:0.2),
           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
         ),
       ],
@@ -156,7 +156,7 @@ class SignupScreen extends StatelessWidget {
                 controller.obscurePassword.value 
                   ? Icons.visibility_off_rounded 
                   : Icons.visibility_rounded,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha:0.7),
               ),
               onPressed: controller.togglePasswordVisibility,
             ),
@@ -339,7 +339,7 @@ class SignupScreen extends StatelessWidget {
               value: link['platform'],
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.1),
+                fillColor: Colors.white.withValues(alpha:0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
@@ -368,9 +368,9 @@ class SignupScreen extends StatelessWidget {
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Profile URL',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha:0.6)),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.1),
+                fillColor: Colors.white.withValues(alpha:0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
@@ -462,7 +462,7 @@ class SignupScreen extends StatelessWidget {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              border: Border.all(color: Colors.white.withValues(alpha:0.3)),
               borderRadius: BorderRadius.circular(8),
             ),
             child: image != null
@@ -475,7 +475,7 @@ class SignupScreen extends StatelessWidget {
                   )
                 : Icon(
                     Icons.cloud_upload_outlined,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha:0.6),
                     size: 40,
                   ),
           ),
@@ -513,9 +513,9 @@ class SignupScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha:0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,7 +545,7 @@ class SignupScreen extends StatelessWidget {
           title: RichText(
             text: TextSpan(
               text: 'I agree to the ',
-              style: TextStyle(color: Colors.white.withOpacity(0.8)),
+              style: TextStyle(color: Colors.white.withValues(alpha:0.8)),
               children: [
                 TextSpan(
                   text: 'Terms of Service',
@@ -568,7 +568,7 @@ class SignupScreen extends StatelessWidget {
           checkColor: Color(0xFF667eea),
           title: Text(
             'Subscribe to our newsletter for updates and tips',
-            style: TextStyle(color: Colors.white.withOpacity(0.8)),
+            style: TextStyle(color: Colors.white.withValues(alpha:0.8)),
           ),
           controlAffinity: ListTileControlAffinity.leading,
         )),
@@ -587,7 +587,7 @@ class SignupScreen extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha:0.7),
                 fontSize: 14,
               ),
             ),
@@ -630,10 +630,10 @@ class SignupScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -650,13 +650,13 @@ class SignupScreen extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText + (isRequired ? ' *' : ''),
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha:0.6),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
           prefixIcon: Icon(
             prefixIcon,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha:0.7),
             size: 22,
           ),
           suffixIcon: suffixIcon,
@@ -681,7 +681,7 @@ class SignupScreen extends StatelessWidget {
                 onPressed: controller.previousStep,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: Colors.white.withOpacity(0.5)),
+                  side: BorderSide(color: Colors.white.withValues(alpha:0.5)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -713,7 +713,7 @@ class SignupScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xFFFF6B6B).withOpacity(0.3),
+                    color: Color(0xFFFF6B6B).withValues(alpha:0.3),
                     spreadRadius: 0,
                     blurRadius: 20,
                     offset: Offset(0, 8),

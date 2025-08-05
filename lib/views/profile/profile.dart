@@ -227,7 +227,7 @@ class ProfileScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.06),
+                  color: Colors.grey.withValues(alpha:0.06),
                   spreadRadius: 0,
                   blurRadius: 15,
                   offset: Offset(0, 4),
@@ -239,7 +239,7 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: (stats[index]['color'] as Color).withOpacity(0.1),
+                    color: (stats[index]['color'] as Color).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -279,7 +279,7 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -302,7 +302,7 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withOpacity(0.1),
+                    color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -336,9 +336,9 @@ class ProfileScreen extends StatelessWidget {
                           height: 80,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0xFF6C5CE7).withOpacity(0.1),
+                            color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                             border: Border.all(
-                              color: Color(0xFF6C5CE7).withOpacity(0.3),
+                              color: Color(0xFF6C5CE7).withValues(alpha:0.3),
                               width: 2,
                             ),
                           ),
@@ -420,7 +420,7 @@ class ProfileScreen extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF6C5CE7).withOpacity(0.1),
+                                  color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Obx(
@@ -441,7 +441,7 @@ class ProfileScreen extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF51CF66).withOpacity(0.1),
+                                  color: Color(0xFF51CF66).withValues(alpha:0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
@@ -509,7 +509,7 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -532,7 +532,7 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF51CF66).withOpacity(0.1),
+                    color: Color(0xFF51CF66).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -648,7 +648,7 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -674,7 +674,7 @@ class ProfileScreen extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFF9500).withOpacity(0.1),
+                        color: Color(0xFFFF9500).withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -832,7 +832,7 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -855,7 +855,7 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF3B82F6).withOpacity(0.1),
+                    color: Color(0xFF3B82F6).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -923,7 +923,7 @@ class ProfileScreen extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 16),

@@ -184,7 +184,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -209,7 +209,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: _getStatusColor(
                     data.collectedPercentage,
-                  ).withOpacity(0.1),
+                  ).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

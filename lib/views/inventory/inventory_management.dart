@@ -22,17 +22,62 @@ class InventoryManagementScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[50],
-      floatingActionButton: buildFloatingActionButtons(),
+      floatingActionButton: buildAlternativeFloatingActionButtons(),
       body: SafeArea(
-        child: Column(
-          children: [
-            buildCustomAppBar("Inventory Management", isdark: true),
-            _buildStatsCards(context),
-            _buildFiltersSection(),
-            Expanded(child: _buildInventoryContent()),
-          ],
+        child: NestedScrollView(
+          controller: controller.scrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              // App Bar
+              buildStyledSliverAppBar(
+                title: 'Inventory Management',
+                isDark: false,
+                onRefresh: controller.refreshData,
+              ),
+
+              // Stats Cards
+              SliverToBoxAdapter(child: _buildStatsCards(context)),
+
+              // Filters Section
+              SliverToBoxAdapter(child: _buildFiltersSection()),
+
+              // Sticky Inventory Header
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyHeaderDelegate(
+                  minHeight: 80,
+                  maxHeight: 80,
+                  child: Container(
+                    color: Colors.grey[50],
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildInventoryHeader(),
+                  ),
+                ),
+              ),
+            ];
+          },
+          body: Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            child: _buildInventoryGridOnly(),
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInventoryGridOnly() {
+    return Obx(
+      () =>
+          controller.isInventoryDataLoading.value
+              ? _buildShimmerCards()
+              : controller.hasInventoryDataError.value
+              ? buildErrorCard(
+                controller.inventoryDataerrorMessage,
+                AppConfig.screenWidth,
+                AppConfig.screenHeight,
+                AppConfig.isSmallScreen,
+              )
+              : _buildInventoryGridContent(),
     );
   }
 
@@ -83,7 +128,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       },
                       {
                         'title': 'Monthly Phone Sold',
-                        'value': controller.monthlyPhoneSold,
+                        'value': controller.monthlyPhoneSold.toString(),
                         'subtitle': 'Total Monthly finance',
                         'icon': Icons.trending_up,
                         'color': Color(0xFF51CF66),
@@ -109,6 +154,77 @@ class InventoryManagementScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildInventoryContent() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          _buildInventoryHeader(),
+          SizedBox(height: 8),
+          Expanded(child: _buildInventoryGrid()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInventoryGrid() {
+    return Obx(
+      () =>
+          controller.isInventoryDataLoading.value
+              ? _buildShimmerCards()
+              : controller.hasInventoryDataError.value
+              ? buildErrorCard(
+                controller.inventoryDataerrorMessage,
+                AppConfig.screenWidth,
+                AppConfig.screenHeight,
+                AppConfig.isSmallScreen,
+              )
+              : _buildInventoryGridContent(),
+    );
+  }
+
+  Widget _buildInventoryGridContent() {
+    return Obx(() {
+      if (controller.inventoryItems.isEmpty &&
+          !controller.isInventoryDataLoading.value) {
+        return _buildEmptyState();
+      }
+
+      return NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels >=
+              scrollInfo.metrics.maxScrollExtent - 100) {
+            if (!controller.isLoadingMore.value &&
+                controller.hasMoreData.value &&
+                controller.searchQuery.value.trim().isEmpty &&
+                !controller.isInventoryDataLoading.value) {
+              controller.loadMoreData();
+            }
+          }
+          return false;
+        },
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: AlwaysScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getGridCrossAxisCount(),
+            childAspectRatio: _getGridAspectRatio(),
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: _getGridItemCount(),
+          itemBuilder: (context, index) {
+            if (index < controller.inventoryItems.length) {
+              final item = controller.inventoryItems[index];
+              return _buildInventoryCard(item, index);
+            }
+            return _buildLoadingMoreCard();
+          },
+        ),
+      );
+    });
+  }
+
   Widget _buildStatCard(
     String title,
     String value,
@@ -118,7 +234,7 @@ class InventoryManagementScreen extends StatelessWidget {
     List<Color> gradient,
   ) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard),
+      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard,arguments:{"itemCategory":controller.allCategories} ),
       child: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -130,13 +246,13 @@ class InventoryManagementScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 20,
               offset: Offset(0, 8),
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.1)),
+          border: Border.all(color: color.withValues(alpha: 0.1)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -195,45 +311,46 @@ class InventoryManagementScreen extends StatelessWidget {
     );
   }
 
-// Replace your existing _buildFiltersSection method with this updated version:
-
-Widget _buildFiltersSection() {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.08),
-          spreadRadius: 0,
-          blurRadius: 20,
-          offset: Offset(0, 8),
-        ),
-      ],
-    ),
-    child: Container(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Icon(Icons.filter_list, color: Color(0xFF6C5CE7), size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Filters',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+  Widget _buildFiltersSection() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.filter_list, color: Color(0xFF6C5CE7), size: 20),
+                SizedBox(width: 8),
+                Text(
+                  'Filters',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              Spacer(),
-              Obx(() {
-                int activeFilters = controller.getActiveFiltersCount();
-                return activeFilters > 0
-                    ? Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                Spacer(),
+                Obx(() {
+                  int activeFilters = controller.getActiveFiltersCount();
+                  return activeFilters > 0
+                      ? Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Color(0xFF6C5CE7),
                           borderRadius: BorderRadius.circular(10),
@@ -247,278 +364,227 @@ Widget _buildFiltersSection() {
                           ),
                         ),
                       )
-                    : SizedBox.shrink();
-              }),
-            ],
-          ),
-          SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: CustomSearchWidget(
-                  hintText: 'Search items...',
-                  initialValue: controller.searchQuery.value,
-                  onChanged: (value) => controller.searchQuery.value = value,
-                  onClear: () => controller.searchQuery.value = '',
-                  primaryColor: Color(0xFF6C5CE7),
-                ),
-              ),
-              SizedBox(width: 12),
-              Container(
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: () => _showFilterBottomSheet(),
-                  icon: Obx(() => controller.isFiltersLoading.value
-                      ? SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Icon(Icons.tune, size: 18)),
-                  label: Text('Filters'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF6C5CE7),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Show active filters summary (keep this visible on main screen)
-          Obx(() {
-            int activeFilters = _getActiveFiltersCount();
-            if (activeFilters > 0) {
-              return Container(
-                margin: EdgeInsets.only(top: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Active Filters:',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 6),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
-                      children: [
-                        if (controller.selectedCompany.value.isNotEmpty)
-                          _buildActiveFilterChip('Company: ${controller.selectedCompany.value}'),
-                        if (controller.selectedCategory.value.isNotEmpty)
-                          _buildActiveFilterChip('Category: ${controller.selectedCategory.value}'),
-                        if (controller.selectedModel.value.isNotEmpty)
-                          _buildActiveFilterChip('Model: ${controller.selectedModel.value}'),
-                        if (controller.selectedRAM.value.isNotEmpty)
-                          _buildActiveFilterChip('RAM: ${controller.selectedRAM.value}'),
-                        if (controller.selectedROM.value.isNotEmpty)
-                          _buildActiveFilterChip('Storage: ${controller.selectedROM.value}'),
-                        if (controller.selectedColor.value.isNotEmpty)
-                          _buildActiveFilterChip('Color: ${controller.selectedColor.value}'),
-                        if (controller.selectedStockAvailability.value.isNotEmpty)
-                          _buildActiveFilterChip('Stock: ${controller.selectedStockAvailability.value}'),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }
-            return SizedBox.shrink();
-          }),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildDynamicFilterDropdown(
-  String hint,
-  RxString selectedValue,
-  RxList<String> options, {
-  required Function(String) onChanged,
-  String filterType = '',
-}) {
-  return Obx(() {
-    bool isEnabled = controller.isFilterEnabled(filterType);
-    bool isLoading = controller.isFilterLoading(filterType);
-    
-    // Create options list with 'All' as first option
-    final List<String> dropdownOptions = ['All', ...options.toSet().toList()];
-    
-    // Determine if current selected value is valid
-    final String? validSelectedValue = dropdownOptions.contains(selectedValue.value) && 
-                                     selectedValue.value.isNotEmpty && 
-                                     selectedValue.value != 'All'
-        ? selectedValue.value
-        : null;
-
-    return Container(
-      height: 40,
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: !isEnabled 
-              ? Colors.grey.withOpacity(0.3)
-              : selectedValue.value.isNotEmpty && selectedValue.value != 'All'
-                  ? Color(0xFF6C5CE7)
-                  : Color(0xFF6C5CE7).withOpacity(0.2),
-          width: selectedValue.value.isNotEmpty && selectedValue.value != 'All' ? 1.5 : 1,
-        ),
-        borderRadius: BorderRadius.circular(10),
-        color: !isEnabled
-            ? Colors.grey[100]
-            : selectedValue.value.isNotEmpty && selectedValue.value != 'All'
-                ? Color(0xFF6C5CE7).withOpacity(0.05)
-                : Colors.grey[50],
-      ),
-      child: isLoading
-          ? Row(
+                      : SizedBox.shrink();
+                }),
+              ],
+            ),
+            SizedBox(height: 12),
+            Row(
               children: [
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Color(0xFF6C5CE7),
+                Expanded(
+                  child: CustomSearchWidget(
+                    hintText: 'Search items...',
+                    initialValue: controller.searchQuery.value,
+                    onChanged: (value) => controller.searchQuery.value = value,
+                    onClear: () => controller.searchQuery.value = '',
+                    primaryColor: Color(0xFF6C5CE7),
                   ),
                 ),
-                SizedBox(width: 8),
-                Text(
-                  'Loading $hint...',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF6C5CE7),
-                    fontWeight: FontWeight.w500,
+                SizedBox(width: 12),
+                Container(
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showFilterBottomSheet(),
+                    icon: Obx(
+                      () =>
+                          controller.isFiltersLoading.value
+                              ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : Icon(Icons.tune, size: 18),
+                    ),
+                    label: Text('Filters'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF6C5CE7),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
                   ),
                 ),
               ],
-            )
-          : DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: validSelectedValue,
-                hint: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        !isEnabled ? '$hint (Select ${_getRequiredFilter(filterType)} first)' : hint,
+            ),
+            // Show active filters summary
+            Obx(() {
+              int activeFilters = _getActiveFiltersCount();
+              if (activeFilters > 0) {
+                return Container(
+                  margin: EdgeInsets.only(top: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Active Filters:',
                         style: TextStyle(
                           fontSize: 12,
-                          color: !isEnabled ? Colors.grey[400] : Color(0xFF6C5CE7),
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
-                ),
-                items: !isEnabled || isLoading
-                    ? []
-                    : dropdownOptions.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value == 'All' ? null : value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: value == 'All' ? Colors.grey[600] : Colors.black87,
-                              fontWeight: value == 'All' ? FontWeight.normal : FontWeight.w500,
+                      SizedBox(height: 6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: [
+                          if (controller.selectedCompany.value.isNotEmpty)
+                            _buildActiveFilterChip(
+                              'Company: ${controller.selectedCompany.value}',
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList(),
-                onChanged: !isEnabled || isLoading
-                    ? null
-                    : (String? newValue) {
-                        if (newValue == null) {
-                          // 'All' was selected, clear the filter
-                          onChanged('');
-                        } else {
-                          onChanged(newValue);
-                        }
-                      },
-                icon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (selectedValue.value.isNotEmpty && selectedValue.value != 'All' && isEnabled)
-                      GestureDetector(
-                        onTap: () => onChanged(''),
-                        child: Container(
-                          padding: EdgeInsets.all(2),
-                          child: Icon(
-                            Icons.clear,
-                            color: Color(0xFF6C5CE7),
-                            size: 14,
-                          ),
+                          if (controller.selectedCategory.value.isNotEmpty)
+                            _buildActiveFilterChip(
+                              'Category: ${controller.selectedCategory.value}',
+                            ),
+                          if (controller.selectedModel.value.isNotEmpty)
+                            _buildActiveFilterChip(
+                              'Model: ${controller.selectedModel.value}',
+                            ),
+                          if (controller.selectedRAM.value.isNotEmpty)
+                            _buildActiveFilterChip(
+                              'RAM: ${controller.selectedRAM.value}',
+                            ),
+                          if (controller.selectedROM.value.isNotEmpty)
+                            _buildActiveFilterChip(
+                              'Storage: ${controller.selectedROM.value}',
+                            ),
+                          if (controller.selectedColor.value.isNotEmpty)
+                            _buildActiveFilterChip(
+                              'Color: ${controller.selectedColor.value}',
+                            ),
+                          if (controller
+                              .selectedStockAvailability
+                              .value
+                              .isNotEmpty)
+                            _buildActiveFilterChip(
+                              'Stock: ${controller.selectedStockAvailability.value}',
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInventoryHeader() {
+    return Obx(
+      () => Container(
+        margin: EdgeInsets.only(bottom: 6),
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.05),
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Inventory Items',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      color: !isEnabled ? Colors.grey[400] : Color(0xFF6C5CE7),
-                      size: 16,
-                    ),
-                  ],
-                ),
-                isExpanded: true,
-                dropdownColor: Colors.white,
-                elevation: 8,
-                borderRadius: BorderRadius.circular(12),
+                      if (_getActiveFiltersCount() > 0) ...[
+                        SizedBox(width: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Filtered',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Color(0xFF6C5CE7),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        'Showing ${controller.inventoryItems.length}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                      if (controller.totalItems.value >
+                          controller.inventoryItems.length)
+                        Text(
+                          ' of ${controller.totalItems.value} items',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      if (controller.hasMoreData.value &&
+                          _getActiveFiltersCount() == 0)
+                        Text(
+                          ' • Scroll for more',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF6C5CE7),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
               ),
             ),
-    );
-  });
-}
-
-String _getRequiredFilter(String filterType) {
-  switch (filterType) {
-    case 'model':
-      return 'Company or Category';
-    case 'ram':
-    case 'rom':
-    case 'color':
-      return 'Model';
-    default:
-      return '';
-  }
-}
-
-int _getActiveFiltersCount() {
-  int count = 0;
-  if (controller.searchQuery.value.isNotEmpty) count++;
-  if (controller.selectedCompany.value.isNotEmpty) count++;
-  if (controller.selectedCategory.value.isNotEmpty) count++;
-  if (controller.selectedModel.value.isNotEmpty) count++;
-  if (controller.selectedStockAvailability.value.isNotEmpty) count++;
-  if (controller.selectedRAM.value.isNotEmpty) count++;
-  if (controller.selectedROM.value.isNotEmpty) count++;
-  if (controller.selectedColor.value.isNotEmpty) count++;
-  return count;
-}
-
-
-  Widget _buildInventoryContent() {
-    return Obx(
-      () =>
-          controller.isInventoryDataLoading.value
-              ? _buildShimmerCards()
-              : controller.hasInventoryDataError.value
-              ? buildErrorCard(
-                controller.inventoryDataerrorMessage,
-                AppConfig.screenWidth,
-                AppConfig.screenHeight,
-                AppConfig.isSmallScreen,
-              )
-              : _buildInventoryGrid(),
+            Row(
+              children: [
+                if (controller.isLoadingMore.value)
+                  Container(
+                    margin: EdgeInsets.only(right: 8),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Color(0xFF6C5CE7),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -540,19 +606,65 @@ int _getActiveFiltersCount() {
     }
   }
 
+  int _getGridItemCount() {
+    int itemCount = controller.inventoryItems.length;
+    if (controller.hasMoreData.value || controller.isLoadingMore.value) {
+      itemCount += _getGridCrossAxisCount();
+    }
+    return itemCount;
+  }
+
+  Widget _buildLoadingMoreCard() {
+    return Obx(() {
+      if (controller.isLoadingMore.value || controller.hasMoreData.value) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.08),
+                spreadRadius: 0,
+                blurRadius: 20,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+          child:
+              controller.isLoadingMore.value
+                  ? Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF6C5CE7),
+                      strokeWidth: 2,
+                    ),
+                  )
+                  : Container(
+                    padding: EdgeInsets.all(20),
+                    child: Center(
+                      child: Text(
+                        'Scroll to load more',
+                        style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                      ),
+                    ),
+                  ),
+        );
+      }
+      return SizedBox.shrink();
+    });
+  }
+
   Widget _buildShimmerCards() {
-    return Container(
-      margin: EdgeInsets.all(16),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: _getGridCrossAxisCount(),
-          childAspectRatio: _getGridAspectRatio(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
-        itemCount: 6,
-        itemBuilder: (context, index) => _buildShimmerCard(),
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _getGridCrossAxisCount(),
+        childAspectRatio: _getGridAspectRatio(),
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
       ),
+      itemCount: 6,
+      itemBuilder: (context, index) => _buildShimmerCard(),
     );
   }
 
@@ -564,7 +676,7 @@ int _getActiveFiltersCount() {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -627,292 +739,6 @@ int _getActiveFiltersCount() {
     );
   }
 
-
-Widget _buildInventoryGrid() {
-  return Container(
-    margin: EdgeInsets.all(16),
-    child: Column(
-      children: [
-        _buildInventoryHeader(),
-        Expanded(
-          child: Obx(() {
-            if (controller.inventoryItems.isEmpty && !controller.isInventoryDataLoading.value) {
-              return _buildEmptyState();
-            }
-
-            return NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                // Additional scroll debugging
-                if (scrollInfo is ScrollEndNotification) {
-                  print("📱 Scroll ended at: ${scrollInfo.metrics.pixels}");
-                  print("📱 Max extent: ${scrollInfo.metrics.maxScrollExtent}");
-                  print("📱 Has more data: ${controller.hasMoreData.value}");
-                  print("📱 Is loading more: ${controller.isLoadingMore.value}");
-                }
-                return false;
-              },
-              child: GridView.builder(
-                controller: controller.scrollController,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: _getGridCrossAxisCount(),
-                  childAspectRatio: _getGridAspectRatio(),
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemCount: _getGridItemCount(),
-                itemBuilder: (context, index) {
-                  // Show actual inventory items
-                  if (index < controller.inventoryItems.length) {
-                    final item = controller.inventoryItems[index];
-                    return _buildInventoryCard(item, index);
-                  }
-                  
-                  // Show loading indicators for remaining slots
-                  return _buildLoadingMoreCard();
-                },
-              ),
-            );
-          }),
-        ),
-        // Loading more indicator at the bottom
-        Obx(() => controller.isLoadingMore.value
-            ? Container(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(0xFF6C5CE7),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      'Loading more items...',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : SizedBox.shrink()),
-      ],
-    ),
-  );
-}
-
-// Helper method to calculate grid item count
-int _getGridItemCount() {
-  int itemCount = controller.inventoryItems.length;
-  
-  // Add loading placeholders only if we have more data and are loading
-  if (controller.hasMoreData.value || controller.isLoadingMore.value) {
-    // Add a few loading cards (based on grid columns)
-    itemCount += _getGridCrossAxisCount();
-  }
-  
-  return itemCount;
-}
-
-// Fixed loading more card
-Widget _buildLoadingMoreCard() {
-  return Obx(() {
-    // Only show loading cards if we're actually loading more or have more data
-    if (controller.isLoadingMore.value || controller.hasMoreData.value) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
-              spreadRadius: 0,
-              blurRadius: 20,
-              offset: Offset(0, 8),
-            ),
-          ],
-        ),
-        child: controller.isLoadingMore.value
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFF6C5CE7),
-                  strokeWidth: 2,
-                ),
-              )
-            : Container(
-                padding: EdgeInsets.all(20),
-                child: Center(
-                  child: Text(
-                    'Scroll to load more',
-                    style: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-      );
-    }
-    return SizedBox.shrink();
-  });
-}
-
-Widget _buildInventoryHeader() {
-  return Obx(() => Container(
-    margin: EdgeInsets.only(bottom: 6),
-    padding: EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.05),
-          spreadRadius: 0,
-          blurRadius: 10,
-          offset: Offset(0, 4),
-        ),
-      ],
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Inventory Items',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  if (_getActiveFiltersCount() > 0) ...[
-                    SizedBox(width: 8),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF6C5CE7).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        'Filtered',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Color(0xFF6C5CE7),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              SizedBox(height: 4),
-              Row(
-                children: [
-                  Text(
-                    'Showing ${controller.inventoryItems.length}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  if (controller.totalItems.value > controller.inventoryItems.length)
-                    Text(
-                      ' of ${controller.totalItems.value} items',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                  if (controller.hasMoreData.value && _getActiveFiltersCount() == 0)
-                    Text(
-                      ' • Scroll for more',
-                      style: TextStyle(
-                        fontSize: 12, 
-                        color: Color(0xFF6C5CE7),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                ],
-              ),
-              // Show active filters summary
-              if (_getActiveFiltersCount() > 0) ...[
-                SizedBox(height: 4),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  children: [
-                    if (controller.selectedCompany.value.isNotEmpty)
-                      _buildFilterChip('Company: ${controller.selectedCompany.value}'),
-                    if (controller.selectedCategory.value.isNotEmpty)
-                      _buildFilterChip('Category: ${controller.selectedCategory.value}'),
-                    if (controller.selectedModel.value.isNotEmpty)
-                      _buildFilterChip('Model: ${controller.selectedModel.value}'),
-                    if (controller.selectedRAM.value.isNotEmpty)
-                      _buildFilterChip('RAM: ${controller.selectedRAM.value}'),
-                    if (controller.selectedROM.value.isNotEmpty)
-                      _buildFilterChip('Storage: ${controller.selectedROM.value}'),
-                    if (controller.selectedColor.value.isNotEmpty)
-                      _buildFilterChip('Color: ${controller.selectedColor.value}'),
-                    if (controller.selectedStockAvailability.value.isNotEmpty)
-                      _buildFilterChip('Stock: ${controller.selectedStockAvailability.value}'),
-                  ],
-                ),
-              ],
-            ],
-          ),
-        ),
-        Row(
-          children: [
-            if (controller.isLoadingMore.value)
-              Container(
-                margin: EdgeInsets.only(right: 8),
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Color(0xFF6C5CE7),
-                  ),
-                ),
-              ),
-            IconButton(
-              onPressed: controller.refreshData,
-              icon: Icon(Icons.refresh, color: Color(0xFF6C5CE7)),
-              tooltip: 'Refresh',
-            ),
-          ],
-        ),
-      ],
-    ),
-  ));
-}
-
-Widget _buildFilterChip(String label) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-    decoration: BoxDecoration(
-      color: Color(0xFF6C5CE7).withOpacity(0.1),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: Color(0xFF6C5CE7).withOpacity(0.3),
-        width: 1,
-      ),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(
-        fontSize: 10,
-        color: Color(0xFF6C5CE7),
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  );
-}
-
   Widget _buildEmptyState() {
     return Container(
       padding: EdgeInsets.all(40),
@@ -942,7 +768,6 @@ Widget _buildFilterChip(String label) {
     );
   }
 
-  // Updated inventory card with proper InventoryItem model usage
   Widget _buildInventoryCard(InventoryItem item, int index) {
     return InkWell(
       onTap: () => _navigateToDetailedView(item),
@@ -953,14 +778,14 @@ Widget _buildFilterChip(String label) {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha: 0.08),
               spreadRadius: 0,
               blurRadius: 20,
               offset: Offset(0, 8),
             ),
           ],
           border: Border.all(
-            color: _getStockStatusColor(item.quantity).withOpacity(0.2),
+            color: _getStockStatusColor(item.quantity).withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -970,7 +795,6 @@ Widget _buildFilterChip(String label) {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Company logo or phone icon
                 Container(
                   width: 45,
                   height: 45,
@@ -1095,7 +919,9 @@ Widget _buildFilterChip(String label) {
                         child: ElevatedButton(
                           onPressed: () => controller.editItem(item),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF6C5CE7).withOpacity(0.1),
+                            backgroundColor: Color(
+                              0xFF6C5CE7,
+                            ).withValues(alpha: 0.1),
                             foregroundColor: Color(0xFF6C5CE7),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -1120,7 +946,9 @@ Widget _buildFilterChip(String label) {
                                   )
                                   : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFFF6B6B).withOpacity(0.1),
+                            backgroundColor: Color(
+                              0xFFFF6B6B,
+                            ).withValues(alpha: 0.1),
                             foregroundColor: Color(0xFFFF6B6B),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -1142,421 +970,6 @@ Widget _buildFilterChip(String label) {
     );
   }
 
-
-
-  //filter sheet
-  void _showFilterBottomSheet() {
-  Get.bottomSheet(
-    Container(
-      height: Get.height * 0.8,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      child: Column(
-        children: [
-          // Bottom sheet header
-          Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey.withOpacity(0.2),
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.tune, color: Color(0xFF6C5CE7), size: 24),
-                SizedBox(width: 12),
-                Text(
-                  'Filter Options',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                Spacer(),
-                Obx(() {
-                  int activeFilters = controller.getActiveFiltersCount();
-                  return activeFilters > 0
-                      ? Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Color(0xFF6C5CE7),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '$activeFilters Active',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      : SizedBox.shrink();
-                }),
-                SizedBox(width: 8),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: Icon(Icons.close, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-          // Filter content
-          Expanded(
-            child: Obx(() {
-              if (controller.isFiltersLoading.value) {
-                return Container(
-                  padding: EdgeInsets.all(40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        color: Color(0xFF6C5CE7),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Loading filters...',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              if (controller.hasFiltersError.value) {
-                return Container(
-                  padding: EdgeInsets.all(40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, color: Colors.red, size: 48),
-                      SizedBox(height: 16),
-                      Text(
-                        'Error Loading Filters',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        controller.filtersErrorMessage.value,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        onPressed: controller.fetchFiltersData,
-                        icon: Icon(Icons.refresh),
-                        label: Text('Retry'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF6C5CE7),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return SingleChildScrollView(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Info text about cascading filters
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      margin: EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF6C5CE7).withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Color(0xFF6C5CE7).withOpacity(0.2),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            color: Color(0xFF6C5CE7),
-                            size: 20,
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Select Company/Category first, then Model, then specifications',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF6C5CE7),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Filter Section 1: Company and Category
-                    Text(
-                      'Basic Filters',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildDynamicFilterDropdown(
-                            'Company',
-                            controller.selectedCompany,
-                            controller.availableCompanies,
-                            onChanged: controller.onCompanyFilterChanged,
-                            filterType: 'company',
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: _buildDynamicFilterDropdown(
-                            'Category',
-                            controller.selectedCategory,
-                            controller.availableCategories,
-                            onChanged: controller.onCategoryFilterChanged,
-                            filterType: 'category',
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    // Filter Section 2: Model
-                    Text(
-                      'Model Selection',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    _buildDynamicFilterDropdown(
-                      'Model',
-                      controller.selectedModel,
-                      controller.availableModels,
-                      onChanged: controller.onModelFilterChanged,
-                      filterType: 'model',
-                    ),
-                    SizedBox(height: 20),
-
-                    // Filter Section 3: Specifications
-                    Text(
-                      'Specifications',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildDynamicFilterDropdown(
-                            'RAM',
-                            controller.selectedRAM,
-                            controller.availableRAMs,
-                            onChanged: controller.onRAMFilterChanged,
-                            filterType: 'ram',
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: _buildDynamicFilterDropdown(
-                            'Storage',
-                            controller.selectedROM,
-                            controller.availableROMs,
-                            onChanged: controller.onROMFilterChanged,
-                            filterType: 'rom',
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    _buildDynamicFilterDropdown(
-                      'Color',
-                      controller.selectedColor,
-                      controller.availableColors,
-                      onChanged: controller.onColorFilterChanged,
-                      filterType: 'color',
-                    ),
-                    SizedBox(height: 20),
-
-                    // Show current filter path
-                    Obx(() {
-                      List<String> filterPath = [];
-                      if (controller.selectedCompany.value.isNotEmpty) {
-                        filterPath.add(controller.selectedCompany.value);
-                      }
-                      if (controller.selectedCategory.value.isNotEmpty) {
-                        filterPath.add(controller.selectedCategory.value);
-                      }
-                      if (controller.selectedModel.value.isNotEmpty) {
-                        filterPath.add(controller.selectedModel.value);
-                      }
-                      
-                      if (filterPath.isNotEmpty) {
-                        return Container(
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.filter_alt_outlined,
-                                    size: 16,
-                                    color: Colors.grey[600],
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Current Filter Path:',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                filterPath.join(' → '),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF6C5CE7),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    }),
-                    SizedBox(height: 100), // Extra space for bottom buttons
-                  ],
-                ),
-              );
-            }),
-          ),
-          // Bottom action buttons
-          Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.grey.withOpacity(0.2),
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      controller.clearFilters();
-                      Get.back();
-                    },
-                    icon: Icon(Icons.refresh, size: 18),
-                    label: Text('Clear All'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Color(0xFF6C5CE7),
-                      side: BorderSide(
-                        color: Color(0xFF6C5CE7).withOpacity(0.3),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      controller.applyFilters();
-                      Get.back();
-                    },
-                    icon: Icon(Icons.search, size: 18),
-                    label: Text('Apply Filters'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF6C5CE7),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-  );
-}
-
-Widget _buildActiveFilterChip(String label) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(
-      color: Color(0xFF6C5CE7).withOpacity(0.1),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: Color(0xFF6C5CE7).withOpacity(0.3),
-        width: 1,
-      ),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(
-        fontSize: 11,
-        color: Color(0xFF6C5CE7),
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  );
-}
-
-  // Navigate to detailed view
   void _navigateToDetailedView(InventoryItem item) {
     Get.to(() => InventoryDetailScreen(item: item));
   }
@@ -1568,9 +981,9 @@ Widget _buildActiveFilterChip(String label) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity(0.1),
+        color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: badgeColor.withOpacity(0.3)),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
       ),
       child: Text(
         status,
@@ -1595,43 +1008,738 @@ Widget _buildActiveFilterChip(String label) {
     return 'In Stock';
   }
 
-  Widget buildFloatingActionButtons() {
-    return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
-      backgroundColor: Color(0xFF6C5CE7),
-      foregroundColor: Colors.white,
-      elevation: 8,
-      shape: CircleBorder(),
-      children: [
-        SpeedDialChild(
-          child: Icon(Icons.add, color: Colors.white),
-          backgroundColor: Color(0xFF51CF66),
-          label: 'Add New Mobile',
-          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          onTap: controller.addNewItem,
+  int _getActiveFiltersCount() {
+    int count = 0;
+    if (controller.searchQuery.value.isNotEmpty) count++;
+    if (controller.selectedCompany.value.isNotEmpty) count++;
+    if (controller.selectedCategory.value.isNotEmpty) count++;
+    if (controller.selectedModel.value.isNotEmpty) count++;
+    if (controller.selectedStockAvailability.value.isNotEmpty) count++;
+    if (controller.selectedRAM.value.isNotEmpty) count++;
+    if (controller.selectedROM.value.isNotEmpty) count++;
+    if (controller.selectedColor.value.isNotEmpty) count++;
+    return count;
+  }
+
+  Widget _buildActiveFilterChip(String label) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
+          width: 1,
         ),
-        SpeedDialChild(
-          child: Icon(Icons.upload_file, color: Colors.white),
-          backgroundColor: Color(0xFF00CEC9),
-          label: 'Bulk Upload',
-          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          onTap: controller.bulkUpload,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          color: Color(0xFF6C5CE7),
+          fontWeight: FontWeight.w500,
         ),
-        SpeedDialChild(
-          child: Icon(Icons.download, color: Colors.white),
-          backgroundColor: Color(0xFFFF9500),
-          label: 'Export Data',
-          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          onTap: controller.exportData,
-        ),
-        SpeedDialChild(
-          child: Icon(Icons.inventory_rounded, color: Colors.white),
-          backgroundColor: Color(0xFF6C5CE7),
-          label: 'Add New Stock',
-          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          onTap: controller.addNewStocks,
-        ),
-      ],
+      ),
     );
   }
+
+  void _showFilterBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        height: Get.height * 0.8,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Bottom sheet header
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.tune, color: Color(0xFF6C5CE7), size: 24),
+                  SizedBox(width: 12),
+                  Text(
+                    'Filter Options',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  Spacer(),
+                  Obx(() {
+                    int activeFilters = controller.getActiveFiltersCount();
+                    return activeFilters > 0
+                        ? Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6C5CE7),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '$activeFilters Active',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                        : SizedBox.shrink();
+                  }),
+                  SizedBox(width: 8),
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: Icon(Icons.close, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            // Filter content
+            Expanded(
+              child: Obx(() {
+                if (controller.isFiltersLoading.value) {
+                  return Container(
+                    padding: EdgeInsets.all(40),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(color: Color(0xFF6C5CE7)),
+                        SizedBox(height: 16),
+                        Text(
+                          'Loading filters...',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (controller.hasFiltersError.value) {
+                  return Container(
+                    padding: EdgeInsets.all(40),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline, color: Colors.red, size: 48),
+                        SizedBox(height: 16),
+                        Text(
+                          'Error Loading Filters',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          controller.filtersErrorMessage.value,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: controller.fetchFiltersData,
+                          icon: Icon(Icons.refresh),
+                          label: Text('Retry'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF6C5CE7),
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Info text about cascading filters
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF6C5CE7).withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Color(0xFF6C5CE7).withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: Color(0xFF6C5CE7),
+                              size: 20,
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Select Company/Category first, then Model, then specifications',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF6C5CE7),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Filter Section 1: Company and Category
+                      Text(
+                        'Basic Filters',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDynamicFilterDropdown(
+                              'Company',
+                              controller.selectedCompany,
+                              controller.availableCompanies,
+                              onChanged: controller.onCompanyFilterChanged,
+                              filterType: 'company',
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: _buildDynamicFilterDropdown(
+                              'Category',
+                              controller.selectedCategory,
+                              controller.availableCategories,
+                              onChanged: controller.onCategoryFilterChanged,
+                              filterType: 'category',
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+
+                      // Filter Section 2: Model
+                      Text(
+                        'Model Selection',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      _buildDynamicFilterDropdown(
+                        'Model',
+                        controller.selectedModel,
+                        controller.availableModels,
+                        onChanged: controller.onModelFilterChanged,
+                        filterType: 'model',
+                      ),
+                      SizedBox(height: 20),
+
+                      // Filter Section 3: Specifications
+                      Text(
+                        'Specifications',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildDynamicFilterDropdown(
+                              'RAM',
+                              controller.selectedRAM,
+                              controller.availableRAMs,
+                              onChanged: controller.onRAMFilterChanged,
+                              filterType: 'ram',
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: _buildDynamicFilterDropdown(
+                              'Storage',
+                              controller.selectedROM,
+                              controller.availableROMs,
+                              onChanged: controller.onROMFilterChanged,
+                              filterType: 'rom',
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      _buildDynamicFilterDropdown(
+                        'Color',
+                        controller.selectedColor,
+                        controller.availableColors,
+                        onChanged: controller.onColorFilterChanged,
+                        filterType: 'color',
+                      ),
+                      SizedBox(height: 20),
+
+                      // Show current filter path
+                      Obx(() {
+                        List<String> filterPath = [];
+                        if (controller.selectedCompany.value.isNotEmpty) {
+                          filterPath.add(controller.selectedCompany.value);
+                        }
+                        if (controller.selectedCategory.value.isNotEmpty) {
+                          filterPath.add(controller.selectedCategory.value);
+                        }
+                        if (controller.selectedModel.value.isNotEmpty) {
+                          filterPath.add(controller.selectedModel.value);
+                        }
+
+                        if (filterPath.isNotEmpty) {
+                          return Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.filter_alt_outlined,
+                                      size: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Current Filter Path:',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  filterPath.join(' → '),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF6C5CE7),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return SizedBox.shrink();
+                      }),
+                      SizedBox(height: 100), // Extra space for bottom buttons
+                    ],
+                  ),
+                );
+              }),
+            ),
+            // Bottom action buttons
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        controller.clearFilters();
+                        Get.back();
+                      },
+                      icon: Icon(Icons.refresh, size: 18),
+                      label: Text('Clear All'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Color(0xFF6C5CE7),
+                        side: BorderSide(
+                          color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        controller.applyFilters();
+                        Get.back();
+                      },
+                      icon: Icon(Icons.search, size: 18),
+                      label: Text('Apply Filters'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF6C5CE7),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _buildDynamicFilterDropdown(
+    String hint,
+    RxString selectedValue,
+    RxList<String> options, {
+    required Function(String) onChanged,
+    String filterType = '',
+  }) {
+    return Obx(() {
+      bool isEnabled = controller.isFilterEnabled(filterType);
+      bool isLoading = controller.isFilterLoading(filterType);
+
+      // Create options list with 'All' as first option
+      final List<String> dropdownOptions = ['All', ...options.toSet().toList()];
+
+      // Determine if current selected value is valid
+      final String? validSelectedValue =
+          dropdownOptions.contains(selectedValue.value) &&
+                  selectedValue.value.isNotEmpty &&
+                  selectedValue.value != 'All'
+              ? selectedValue.value
+              : null;
+
+      return Container(
+        height: 40,
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color:
+                !isEnabled
+                    ? Colors.grey.withValues(alpha: 0.3)
+                    : selectedValue.value.isNotEmpty &&
+                        selectedValue.value != 'All'
+                    ? Color(0xFF6C5CE7)
+                    : Color(0xFF6C5CE7).withValues(alpha: 0.2),
+            width:
+                selectedValue.value.isNotEmpty && selectedValue.value != 'All'
+                    ? 1.5
+                    : 1,
+          ),
+          borderRadius: BorderRadius.circular(10),
+          color:
+              !isEnabled
+                  ? Colors.grey[100]
+                  : selectedValue.value.isNotEmpty &&
+                      selectedValue.value != 'All'
+                  ? Color(0xFF6C5CE7).withValues(alpha: 0.05)
+                  : Colors.grey[50],
+        ),
+        child:
+            isLoading
+                ? Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Color(0xFF6C5CE7),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Loading $hint...',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF6C5CE7),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                )
+                : DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: validSelectedValue,
+                    hint: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            !isEnabled
+                                ? '$hint (Select ${_getRequiredFilter(filterType)} first)'
+                                : hint,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  !isEnabled
+                                      ? Colors.grey[400]
+                                      : Color(0xFF6C5CE7),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    items:
+                        !isEnabled || isLoading
+                            ? []
+                            : dropdownOptions.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value == 'All' ? null : value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color:
+                                        value == 'All'
+                                            ? Colors.grey[600]
+                                            : Colors.black87,
+                                    fontWeight:
+                                        value == 'All'
+                                            ? FontWeight.normal
+                                            : FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            }).toList(),
+                    onChanged:
+                        !isEnabled || isLoading
+                            ? null
+                            : (String? newValue) {
+                              if (newValue == null) {
+                                // 'All' was selected, clear the filter
+                                onChanged('');
+                              } else {
+                                onChanged(newValue);
+                              }
+                            },
+                    icon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (selectedValue.value.isNotEmpty &&
+                            selectedValue.value != 'All' &&
+                            isEnabled)
+                          GestureDetector(
+                            onTap: () => onChanged(''),
+                            child: Container(
+                              padding: EdgeInsets.all(2),
+                              child: Icon(
+                                Icons.clear,
+                                color: Color(0xFF6C5CE7),
+                                size: 14,
+                              ),
+                            ),
+                          ),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color:
+                              !isEnabled ? Colors.grey[400] : Color(0xFF6C5CE7),
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                    isExpanded: true,
+                    dropdownColor: Colors.white,
+                    elevation: 8,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+      );
+    });
+  }
+
+  String _getRequiredFilter(String filterType) {
+    switch (filterType) {
+      case 'model':
+        return 'Company or Category';
+      case 'ram':
+      case 'rom':
+      case 'color':
+        return 'Model';
+      default:
+        return '';
+    }
+  }
+
+ Widget buildAlternativeFloatingActionButtons() {
+  return Obx(() => Column(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      // Scroll to Top Button (shows when scrolled down)
+      if (controller.showScrollToTop.value)
+        Container(
+          margin: EdgeInsets.only(bottom: 16),
+          child: FloatingActionButton(
+            mini: true,
+            backgroundColor: Colors.white,
+            foregroundColor: Color(0xFF6C5CE7),
+            elevation: 4,
+            onPressed: controller.scrollToTop,
+            heroTag: "scrollToTop",
+            child: Icon(
+              Icons.keyboard_arrow_up,
+              size: 28,
+            ),
+          ),
+        ),
+      
+      // Main Speed Dial
+      SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        backgroundColor: Color(0xFF6C5CE7),
+        foregroundColor: Colors.white,
+        elevation: 8,
+        shape: CircleBorder(),
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.add, color: Colors.white),
+            backgroundColor: Color(0xFF51CF66),
+            label: 'Add New Mobile',
+            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            onTap: controller.addNewItem,
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.upload_file, color: Colors.white),
+            backgroundColor: Color(0xFF00CEC9),
+            label: 'Bulk Upload',
+            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            onTap: controller.bulkUpload,
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.download, color: Colors.white),
+            backgroundColor: Color(0xFFFF9500),
+            label: 'Export Data',
+            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            onTap: controller.exportData,
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.inventory_rounded, color: Colors.white),
+            backgroundColor: Color(0xFF6C5CE7),
+            label: 'Add New Stock',
+            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            onTap: controller.addNewStocks,
+          ),
+        ],
+      ),
+    ],
+  ));
+}
+
+  Widget buildCustomAppBar(String title, {bool isdark = false}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          Spacer(),
+          IconButton(
+            onPressed: controller.refreshData,
+            icon: Icon(Icons.refresh, color: Color(0xFF6C5CE7)),
+            tooltip: 'Refresh',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Custom delegate for sticky header
+class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double minHeight;
+  final double maxHeight;
+
+  _StickyHeaderDelegate({
+    required this.child,
+    required this.minHeight,
+    required this.maxHeight,
+  });
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return child;
+  }
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }

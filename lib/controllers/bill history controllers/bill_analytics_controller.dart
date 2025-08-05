@@ -191,7 +191,7 @@ class BillAnalyticsController extends GetxController {
         'Error',
         'Failed to load analytics: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     } finally {

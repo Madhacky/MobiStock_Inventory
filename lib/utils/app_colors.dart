@@ -63,8 +63,8 @@ class AppTheme {
   static Color textHintDark = const Color(0xFF94A3B8);
 
   // Shadow Colors
-  static Color shadowLight = Colors.black.withOpacity(0.05);
-  static Color shadowDark = Colors.black.withOpacity(0.3);
+  static Color shadowLight = Colors.black.withValues(alpha:0.05);
+  static Color shadowDark = Colors.black.withValues(alpha:0.3);
 
   // Light Theme
   static ThemeData lightTheme = ThemeData(
@@ -576,8 +576,8 @@ class AppTheme {
 
   static Color shadowColor(BuildContext context) =>
       ThemeController().isDarkMode
-          ? Colors.black.withOpacity(0.3)
-          : Colors.black.withOpacity(0.05);
+          ? Colors.black.withValues(alpha:0.3)
+          : Colors.black.withValues(alpha:0.05);
 
   static Color accentColor(BuildContext context) =>
       ThemeController().isDarkMode ? Color(0xFFA29BFE) : Color(0xFF6C5CE7);

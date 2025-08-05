@@ -98,7 +98,7 @@ class RetrievalDueController extends GetxController {
           'Success',
           'Notification sent to $customerName',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.blue.withOpacity(0.8),
+          backgroundColor: Colors.blue.withValues(alpha:0.8),
           colorText: Colors.white,
         );
       } else {
@@ -112,7 +112,7 @@ class RetrievalDueController extends GetxController {
         'Success',
         'Failed to send notification to $customerName',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blue.withOpacity(0.8),
+        backgroundColor: Colors.blue.withValues(alpha:0.8),
         colorText: Colors.white,
       );
     }

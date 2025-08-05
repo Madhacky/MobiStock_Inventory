@@ -22,7 +22,8 @@ class PaymentDialog extends StatefulWidget {
 }
 
 class _PaymentDialogState extends State<PaymentDialog> {
-  final CustomerDetailsController controller = Get.find<CustomerDetailsController>();
+  final CustomerDetailsController controller =
+      Get.find<CustomerDetailsController>();
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _remarksController = TextEditingController();
@@ -41,7 +42,8 @@ class _PaymentDialogState extends State<PaymentDialog> {
   }
 
   bool get _isValidAmount {
-    return _paymentAmount > 0 && _paymentAmount <= widget.dueDetail.remainingDue;
+    return _paymentAmount > 0 &&
+        _paymentAmount <= widget.dueDetail.remainingDue;
   }
 
   @override
@@ -108,34 +110,47 @@ class _PaymentDialogState extends State<PaymentDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _sectionTitle('Payment Details'),
-                    SizedBox(height: 16),
+                    SizedBox(height: 12),
                     Row(
                       children: [
                         _infoColumn('Customer Name', widget.customerName),
                         SizedBox(width: 16),
-                        _infoColumn('Invoice Number', 'DUE-${widget.dueDetail.id}'),
+                        _infoColumn(
+                          'Invoice Number',
+                          'DUE-${widget.dueDetail.id}',
+                        ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 12),
                     Row(
                       children: [
-                        _infoColumn('Total Due', '₹${widget.dueDetail.totalDue.toStringAsFixed(0)}'),
-                        _infoColumn('Already Paid', '₹${widget.dueDetail.totalPaid.toStringAsFixed(0)}', color: Color(0xFF4CAF50)),
-                        _infoColumn('Remaining Due', '₹${widget.dueDetail.remainingDue.toStringAsFixed(0)}', color: Color(0xFFFF6B6B)),
+                        _infoColumn(
+                          'Total Due',
+                          '₹${widget.dueDetail.totalDue.toStringAsFixed(0)}',
+                        ),
+                        _infoColumn(
+                          'Already Paid',
+                          '₹${widget.dueDetail.totalPaid.toStringAsFixed(0)}',
+                          color: Color(0xFF4CAF50),
+                        ),
+                        _infoColumn(
+                          'Remaining Due',
+                          '₹${widget.dueDetail.remainingDue.toStringAsFixed(0)}',
+                          color: Color(0xFFFF6B6B),
+                        ),
                       ],
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 20),
                     _sectionTitle('Enter Payment Information'),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        _paymentAmountField(),
-                        SizedBox(width: 16),
-                        _paymentMethodDropdown(),
-                      ],
+                    SizedBox(height: 12),
+                    _paymentAmountField(),
+                    SizedBox(height: 4),
+                    _paymentMethodDropdown(),
+                    SizedBox(height: 8),
+                    Text(
+                      'Remarks (Optional)',
+                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
                     ),
-                    SizedBox(height: 16),
-                    Text('Remarks (Optional)', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
                     SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
@@ -148,25 +163,34 @@ class _PaymentDialogState extends State<PaymentDialog> {
                         style: TextStyle(color: Colors.black87, fontSize: 14),
                         decoration: InputDecoration(
                           hintText: 'Add any remarks here...',
-                          hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.all(12),
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 20),
                     _sectionTitle('Payment Summary'),
                     SizedBox(height: 12),
-                    _summaryRow('Payment Amount:', '₹${_paymentAmount.toStringAsFixed(0)}', Color(0xFF4CAF50)),
+                    _summaryRow(
+                      'Payment Amount:',
+                      '₹${_paymentAmount.toStringAsFixed(0)}',
+                      Color(0xFF4CAF50),
+                    ),
                     SizedBox(height: 8),
                     _paymentMethodSummary(),
                     SizedBox(height: 8),
                     _summaryRow(
                       'Remaining After Payment:',
                       '₹${_remainingAfterPayment.toStringAsFixed(0)}',
-                      _remainingAfterPayment <= 0 ? Color(0xFF4CAF50) : Color(0xFFFF9500),
+                      _remainingAfterPayment <= 0
+                          ? Color(0xFF4CAF50)
+                          : Color(0xFFFF9500),
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(
@@ -179,33 +203,55 @@ class _PaymentDialogState extends State<PaymentDialog> {
                                 side: BorderSide(color: Colors.grey[400]!),
                               ),
                             ),
-                            child: Text('Cancel', style: TextStyle(color: Colors.grey[800], fontSize: 14)),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
                         ),
                         SizedBox(width: 12),
                         Expanded(
-                          child: Obx(() => ElevatedButton(
-                                onPressed: _isValidAmount && !controller.isProcessingPayment.value ? _processPayment : null,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF4CAF50),
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  elevation: 0,
+                          child: Obx(
+                            () => ElevatedButton(
+                              onPressed:
+                                  _isValidAmount &&
+                                          !controller.isProcessingPayment.value
+                                      ? _processPayment
+                                      : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF4CAF50),
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: controller.isProcessingPayment.value
-                                    ? SizedBox(
+                                elevation: 0,
+                              ),
+                              child:
+                                  controller.isProcessingPayment.value
+                                      ? SizedBox(
                                         height: 16,
                                         width: 16,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
                                         ),
                                       )
-                                    : Text(
+                                      : Text(
                                         'Pay ₹${_paymentAmount.toStringAsFixed(0)}',
-                                        style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                              )),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -251,89 +297,96 @@ class _PaymentDialogState extends State<PaymentDialog> {
   }
 
   Widget _paymentAmountField() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Payment Amount', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
-          SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: _isValidAmount ? Colors.grey[300]! : Colors.red,
-                width: 1,
-              ),
-            ),
-            child: TextField(
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: TextStyle(color: Colors.black87, fontSize: 14),
-              decoration: InputDecoration(
-                hintText: '50',
-                hintStyle: TextStyle(color: Colors.grey[600]),
-                prefixText: '₹ ',
-                prefixStyle: TextStyle(color: Colors.black87),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(12),
-              ),
-              onChanged: (_) => setState(() {}),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Payment Amount',
+          style: TextStyle(color: Colors.grey[700], fontSize: 12),
+        ),
+        SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: _isValidAmount ? Colors.grey[300]! : Colors.red,
+              width: 1,
             ),
           ),
-          SizedBox(height: 4),
-          Text('Maximum ₹${widget.dueDetail.remainingDue.toStringAsFixed(0)}',
-              style: TextStyle(color: Colors.grey[600], fontSize: 10)),
-        ],
-      ),
+          child: TextField(
+            controller: _amountController,
+            keyboardType: TextInputType.number,
+            style: TextStyle(color: Colors.black87, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: '50',
+              hintStyle: TextStyle(color: Colors.grey[600]),
+              prefixText: '₹ ',
+              prefixStyle: TextStyle(color: Colors.black87),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(12),
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          'Maximum ₹${widget.dueDetail.remainingDue.toStringAsFixed(0)}',
+          style: TextStyle(color: Colors.grey[600], fontSize: 10),
+        ),
+      ],
     );
   }
 
   Widget _paymentMethodDropdown() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Payment Method', style: TextStyle(color: Colors.grey[700], fontSize: 12)),
-          SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey[300]!),
-            ),
-            child: DropdownButtonFormField<String>(
-              value: _selectedPaymentMethod,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                prefixIcon: Container(
-                  margin: EdgeInsets.all(8),
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF4CAF50),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Icon(Icons.payments, color: Colors.white, size: 12),
-                ),
-              ),
-              dropdownColor: Colors.white,
-              style: TextStyle(color: Colors.black87, fontSize: 14),
-              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black87),
-              items: _paymentMethods.map((method) {
-                return DropdownMenuItem<String>(
-                  value: method,
-                  child: Text(method),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() => _selectedPaymentMethod = value!);
-              },
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Payment Method',
+          style: TextStyle(color: Colors.grey[700], fontSize: 12),
+        ),
+        SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
           ),
-        ],
-      ),
+          child: DropdownButtonFormField<String>(
+            value: _selectedPaymentMethod,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              prefixIcon: Container(
+                margin: EdgeInsets.all(8),
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Color(0xFF4CAF50),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Icon(Icons.payments, color: Colors.white, size: 12),
+              ),
+            ),
+            dropdownColor: Colors.white,
+            style: TextStyle(color: Colors.black87, fontSize: 14),
+            icon: Icon(Icons.keyboard_arrow_down, color: Colors.black87),
+            items:
+                _paymentMethods.map((method) {
+                  return DropdownMenuItem<String>(
+                    value: method,
+                    child: Text(method),
+                  );
+                }).toList(),
+            onChanged: (value) {
+              setState(() => _selectedPaymentMethod = value!);
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -342,7 +395,14 @@ class _PaymentDialogState extends State<PaymentDialog> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: TextStyle(color: Colors.grey[800], fontSize: 14)),
-        Text(value, style: TextStyle(color: valueColor, fontSize: 14, fontWeight: FontWeight.w600)),
+        Text(
+          value,
+          style: TextStyle(
+            color: valueColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
@@ -351,7 +411,10 @@ class _PaymentDialogState extends State<PaymentDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Payment Method:', style: TextStyle(color: Colors.grey[800], fontSize: 14)),
+        Text(
+          'Payment Method:',
+          style: TextStyle(color: Colors.grey[800], fontSize: 14),
+        ),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
@@ -365,7 +428,11 @@ class _PaymentDialogState extends State<PaymentDialog> {
               SizedBox(width: 4),
               Text(
                 _selectedPaymentMethod.toUpperCase(),
-                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),

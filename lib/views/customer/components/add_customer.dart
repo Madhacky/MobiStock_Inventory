@@ -100,10 +100,10 @@ class AddCustomerForm extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.1),
+                  color: const Color(0xFF6366F1).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF6366F1).withOpacity(0.2),
+                    color: const Color(0xFF6366F1).withValues(alpha:0.2),
                   ),
                 ),
                 child: const Icon(
@@ -147,7 +147,7 @@ class AddCustomerForm extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withOpacity(0.1),
+                    color: const Color(0xFF6366F1).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -173,7 +173,7 @@ class AddCustomerForm extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -261,9 +261,9 @@ class AddCustomerForm extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.05),
+                color: Colors.grey.withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
               ),
               child: ImageUploadWidget(
                 labelText: 'Customer Photo',
@@ -286,7 +286,7 @@ class AddCustomerForm extends StatelessWidget {
                             ? null
                             : controller.cancelAddCustomer,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                          side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -361,10 +361,10 @@ class AddCustomerForm extends StatelessWidget {
                       margin: const EdgeInsets.only(top: 16),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Colors.red.withOpacity(0.3),
+                          color: Colors.red.withValues(alpha:0.3),
                         ),
                       ),
                       child: Row(
@@ -403,7 +403,7 @@ class AddCustomerForm extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            color: const Color(0xFF6366F1).withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF6366F1), size: 16),

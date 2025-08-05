@@ -48,9 +48,9 @@ class CommonFileUploadWidget extends StatelessWidget {
     
     final Color effectivePrimaryColor = primaryColor ?? const Color(0xFF10B981);
     final Color effectiveBackgroundColor = backgroundColor ?? 
-        (isDarkTheme ? const Color(0xFF2A2A2A) : Colors.grey.withOpacity(0.05));
+        (isDarkTheme ? const Color(0xFF2A2A2A) : Colors.grey.withValues(alpha:0.05));
     final Color effectiveBorderColor = borderColor ?? 
-        (isDarkTheme ? Colors.grey.withOpacity(0.2) : Colors.grey.withOpacity(0.3));
+        (isDarkTheme ? Colors.grey.withValues(alpha:0.2) : Colors.grey.withValues(alpha:0.3));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +107,7 @@ class CommonFileUploadWidget extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
+                  color: primaryColor.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -155,7 +155,7 @@ class CommonFileUploadWidget extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
+              color: primaryColor.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -219,7 +219,7 @@ class CommonFileUploadWidget extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.1),
+                    color: primaryColor.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(
@@ -235,7 +235,7 @@ class CommonFileUploadWidget extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Icon(

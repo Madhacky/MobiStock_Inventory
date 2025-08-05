@@ -399,7 +399,7 @@ class CompanyStockDetailsController extends GetxController {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha:0.1),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
@@ -427,7 +427,7 @@ class CompanyStockDetailsController extends GetxController {
                   Container(
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -453,7 +453,7 @@ class CompanyStockDetailsController extends GetxController {
                         Text(
                           item.company,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha:0.9),
                             fontSize: 14,
                           ),
                         ),
@@ -463,7 +463,7 @@ class CompanyStockDetailsController extends GetxController {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(item.stockStatus).withOpacity(0.2),
+                      color: _getStatusColor(item.stockStatus).withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: _getStatusColor(item.stockStatus),
@@ -580,7 +580,7 @@ Widget _buildDetailRow(String label, String value, IconData icon, Color iconColo
       Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: iconColor.withOpacity(0.1),
+          color: iconColor.withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(

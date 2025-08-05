@@ -23,7 +23,7 @@ class PDFDownloadService {
         'Download Started',
         'Downloading $fileName...',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blue.withOpacity(0.8),
+        backgroundColor: Colors.blue.withValues(alpha:0.8),
         colorText: Colors.white,
         showProgressIndicator: true,
         duration: const Duration(seconds: 2),
@@ -36,7 +36,7 @@ class PDFDownloadService {
           'Permission Denied',
           'Storage permission is required to download files',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha:0.8),
           colorText: Colors.white,
         );
         return;
@@ -68,7 +68,7 @@ class PDFDownloadService {
           'Download Complete',
           '$fileName saved successfully',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha:0.8),
           colorText: Colors.white,
           duration: const Duration(seconds: 3),
           mainButton: TextButton(
@@ -171,7 +171,7 @@ class PDFDownloadService {
       'Download Failed',
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red.withOpacity(0.8),
+      backgroundColor: Colors.red.withValues(alpha:0.8),
       colorText: Colors.white,
       duration: const Duration(seconds: 4),
     );

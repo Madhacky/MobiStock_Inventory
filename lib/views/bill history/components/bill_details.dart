@@ -60,7 +60,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF1E293B).withOpacity(0.3),
+            color: Color(0xFF1E293B).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -76,7 +76,7 @@ class BillDetailsPage extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -105,7 +105,7 @@ class BillDetailsPage extends StatelessWidget {
                           SizedBox(width: 8),
                           Icon(
                             Icons.copy,
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha:0.7),
                             size: 16,
                           ),
                         ],
@@ -116,7 +116,7 @@ class BillDetailsPage extends StatelessWidget {
                       bill.companyName,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha:0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -127,7 +127,7 @@ class BillDetailsPage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
-          Divider(color: Colors.white.withOpacity(0.2)),
+          Divider(color: Colors.white.withValues(alpha:0.2)),
           SizedBox(height: 16),
           Row(
             children: [
@@ -146,7 +146,7 @@ class BillDetailsPage extends StatelessWidget {
   Widget _buildHeaderInfo(String label, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.8), size: 16),
+        Icon(icon, color: Colors.white.withValues(alpha:0.8), size: 16),
         SizedBox(width: 6),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +155,7 @@ class BillDetailsPage extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha:0.7),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -184,7 +184,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withOpacity(0.3),
+            color: statusColor.withValues(alpha:0.3),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -216,7 +216,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -240,7 +240,7 @@ class BillDetailsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF1E293B).withOpacity(0.1),
+                  color: Color(0xFF1E293B).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -279,7 +279,7 @@ class BillDetailsPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Color(0xFFFEF2F2),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Color(0xFFEF4444).withOpacity(0.2)),
+                border: Border.all(color: Color(0xFFEF4444).withValues(alpha:0.2)),
               ),
               child: Row(
                 children: [
@@ -319,9 +319,9 @@ class BillDetailsPage extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.2)),
+          border: Border.all(color: color.withValues(alpha:0.2)),
         ),
         child: Column(
           children: [
@@ -357,7 +357,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -383,7 +383,7 @@ class BillDetailsPage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF1E293B).withOpacity(0.1),
+                    color: Color(0xFF1E293B).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -432,7 +432,7 @@ class BillDetailsPage extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [companyColor, companyColor.withOpacity(0.7)],
+                colors: [companyColor, companyColor.withValues(alpha:0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -518,7 +518,7 @@ class BillDetailsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF10B981).withOpacity(0.1),
+                  color: Color(0xFF10B981).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -561,7 +561,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -606,7 +606,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),

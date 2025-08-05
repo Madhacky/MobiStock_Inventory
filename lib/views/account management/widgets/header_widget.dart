@@ -8,7 +8,7 @@ Widget buildSectionTitle(String title) {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),

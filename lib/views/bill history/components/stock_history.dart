@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
 import 'package:smartbecho/models/bill%20history/stock_history_item_response.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/custom_dropdown.dart';
 
 class StockHistoryPage extends GetView<BillHistoryController> {
   
@@ -137,7 +139,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha:0.05),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -177,10 +179,10 @@ class StockHistoryPage extends GetView<BillHistoryController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha:0.05),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -273,7 +275,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
             ),
             child: IconButton(
               onPressed: () => controller.refreshStockItems(),
@@ -326,7 +328,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
                   onPressed: () => Get.back(),
                   icon: Icon(Icons.close),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.withOpacity(0.1),
+                    backgroundColor: Colors.grey.withValues(alpha:0.1),
                   ),
                 ),
               ],
@@ -338,7 +340,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             Row(
               children: [
                 Expanded(
-                  child: Obx(() => _buildStyledDropdown(
+                  child: Obx(() => buildStyledDropdown(
                     labelText: 'Company',
                     hintText: 'Select Company',
                     value: controller.selectedStockCompany.value == 'All' ? null : controller.selectedStockCompany.value,
@@ -348,7 +350,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: Obx(() => _buildStyledDropdown(
+                  child: Obx(() => buildStyledDropdown(
                     labelText: 'Category',
                     hintText: 'Select Category',
                     value: controller.selectedCategory.value == 'All' ? null : controller.selectedCategory.value,
@@ -362,7 +364,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             SizedBox(height: 16),
             
             // Time Period Selection
-            Obx(() => _buildStyledDropdown(
+            Obx(() => buildStyledDropdown(
               labelText: 'Time Period',
               hintText: 'Select Period',
               value: controller.stockTimePeriodType.value,
@@ -384,7 +386,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             SizedBox(height: 16),
             
             // Sort Option
-            Obx(() => _buildStyledDropdown(
+            Obx(() => buildStyledDropdown(
               labelText: 'Sort By',
               hintText: 'Select Sort Field',
               value: controller.stockSortBy.value,
@@ -451,7 +453,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
     return Row(
       children: [
         Expanded(
-          child: Obx(() => _buildStyledDropdown(
+          child: Obx(() => buildStyledDropdown(
             labelText: 'Month',
             hintText: 'Select Month',
             value: controller.getMonthName(controller.stockSelectedMonth.value),
@@ -467,7 +469,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
         ),
         SizedBox(width: 12),
         Expanded(
-          child: Obx(() => _buildStyledDropdown(
+          child: Obx(() => buildStyledDropdown(
             labelText: 'Year',
             hintText: 'Select Year',
             value: controller.stockSelectedYear.value.toString(),
@@ -483,7 +485,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
     return Row(
       children: [
         Expanded(
-          child: _buildDateField(
+          child: buildDateField(
             labelText: 'Start Date',
             controller: controller.stockStartDateController,
             onTap: () => _selectStockDate(context, true),
@@ -491,7 +493,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
         ),
         SizedBox(width: 12),
         Expanded(
-          child: _buildDateField(
+          child: buildDateField(
             labelText: 'End Date',
             controller: controller.stockEndDateController,
             onTap: () => _selectStockDate(context, false),
@@ -501,54 +503,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildDateField({
-    required String labelText,
-    required TextEditingController controller,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          labelText,
-          style: const TextStyle(
-            color: Color(0xFF374151),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
-          ),
-          child: TextFormField(
-            controller: controller,
-            readOnly: true,
-            onTap: onTap,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Select Date',
-              hintStyle: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-              ),
-              suffixIcon: Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            style: const TextStyle(
-              color: Color(0xFF374151),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+ 
 
   Future<void> _selectStockDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
@@ -580,70 +535,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
     }
   }
 
-  Widget _buildStyledDropdown({
-    required String labelText,
-    required String hintText,
-    required String? value,
-    required List<String> items,
-    required Function(String?) onChanged,
-    String? Function(String?)? validator,
-    bool enabled = true,
-    Widget? suffixIcon
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          labelText,
-          style: const TextStyle(
-            color: Color(0xFF374151),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: enabled ? Colors.white : Colors.grey.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            isExpanded: true,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              suffixIcon: suffixIcon,
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            hint: Text(
-              hintText,
-              style: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-              ),
-            ),
-            style: const TextStyle(
-              color: Color(0xFF374151),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-            items: enabled
-                ? items.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item == 'All' ? item : item.replaceAll('_', ' ')),
-                    );
-                  }).toList()
-                : [],
-            onChanged: enabled ? onChanged : null,
-            validator: validator,
-          ),
-        ),
-      ],
-    );
-  }
+ 
 
   Widget _buildStockItemsGrid() {
     return Obx(() {
@@ -693,14 +585,14 @@ class StockHistoryPage extends GetView<BillHistoryController> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: controller.getCategoryColor(stockItem.itemCategory).withOpacity(0.15),
+          color: controller.getCategoryColor(stockItem.itemCategory).withValues(alpha:0.15),
           width: 1,
         ),
       ),
@@ -713,8 +605,8 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  controller.getCategoryColor(stockItem.itemCategory).withOpacity(0.1),
-                  controller.getCategoryColor(stockItem.itemCategory).withOpacity(0.05),
+                  controller.getCategoryColor(stockItem.itemCategory).withValues(alpha:0.1),
+                  controller.getCategoryColor(stockItem.itemCategory).withValues(alpha:0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,

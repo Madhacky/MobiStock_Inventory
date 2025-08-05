@@ -26,9 +26,9 @@ Widget buildStyledDropdown({
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: enabled ? Colors.white : Colors.grey.withOpacity(0.05),
+            color: enabled ? Colors.white : Colors.grey.withValues(alpha:0.05),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
           ),
           child: DropdownButtonFormField<String>(
             

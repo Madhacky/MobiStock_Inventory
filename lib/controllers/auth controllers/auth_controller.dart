@@ -744,7 +744,7 @@ Future<void> signup(BuildContext context) async {
         Get.snackbar(
           "Success",
           "Please check email for OTP",
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 2),
@@ -754,7 +754,7 @@ Future<void> signup(BuildContext context) async {
         Get.snackbar(
           'Error',
           'Please try again later',
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha:0.8),
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 3),

@@ -39,7 +39,7 @@ class RepeatedCustomersModal extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFF9500).withOpacity(0.1),
+                    color: Color(0xFFFF9500).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -228,10 +228,10 @@ class RepeatedCustomersModal extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha:0.05),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -244,7 +244,7 @@ class RepeatedCustomersModal extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Color(0xFF6C5CE7).withOpacity(0.1),
+              color: Color(0xFF6C5CE7).withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(

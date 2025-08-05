@@ -271,7 +271,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
             backgroundColor: Colors.white,
             statusBarColor: _themeColor,
             cropFrameColor: _themeColor,
-            cropGridColor: _themeColor.withOpacity(0.5),
+            cropGridColor: _themeColor.withValues(alpha:0.5),
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
             hideBottomControls: false,
@@ -452,7 +452,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _themeColor.withOpacity(0.1),
+              color: _themeColor.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: _themeColor, size: 32),
@@ -522,7 +522,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.08),
+                  color: Colors.grey.withValues(alpha:0.08),
                   spreadRadius: 0,
                   blurRadius: 20,
                   offset: Offset(0, 4),
@@ -547,7 +547,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
                             width: double.infinity,
                             height: double.infinity,
                             decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha:0.5),
                             borderRadius: BorderRadius.circular(16),
                           ),
                             child: Column(
@@ -578,7 +578,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
                             child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: AppTheme.errorLight.withOpacity(0.8),
+                              color: AppTheme.errorLight.withValues(alpha:0.8),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -616,7 +616,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: _themeColor.withOpacity(0.1),
+              color: _themeColor.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -656,7 +656,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.errorLight.withOpacity(0.1),
+              color: AppTheme.errorLight.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(

@@ -26,7 +26,7 @@ class CommonWidgets {
   static Widget mainCard({required Widget child}) {
     return Card(
       elevation: 12,
-      shadowColor: Colors.purple.withOpacity(0.3),
+      shadowColor: Colors.purple.withValues(alpha:0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -188,7 +188,7 @@ class CommonWidgets {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF9C27B0).withOpacity(0.3),
+                  color: Color(0xFF9C27B0).withValues(alpha:0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),

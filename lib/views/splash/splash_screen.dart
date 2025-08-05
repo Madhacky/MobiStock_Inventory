@@ -180,14 +180,14 @@ class _SplashScreenState extends State<SplashScreen>
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
                                     colors: [
-                                      Colors.white.withOpacity(0.3),
-                                      Colors.white.withOpacity(0.1),
+                                      Colors.white.withValues(alpha:0.3),
+                                      Colors.white.withValues(alpha:0.1),
                                       Colors.transparent,
                                     ],
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.white.withOpacity(0.3),
+                                      color: Colors.white.withValues(alpha:0.3),
                                       spreadRadius: 10,
                                       blurRadius: 30,
                                       offset: Offset(0, 0),
@@ -208,12 +208,12 @@ class _SplashScreenState extends State<SplashScreen>
                                             gradient: LinearGradient(
                                               colors: [
                                                 Colors.white,
-                                                Colors.white.withOpacity(0.8),
+                                                Colors.white.withValues(alpha:0.8),
                                               ],
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(
+                                                color: Colors.black.withValues(alpha:
                                                   0.2,
                                                 ),
                                                 spreadRadius: 2,
@@ -266,7 +266,7 @@ class _SplashScreenState extends State<SplashScreen>
                               letterSpacing: -1,
                               shadows: [
                                 Shadow(
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha:0.3),
                                   offset: Offset(0, 4),
                                   blurRadius: 8,
                                 ),
@@ -279,7 +279,7 @@ class _SplashScreenState extends State<SplashScreen>
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha:0.9),
                               letterSpacing: 2,
                             ),
                           ),
@@ -299,7 +299,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: CircularProgressIndicator(
                         strokeWidth: 3,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.white.withOpacity(0.8),
+                          Colors.white.withValues(alpha:0.8),
                         ),
                       ),
                     ),
@@ -319,7 +319,7 @@ class _SplashScreenState extends State<SplashScreen>
                   'Version 1.0.0',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha:0.7),
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
                   ),
@@ -352,10 +352,10 @@ class _SplashScreenState extends State<SplashScreen>
               height: 4 + (random * 8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.3 + (random * 0.4)),
+                color: Colors.white.withValues(alpha:0.3 + (random * 0.4)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha:0.2),
                     spreadRadius: 1,
                     blurRadius: 5,
                   ),

@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 Widget customBackButton ({required bool isdark}){
   return Container(
      decoration: BoxDecoration(
-              color:  Colors.white.withOpacity(0.2),
+              color:  Colors.white.withValues(alpha:0.2),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isdark?Colors.black.withOpacity(0.3):  Colors.white.withOpacity(0.3),
+                color: isdark?Colors.black.withValues(alpha:0.3):  Colors.white.withValues(alpha:0.3),
                 width: 1,
               ),
             ),

@@ -45,7 +45,7 @@ _buildSummaryCardShimmer(
   child: Container(
     padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
     decoration: BoxDecoration(
-      color: Colors.grey.shade50.withOpacity(0.7),
+      color: Colors.grey.shade50.withValues(alpha:0.7),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(color: Colors.grey.shade200, width: 1),
     ),
@@ -115,22 +115,22 @@ Widget _buildSummaryCardShimmer({
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Colors.white, Colors.blue.shade50.withOpacity(0.3)],
+        colors: [Colors.white, Colors.blue.shade50.withValues(alpha:0.3)],
       ),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
-        color: Colors.blue.shade100.withOpacity(0.5),
+        color: Colors.blue.shade100.withValues(alpha:0.5),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.blue.shade100.withOpacity(0.2),
+          color: Colors.blue.shade100.withValues(alpha:0.2),
           blurRadius: 20,
           offset: const Offset(0, 8),
           spreadRadius: 0,
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha:0.8),
           blurRadius: 10,
           offset: const Offset(0, -2),
           spreadRadius: 0,
@@ -183,7 +183,7 @@ Widget _buildShimmerMetricCard({
   return Container(
     padding: EdgeInsets.all(ShimmerResponsiveUtils.getResponsivePadding(context)),
     decoration: BoxDecoration(
-      color: Colors.grey.shade50.withOpacity(0.7),
+      color: Colors.grey.shade50.withValues(alpha:0.7),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(color: Colors.grey.shade200, width: 1),
     ),
@@ -310,7 +310,7 @@ class TodaysSalesStatsShimmer extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             spreadRadius: 0,
             blurRadius: 12,
             offset: const Offset(0, 4),
@@ -404,18 +404,18 @@ class GenericBarChartShimmer extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, primaryLight.withOpacity(0.2)],
+          colors: [Colors.white, primaryLight.withValues(alpha:0.2)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: primaryLight.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: primaryLight.withValues(alpha:0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: primaryLight.withOpacity(0.2),
+            color: primaryLight.withValues(alpha:0.2),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),

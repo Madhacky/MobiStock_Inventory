@@ -93,7 +93,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                     borderRadius: BorderRadius.circular(25),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF4CAF50).withOpacity(0.3),
+                        color: const Color(0xFF4CAF50).withValues(alpha:0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -124,7 +124,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEF4444).withOpacity(0.1),
+                  color: const Color(0xFFEF4444).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -144,9 +144,9 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
         // Search Bar
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha:0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withOpacity(0.1)),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
           ),
           child: TextField(
             controller: controller.searchController,
@@ -175,7 +175,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
           ),
           child: Material(
             color: Colors.transparent,
@@ -212,7 +212,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF3B82F6).withOpacity(0.1),
+                            color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -253,7 +253,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,10 +424,10 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.05),
+                color: const Color(0xFF3B82F6).withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF3B82F6).withOpacity(0.1),
+                  color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                 ),
               ),
               child: Row(
@@ -519,13 +519,13 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha:0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
           ),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+        border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -580,7 +580,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                 decoration: BoxDecoration(
                   color: controller
                       .getPurposeColor(withdrawal.purpose)
-                      .withOpacity(0.1),
+                      .withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
@@ -655,7 +655,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
               width: double.infinity,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.05),
+                color: Colors.grey.withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -679,7 +679,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
             child: ElevatedButton(
               onPressed: () => _showWithdrawDetails(withdrawal),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3B82F6).withOpacity(0.1),
+                backgroundColor: const Color(0xFF3B82F6).withValues(alpha:0.1),
                 foregroundColor: const Color(0xFF3B82F6),
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -707,7 +707,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(60),
             ),
             child: const Icon(
@@ -823,7 +823,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                         onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(Icons.close),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.grey.withOpacity(0.1),
+                          backgroundColor: Colors.grey.withValues(alpha:0.1),
                           padding: const EdgeInsets.all(8),
                         ),
                       ),
@@ -836,7 +836,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEF4444).withOpacity(0.1),
+                      color: const Color(0xFFEF4444).withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -900,7 +900,7 @@ class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.05),
+                        color: Colors.grey.withValues(alpha:0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

@@ -51,6 +51,7 @@ class InventoryController extends GetxController {
   final RxBool isLoadingMore = false.obs;
   final RxBool hasMoreData = true.obs;
   late ScrollController scrollController;
+  final RxBool showScrollToTop = false.obs;
 
   // Loading states
   final RxBool isLoading = false.obs;
@@ -97,6 +98,7 @@ class InventoryController extends GetxController {
     // Initialize scroll controller for lazy loading
     scrollController = ScrollController();
     scrollController.addListener(_onScroll);
+    scrollController.addListener(_onScrollPositionChanged);
 
     // Set up search debouncer for API calls
     _searchDebouncer = debounce(
@@ -117,6 +119,22 @@ class InventoryController extends GetxController {
     // Initial data fetch
     loadInitialData();
   }
+void _onScrollPositionChanged() {
+  // Show button when scrolled down more than 200 pixels
+  if (scrollController.hasClients) {
+    showScrollToTop.value = scrollController.offset > 200;
+  }
+}
+
+void scrollToTop() {
+  if (scrollController.hasClients) {
+    scrollController.animateTo(
+      0.0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+}
 
   @override
   void onClose() {
@@ -271,7 +289,7 @@ Future<void> _updateAvailableModels() async {
       params['company'] = selectedCompany.value;
     }
     if (selectedCategory.value.isNotEmpty) {
-      params['itemCategory'] = selectedCategory.value;
+      params['itemType'] = selectedCategory.value;
     }
 
     String queryString = params.entries
@@ -330,7 +348,7 @@ Future<void> _updateAvailableSpecs() async {
       params['company'] = selectedCompany.value;
     }
     if (selectedCategory.value.isNotEmpty) {
-      params['itemCategory'] = selectedCategory.value;
+      params['itemType'] = selectedCategory.value;
     }
 
     String queryString = params.entries
@@ -527,7 +545,7 @@ void _onModelChanged() async {
     }
     
     if (selectedCategory.value.isNotEmpty) {
-      params['itemCategory'] = selectedCategory.value;
+      params['itemType'] = selectedCategory.value;
     }
     
     if (selectedCompany.value.isNotEmpty) {

@@ -4,6 +4,8 @@ import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 import 'package:smartbecho/controllers/dashboard_controller.dart';
 
 class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final AuthController controller = Get.find<AuthController>();
@@ -60,10 +62,10 @@ class LoginScreen extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha:0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha:0.3),
               width: 2,
             ),
           ),
@@ -88,7 +90,7 @@ class LoginScreen extends StatelessWidget {
           'Sign in to continue your journey',
           style: TextStyle(
             fontSize: 16,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -119,7 +121,7 @@ class LoginScreen extends StatelessWidget {
                 controller.obscurePassword.value 
                   ? Icons.visibility_off_rounded 
                   : Icons.visibility_rounded,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha:0.7),
               ),
               onPressed: controller.togglePasswordVisibility,
             ),
@@ -141,10 +143,10 @@ class LoginScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha:0.2),
           width: 1,
         ),
       ),
@@ -161,13 +163,13 @@ class LoginScreen extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha:0.6),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
           prefixIcon: Icon(
             prefixIcon,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha:0.7),
             size: 22,
           ),
           suffixIcon: suffixIcon,
@@ -194,7 +196,7 @@ class LoginScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFFFF6B6B).withOpacity(0.3),
+            color: Color(0xFFFF6B6B).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -240,11 +242,11 @@ class LoginScreen extends StatelessWidget {
       child: Text(
         'Forgot Password?',
         style: TextStyle(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha:0.9),
           fontSize: 16,
           fontWeight: FontWeight.w600,
           decoration: TextDecoration.underline,
-          decorationColor: Colors.white.withOpacity(0.6),
+          decorationColor: Colors.white.withValues(alpha:0.6),
         ),
       ),
     );
@@ -257,7 +259,7 @@ class LoginScreen extends StatelessWidget {
         Text(
           "Don't have an account? ",
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),

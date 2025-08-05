@@ -98,7 +98,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                         borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF4ECDC4).withOpacity(0.3),
+                            color: const Color(0xFF4ECDC4).withValues(alpha:0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -129,7 +129,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withOpacity(0.1),
+                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -153,9 +153,9 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
           padding: const EdgeInsets.symmetric(horizontal: 17),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.1)),
+              border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
             ),
             child: Row(
               children: [
@@ -184,10 +184,10 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                 padding: const EdgeInsets.only(right: 5.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    color: const Color(0xFF10B981).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: const Color(0xFF10B981).withOpacity(0.2),
+                      color: const Color(0xFF10B981).withValues(alpha:0.2),
                     ),
                   ),
                   child: Material(
@@ -238,7 +238,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
             ),
             child: Material(
               color: Colors.transparent,
@@ -275,7 +275,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF3B82F6).withOpacity(0.1),
+                              color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
@@ -317,7 +317,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,10 +449,10 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.05),
+                color: const Color(0xFF3B82F6).withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF3B82F6).withOpacity(0.1),
+                  color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                 ),
               ),
               child: Row(
@@ -547,12 +547,12 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha:0.08),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,7 +602,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                 Container(
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withOpacity(0.1),
+                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
@@ -703,7 +703,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withOpacity(0.1),
+                color: const Color(0xFF10B981).withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Text(
@@ -731,7 +731,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(40),
             ),
             child: const Icon(
@@ -804,7 +804,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: Colors.grey.withValues(alpha:0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -1050,7 +1050,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha:0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1084,10 +1084,10 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withOpacity(0.1),
+                        color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: const Color(0xFF3B82F6).withOpacity(0.2),
+                          color: const Color(0xFF3B82F6).withValues(alpha:0.2),
                         ),
                       ),
                       child: DropdownButton<int>(
@@ -1165,7 +1165,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha:0.1),
                             borderRadius: BorderRadius.circular(40),
                           ),
                           child: const Icon(

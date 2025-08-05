@@ -132,7 +132,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha:0.1),
             blurRadius: 20,
             offset: Offset(2, 0),
           ),
@@ -174,7 +174,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFF667eea).withOpacity(0.3),
+                            color: Color(0xFF667eea).withValues(alpha:0.3),
                             blurRadius: 15,
                             offset: Offset(0, 5),
                           ),
@@ -216,10 +216,10 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF00b894).withOpacity(0.1),
+                    color: Color(0xFF00b894).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Color(0xFF00b894).withOpacity(0.2),
+                      color: Color(0xFF00b894).withValues(alpha:0.2),
                       width: 1,
                     ),
                   ),
@@ -268,7 +268,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha:0.05),
                   blurRadius: 10,
                   offset: Offset(0, 2),
                 ),
@@ -348,11 +348,11 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color:
-                  isSelected ? item.color.withOpacity(0.1) : Colors.transparent,
+                  isSelected ? item.color.withValues(alpha:0.1) : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
               border:
                   isSelected
-                      ? Border.all(color: item.color.withOpacity(0.3), width: 1)
+                      ? Border.all(color: item.color.withValues(alpha:0.3), width: 1)
                       : null,
             ),
             child: Row(
@@ -362,7 +362,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                   height: 44,
                   decoration: BoxDecoration(
                     color:
-                        isSelected ? item.color : item.color.withOpacity(0.1),
+                        isSelected ? item.color : item.color.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -459,7 +459,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF667eea).withOpacity(0.3),
+                        color: Color(0xFF667eea).withValues(alpha:0.3),
                         blurRadius: 8,
                         offset: Offset(0, 4),
                       ),

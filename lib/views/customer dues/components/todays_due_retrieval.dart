@@ -120,13 +120,13 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha:0.1),
             spreadRadius: 1,
             blurRadius: 20,
             offset: Offset(0, 8),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.1)),
+        border: Border.all(color: color.withValues(alpha:0.1)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -242,7 +242,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha:0.05),
               spreadRadius: 0,
               blurRadius: 10,
               offset: Offset(0, 4),
@@ -295,13 +295,13 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha:0.08),
               spreadRadius: 0,
               blurRadius: 20,
               offset: Offset(0, 8),
             ),
           ],
-          border: Border.all(color: statusColor.withOpacity(0.2), width: 1),
+          border: Border.all(color: statusColor.withValues(alpha:0.2), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,9 +337,9 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: statusColor.withOpacity(0.3)),
+                    border: Border.all(color: statusColor.withValues(alpha:0.3)),
                   ),
                   child: Text(
                     customer.status,
@@ -487,7 +487,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Color(0xFF6C5CE7),
                         side: BorderSide(
-                          color: Color(0xFF6C5CE7).withOpacity(0.3),
+                          color: Color(0xFF6C5CE7).withValues(alpha:0.3),
                         ),
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         shape: RoundedRectangleBorder(
@@ -587,13 +587,13 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: Color(0xFF6C5CE7).withOpacity(0.1),
+              color: Color(0xFF6C5CE7).withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(60),
             ),
             child: Icon(
               Icons.search_off,
               size: 60,
-              color: Color(0xFF6C5CE7).withOpacity(0.5),
+              color: Color(0xFF6C5CE7).withValues(alpha:0.5),
             ),
           ),
           SizedBox(height: 24),
@@ -634,7 +634,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha:0.1),
                   spreadRadius: 1,
                   blurRadius: 10,
                   offset: Offset(0, 4),
@@ -705,7 +705,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
+                  color: Colors.grey.withValues(alpha:0.05),
                   spreadRadius: 0,
                   blurRadius: 10,
                   offset: Offset(0, 4),
@@ -766,7 +766,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.08),
+                        color: Colors.grey.withValues(alpha:0.08),
                         spreadRadius: 0,
                         blurRadius: 20,
                         offset: Offset(0, 8),
@@ -1017,7 +1017,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                 border: Border.all(
                   color: Color(
                     int.parse('0xFF${customer.statusColor.substring(1)}'),
-                  ).withOpacity(0.3),
+                  ).withValues(alpha:0.3),
                 ),
               ),
               child: Column(

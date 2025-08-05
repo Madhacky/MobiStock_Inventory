@@ -106,7 +106,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: controller.totalStockColor.withOpacity(0.1),
+              color: controller.totalStockColor.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
@@ -138,7 +138,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
             onChanged:
                 (value) => controller.updateSearchQueryWithDebounce(value),
             primaryColor: Color(0xFF9CA3AF),
-            backgroundColor: Colors.grey.withOpacity(0.05),
+            backgroundColor: Colors.grey.withValues(alpha:0.05),
             borderRadius: 12,
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
@@ -156,7 +156,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
                   ),
                   child: Obx(
                     () => DropdownButtonHideUnderline(
@@ -201,7 +201,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
                   ),
                   child: Obx(
                     () => DropdownButtonHideUnderline(
@@ -293,9 +293,9 @@ class CompanyStockDetailsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha:0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.1)),
+        border: Border.all(color: color.withValues(alpha:0.1)),
       ),
       child: Column(
         children: [
@@ -409,13 +409,13 @@ class CompanyStockDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
           ),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+        border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
       ),
       child: Column(
         children: [
@@ -451,13 +451,13 @@ class CompanyStockDetailsPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha:0.08),
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,12 +471,12 @@ class CompanyStockDetailsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: controller
                         .getCompanyColor(item.company)
-                        .withOpacity(0.1),
+                        .withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: controller
                           .getCompanyColor(item.company)
-                          .withOpacity(0.2),
+                          .withValues(alpha:0.2),
                     ),
                   ),
                   child: Icon(
@@ -505,7 +505,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: controller
                             .getStockStatusColor(item)
-                            .withOpacity(0.1),
+                            .withValues(alpha:0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -572,10 +572,10 @@ class CompanyStockDetailsPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: controller.getStockStatusColor(item).withOpacity(0.05),
+                color: controller.getStockStatusColor(item).withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: controller.getStockStatusColor(item).withOpacity(0.1),
+                  color: controller.getStockStatusColor(item).withValues(alpha:0.1),
                 ),
               ),
               child: Column(
@@ -616,7 +616,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(
                                 0xFF3B82F6,
-                              ).withOpacity(0.1),
+                              ).withValues(alpha:0.1),
                               foregroundColor: const Color(0xFF3B82F6),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -637,7 +637,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(
                                 0xFF10B981,
-                              ).withOpacity(0.1),
+                              ).withValues(alpha:0.1),
                               foregroundColor: const Color(0xFF10B981),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -658,7 +658,7 @@ class CompanyStockDetailsPage extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(
                                 0xFF6B7280,
-                              ).withOpacity(0.1),
+                              ).withValues(alpha:0.1),
                               foregroundColor: const Color(0xFF6B7280),
                               elevation: 0,
                               shape: RoundedRectangleBorder(

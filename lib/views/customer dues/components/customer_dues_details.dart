@@ -204,7 +204,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6C5CE7).withOpacity(0.3),
+            color: Color(0xFF6C5CE7).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -219,7 +219,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                 width: 70,
                 height: 70,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
@@ -250,21 +250,21 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                     Text(
                       'Due ID: #${dueDetails.duesId}',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha:0.9),
                         fontSize: 14,
                       ),
                     ),
                     Text(
                       'Customer ID: ${dueDetails.customer.id}',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha:0.9),
                         fontSize: 14,
                       ),
                     ),
                     Text(
                       'Date: ${_formatDate(dueDetails.creationDateTime)}',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha:0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -297,9 +297,9 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha:0.2),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: Colors.white.withValues(alpha:0.3)),
       ),
       child: Text(
         statusText,
@@ -363,7 +363,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha:0.1),
               spreadRadius: 0,
               blurRadius: 10,
               offset: Offset(0, 2),
@@ -375,7 +375,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),
@@ -447,7 +447,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -460,7 +460,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha:0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -503,7 +503,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -552,7 +552,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -598,7 +598,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -642,7 +642,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -788,7 +788,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Color(0xFF6C5CE7).withOpacity(0.1),
+            color: Color(0xFF6C5CE7).withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: Color(0xFF6C5CE7), size: 20),
@@ -1026,7 +1026,7 @@ Remaining Due: ₹${_formatAmount(dueDetails.remainingDue)}
       'Success',
       'Details copied to clipboard',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.withOpacity(0.8),
+      backgroundColor: Colors.green.withValues(alpha:0.8),
       colorText: Colors.white,
     );
   }

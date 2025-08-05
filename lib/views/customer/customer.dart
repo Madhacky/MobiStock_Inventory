@@ -119,13 +119,13 @@ Widget _buildEnhancedStatCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +136,7 @@ Widget _buildEnhancedStatCard(
               Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -146,8 +146,8 @@ Widget _buildEnhancedStatCard(
                 decoration: BoxDecoration(
                   color:
                       trendUp
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
+                          ? Colors.green.withValues(alpha:0.1)
+                          : Colors.red.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -204,7 +204,7 @@ Widget _buildEnhancedStatCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -323,7 +323,7 @@ Widget _buildEnhancedStatCard(
                                 color: Colors.grey[50],
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.grey.withOpacity(0.2),
+                                  color: Colors.grey.withValues(alpha:0.2),
                                 ),
                               ),
                               child: TextField(
@@ -440,7 +440,7 @@ Widget _buildEnhancedStatCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6C5CE7).withOpacity(0.3),
+            color: Color(0xFF6C5CE7).withValues(alpha:0.3),
             blurRadius: 20,
             offset: Offset(0, 8),
           ),
@@ -481,7 +481,7 @@ Widget _buildEnhancedStatCard(
                           'Customer trends & growth',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha:0.9),
                           ),
                         ),
                       ],
@@ -497,7 +497,7 @@ Widget _buildEnhancedStatCard(
             width: 1,
             height: 90,
             margin: EdgeInsets.symmetric(horizontal: 12),
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha:0.3),
           ),
 
           /// Right Section: Details
@@ -526,7 +526,7 @@ Widget _buildEnhancedStatCard(
                           'View all customer records',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha:0.9),
                           ),
                         ),
                       ],
@@ -549,7 +549,7 @@ Widget _buildEnhancedStatCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -577,7 +577,7 @@ Widget _buildEnhancedStatCard(
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withOpacity(0.1),
+                    color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -775,7 +775,7 @@ Widget _buildEnhancedStatCard(
                     ),
                     rowColor: Colors.white,
                     evenRowColor: Colors.grey[25],
-                    activatedColor: Color(0xFF6C5CE7).withOpacity(0.08),
+                    activatedColor: Color(0xFF6C5CE7).withValues(alpha:0.08),
                     gridBackgroundColor: Colors.white,
                     borderColor: Colors.grey[200]!,
                     activatedBorderColor: Color(0xFF6C5CE7),
@@ -826,7 +826,7 @@ Widget _buildEnhancedStatCard(
             padding: EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Color(0xFF6C5CE7).withOpacity(0.3)),
+              side: BorderSide(color: Color(0xFF6C5CE7).withValues(alpha:0.3)),
             ),
             elevation: 0,
           ),

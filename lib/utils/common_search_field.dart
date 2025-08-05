@@ -98,13 +98,13 @@ class CustomSearchWidget extends StatelessWidget {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
             borderSide: BorderSide(
-              color: primary.withOpacity(0.2),
+              color: primary.withValues(alpha:0.2),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
             borderSide: BorderSide(
-              color: primary.withOpacity(0.2),
+              color: primary.withValues(alpha:0.2),
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -117,7 +117,7 @@ class CustomSearchWidget extends StatelessWidget {
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
             borderSide: BorderSide(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha:0.3),
             ),
           ),
           filled: true,

@@ -97,10 +97,10 @@ class AddWithdrawPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withOpacity(0.1),
+                color: const Color(0xFFEF4444).withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFFEF4444).withOpacity(0.2),
+                  color: const Color(0xFFEF4444).withValues(alpha:0.2),
                 ),
               ),
               child: const Icon(
@@ -146,7 +146,7 @@ class AddWithdrawPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -222,7 +222,7 @@ class AddWithdrawPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFFEF4444).withOpacity(0.1),
+            color: const Color(0xFFEF4444).withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFFEF4444), size: 16),
@@ -257,7 +257,7 @@ class AddWithdrawPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
           ),
           child: TextFormField(
             controller: controller.dateController,
@@ -311,7 +311,7 @@ class AddWithdrawPage extends StatelessWidget {
                 border: Border.all(
                   color: controller.selectedSource.value == 'CASH'
                       ? const Color(0xFF10B981)
-                      : Colors.grey.withOpacity(0.2),
+                      : Colors.grey.withValues(alpha:0.2),
                 ),
               ),
               child: ListTile(
@@ -319,7 +319,7 @@ class AddWithdrawPage extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    color: const Color(0xFF10B981).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
@@ -357,7 +357,7 @@ class AddWithdrawPage extends StatelessWidget {
                 border: Border.all(
                   color: controller.selectedSource.value == 'ACCOUNT'
                       ? const Color(0xFF3B82F6)
-                      : Colors.grey.withOpacity(0.2),
+                      : Colors.grey.withValues(alpha:0.2),
                 ),
               ),
               child: ListTile(
@@ -365,7 +365,7 @@ class AddWithdrawPage extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withOpacity(0.1),
+                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(

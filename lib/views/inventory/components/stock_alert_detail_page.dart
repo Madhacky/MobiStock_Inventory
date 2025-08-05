@@ -95,7 +95,7 @@ class _StockAlertsDetailPageState extends State<StockAlertsDetailPage> {
         iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.withOpacity(0.1)),
+          child: Container(height: 1, color: Colors.grey.withValues(alpha:0.1)),
         ),
       ),
       body: Column(
@@ -120,18 +120,18 @@ class _StockAlertsDetailPageState extends State<StockAlertsDetailPage> {
                         : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                  borderSide: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                  borderSide: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: color, width: 2),
                 ),
                 filled: true,
-                fillColor: Colors.grey.withOpacity(0.05),
+                fillColor: Colors.grey.withValues(alpha:0.05),
               ),
             ),
           ),
@@ -202,12 +202,12 @@ class _StockAlertsDetailPageState extends State<StockAlertsDetailPage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: color.withOpacity(0.1),
+                              color: color.withValues(alpha:0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: Colors.grey.withValues(alpha:0.05),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -218,7 +218,7 @@ class _StockAlertsDetailPageState extends State<StockAlertsDetailPage> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.1),
+                                  color: color.withValues(alpha:0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(icon, color: color, size: 20),

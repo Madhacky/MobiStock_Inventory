@@ -161,7 +161,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                       'Download',
                       'Downloading invoice...',
                       snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.green.withOpacity(0.8),
+                      backgroundColor: Colors.green.withValues(alpha:0.8),
                       colorText: Colors.white,
                     );
                   },
@@ -174,7 +174,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                       'Share',
                       'Sharing sale details...',
                       snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.blue.withOpacity(0.8),
+                      backgroundColor: Colors.blue.withValues(alpha:0.8),
                       colorText: Colors.white,
                     );
                   },
@@ -213,7 +213,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -251,7 +251,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Color(0xFF10B981).withOpacity(0.1),
+                  color: Color(0xFF10B981).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -376,7 +376,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -402,7 +402,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF3B82F6).withOpacity(0.1),
+                  color: Color(0xFF3B82F6).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -428,7 +428,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,7 +533,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -565,8 +565,8 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                 decoration: BoxDecoration(
                   color:
                       dues.paid
-                          ? Color(0xFF10B981).withOpacity(0.1)
-                          : Color(0xFFF59E0B).withOpacity(0.1),
+                          ? Color(0xFF10B981).withValues(alpha:0.1)
+                          : Color(0xFFF59E0B).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -672,7 +672,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),

@@ -103,10 +103,10 @@ class AddDuesPage extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.1),
+                  color: const Color(0xFF6366F1).withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF6366F1).withOpacity(0.2),
+                    color: const Color(0xFF6366F1).withValues(alpha:0.2),
                   ),
                 ),
                 child: const Icon(
@@ -153,7 +153,7 @@ class AddDuesPage extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withOpacity(0.1),
+                    color: const Color(0xFF6366F1).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -182,7 +182,7 @@ class AddDuesPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -241,14 +241,14 @@ class AddDuesPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color:
                       controller.remainingDueAmount.value > 0
-                          ? const Color(0xFFEF4444).withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
+                          ? const Color(0xFFEF4444).withValues(alpha:0.1)
+                          : Colors.green.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color:
                         controller.remainingDueAmount.value > 0
-                            ? const Color(0xFFEF4444).withOpacity(0.3)
-                            : Colors.green.withOpacity(0.3),
+                            ? const Color(0xFFEF4444).withValues(alpha:0.3)
+                            : Colors.green.withValues(alpha:0.3),
                   ),
                 ),
                 child: Row(
@@ -331,7 +331,7 @@ class AddDuesPage extends StatelessWidget {
                                 ? null
                                 : controller.cancelAddDue,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                          side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -409,10 +409,10 @@ class AddDuesPage extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.red.withOpacity(0.3),
+                            color: Colors.red.withValues(alpha:0.3),
                           ),
                         ),
                         child: Row(
@@ -453,7 +453,7 @@ class AddDuesPage extends StatelessWidget {
               height: 65,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                border: Border.all(color: Colors.grey.withValues(alpha:0.3)),
               ),
               child: DropdownButtonFormField<String>(
                 isDense: false,
@@ -466,7 +466,7 @@ class AddDuesPage extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.withOpacity(0.05),
+                  fillColor: Colors.grey.withValues(alpha:0.05),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 6,
@@ -487,7 +487,7 @@ class AddDuesPage extends StatelessWidget {
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF6366F1).withOpacity(0.1),
+                                color: const Color(0xFF6366F1).withValues(alpha:0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
@@ -563,10 +563,10 @@ class AddDuesPage extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withOpacity(0.1),
+                    color: const Color(0xFF6366F1).withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF6366F1).withOpacity(0.2),
+                      color: const Color(0xFF6366F1).withValues(alpha:0.2),
                     ),
                   ),
                   child: const Icon(
@@ -588,7 +588,7 @@ class AddDuesPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            color: const Color(0xFF6366F1).withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF6366F1), size: 16),

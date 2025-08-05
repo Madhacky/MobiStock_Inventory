@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
 import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/show_network_image.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_dues_details.dart';
@@ -148,7 +149,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha:0.08),
               spreadRadius: 0,
               blurRadius: 20,
               offset: Offset(0, 4),
@@ -161,7 +162,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 18),
@@ -226,7 +227,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -238,40 +239,57 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         child: Column(
           children: [
             // Search Bar
-            Container(
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withOpacity(0.2)),
-              ),
-              child: TextField(
-                onChanged: controller.onSearchChanged,
-                decoration: InputDecoration(
-                  hintText: 'Search by name, ID, or customer ID...',
-                  hintStyle: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    size: 20,
-                    color: Colors.grey[500],
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                ),
-              ),
-            ),
-            SizedBox(height: 12),
-            // Filter buttons
             Row(
               children: [
                 Expanded(
-                  child: _buildFilterButton(
-                    'Sort by Date',
-                    Icons.sort,
-                    onPressed: () => _showSortOptions(),
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+                    ),
+                    child: TextField(
+                      onChanged: controller.onSearchChanged,
+                      decoration: InputDecoration(
+                        hintText: 'Search by name, ID, or customer ID...',
+                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          size: 20,
+                          color: Colors.grey[500],
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(width: 8),
+                // Filter Button
+                Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Color(0xFF6C5CE7).withValues(alpha:0.3)),
+                  ),
+                  child: IconButton(
+                    onPressed: () => _showFilterBottomSheet(context),
+                    icon: Icon(
+                      Icons.tune,
+                      size: 20,
+                      color: Color(0xFF6C5CE7),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            // Quick Filter buttons
+            Row(
+              children: [
                 Expanded(
                   child: _buildFilterButton(
                     'Reset',
@@ -295,7 +313,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         decoration: BoxDecoration(
           color: Colors.grey[50],
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -324,7 +342,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -332,8 +350,8 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         ],
       ),
       child: Obx(() {
-        final duesCount = controller.allDues.where((due) => due.remainingDue > 0).length;
-        final paidCount = controller.allDues.where((due) => due.remainingDue <= 0).length;
+        final duesCount = controller.allDues.length;
+        final paidCount = controller.paidDues.length;
 
         return TabBar(
           controller: _tabController,
@@ -398,7 +416,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         return _buildLoadingIndicator();
       }
 
-      final duesCustomers = controller.allDues.where((due) => due.remainingDue > 0).toList();
+      final duesCustomers = controller.allDues;
 
       if (duesCustomers.isEmpty) {
         return _buildEmptyState('No dues found', 'All customers have paid their dues');
@@ -424,7 +442,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         return _buildLoadingIndicator();
       }
 
-      final paidCustomers = controller.allDues.where((due) => due.remainingDue <= 0).toList();
+      final paidCustomers = controller.paidDues;
 
       if (paidCustomers.isEmpty) {
         return _buildEmptyState('No paid customers', 'Customers who have paid will appear here');
@@ -480,7 +498,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 0.85,
+          childAspectRatio: 0.8,
         ),
         itemCount: customers.length,
         itemBuilder: (context, index) {
@@ -492,13 +510,16 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
   }
 
   Widget _buildCustomerCard(CustomerDue customer, {required bool isDuesSection}) {
+    // Determine status color based on remainingDue
+    Color statusColor = customer.remainingDue <= 0 ? Colors.green : Colors.red;
+    
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha:0.08),
             spreadRadius: 0,
             blurRadius: 15,
             offset: Offset(0, 4),
@@ -519,12 +540,6 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                   child: customer.profileUrl != null 
                       ? cachedImage(customer.profileUrl!) 
                       : Icon(Icons.person, color: Colors.grey[600]),
-                      
-                 // child: Icon(Icons.person, color: Colors.grey[600]),
-                  
-                  //  customer.profileUrl == null
-                  //     ? Icon(Icons.person, color: Colors.grey[600])
-                  //     : null,
                 ),
                 SizedBox(width: 8),
                 Expanded(
@@ -554,17 +569,15 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isDuesSection 
-                        ? Colors.red.withOpacity(0.1) 
-                        : Colors.green.withOpacity(0.1),
+                    color: statusColor.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     customer.statusText,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: 8,
                       fontWeight: FontWeight.w500,
-                      color: isDuesSection ? Colors.red : Colors.green,
+                      color: statusColor,
                     ),
                   ),
                 ),
@@ -586,7 +599,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                   _buildAmountRow(
                     'Remaining:', 
                     customer.remainingDue, 
-                    isDuesSection ? Colors.red : Colors.green,
+                    customer.remainingDue <= 0 ? Colors.green : Colors.red,
                     isHighlight: true,
                   ),
                   SizedBox(height: 8),
@@ -676,9 +689,9 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
       child: Container(
         height: 32,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha:0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -777,88 +790,300 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  void _showSortOptions() {
+  // Filter Bottom Sheet
+  void _showFilterBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+            // Header
+            Row(
+              children: [
+                Text(
+                  'Filter & Sort',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(Icons.close),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.grey.withValues(alpha:0.1),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 20),
+
+            // Time Period Row
+            Obx(
+              () => _buildStyledDropdown(
+                labelText: 'Time Period',
+                hintText: 'Select Period',
+                value: controller.timePeriodType.value,
+                items: controller.timePeriodOptions,
+                onChanged: controller.onTimePeriodTypeChanged,
               ),
             ),
-            SizedBox(height: 20),
-            Text(
-              'Sort Options',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+
+            SizedBox(height: 16),
+
+            // Date Selection based on Time Period Type
+            Obx(() {
+              if (controller.timePeriodType.value == 'Month/Year') {
+                return _buildMonthYearSelection();
+              } else {
+                return _buildCustomDateSelection(context);
+              }
+            }),
+
+            SizedBox(height: 16),
+
+            // Sort Option
+            Obx(
+              () => _buildStyledDropdown(
+                labelText: 'Sort By',
+                hintText: 'Select Sort Field',
+                value: controller.sortBy.value,
+                items: controller.sortOptions,
+                onChanged: (value) => controller.onSortChanged(value ?? 'creationDate'),
+                suffixIcon: Icon(
+                  controller.sortDir.value == 'asc'
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward,
+                  size: 16,
+                  color: Color(0xFF1E293B),
+                ),
               ),
             ),
-            SizedBox(height: 20),
-            _buildSortOption('Latest First', 'creationDate,desc'),
-            _buildSortOption('Oldest First', 'creationDate,asc'),
-            _buildSortOption('Highest Amount', 'totalDue,desc'),
-            _buildSortOption('Lowest Amount', 'totalDue,asc'),
-            _buildSortOption('Name A-Z', 'name,asc'),
-            _buildSortOption('Name Z-A', 'name,desc'),
-            SizedBox(height: 20),
+
+            SizedBox(height: 24),
+
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _resetFilters,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Color(0xFF1E293B),
+                      side: BorderSide(color: Color(0xFF1E293B)),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text('Reset'),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Get.back(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF1E293B),
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text('Apply'),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
           ],
         ),
       ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
     );
   }
 
-  Widget _buildSortOption(String title, String sortValue) {
-    return Obx(() {
-      final isSelected = controller.selectedSort.value == sortValue;
-      return InkWell(
-        onTap: () {
-          controller.onSortChanged(sortValue);
-          Get.back();
-        },
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          margin: EdgeInsets.only(bottom: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? Color(0xFF6C5CE7).withOpacity(0.1) : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected ? Color(0xFF6C5CE7) : Colors.grey.withOpacity(0.2),
+  void _resetFilters() {
+    controller.resetFilters();
+    Get.back();
+  }
+
+  Widget _buildMonthYearSelection() {
+    return Row(
+      children: [
+        Expanded(
+          child: Obx(
+            () => _buildStyledDropdown(
+              labelText: 'Month',
+              hintText: 'Select Month',
+              value: controller.selectedMonth.value != null
+                  ? controller.getMonthName(controller.selectedMonth.value!)
+                  : null,
+              items: List.generate(
+                12,
+                (index) => controller.getMonthName(index + 1),
+              ),
+              onChanged: (value) {
+                if (value != null) {
+                  final monthIndex = List.generate(
+                    12,
+                    (index) => controller.getMonthName(index + 1),
+                  ).indexOf(value) + 1;
+                  controller.onMonthChanged(monthIndex);
+                }
+              },
             ),
           ),
-          child: Row(
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? Color(0xFF6C5CE7) : Colors.black87,
-                ),
-              ),
-              Spacer(),
-              if (isSelected)
-                Icon(
-                  Icons.check_circle,
-                  color: Color(0xFF6C5CE7),
-                  size: 20,
-                ),
-            ],
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Obx(
+            () => _buildStyledDropdown(
+              labelText: 'Year',
+              hintText: 'Select Year',
+              value: controller.selectedYear.value?.toString(),
+              items: List.generate(
+                6,
+                (index) => (2020 + index).toString(),
+              ).reversed.toList(),
+              onChanged: (value) => controller.onYearChanged(int.tryParse(value ?? '')),
+            ),
           ),
         ),
-      );
-    });
+      ],
+    );
+  }
+
+  Widget _buildCustomDateSelection(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: buildDateField(
+            labelText: 'Start Date',
+            controller: controller.startDateController,
+            onTap: () => _selectDate(context, true),
+          ),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: buildDateField(
+            labelText: 'End Date',
+            controller: controller.endDateController,
+            onTap: () => _selectDate(context, false),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Color(0xFF1E293B),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      if (isStartDate) {
+        controller.onStartDateChanged(picked);
+      } else {
+        controller.onEndDateChanged(picked);
+      }
+    }
+  }
+
+  Widget _buildStyledDropdown({
+    required String labelText,
+    required String hintText,
+    required String? value,
+    required List<String> items,
+    required Function(String?) onChanged,
+    Widget? suffixIcon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          labelText,
+          style: const TextStyle(
+            color: Color(0xFF374151),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: value,
+            hint: Text(
+              hintText,
+              style: const TextStyle(
+                color: Color(0xFF9CA3AF),
+                fontSize: 14,
+              ),
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+              suffixIcon: suffixIcon,
+            ),
+            style: const TextStyle(
+              color: Color(0xFF374151),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+            items: items.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: onChanged,
+            icon: suffixIcon == null
+                ? Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFF9CA3AF),
+                  )
+                : SizedBox.shrink(),
+          ),
+        ),
+      ],
+    );
   }
 
   String _formatAmount(double amount) {

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/common_date_feild.dart';
+import 'package:smartbecho/utils/common_speed_dial_fl_button_widegt.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/bill%20history/components/show_stats_info.dart';
 
@@ -16,27 +19,32 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar("Purchase Bills", isdark: true,actionItem: IconButton(
-        onPressed: controller.showAnalyticsModal,
-        icon: Icon(Icons.analytics_outlined),
-      ),),
-            
+            buildCustomAppBar(
+              "Purchase Bills",
+              isdark: true,
+              actionItem: IconButton(
+                onPressed: controller.showAnalyticsModal,
+                icon: Icon(Icons.analytics_outlined),
+              ),
+            ),
+
             // Loading indicator
             Obx(
-              () => controller.isLoading.value && controller.bills.isEmpty
-                  ? LinearProgressIndicator(
-                      backgroundColor: Colors.grey[200],
-                      color: Color(0xFF1E293B),
-                    )
-                  : SizedBox.shrink(),
+              () =>
+                  controller.isLoading.value && controller.bills.isEmpty
+                      ? LinearProgressIndicator(
+                        backgroundColor: Colors.grey[200],
+                        color: Color(0xFF1E293B),
+                      )
+                      : SizedBox.shrink(),
             ),
-            
+
             // Stats section
             _buildStatsSection(context),
-            
+
             // Filter button
             _buildFilterButton(context),
-            
+
             // Bills grid with lazy loading
             Expanded(
               child: NotificationListener<ScrollNotification>(
@@ -55,26 +63,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           ],
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: "stock_list",
-            onPressed: () { 
-              Get.toNamed(AppRoutes.stockList);
-              },
-            backgroundColor: Color(0xFF3B82F6),
-            child: Icon(Icons.inventory_2, color: Colors.white),
-          ),
-          SizedBox(height: 12),
-          FloatingActionButton(
-            heroTag: "add_stock",
-            onPressed: () => Get.toNamed(AppRoutes.addNewStock),
-            backgroundColor: Color(0xFF1E293B),
-            child: Icon(Icons.add, color: Colors.white),
-          ),
-        ],
-      ),
+      floatingActionButton: buildFloatingActionButtons()
     );
   }
 
@@ -118,7 +107,12 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                     stats.todayStock.toString(),
                     Icons.today,
                     Color(0xFF10B981),
-                    onTap: () => showStockItemsDialog(context,stats,StockWhenAdded.today),
+                    onTap:
+                        () => showStockItemsDialog(
+                          context,
+                          stats,
+                          StockWhenAdded.today,
+                        ),
                   ),
                 ),
                 SizedBox(width: 8),
@@ -128,8 +122,12 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                     stats.thisMonthStock.toString(),
                     Icons.date_range,
                     Color(0xFF3B82F6),
-                    onTap: () => showStockItemsDialog(context,stats,StockWhenAdded.thisMonth),
-
+                    onTap:
+                        () => showStockItemsDialog(
+                          context,
+                          stats,
+                          StockWhenAdded.thisMonth,
+                        ),
                   ),
                 ),
                 SizedBox(width: 8),
@@ -149,7 +147,13 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color,{void Function()? onTap}) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color, {
+    void Function()? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -159,7 +163,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.grey.withValues(alpha:0.05),
               blurRadius: 8,
               offset: Offset(0, 2),
             ),
@@ -200,27 +204,30 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         children: [
           Expanded(
             child: ElevatedButton.icon(
-              onPressed:()=> _showFilterBottomSheet(context),
+              onPressed: () => _showFilterBottomSheet(context),
               icon: Icon(Icons.filter_list, size: 18),
               label: Obx(() {
                 String filterText = 'Filter & Sort';
                 List<String> activeFilters = [];
-                
+
                 if (controller.selectedCompany.value != 'All') {
                   activeFilters.add(controller.selectedCompany.value);
                 }
-                
+
                 if (controller.timePeriodType.value == 'Month/Year') {
-                  activeFilters.add('${controller.getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}');
-                } else if (controller.timePeriodType.value == 'Custom Date' && 
-                           controller.startDate.value != null && controller.endDate.value != null) {
+                  activeFilters.add(
+                    '${controller.getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}',
+                  );
+                } else if (controller.timePeriodType.value == 'Custom Date' &&
+                    controller.startDate.value != null &&
+                    controller.endDate.value != null) {
                   activeFilters.add('Custom Range');
                 }
-                
+
                 if (activeFilters.isNotEmpty) {
                   filterText = activeFilters.join(' • ');
                 }
-                
+
                 return Text(
                   filterText,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -243,20 +250,23 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
             ),
             child: IconButton(
               onPressed: () => controller.refreshBills(),
-              icon: Obx(() => controller.isLoading.value
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(0xFF1E293B),
-                      ),
-                    )
-                  : Icon(Icons.refresh, color: Color(0xFF1E293B))),
+              icon: Obx(
+                () =>
+                    controller.isLoading.value
+                        ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xFF1E293B),
+                          ),
+                        )
+                        : Icon(Icons.refresh, color: Color(0xFF1E293B)),
+              ),
               tooltip: 'Refresh',
             ),
           ),
@@ -296,41 +306,48 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                   onPressed: () => Get.back(),
                   icon: Icon(Icons.close),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.withOpacity(0.1),
+                    backgroundColor: Colors.grey.withValues(alpha:0.1),
                   ),
                 ),
               ],
             ),
-            
+
             SizedBox(height: 20),
-            
+
             // Company and Time Period Row
             Row(
               children: [
                 Expanded(
-                  child: Obx(() => _buildStyledDropdown(
-                    labelText: 'Company',
-                    hintText: 'Select Company',
-                    value: controller.selectedCompany.value == 'All' ? null : controller.selectedCompany.value,
-                    items: controller.companyOptions,
-                    onChanged: controller.onCompanyChanged,
-                  )),
+                  child: Obx(
+                    () => _buildStyledDropdown(
+                      labelText: 'Vendors',
+                      hintText: 'Select Vendor',
+                      value:
+                          controller.selectedCompany.value == 'All'
+                              ? null
+                              : controller.selectedCompany.value,
+                      items: controller.companyOptions,
+                      onChanged: controller.onCompanyChanged,
+                    ),
+                  ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: Obx(() => _buildStyledDropdown(
-                    labelText: 'Time Period',
-                    hintText: 'Select Period',
-                    value: controller.timePeriodType.value,
-                    items: controller.timePeriodOptions,
-                    onChanged: controller.onTimePeriodTypeChanged,
-                  )),
+                  child: Obx(
+                    () => _buildStyledDropdown(
+                      labelText: 'Time Period',
+                      hintText: 'Select Period',
+                      value: controller.timePeriodType.value,
+                      items: controller.timePeriodOptions,
+                      onChanged: controller.onTimePeriodTypeChanged,
+                    ),
+                  ),
                 ),
               ],
             ),
-            
+
             SizedBox(height: 16),
-            
+
             // Date Selection based on Time Period Type
             Obx(() {
               if (controller.timePeriodType.value == 'Month/Year') {
@@ -339,27 +356,30 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 return _buildCustomDateSelection(context);
               }
             }),
-            
+
             SizedBox(height: 16),
-            
+
             // Sort Option
-            Obx(() => _buildStyledDropdown(
-              labelText: 'Sort By',
-              hintText: 'Select Sort Field',
-              value: controller.sortBy.value,
-              items: controller.sortOptions,
-              onChanged: (value) => controller.onSortChanged(value ?? 'billId'),
-              suffixIcon: Icon(
-                controller.sortDir.value == 'asc' 
-                    ? Icons.arrow_upward 
-                    : Icons.arrow_downward,
-                size: 16,
-                color: Color(0xFF1E293B),
+            Obx(
+              () => _buildStyledDropdown(
+                labelText: 'Sort By',
+                hintText: 'Select Sort Field',
+                value: controller.sortBy.value,
+                items: controller.sortOptions,
+                onChanged:
+                    (value) => controller.onSortChanged(value ?? 'billId'),
+                suffixIcon: Icon(
+                  controller.sortDir.value == 'asc'
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward,
+                  size: 16,
+                  color: Color(0xFF1E293B),
+                ),
               ),
-            )),
-            
+            ),
+
             SizedBox(height: 24),
-            
+
             // Action Buttons
             Row(
               children: [
@@ -394,7 +414,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                 ),
               ],
             ),
-            
+
             SizedBox(height: MediaQuery.of(Get.context!).viewInsets.bottom),
           ],
         ),
@@ -423,29 +443,46 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     return Row(
       children: [
         Expanded(
-          child: Obx(() => _buildStyledDropdown(
-            labelText: 'Month',
-            hintText: 'Select Month',
-            value: controller.getMonthName(controller.selectedMonth.value),
-            items: List.generate(12, (index) => controller.getMonthName(index + 1)),
-            onChanged: (value) {
-              if (value != null) {
-                final monthIndex = List.generate(12, (index) => controller.getMonthName(index + 1))
-                    .indexOf(value) + 1;
-                controller.onMonthChanged(monthIndex);
-              }
-            },
-          )),
+          child: Obx(
+            () => _buildStyledDropdown(
+              labelText: 'Month',
+              hintText: 'Select Month',
+              value: controller.getMonthName(controller.selectedMonth.value),
+              items: List.generate(
+                12,
+                (index) => controller.getMonthName(index + 1),
+              ),
+              onChanged: (value) {
+                if (value != null) {
+                  final monthIndex =
+                      List.generate(
+                        12,
+                        (index) => controller.getMonthName(index + 1),
+                      ).indexOf(value) +
+                      1;
+                  controller.onMonthChanged(monthIndex);
+                }
+              },
+            ),
+          ),
         ),
         SizedBox(width: 12),
         Expanded(
-          child: Obx(() => _buildStyledDropdown(
-            labelText: 'Year',
-            hintText: 'Select Year',
-            value: controller.selectedYear.value.toString(),
-            items: List.generate(6, (index) => (2020 + index).toString()).reversed.toList(),
-            onChanged: (value) => controller.onYearChanged(int.tryParse(value ?? '')),
-          )),
+          child: Obx(
+            () => _buildStyledDropdown(
+              labelText: 'Year',
+              hintText: 'Select Year',
+              value: controller.selectedYear.value.toString(),
+              items:
+                  List.generate(
+                    6,
+                    (index) => (2020 + index).toString(),
+                  ).reversed.toList(),
+              onChanged:
+                  (value) =>
+                      controller.onYearChanged(int.tryParse(value ?? '')),
+            ),
+          ),
         ),
       ],
     );
@@ -455,7 +492,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     return Row(
       children: [
         Expanded(
-          child: _buildDateField(
+          child: buildDateField(
             labelText: 'Start Date',
             controller: controller.startDateController,
             onTap: () => _selectDate(context, true),
@@ -463,7 +500,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         ),
         SizedBox(width: 12),
         Expanded(
-          child: _buildDateField(
+          child: buildDateField(
             labelText: 'End Date',
             controller: controller.endDateController,
             onTap: () => _selectDate(context, false),
@@ -473,55 +510,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildDateField({
-    required String labelText,
-    required TextEditingController controller,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          labelText,
-          style: const TextStyle(
-            color: Color(0xFF374151),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
-          ),
-          child: TextFormField(
-            controller: controller,
-            readOnly: true,
-            onTap: onTap,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Select Date',
-              hintStyle: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-              ),
-              suffixIcon: Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            style: const TextStyle(
-              color: Color(0xFF374151),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
+  
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -560,7 +549,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     required Function(String?) onChanged,
     String? Function(String?)? validator,
     bool enabled = true,
-    Widget? suffixIcon
+    Widget? suffixIcon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -577,9 +566,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: enabled ? Colors.white : Colors.grey.withOpacity(0.05),
+            color: enabled ? Colors.white : Colors.grey.withValues(alpha:0.05),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
           ),
           child: DropdownButtonFormField<String>(
             value: value,
@@ -591,24 +580,22 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             ),
             hint: Text(
               hintText,
-              style: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
             ),
             style: const TextStyle(
               color: Color(0xFF374151),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
-            items: enabled
-                ? items.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList()
-                : [],
+            items:
+                enabled
+                    ? items.map((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList()
+                    : [],
             onChanged: enabled ? onChanged : null,
             validator: validator,
           ),
@@ -643,7 +630,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               mainAxisSpacing: 12,
               childAspectRatio: 0.7,
             ),
-            itemCount: controller.bills.length + (controller.isLoadingMore.value ? 1 : 0),
+            itemCount:
+                controller.bills.length +
+                (controller.isLoadingMore.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == controller.bills.length) {
                 return _buildLoadingMoreIndicator();
@@ -667,14 +656,14 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.grey.withValues(alpha:0.08),
               spreadRadius: 0,
               blurRadius: 12,
               offset: Offset(0, 4),
             ),
           ],
           border: Border.all(
-            color: controller.getStatusColor(bill).withOpacity(0.15),
+            color: controller.getStatusColor(bill).withValues(alpha:0.15),
             width: 1,
           ),
         ),
@@ -687,8 +676,12 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    controller.getCompanyColor(bill.companyName).withOpacity(0.1),
-                    controller.getCompanyColor(bill.companyName).withOpacity(0.05),
+                    controller
+                        .getCompanyColor(bill.companyName)
+                        .withValues(alpha:0.1),
+                    controller
+                        .getCompanyColor(bill.companyName)
+                        .withValues(alpha:0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -751,7 +744,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                     // Date
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, size: 12, color: Colors.grey[500]),
+                        Icon(
+                          Icons.calendar_today,
+                          size: 12,
+                          color: Colors.grey[500],
+                        ),
                         SizedBox(width: 4),
                         Text(
                           bill.formattedDate,
@@ -776,32 +773,39 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                         ),
                       ),
                       SizedBox(height: 4),
-                      ...bill.items.take(2).map((item) => Padding(
-                        padding: EdgeInsets.only(bottom: 2),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: controller.getCompanyColor(item.company),
-                                shape: BoxShape.circle,
+                      ...bill.items
+                          .take(2)
+                          .map(
+                            (item) => Padding(
+                              padding: EdgeInsets.only(bottom: 2),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 4,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: controller.getCompanyColor(
+                                        item.company,
+                                      ),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      '${item.model} (${item.ramRomDisplay})',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey[700],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                '${item.model} (${item.ramRomDisplay})',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[700],
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )).toList(),
+                          )
+                          .toList(),
                       if (bill.items.length > 2)
                         Text(
                           '+${bill.items.length - 2} more',
@@ -826,7 +830,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.currency_rupee, size: 12, color: Colors.grey[600]),
+                              Icon(
+                                Icons.currency_rupee,
+                                size: 12,
+                                color: Colors.grey[600],
+                              ),
                               SizedBox(width: 4),
                               Text(
                                 'Amount',
@@ -850,7 +858,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                             SizedBox(height: 4),
                             Row(
                               children: [
-                                Icon(Icons.warning, size: 10, color: Colors.orange),
+                                Icon(
+                                  Icons.warning,
+                                  size: 10,
+                                  color: Colors.orange,
+                                ),
                                 SizedBox(width: 4),
                                 Text(
                                   'Dues',
@@ -894,11 +906,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            controller.getStatusIcon(bill),
-            size: 8,
-            color: Colors.white,
-          ),
+          Icon(controller.getStatusIcon(bill), size: 8, color: Colors.white),
           SizedBox(width: 2),
           Text(
             bill.isPaid ? 'Paid' : 'Pending',
@@ -918,17 +926,11 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: Color(0xFF1E293B),
-            strokeWidth: 2,
-          ),
+          CircularProgressIndicator(color: Color(0xFF1E293B), strokeWidth: 2),
           SizedBox(height: 16),
           Text(
             'Loading bills...',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
         ],
       ),
@@ -940,11 +942,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 64,
-            color: Colors.grey[300],
-          ),
+          Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey[300]),
           SizedBox(height: 16),
           Text(
             'No bills found',
@@ -957,10 +955,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           SizedBox(height: 8),
           Text(
             'Try adjusting your filters',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
           SizedBox(height: 24),
           ElevatedButton(
@@ -985,11 +980,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red[300],
-          ),
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
           SizedBox(height: 16),
           Text(
             'Something went wrong',
@@ -1005,10 +996,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             child: Obx(
               () => Text(
                 controller.error.value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -1049,14 +1037,36 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             SizedBox(height: 8),
             Text(
               'Loading more...',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  //floating button
+  Widget buildFloatingActionButtons() {
+    return SpeedDial(
+      animatedIcon: AnimatedIcons.menu_close,
+      backgroundColor: const Color(0xFF6C5CE7),
+      foregroundColor: Colors.white,
+      elevation: 8,
+      shape: const CircleBorder(),
+      children: [
+        buildSpeedDialChild(
+          label: 'Stock History',
+          backgroundColor: const Color(0xFF51CF66),
+          icon: Icons.inventory_2,
+          onTap: () => Get.toNamed(AppRoutes.stockList),
+        ),
+        buildSpeedDialChild(
+          label: 'Add New Stock',
+          backgroundColor: const Color(0xFF00CEC9),
+          icon: Icons.add,
+          onTap: () => Get.toNamed(AppRoutes.addNewStock),
+        ),
+      ],
     );
   }
 }

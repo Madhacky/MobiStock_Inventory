@@ -114,7 +114,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF667eea).withOpacity(0.3),
+            color: Color(0xFF667eea).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -130,12 +130,12 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               Container(
                 padding: EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: CircleAvatar(
                   radius: 35,
-                  backgroundColor: Colors.white.withOpacity(0.9),
+                  backgroundColor: Colors.white.withValues(alpha:0.9),
                   child: Icon(
                     Icons.person_2_sharp,
                     size: 35,
@@ -167,7 +167,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                         Text(
                           "Beginner Level",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha:0.9),
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
                           ),
@@ -182,7 +182,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -240,7 +240,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                   Text(
                     "Available Stock",
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha:0.9),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -262,7 +262,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FractionallySizedBox(
@@ -284,7 +284,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               Text(
                 "68.5% of total capacity",
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha:0.7),
                   fontSize: 12,
                 ),
               ),
@@ -305,9 +305,9 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha:0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha:0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +320,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
                 child: Text(
                   title,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha:0.9),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -347,7 +347,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
           Text(
             subtitle,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha:0.7),
               fontSize: 10,
             ),
           ),
@@ -759,7 +759,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         color: Colors.grey[50],
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -934,7 +934,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
   //       borderRadius: BorderRadius.circular(16),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: stat.colors[0].withOpacity(0.25),
+  //           color: stat.colors[0].withValues(alpha:0.25),
   //           spreadRadius: 0,
   //           blurRadius: 12,
   //           offset: Offset(0, 4),
@@ -946,7 +946,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
   //         Container(
   //           padding: EdgeInsets.all(controller.isSmallScreen ? 8 : 8),
   //           decoration: BoxDecoration(
-  //             color: Colors.white.withOpacity(0.2),
+  //             color: Colors.white.withValues(alpha:0.2),
   //             borderRadius: BorderRadius.circular(12),
   //           ),
   //           child: Icon(
@@ -965,7 +965,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
   //                 stat.title,
   //                 style: AppStyles.custom(
   //                   size: controller.isSmallScreen ? 10 : 12,
-  //                   color: Colors.white.withOpacity(0.9),
+  //                   color: Colors.white.withValues(alpha:0.9),
   //                   weight: FontWeight.w500,
   //                 ),
   //                 maxLines: 1,
@@ -1042,7 +1042,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
           border: Border.all(color: Colors.grey[200]!, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha:0.05),
               blurRadius: 8,
               offset: Offset(0, 2),
             ),
@@ -1193,22 +1193,22 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white, Colors.blue.shade50.withOpacity(0.3)],
+          colors: [Colors.white, Colors.blue.shade50.withValues(alpha:0.3)],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.blue.shade100.withOpacity(0.5),
+          color: Colors.blue.shade100.withValues(alpha:0.5),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.shade100.withOpacity(0.2),
+            color: Colors.blue.shade100.withValues(alpha:0.2),
             blurRadius: 20,
             offset: Offset(0, 8),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha:0.8),
             blurRadius: 10,
             offset: Offset(0, -2),
             spreadRadius: 0,
@@ -1293,7 +1293,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50.withOpacity(0.7),
+              color: Colors.grey.shade50.withValues(alpha:0.7),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.grey.shade200, width: 1),
             ),
@@ -1522,7 +1522,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6C5CE7).withOpacity(0.3),
+            color: Color(0xFF6C5CE7).withValues(alpha:0.3),
             spreadRadius: 0,
             blurRadius: 12,
             offset: Offset(0, 4),
@@ -1552,12 +1552,12 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white.withValues(alpha:0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: accentColor.withOpacity(0.2), width: 1.5),
+        border: Border.all(color: accentColor.withValues(alpha:0.2), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: accentColor.withOpacity(0.1),
+            color: accentColor.withValues(alpha:0.1),
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
@@ -1571,7 +1571,7 @@ class _InventoryDashboardState extends State<InventoryDashboard> {
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.1),
+                  color: accentColor.withValues(alpha:0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, size: 20, color: accentColor),

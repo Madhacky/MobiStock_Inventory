@@ -190,7 +190,7 @@ class CustomerController extends GetxController {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Color(0xFF6C5CE7).withOpacity(0.1),
+                color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -265,19 +265,19 @@ class CustomerController extends GetxController {
           switch (type) {
             case 'VIP':
               typeColor = Color(0xFFFF9500);
-              bgColor = Color(0xFFFF9500).withOpacity(0.1);
+              bgColor = Color(0xFFFF9500).withValues(alpha:0.1);
               break;
             case 'Repeated':
               typeColor = Color(0xFF51CF66);
-              bgColor = Color(0xFF51CF66).withOpacity(0.1);
+              bgColor = Color(0xFF51CF66).withValues(alpha:0.1);
               break;
             case 'Regular':
               typeColor = Color(0xFF00CEC9);
-              bgColor = Color(0xFF00CEC9).withOpacity(0.1);
+              bgColor = Color(0xFF00CEC9).withValues(alpha:0.1);
               break;
             default:
               typeColor = Color(0xFF6C5CE7);
-              bgColor = Color(0xFF6C5CE7).withOpacity(0.1);
+              bgColor = Color(0xFF6C5CE7).withValues(alpha:0.1);
           }
 
           return Container(
@@ -323,7 +323,7 @@ class CustomerController extends GetxController {
                   child: Container(
                     padding: EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Color(0xFF6C5CE7).withOpacity(0.1),
+                      color: Color(0xFF6C5CE7).withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Icon(
@@ -341,7 +341,7 @@ class CustomerController extends GetxController {
                   child: Container(
                     padding: EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Color(0xFFFF9500).withOpacity(0.1),
+                      color: Color(0xFFFF9500).withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Icon(Icons.edit, size: 16, color: Color(0xFFFF9500)),
@@ -355,7 +355,7 @@ class CustomerController extends GetxController {
                   child: Container(
                     padding: EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Color(0xFFE74C3C).withOpacity(0.1),
+                      color: Color(0xFFE74C3C).withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Icon(
