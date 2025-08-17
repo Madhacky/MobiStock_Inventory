@@ -100,15 +100,6 @@ class InvoiceDetailsController extends GetxController {
   /// Notify customer - Updated with API integration
   int cusomterId = Get.arguments["customer id"];
   Future<void> notifyCustomer() async {
-    if (invoiceDetails.value?.saleId == null) {
-      Get.snackbar(
-        'Error',
-        'Invalid customer information',
-        backgroundColor: Color(0xFFFF6B6B),
-        colorText: Colors.white,
-      );
-      return;
-    }
 
     try {
       isNotifying.value = true;
@@ -125,7 +116,7 @@ class InvoiceDetailsController extends GetxController {
         final notifyResponse = NotifyCustomerResponse.fromJson(response.data);
 
         if (notifyResponse.isSuccess) {
-          if (notifyResponse.payload.hasNotifiedCustomers) {
+          if (notifyResponse.status=="Success") {
             Get.snackbar(
               'Success',
               'Customer notification sent successfully',
@@ -133,15 +124,7 @@ class InvoiceDetailsController extends GetxController {
               colorText: Colors.white,
               duration: Duration(seconds: 3),
             );
-          } else if (notifyResponse.payload.hasNotFoundCustomers) {
-            Get.snackbar(
-              'Warning',
-              'Customer not found or notification could not be sent',
-              backgroundColor: Color(0xFFFF9500),
-              colorText: Colors.white,
-              duration: Duration(seconds: 3),
-            );
-          }
+          } 
         } else {
           Get.snackbar(
             'Error',

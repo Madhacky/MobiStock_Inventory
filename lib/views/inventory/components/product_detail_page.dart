@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
 import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -760,7 +761,7 @@ class InventoryDetailScreen extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: item.quantity > 0 ? () {
-                    // Sell item logic
+                    Get.find<InventoryController>().sellItem(item);
                   } : null,
                   icon: Icon(Icons.point_of_sale, size: 20),
                   label: Text(
@@ -781,22 +782,22 @@ class InventoryDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 12),
-              ElevatedButton(
-                onPressed: () {
-                  // Edit item logic
-                },
-                child: Icon(Icons.edit, size: 20),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6C5CE7),
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.all(18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-              ),
+              // SizedBox(width: 12),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     // Edit item logic
+              //   },
+              //   child: Icon(Icons.edit, size: 20),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Color(0xFF6C5CE7),
+              //     foregroundColor: Colors.white,
+              //     padding: EdgeInsets.all(18),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(16),
+              //     ),
+              //     elevation: 0,
+              //   ),
+              // ),
             ],
           ),
           if (item.quantity == 0) ...[

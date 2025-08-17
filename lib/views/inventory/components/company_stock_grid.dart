@@ -19,7 +19,7 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
   String selectedFilter = 'All';
   String sortBy = 'Company Name';
   String searchQuery = '';
-  String selectedCategory = 'CHARGER'; // Default category
+  String selectedCategory = 'SMARTPHONE'; // Default category
   final TextEditingController searchController = TextEditingController();
 
   List<String> filterOptions = ['All', 'Low Stock', 'Good Stock', 'High Stock'];
@@ -88,7 +88,7 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
           const SizedBox(height: 16),
 
           // Category Dropdown
-          controller.itemCategory.isEmpty
+          Obx(()=>  controller.isLoadingCategories.value
               ? Container(
                 height: 40,
                 width: 120,
@@ -160,7 +160,8 @@ class _CompanyStockGridState extends State<CompanyStockGrid> {
                     },
                   ),
                 ),
-              ),
+              ),),
+        
           const SizedBox(height: 16),
 
           // Search Bar

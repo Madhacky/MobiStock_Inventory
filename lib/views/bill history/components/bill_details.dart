@@ -25,8 +25,8 @@ class BillDetailsPage extends StatelessWidget {
                   children: [
                     _buildBillHeader(bill),
                     SizedBox(height: 16),
-                    _buildBillSummary(bill),
-                    SizedBox(height: 16),
+                    // _buildBillSummary(bill),
+                    // SizedBox(height: 16),
                     _buildItemsSection(bill),
                     SizedBox(height: 16),
                     _buildAmountBreakdown(bill),
@@ -208,7 +208,17 @@ class BillDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBillSummary(Bill bill) {
+Widget _buildBillSummary(Bill bill) {
+    // Calculate SGST and CGST (half of total GST each)
+    double totalGstPercent = bill.gst;
+    double sgstPercent = totalGstPercent / 2;
+    double cgstPercent = totalGstPercent / 2;
+    
+    // Calculate GST amounts
+    double gstAmount = bill.amount - bill.withoutGst;
+    double sgstAmount = gstAmount / 2;
+    double cgstAmount = gstAmount / 2;
+    
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -255,66 +265,132 @@ class BillDetailsPage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
+          
+          // GST Breakdown Row 1
           Row(
             children: [
-              _buildSummaryCard(
-                'Total Items',
-                '${bill.totalItems}',
-                Icons.inventory_2,
+              _buildGstSummaryCard(
+                'GST Rate',
+                '${totalGstPercent.toStringAsFixed(1)}%',
+                Icons.percent,
                 Color(0xFF3B82F6),
               ),
               SizedBox(width: 12),
-              _buildSummaryCard(
-                'Unique Products',
-                '${bill.items.length}',
-                Icons.widgets,
+              _buildGstSummaryCard(
+                'Without GST',
+                '₹${bill.withoutGst.toStringAsFixed(0)}',
+                Icons.remove_circle_outline,
+                Color(0xFF10B981),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          
+          // GST Breakdown Row 2
+          Row(
+            children: [
+              _buildGstSummaryCard(
+                'SGST',
+                '${sgstPercent.toStringAsFixed(1)}% (₹${sgstAmount.toStringAsFixed(0)})',
+                Icons.account_balance,
+                Color(0xFFF59E0B),
+              ),
+              SizedBox(width: 12),
+              _buildGstSummaryCard(
+                'CGST',
+                '${cgstPercent.toStringAsFixed(1)}% (₹${cgstAmount.toStringAsFixed(0)})',
+                Icons.business,
                 Color(0xFF8B5CF6),
               ),
             ],
           ),
-          if (bill.dues > 0) ...[
-            SizedBox(height: 12),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Color(0xFFFEF2F2),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Color(0xFFEF4444).withValues(alpha:0.2)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 20),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Outstanding Dues: ${bill.formattedDues}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFEF4444),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => _markAsPaid(bill),
-                    child: Text(
-                      'Mark Paid',
-                      style: TextStyle(
-                        color: Color(0xFFEF4444),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+          SizedBox(height: 12),
+          
+          // Total Amount Card
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1E293B),
+                  Color(0xFF334155),
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xFF1E293B).withValues(alpha:0.3),
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-          ],
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha:0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.currency_rupee,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Amount (With GST)',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withValues(alpha:0.8),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        bill.formattedAmount,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha:0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'GST: ₹${gstAmount.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
+  Widget _buildGstSummaryCard(String title, String value, IconData icon, Color color) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12),
@@ -325,20 +401,22 @@ class BillDetailsPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 24),
+            Icon(icon, color: color, size: 20),
             SizedBox(height: 8),
             Text(
               value,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 13,
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
+              textAlign: TextAlign.center,
             ),
+            SizedBox(height: 4),
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
@@ -554,6 +632,14 @@ class BillDetailsPage extends StatelessWidget {
   }
 
   Widget _buildAmountBreakdown(Bill bill) {
+    // Calculate SGST and CGST (half of total GST each)
+    double gstAmount = bill.amount - bill.withoutGst;
+    double sgstAmount = gstAmount / 2;
+    double cgstAmount = gstAmount / 2;
+    double totalGstPercent = bill.gst;
+    double sgstPercent = totalGstPercent / 2;
+    double cgstPercent = totalGstPercent / 2;
+    
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -582,16 +668,18 @@ class BillDetailsPage extends StatelessWidget {
           SizedBox(height: 16),
           _buildAmountRow('Subtotal (Without GST)', '₹${bill.withoutGst.toStringAsFixed(0)}', false),
           SizedBox(height: 8),
-          _buildAmountRow('GST', bill.formattedGst, false),
+          _buildAmountRow('SGST (${sgstPercent.toStringAsFixed(1)}%)', '₹${sgstAmount.toStringAsFixed(0)}', false, Color(0xFFF59E0B)),
+          SizedBox(height: 8),
+          _buildAmountRow('CGST (${cgstPercent.toStringAsFixed(1)}%)', '₹${cgstAmount.toStringAsFixed(0)}', false, Color(0xFF8B5CF6)),
           SizedBox(height: 8),
           Divider(thickness: 2),
           SizedBox(height: 8),
           _buildAmountRow('Total Amount', bill.formattedAmount, true),
           if (bill.dues > 0) ...[
-            SizedBox(height: 8),
-            _buildAmountRow('Paid Amount', '₹${(bill.amount - bill.dues).toStringAsFixed(0)}', false, Colors.green),
-            SizedBox(height: 8),
-            _buildAmountRow('Outstanding Dues', bill.formattedDues, false, Colors.red),
+            // SizedBox(height: 8),
+            // _buildAmountRow('Paid Amount', '₹${(bill.amount - bill.dues).toStringAsFixed(0)}', false, Colors.green),
+            // SizedBox(height: 8),
+            // _buildAmountRow('Outstanding Dues', bill.formattedDues, false, Colors.red),
           ],
         ],
       ),

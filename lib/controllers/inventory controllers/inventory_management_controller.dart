@@ -863,9 +863,12 @@ void _onModelChanged() async {
     Get.snackbar('Export', 'Exporting ${inventoryItems.length} items...');
   }
 
-  void editItem(InventoryItem item) {
-    Get.toNamed('/edit-stock', arguments: item);
-  }
+ void sellItem(InventoryItem item) {
+  Get.toNamed(AppRoutes.mobileSalesForm, arguments: {
+    'fromInventory': true,
+    'inventoryItem': item,
+  });
+}
 
   void deleteItem(String itemId, int index) {
     Get.defaultDialog(

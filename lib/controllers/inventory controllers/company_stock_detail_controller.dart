@@ -5,6 +5,8 @@ import 'dart:developer';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
+import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/models/inventory%20management/stock_item_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
@@ -195,7 +197,7 @@ class CompanyStockDetailsController extends GetxController {
         case 'Price (Low to High)':
           return a.sellingPrice.compareTo(b.sellingPrice);
         case 'Recently Added':
-          return b.dateCreated.compareTo(a.dateCreated);
+          return b.formattedDate.compareTo(a.formattedDate);
         default:
           return 0;
       }
@@ -363,25 +365,7 @@ class CompanyStockDetailsController extends GetxController {
   }
 
   void sellItem(StockItem item) {
-    // Implement sell functionality
-    log("Sell ${item.model}");
-    Get.dialog(
-      AlertDialog(
-        title: Text('Sell Item'),
-        content: Text('Sell ${item.model}?'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
-          TextButton(
-            onPressed: () {
-              // Add your sell logic here
-              Get.back();
-              Get.snackbar('Success', 'Item sold successfully');
-            },
-            child: Text('Sell'),
-          ),
-        ],
-      ),
-    );
+    Get.find<InventoryController>().sellItem(InventoryItem.fromJson(item.toJson()));
   }
 
   void viewDetails(StockItem item) {

@@ -1,9 +1,11 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/account%20management%20controller/account_management_controller.dart';
 import 'package:smartbecho/models/account%20management%20models/account_summary_model.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/utils/generic_charts.dart';
 import 'package:smartbecho/views/account%20management/components/commision%20received/commission_received.dart';
 import 'package:smartbecho/views/account%20management/components/emi%20settlement/emi_settlement.dart';
 import 'package:smartbecho/views/account%20management/components/history.dart';
@@ -121,21 +123,22 @@ class AccountManagementScreen extends StatelessWidget {
               color: isActive ? item.color : Colors.white,
               borderRadius: BorderRadius.circular(25),
               border: Border.all(
-                color: isActive ? item.color : Colors.grey.withValues(alpha:0.3),
+                color:
+                    isActive ? item.color : Colors.grey.withValues(alpha: 0.3),
                 width: 1.5,
               ),
               boxShadow:
                   isActive
                       ? [
                         BoxShadow(
-                          color: item.color.withValues(alpha:0.3),
+                          color: item.color.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: Offset(0, 4),
                         ),
                       ]
                       : [
                         BoxShadow(
-                          color: Colors.grey.withValues(alpha:0.1),
+                          color: Colors.grey.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: Offset(0, 2),
                         ),
@@ -267,47 +270,52 @@ class AccountManagementScreen extends StatelessWidget {
     return Container(
       height: 130,
       child: Obx(() {
-        if (controller.isLoading.value) {
-          return _buildSummaryCardsShimmer();
-        }
+        log(controller.accountDashboardData.value.toString());
 
-        if (controller.accountData.value == null) {
+        if (controller.hasError.value &&
+            controller.accountDashboardData.value == null) {
           return Center(
             child: Text(
-              'No data available',
-              style: TextStyle(color: Colors.grey[600]),
+              'Failed to load account summary',
+              style: TextStyle(color: Colors.red, fontSize: 16),
             ),
           );
         }
 
-        final data = controller.accountData.value!;
+        if (controller.isLoading.value &&
+            controller.accountDashboardData.value == null) {
+          return _buildSummaryCardsShimmer();
+        }
 
         return ListView(
           scrollDirection: Axis.horizontal,
           children: [
             _buildSummaryCard(
-              'Opening\nBalance',
-              '₹${controller.formatAmount(data.openingBalance)}',
+              "Today’s Opening\nCash",
+              controller.formatAmount(controller.openingBalance),
               Icons.account_balance_wallet_outlined,
               Color(0xFF6C5CE7),
             ),
             _buildSummaryCard(
-              'In-Counter\nCash',
-              '₹${controller.formatAmount(data.inCounterCash)}',
+              "Today’s Closing\nCash",
+              // controller.formattedClosingBalance,
+              controller.formatAmount(controller.closingBalance),
               Icons.payments_outlined,
               Color(0xFF51CF66),
             ),
             _buildSummaryCard(
-              'In-Account\nBalance',
-              '₹${controller.formatAmount(data.inAccountBalance)}',
-              Icons.account_balance_outlined,
-              Color(0xFF4ECDC4),
-            ),
-            _buildSummaryCard(
-              'Total\nSales',
-              '₹${controller.formatAmount(data.totalSales)}',
+              "Today’s Sales",
+              // controller.formattedTotalSale,
+              controller.formatAmount(controller.totalSale),
               Icons.shopping_cart_outlined,
               Color(0xFFFF9500),
+            ),
+            _buildSummaryCard(
+              'Today’s EMI Collected',
+              // controller.formattedEmiReceivedToday,
+              controller.formatAmount(controller.emiReceivedToday),
+              Icons.account_balance_outlined,
+              Color(0xFF4ECDC4),
             ),
           ],
         );
@@ -330,7 +338,7 @@ class AccountManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -343,7 +351,7 @@ class AccountManagementScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withValues(alpha:0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -397,36 +405,51 @@ class AccountManagementScreen extends StatelessWidget {
   }
 
   Widget _buildMetricsGrid() {
-    final data = controller.accountData.value;
+    final data = controller.accountDashboardData.value;
     if (data == null) return SizedBox.shrink();
 
     final metrics = [
       {
-        'title': 'Total Paid Bills',
-        'value': data.totalPaidBills,
+        'title': 'Due Payments Collected',
+        'value': controller.formatAmount(controller.duesRecovered),
         'icon': Icons.receipt_outlined,
         'color': Color(0xFFFF6B6B),
       },
       {
-        'title': 'Total Commission',
-        'value': data.totalCommission,
+        'title': 'Today’s Bills Paid',
+        'value': controller.formatAmount(controller.payBills),
         'icon': Icons.monetization_on_outlined,
         'color': Color(0xFF51CF66),
       },
       {
-        'title': 'Net Balance',
-        'value': data.netBalance,
+        'title': 'Today’s Withdrawals',
+        'value': controller.formatAmount(controller.withdrawals),
         'icon': Icons.savings_outlined,
         'color': Color(0xFF4ECDC4),
       },
       {
-        'title': 'Closing Balance',
-        'value': data.closingBalance,
+        'title': 'Total Commission',
+        'value': controller.formatAmount(controller.commissionReceived),
         'icon': Icons.account_balance_outlined,
         'color': Color(0xFF6C5CE7),
       },
     ];
-
+    if (controller.isLoading.value) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF6C5CE7),
+          strokeWidth: 3,
+        ),
+      );
+    }
+    if (controller.hasError.value) {
+      return Center(
+        child: Text(
+          'Failed to load metrics',
+          style: TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
+    }
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -441,7 +464,7 @@ class AccountManagementScreen extends StatelessWidget {
         final metric = metrics[index];
         return _buildMetricCard(
           metric['title'] as String,
-          metric['value'] as double,
+          metric['value'] as String,
           metric['icon'] as IconData,
           metric['color'] as Color,
         );
@@ -451,7 +474,7 @@ class AccountManagementScreen extends StatelessWidget {
 
   Widget _buildMetricCard(
     String title,
-    double value,
+    String value,
     IconData icon,
     Color color,
   ) {
@@ -462,7 +485,7 @@ class AccountManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -475,14 +498,14 @@ class AccountManagementScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withValues(alpha:0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, color: color, size: 18),
           ),
           Spacer(),
           Text(
-            '₹${controller.formatAmount(value)}',
+            value,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -496,45 +519,115 @@ class AccountManagementScreen extends StatelessWidget {
     );
   }
 
+  // Chart Section
   Widget _buildChartsSection() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 4),
+    log(controller.accountDashboardData.string);
+    if (controller.isLoading.value &&
+        controller.accountDashboardData.value == null) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF6C5CE7),
+          strokeWidth: 3,
+        ),
+      );
+    }
+
+    if (controller.hasError.value &&
+        controller.accountDashboardData.value == null) {
+      return Center(
+        child: Text(
+          'Failed to load financial overview',
+          style: TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
+    }
+
+    return Obx(() {
+      log(
+        "Rendering financial overview chart with data: ${controller.creditByAccount}",
+      );
+      if (controller.isLoading.value) {
+        return Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF6C5CE7),
+            strokeWidth: 3,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Financial Overview',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+        );
+      }
+      if (controller.hasError.value) {
+        return Center(
+          child: Text(
+            'Failed to load financial overview',
+            style: TextStyle(color: Colors.red, fontSize: 16),
           ),
-          SizedBox(height: 16),
-          Container(
-            height: 200,
-            child: Center(
-              child: Text(
-                'Chart visualization will be implemented here',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              ),
-            ),
+        );
+      }
+      if (controller.creditByAccount.isEmpty) {
+        return Center(
+          child: Text(
+            'No financial data available',
+            style: TextStyle(color: Colors.grey[600], fontSize: 16),
           ),
-        ],
-      ),
-    );
+        );
+      }
+      return // Chart Section
+      GenericDoubleBarChart(
+        title: 'Cash vs Account Balance',
+        payload: controller.creditByAccount,
+        // secondaryPayload: controller.creditByAccount,
+        primaryLabel: 'Cash Amount',
+        secondaryLabel: 'Account Balance',
+        primaryBarColor: Colors.green[500],
+        secondaryBarColor: Colors.red[400],
+        screenWidth: controller.screenWidth,
+        isSmallScreen: controller.isSmallScreen,
+        chartHeight: 300,
+        dataType: ChartDataType.revenue,
+        showTotals: true,
+      );
+    });
+    // return
+    // Container(
+    //   padding: EdgeInsets.all(16),
+    //   decoration: BoxDecoration(
+    //     color: Colors.white,
+    //     borderRadius: BorderRadius.circular(12),
+    //     boxShadow: [
+    //       BoxShadow(
+    //         color: Colors.grey.withValues(alpha: 0.08),
+    //         spreadRadius: 0,
+    //         blurRadius: 20,
+    //         offset: Offset(0, 4),
+    //       ),
+    //     ],
+    //   ),
+    //   child: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: [
+    //       Text(
+    //         'Financial Overview',
+    //         style: TextStyle(
+    //           fontSize: 16,
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.black87,
+    //         ),
+    //       ),
+    //       SizedBox(height: 16),
+    //       Container(
+    //         child: Column(
+    //           children: [
+    //             Center(
+    //               child: Text(
+    //                 'Chart visualization will be implemented here',
+    //                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
 

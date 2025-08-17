@@ -608,27 +608,27 @@ class CompanyStockDetailsPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 28,
-                          child: ElevatedButton(
-                            onPressed: () => controller.updateStock(item),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(
-                                0xFF3B82F6,
-                              ).withValues(alpha:0.1),
-                              foregroundColor: const Color(0xFF3B82F6),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: const Icon(Icons.edit, size: 12),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
+                      // Expanded(
+                      //   child: SizedBox(
+                      //     height: 28,
+                      //     child: ElevatedButton(
+                      //       onPressed: () => controller.updateStock(item),
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor: const Color(
+                      //           0xFF3B82F6,
+                      //         ).withValues(alpha:0.1),
+                      //         foregroundColor: const Color(0xFF3B82F6),
+                      //         elevation: 0,
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(6),
+                      //         ),
+                      //         padding: EdgeInsets.zero,
+                      //       ),
+                      //       child: const Icon(Icons.edit, size: 12),
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 4),s
                       Expanded(
                         child: SizedBox(
                           height: 28,

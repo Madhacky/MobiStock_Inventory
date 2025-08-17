@@ -502,7 +502,7 @@ class AuthController extends GetxController
           if (loginResponse.isSuccess && loginResponse.payload != null) {
             String userToken = loginResponse.payload!.userToken;
             String refreshToken = loginResponse.payload!.refreshToken;
-            List<int> loginDate = loginResponse.payload!.loginDate;
+            String loginDate = loginResponse.payload!.loginDate;
 
             await SharedPreferencesHelper.setJwtToken(userToken);
             await SharedPreferencesHelper.setLoginDate(loginDate);

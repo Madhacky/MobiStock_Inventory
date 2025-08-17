@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -14,7 +13,8 @@ class MobileSalesForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SalesCrudOperationController controller =
-        Get.find<SalesCrudOperationController>();
+    Get.isRegistered<SalesCrudOperationController>()?
+        Get.find<SalesCrudOperationController>():Get.put(SalesCrudOperationController());
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -261,6 +261,49 @@ class MobileSalesForm extends StatelessWidget {
               );
             }),
             const SizedBox(height: 16),
+
+            // RAM and ROM Fields (only for SMARTPHONE and TABLET)
+            Obx(() {
+              bool shouldShowRamRom = controller.shouldShowRamRomFields;
+              if (!shouldShowRamRom) return const SizedBox.shrink();
+
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      // RAM Dropdown
+                      Expanded(
+                        child: buildStyledDropdown(
+                          labelText: 'RAM',
+                          hintText: 'Select RAM',
+                          value: controller.selectedRam.value.isEmpty
+                              ? null
+                              : controller.selectedRam.value,
+                          items: controller.ramOptions,
+                          onChanged: (value) => controller.onRamChanged(value ?? ''),
+                          validator: controller.validateRam,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // ROM Dropdown
+                      Expanded(
+                        child: buildStyledDropdown(
+                          labelText: 'Storage (ROM)',
+                          hintText: 'Select Storage',
+                          value: controller.selectedRom.value.isEmpty
+                              ? null
+                              : controller.selectedRom.value,
+                          items: controller.romOptions,
+                          onChanged: (value) => controller.onRomChanged(value ?? ''),
+                          validator: controller.validateRom,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }),
 
             // Product Description
             buildStyledTextField(

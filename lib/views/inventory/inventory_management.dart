@@ -234,7 +234,7 @@ class InventoryManagementScreen extends StatelessWidget {
     List<Color> gradient,
   ) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard,arguments:{"itemCategory":controller.allCategories} ),
+      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard ),
       child: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -917,7 +917,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       child: Container(
                         height: 32,
                         child: ElevatedButton(
-                          onPressed: () => controller.editItem(item),
+                          onPressed: () => controller.sellItem(item),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(
                               0xFF6C5CE7,
@@ -929,7 +929,7 @@ class InventoryManagementScreen extends StatelessWidget {
                             ),
                             padding: EdgeInsets.zero,
                           ),
-                          child: Icon(Icons.sell, size: 14),
+                          child: Icon(Icons.shopping_cart_rounded, size: 14),
                         ),
                       ),
                     ),
@@ -1649,19 +1649,20 @@ class InventoryManagementScreen extends StatelessWidget {
             labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             onTap: controller.addNewItem,
           ),
-          SpeedDialChild(
-            child: Icon(Icons.upload_file, color: Colors.white),
-            backgroundColor: Color(0xFF00CEC9),
-            label: 'Bulk Upload',
-            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            onTap: controller.bulkUpload,
-          ),
+          // SpeedDialChild(
+          //   child: Icon(Icons.upload_file, color: Colors.white),
+          //   backgroundColor: Color(0xFF00CEC9),
+          //   label: 'Bulk Upload',
+          //   labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          //   onTap: controller.bulkUpload,
+          // ),
           SpeedDialChild(
             child: Icon(Icons.download, color: Colors.white),
             backgroundColor: Color(0xFFFF9500),
             label: 'Export Data',
             labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            onTap: controller.exportData,
+            onTap: null,
+            //controller.exportData,
           ),
           SpeedDialChild(
             child: Icon(Icons.inventory_rounded, color: Colors.white),

@@ -718,58 +718,58 @@ Widget _buildActionButtons() {
           ),
         ],
       ),
-      if (controller.invoiceDetails.value?.dues?.remainingDue != null && 
-          controller.invoiceDetails.value!.dues!.remainingDue > 0) ...[
-        SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => controller.addPayment(),
-                icon: Icon(Icons.payment, size: 18),
-                label: Text('Add Payment'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6C5CE7),
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Obx(() => ElevatedButton.icon(
-                onPressed: controller.isNotifying.value 
-                    ? null 
-                    : () => controller.notifyCustomer(),
-                icon: controller.isNotifying.value
-                    ? SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Icon(Icons.notifications, size: 18),
-                label: Text(controller.isNotifying.value ? 'Notifying...' : 'Notify Customer'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: controller.isNotifying.value 
-                      ? Color(0xFF51CF66).withValues(alpha:0.7)
-                      : Color(0xFF51CF66),
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              )),
-            ),
-          ],
-        ),
-      ],
+      // if (controller.invoiceDetails.value?.dues?.remainingDue != null && 
+      //     controller.invoiceDetails.value!.dues!.remainingDue > 0) ...[
+      //   SizedBox(height: 12),
+      //   Row(
+      //     children: [
+      //       Expanded(
+      //         child: ElevatedButton.icon(
+      //           onPressed: () => controller.addPayment(),
+      //           icon: Icon(Icons.payment, size: 18),
+      //           label: Text('Add Payment'),
+      //           style: ElevatedButton.styleFrom(
+      //             backgroundColor: Color(0xFF6C5CE7),
+      //             foregroundColor: Colors.white,
+      //             padding: EdgeInsets.symmetric(vertical: 12),
+      //             shape: RoundedRectangleBorder(
+      //               borderRadius: BorderRadius.circular(8),
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //       SizedBox(width: 12),
+      //       Expanded(
+      //         child: Obx(() => ElevatedButton.icon(
+      //           onPressed: controller.isNotifying.value 
+      //               ? null 
+      //               : () => controller.notifyCustomer(),
+      //           icon: controller.isNotifying.value
+      //               ? SizedBox(
+      //                   width: 18,
+      //                   height: 18,
+      //                   child: CircularProgressIndicator(
+      //                     strokeWidth: 2,
+      //                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      //                   ),
+      //                 )
+      //               : Icon(Icons.notifications, size: 18),
+      //           label: Text(controller.isNotifying.value ? 'Notifying...' : 'Notify Customer'),
+      //           style: ElevatedButton.styleFrom(
+      //             backgroundColor: controller.isNotifying.value 
+      //                 ? Color(0xFF51CF66).withValues(alpha:0.7)
+      //                 : Color(0xFF51CF66),
+      //             foregroundColor: Colors.white,
+      //             padding: EdgeInsets.symmetric(vertical: 12),
+      //             shape: RoundedRectangleBorder(
+      //               borderRadius: BorderRadius.circular(8),
+      //             ),
+      //           ),
+      //         )),
+      //       ),
+      //     ],
+      //   ),
+      // ],
     ],
   );
 }

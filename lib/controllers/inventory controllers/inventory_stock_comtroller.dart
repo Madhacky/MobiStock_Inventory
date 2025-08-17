@@ -17,17 +17,96 @@ class InventorySalesStockController extends GetxController {
   final AppConfig _config = AppConfig.instance;
   // Observable variables
   var isLoading = false.obs;
+  var isLoadingCategories = false.obs; // Loading state for categories
   var lowStockAlerts = Rx<LowStockAlertModel?>(null);
   var companyStocks = <CompanyStockModel>[].obs;
   var businessSummary = Rx<BusinessSummaryModel?>(null);
   var currentCategory = 'CHARGER'.obs; // Track current category
-  RxList<String> itemCategory = RxList();
+  RxList<String> itemCategory = RxList<String>(); // Categories from API
 
   @override
   void onInit() {
     super.onInit();
-    itemCategory = Get.arguments["itemCategory"];
-    fetchInventoryData();
+    // Fetch categories first, then inventory data
+    fetchItemCategories().then((_) {
+      fetchInventoryData();
+    });
+  }
+
+  // New method to fetch item categories from API
+  Future<void> fetchItemCategories() async {
+    try {
+      isLoadingCategories.value = true;
+      log("🔄 Fetching item categories from API");
+
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: "${_config.baseUrl}/inventory/item-types", // Add this to your AppConfig
+        authToken: true,
+      );
+
+      if (response != null) {
+        if (response.statusCode == 200) {
+          final data = response.data is String 
+              ? json.decode(response.data) 
+              : response.data;
+
+          if (data is List) {
+            // Clear existing categories and add new ones
+            itemCategory.clear();
+            itemCategory.addAll(data.cast<String>());
+            
+            // Set default category if current category is not in the list
+            if (itemCategory.isNotEmpty) {
+              if (!itemCategory.contains(currentCategory.value)) {
+                currentCategory.value = itemCategory.first;
+              }
+            }
+
+            log("✅ Item categories loaded successfully");
+            log("Categories: ${itemCategory.join(', ')}");
+            log("Current category set to: ${currentCategory.value}");
+          } else {
+            throw Exception('Expected List<String> but got ${data.runtimeType}');
+          }
+        } else {
+          log("❌ Failed to fetch categories. Status: ${response.statusCode}");
+          // Use fallback categories if API fails
+          _setFallbackCategories();
+        }
+      } else {
+        log("❌ No response received for item categories");
+        _setFallbackCategories();
+      }
+    } catch (error) {
+      log("❌ Error in fetchItemCategories: $error");
+      // Use fallback categories on error
+      _setFallbackCategories();
+      Get.snackbar(
+        'Warning', 
+        'Failed to fetch categories. Using default categories.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
+
+  // Fallback categories in case API fails
+  void _setFallbackCategories() {
+    itemCategory.clear();
+    itemCategory.addAll([
+      'SMARTPHONE',
+      'CHARGER', 
+      'EARPHONES',
+      'HEADPHONES',
+      'BLUETOOTH_SPEAKER',
+      'COVER',
+      'SCREEN_GUARD',
+      'USB_CABLE',
+      'POWER_BANK'
+    ]);
+    currentCategory.value = 'SMARTPHONE';
+    log("📦 Using fallback categories");
   }
 
   Future<void> fetchInventoryData() async {
@@ -200,6 +279,11 @@ class InventorySalesStockController extends GetxController {
     if (newCategory != currentCategory.value) {
       await fetchCompanyStocksByCategory(newCategory);
     }
+  }
+
+  // Method to refresh categories from API
+  Future<void> refreshCategories() async {
+    await fetchItemCategories();
   }
 
   // Helper methods

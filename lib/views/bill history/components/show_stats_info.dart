@@ -50,10 +50,11 @@ Widget _buildItemList(List<StockItemModel> items) {
     itemBuilder: (context, index) {
       final item = items[index];
 
-      String dateFormatted = item.createdDate.length >= 3
-          ? DateFormat('dd MMM yyyy').format(
-              DateTime(item.createdDate[0], item.createdDate[1], item.createdDate[2]))
-          : "N/A";
+  String dateFormatted = item.createdDate.isNotEmpty
+    ? DateFormat('dd MMM yyyy').format(
+        DateTime.parse(item.createdDate),
+      )
+    : "N/A";
 
       return Card(
         elevation: 2,

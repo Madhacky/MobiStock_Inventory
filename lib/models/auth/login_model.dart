@@ -36,22 +36,20 @@ class LoginResponse {
 
 class LoginPayload {
   final String userToken;
-  final List<int> loginDate;
+  final String loginDate;
   final String refreshToken;
 
   LoginPayload({
     required this.userToken,
     required this.loginDate,
-    required this.refreshToken
+    required this.refreshToken,
   });
 
   factory LoginPayload.fromJson(Map<String, dynamic> json) {
     return LoginPayload(
       userToken: json['userToken'] ?? '',
-      loginDate: json['loginDate'] != null 
-          ? List<int>.from(json['loginDate']) 
-          : [],
-          refreshToken: json["refreshToken"]??""
+      loginDate: json['loginDate'] ?? '',
+      refreshToken: json['refreshToken'] ?? '',
     );
   }
 
@@ -59,14 +57,16 @@ class LoginPayload {
     return {
       'userToken': userToken,
       'loginDate': loginDate,
-      'refreshToken':refreshToken
+      'refreshToken': refreshToken,
     };
   }
 
+  /// Convert string to DateTime safely
   DateTime get loginDateTime {
-    if (loginDate.length >= 3) {
-      return DateTime(loginDate[0], loginDate[1], loginDate[2]);
+    try {
+      return DateTime.parse(loginDate);
+    } catch (_) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 }

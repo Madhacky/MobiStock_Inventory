@@ -49,10 +49,9 @@ class SharedPreferencesHelper {
   }
 
   // Login date methods
-  static Future<void> setLoginDate(List<int> loginDate) async {
+  static Future<void> setLoginDate(String loginDate) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String loginDateJson = jsonEncode(loginDate);
-    await prefs.setString(_loginDateKey, loginDateJson);
+    await prefs.setString(_loginDateKey, loginDate);
   }
 
   static Future<List<int>?> getLoginDate() async {

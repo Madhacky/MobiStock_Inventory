@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/debuggers.dart';
@@ -41,19 +42,22 @@ class SalesCrudOperationController extends GetxController {
   final ApiServices _apiService = ApiServices();
   // App config instance
   final AppConfig _config = AppConfig.instance;
-  
+
   // Form Key
   final GlobalKey<FormState> salesFormKey = GlobalKey<FormState>();
-  
+
   // Page Controller for steps
   final PageController pageController = PageController();
-  
+
   // Current step
   final RxInt currentStep = 1.obs;
 
   // Step 1 Controllers - Product Details
-  final TextEditingController productDescriptionController = TextEditingController();
-  final TextEditingController quantityController = TextEditingController(text: '1');
+  final TextEditingController productDescriptionController =
+      TextEditingController();
+  final TextEditingController quantityController = TextEditingController(
+    text: '1',
+  );
   final TextEditingController unitPriceController = TextEditingController();
 
   // Step 1 Controllers - Customer Details
@@ -68,15 +72,26 @@ class SalesCrudOperationController extends GetxController {
   // Step 2 Controllers - Payment Details
   final TextEditingController payableAmountController = TextEditingController();
   final TextEditingController downPaymentController = TextEditingController();
-  final TextEditingController paymentRetrievalDateController = TextEditingController();
+  final TextEditingController paymentRetrievalDateController =
+      TextEditingController();
   final TextEditingController monthlyEMIController = TextEditingController();
 
   // Price Calculation Controllers
-  final TextEditingController gstPercentageController = TextEditingController(text: '12');
-  final TextEditingController extraChargesController = TextEditingController(text: '0');
-  final TextEditingController accessoriesCostController = TextEditingController(text: '0');
-  final TextEditingController repairChargesController = TextEditingController(text: '0');
-  final TextEditingController totalDiscountController = TextEditingController(text: '0');
+  final TextEditingController gstPercentageController = TextEditingController(
+    text: '12',
+  );
+  final TextEditingController extraChargesController = TextEditingController(
+    text: '0',
+  );
+  final TextEditingController accessoriesCostController = TextEditingController(
+    text: '0',
+  );
+  final TextEditingController repairChargesController = TextEditingController(
+    text: '0',
+  );
+  final TextEditingController totalDiscountController = TextEditingController(
+    text: '0',
+  );
 
   // Calculated Price Values
   final RxDouble baseAmount = 0.0.obs;
@@ -90,6 +105,8 @@ class SalesCrudOperationController extends GetxController {
   final RxString selectedCompany = ''.obs;
   final RxString selectedModel = ''.obs;
   final RxString selectedColor = ''.obs;
+  final RxString selectedRam = ''.obs; // New RAM field
+  final RxString selectedRom = ''.obs; // New ROM field
 
   // Form Values - Payment Details
   final Rx<PaymentMode> selectedPaymentMode = PaymentMode.fullPayment.obs;
@@ -112,17 +129,90 @@ class SalesCrudOperationController extends GetxController {
   final RxList<String> companies = <String>[].obs;
   final RxList<String> models = <String>[].obs;
   final RxList<String> colorOptions = <String>[].obs;
-  final RxList<String> paymentMethods = <String>['UPI', 'Cash', 'Card', 'Bank Transfer'].obs;
-  final RxList<String> emiTenureOptions = <String>['3', '6', '9', '12', '18', '24'].obs;
+  final RxList<String> ramOptions = <String>[].obs; // New RAM options
+  final RxList<String> romOptions = <String>[].obs; // New ROM options
+  final RxList<String> paymentMethods =
+      <String>['UPI', 'Cash', 'Card', 'Bank Transfer'].obs;
+  final RxList<String> emiTenureOptions =
+      <String>['3', '6', '9', '12', '18', '24'].obs;
+
+  // Check if its from inventory page
+  final RxBool isFromInventory = false.obs;
+  InventoryItem? inventoryItem;
 
   @override
   void onInit() {
     super.onInit();
+
+    // Check if we're coming from inventory page
+    final arguments = Get.arguments;
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      if (arguments['fromInventory'] == true &&
+          arguments['inventoryItem'] != null) {
+        isFromInventory.value = true;
+        inventoryItem = arguments['inventoryItem'] as InventoryItem;
+        _prefillProductDetails();
+      }
+    }
+
     loadInitialFilters();
-    
+
     // Listen to quantity and unit price changes for automatic calculation
     quantityController.addListener(calculatePrices);
     unitPriceController.addListener(calculatePrices);
+  }
+
+  /// Check if RAM/ROM fields should be shown
+  bool get shouldShowRamRomFields {
+    final category = selectedCategory.value.toUpperCase();
+    return category == 'SMARTPHONE' || category == 'TABLET';
+  }
+
+  /// Pre-fill product details from inventory item
+  void _prefillProductDetails() {
+    if (inventoryItem != null) {
+      // Set the dropdown values
+      selectedCategory.value = inventoryItem!.itemCategory;
+      selectedCompany.value = inventoryItem!.company;
+      selectedModel.value = inventoryItem!.model;
+      selectedColor.value = inventoryItem!.color;
+
+      // Set RAM and ROM if available
+      if (inventoryItem!.ram != null && inventoryItem!.ram!.isNotEmpty) {
+        selectedRam.value = inventoryItem!.ram!;
+      }
+      if (inventoryItem!.rom != null && inventoryItem!.rom!.isNotEmpty) {
+        selectedRom.value = inventoryItem!.rom!;
+      }
+
+      // Set text field values
+      productDescriptionController.text = inventoryItem!.description ?? '';
+      quantityController.text = '1'; // Default to 1 for selling
+      unitPriceController.text = inventoryItem!.sellingPrice.toString();
+
+      // Load companies and models for the selected category and company
+      _loadDataForPrefilledItem();
+    }
+  }
+
+  /// Load dropdown data for pre-filled item
+  Future<void> _loadDataForPrefilledItem() async {
+    try {
+      // Load companies for the selected category
+      if (selectedCategory.value.isNotEmpty) {
+        await loadCompaniesForCategory(selectedCategory.value);
+
+        // Load models for the selected company
+        if (selectedCompany.value.isNotEmpty) {
+          await loadModelsForCompany(selectedCompany.value);
+        }
+      }
+
+      // Calculate initial prices
+      calculatePrices();
+    } catch (e) {
+      log('Error loading data for pre-filled item: $e');
+    }
   }
 
   /// Calculate prices based on inputs
@@ -133,38 +223,47 @@ class SalesCrudOperationController extends GetxController {
       double unitPrice = double.tryParse(unitPriceController.text) ?? 0.0;
       double gstPercent = double.tryParse(gstPercentageController.text) ?? 12.0;
       double extraCharges = double.tryParse(extraChargesController.text) ?? 0.0;
-      double accessoriesCost = double.tryParse(accessoriesCostController.text) ?? 0.0;
-      double repairCharges = double.tryParse(repairChargesController.text) ?? 0.0;
-      double totalDiscount = double.tryParse(totalDiscountController.text) ?? 0.0;
+      double accessoriesCost =
+          double.tryParse(accessoriesCostController.text) ?? 0.0;
+      double repairCharges =
+          double.tryParse(repairChargesController.text) ?? 0.0;
+      double totalDiscount =
+          double.tryParse(totalDiscountController.text) ?? 0.0;
 
       // Calculate base amount (quantity * unit price + extras - discount)
-      baseAmount.value = (quantity * unitPrice) + extraCharges + accessoriesCost + repairCharges - totalDiscount;
-      
+      baseAmount.value =
+          (quantity * unitPrice) +
+          extraCharges +
+          accessoriesCost +
+          repairCharges -
+          totalDiscount;
+
       // Calculate amount without GST
       amountWithoutGST.value = baseAmount.value;
-      
+
       // Calculate GST amount
       gstPercentage.value = gstPercent;
       gstAmount.value = (amountWithoutGST.value * gstPercent) / 100;
-      
+
       // Calculate total payable amount
       totalPayableAmount.value = amountWithoutGST.value + gstAmount.value;
-      
+
       // Auto-update payable amount field for full payment
       if (selectedPaymentMode.value == PaymentMode.fullPayment) {
-        payableAmountController.text = totalPayableAmount.value.toStringAsFixed(2);
+        payableAmountController.text = totalPayableAmount.value.toStringAsFixed(
+          2,
+        );
       }
-      
     } catch (e) {
       log('Error calculating prices: $e');
     }
   }
 
-  /// Load initial filter data (categories, colors, etc.)
+  /// Load initial filter data (categories, colors, RAM, ROM, etc.)
   Future<void> loadInitialFilters() async {
     try {
       isLoadingFilters.value = true;
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
         url: '${_config.baseUrl}/api/mobiles/filters',
         authToken: true,
@@ -172,12 +271,37 @@ class SalesCrudOperationController extends GetxController {
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        
+
         // Update dropdown options
-        categories.value = List<String>.from(data['categories'] ?? ['SMARTPHONE']);
+        categories.value = List<String>.from(
+          data['itemCategories'] ?? ['SMARTPHONE'],
+        );
+        ramOptions.value = List<String>.from(data['rams'] ?? []);
+        romOptions.value = List<String>.from(data['roms'] ?? []);
         colorOptions.value = List<String>.from(data['colors'] ?? []);
-        
+
         log("✅ Filters loaded successfully");
+
+        // If we have pre-filled data and categories are loaded, ensure the values are available
+        if (isFromInventory.value && inventoryItem != null) {
+          if (!categories.contains(inventoryItem!.itemCategory)) {
+            categories.add(inventoryItem!.itemCategory);
+          }
+          if (!colorOptions.contains(inventoryItem!.color)) {
+            colorOptions.add(inventoryItem!.color);
+          }
+          // Add RAM and ROM if not present in options
+          if (inventoryItem!.ram != null && inventoryItem!.ram!.isNotEmpty) {
+            if (!ramOptions.contains(inventoryItem!.ram!)) {
+              ramOptions.add(inventoryItem!.ram!);
+            }
+          }
+          if (inventoryItem!.rom != null && inventoryItem!.rom!.isNotEmpty) {
+            if (!romOptions.contains(inventoryItem!.rom!)) {
+              romOptions.add(inventoryItem!.rom!);
+            }
+          }
+        }
       } else {
         throw Exception('Failed to load filters');
       }
@@ -185,6 +309,26 @@ class SalesCrudOperationController extends GetxController {
       log("❌ Error loading filters: $error");
       // Set default values if API fails
       categories.value = ['SMARTPHONE'];
+      ramOptions.value = [
+        '1GB',
+        '2GB',
+        '3GB',
+        '4GB',
+        '6GB',
+        '8GB',
+        '12GB',
+        '16GB',
+      ];
+      romOptions.value = [
+        '8GB',
+        '16GB',
+        '32GB',
+        '64GB',
+        '128GB',
+        '256GB',
+        '512GB',
+        '1TB',
+      ];
     } finally {
       isLoadingFilters.value = false;
     }
@@ -194,20 +338,32 @@ class SalesCrudOperationController extends GetxController {
   Future<void> loadCompaniesForCategory(String category) async {
     try {
       isLoadingCompanies.value = true;
-      companies.clear();
-      selectedCompany.value = '';
-      models.clear();
-      selectedModel.value = '';
-      
+
+      // Don't clear if we're pre-filling from inventory
+      if (!isFromInventory.value || selectedCompany.value.isEmpty) {
+        companies.clear();
+        selectedCompany.value = '';
+        models.clear();
+        selectedModel.value = '';
+      }
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url: '${_config.baseUrl}/api/mobiles/filters?category=${Uri.encodeComponent(category)}',
+        url:
+            '${_config.baseUrl}/api/mobiles/filters?category=${Uri.encodeComponent(category)}',
         authToken: true,
       );
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
         companies.value = List<String>.from(data['companies'] ?? []);
-        
+
+        // If we have pre-filled data, ensure the company is available
+        if (isFromInventory.value && inventoryItem != null) {
+          if (!companies.contains(inventoryItem!.company)) {
+            companies.add(inventoryItem!.company);
+          }
+        }
+
         log("✅ Companies loaded for category: $category");
       } else {
         throw Exception('Failed to load companies for category: $category');
@@ -223,18 +379,30 @@ class SalesCrudOperationController extends GetxController {
   Future<void> loadModelsForCompany(String company) async {
     try {
       isLoadingModels.value = true;
-      models.clear();
-      selectedModel.value = '';
-      
+
+      // Don't clear if we're pre-filling from inventory
+      if (!isFromInventory.value || selectedModel.value.isEmpty) {
+        models.clear();
+        selectedModel.value = '';
+      }
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url: '${_config.baseUrl}/api/mobiles/filters?company=${Uri.encodeComponent(company)}',
+        url:
+            '${_config.baseUrl}/api/mobiles/filters?company=${Uri.encodeComponent(company)}',
         authToken: true,
       );
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
         models.value = List<String>.from(data['models'] ?? []);
-        
+
+        // If we have pre-filled data, ensure the model is available
+        if (isFromInventory.value && inventoryItem != null) {
+          if (!models.contains(inventoryItem!.model)) {
+            models.add(inventoryItem!.model);
+          }
+        }
+
         log("✅ Models loaded for company: $company");
       } else {
         throw Exception('Failed to load models for company: $company');
@@ -249,29 +417,30 @@ class SalesCrudOperationController extends GetxController {
   /// Fetch customer details by phone number
   Future<void> fetchCustomerByPhone(String phone) async {
     if (phone.length < 10) return;
-    
+
     try {
       isLoadingCustomer.value = true;
       customerFound.value = false;
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url: '${_config.baseUrl}/api/customers/getCustomerByPhoneAndShop?phone=$phone',
+        url:
+            '${_config.baseUrl}/api/customers/getCustomerByPhoneAndShop?phone=$phone',
         authToken: true,
       );
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        
+
         if (data['status'] == 'Success' && data['payload'] != null) {
           final customer = data['payload'];
-          
+
           // Auto-fill customer details
           customerNameController.text = customer['name'] ?? '';
           emailController.text = customer['email'] ?? '';
           addressController.text = customer['defaultAddress'] ?? '';
-          
+
           customerFound.value = true;
-          
+
           Get.snackbar(
             'Customer Found',
             'Customer details loaded automatically',
@@ -280,7 +449,7 @@ class SalesCrudOperationController extends GetxController {
             colorText: Colors.white,
             duration: const Duration(seconds: 2),
           );
-          
+
           log("✅ Customer found and details loaded");
         }
       }
@@ -297,7 +466,13 @@ class SalesCrudOperationController extends GetxController {
     selectedCategory.value = category;
     selectedCompany.value = '';
     selectedModel.value = '';
-    
+
+    // Clear RAM and ROM when category changes
+    if (!shouldShowRamRomFields) {
+      selectedRam.value = '';
+      selectedRom.value = '';
+    }
+
     if (category.isNotEmpty) {
       loadCompaniesForCategory(category);
     } else {
@@ -310,7 +485,7 @@ class SalesCrudOperationController extends GetxController {
   void onCompanyChanged(String company) {
     selectedCompany.value = company;
     selectedModel.value = '';
-    
+
     if (company.isNotEmpty) {
       loadModelsForCompany(company);
     } else {
@@ -326,6 +501,16 @@ class SalesCrudOperationController extends GetxController {
   /// Handle color selection
   void onColorChanged(String color) {
     selectedColor.value = color;
+  }
+
+  /// Handle RAM selection
+  void onRamChanged(String ram) {
+    selectedRam.value = ram;
+  }
+
+  /// Handle ROM selection
+  void onRomChanged(String rom) {
+    selectedRom.value = rom;
   }
 
   /// Handle quantity and unit price changes
@@ -347,7 +532,7 @@ class SalesCrudOperationController extends GetxController {
     paymentRetrievalDateController.clear();
     selectedEMITenure.value = '';
     monthlyEMIController.clear();
-    
+
     // Recalculate prices
     calculatePrices();
   }
@@ -380,9 +565,9 @@ class SalesCrudOperationController extends GetxController {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
-    
+
     if (picked != null) {
-      paymentRetrievalDateController.text = 
+      paymentRetrievalDateController.text =
           "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
     }
   }
@@ -431,6 +616,19 @@ class SalesCrudOperationController extends GetxController {
       Get.snackbar('Error', 'Please select a color');
       return false;
     }
+
+    // Validate RAM and ROM for smartphones and tablets
+    if (shouldShowRamRomFields) {
+      if (selectedRam.value.isEmpty) {
+        Get.snackbar('Error', 'Please select RAM');
+        return false;
+      }
+      if (selectedRom.value.isEmpty) {
+        Get.snackbar('Error', 'Please select Storage (ROM)');
+        return false;
+      }
+    }
+
     if (quantityController.text.isEmpty) {
       Get.snackbar('Error', 'Please enter quantity');
       return false;
@@ -470,127 +668,135 @@ class SalesCrudOperationController extends GetxController {
   }
 
   /// Complete sale
-  /// Complete sale
-Future<void> completeSale() async {
-  if (!validateStep2()) return;
+  Future<void> completeSale() async {
+    if (!validateStep2()) return;
 
-  try {
-    isProcessingSale.value = true;
+    try {
+      isProcessingSale.value = true;
 
-    // Prepare sale data according to API format
-    Map<String, dynamic> saleData = {
-      'shopName':  AppConfig.shopName.value, // You might want to get this from app config
-      'totalAmount': totalPayableAmount.value,
-      'amountWithGst': totalPayableAmount.value,
-      'amountWithoutGst': amountWithoutGST.value,
-      'gstPercentage': num.parse(gstPercentageController.text),
-      'isPaid': selectedPaymentMode.value == PaymentMode.fullPayment,
-      'paymentMode': _getPaymentModeString(),
-      'paymentMethod': selectedPaymentMethod.value.toUpperCase(),
-      'downPayment': _getDownPaymentAmount().toString(),
-      'extraCharges': extraChargesController.text,
-      'accessoriesCost': accessoriesCostController.text,
-      'repairCharges': repairChargesController.text,
-      'totalDiscount': totalDiscountController.text,
-      'totalPayableAmount': totalPayableAmount.value,
-      'paymentRetriableDate': _getPaymentRetriableDate(),
-      'customer': {
-        'name': customerNameController.text,
-        'primaryPhone': phoneNumberController.text,
-        'primaryAddress': addressController.text,
-        'customerEmail': emailController.text.isEmpty ? null : emailController.text,
-        'location': cityController.text,
-        'state': stateController.text,
-        'pincode': pincodeController.text,
-      },
-      'items': [
-        {
-          'itemCategory': selectedCategory.value,
-          'model': selectedModel.value,
-          'company': selectedCompany.value,
-          'ram': '4GB', // You might want to add RAM field to your form
-          'rom': '128GB', // You might want to add ROM field to your form
-          'color': selectedColor.value,
-          'quantity': int.parse(quantityController.text),
-          'unitPrice': unitPriceController.text,
-        }
-      ],
-    };
+      // Prepare sale data according to API format
+      Map<String, dynamic> saleData = {
+        'shopName': AppConfig.shopName.value,
+        'totalAmount': totalPayableAmount.value,
+        'amountWithGst': totalPayableAmount.value,
+        'amountWithoutGst': amountWithoutGST.value,
+        'gstPercentage': num.parse(gstPercentageController.text),
+        'isPaid': selectedPaymentMode.value == PaymentMode.fullPayment,
+        'paymentMode': _getPaymentModeString(),
+        'paymentMethod': selectedPaymentMethod.value.toUpperCase(),
+        'downPayment': _getDownPaymentAmount().toString(),
 
-    printMapWithTypesAll(saleData);
+        'extraCharges': num.parse(extraChargesController.text),
+        'accessoriesCost': num.parse(accessoriesCostController.text),
+        'repairCharges': num.parse(repairChargesController.text),
+        'totalDiscount': num.parse(totalDiscountController.text),
+        'totalPayableAmount': totalPayableAmount.value,
+        'paymentRetriableDate': _getPaymentRetriableDate(),
 
-    dio.Response? response = await _apiService.requestPostForApi(
-      url: '${_config.baseUrl}/api/sales/create',
-      dictParameter: saleData,
-      authToken: true,
-    );
+        'customer': {
+          'name': customerNameController.text,
+          'primaryPhone': phoneNumberController.text,
+          'primaryAddress': addressController.text,
+          'customerEmail':
+              emailController.text.isEmpty ? null : emailController.text,
+          'location': cityController.text,
+          'state': stateController.text,
+          'pincode': pincodeController.text,
+        },
+        'items': [
+          {
+            'itemCategory': selectedCategory.value,
+            'model': selectedModel.value,
+            'company': selectedCompany.value,
+            'ram': selectedRam.value,
+            'rom': selectedRom.value,
+            'color': selectedColor.value,
+            'quantity': int.parse(quantityController.text),
+            'unitPrice': unitPriceController.text,
+          },
+        ],
+      };
 
-    if (response != null && response.statusCode == 200) {
-      final responseData = response.data;
-      
-      Get.snackbar(
-        'Success',
-        'Sale completed successfully! Invoice: ${responseData['invoiceNumber']}',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF10B981),
-        colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-        duration: const Duration(seconds: 4),
+if (_getPaymentModeString() == "EMI") {
+  saleData['emi'] = {
+    'monthlyEmi': num.parse(selectedEMITenure.value),
+    'totalMonths': num.parse(monthlyEMIController.text),
+  };
+}
+      printMapWithTypesAll(saleData);
+
+      dio.Response? response = await _apiService.requestPostForApi(
+        url: '${_config.baseUrl}/api/sales/create',
+        dictParameter: saleData,
+        authToken: true,
       );
 
-      resetForm();
-    } else {
-      throw Exception('Failed to complete sale: ${response?.statusCode}');
+      if (response != null && response.statusCode == 200) {
+        final responseData = response.data;
+
+        Get.snackbar(
+          'Success',
+          'Sale completed successfully! Invoice: ${responseData['invoiceNumber']}',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFF10B981),
+          colorText: Colors.white,
+          icon: const Icon(Icons.check_circle, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+          duration: const Duration(seconds: 4),
+        );
+
+        resetForm();
+      } else {
+        throw Exception('Failed to complete sale: ${response?.statusCode}');
+      }
+    } catch (error) {
+      log("❌ Error completing sale: $error");
+      Get.snackbar(
+        'Error',
+        'Failed to complete sale. Please try again.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        icon: const Icon(Icons.error, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+    } finally {
+      isProcessingSale.value = false;
     }
-  } catch (error) {
-    log("❌ Error completing sale: $error");
-    Get.snackbar(
-      'Error',
-      'Failed to complete sale. Please try again.',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      icon: const Icon(Icons.error, color: Colors.white),
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-    );
-  } finally {
-    isProcessingSale.value = false;
   }
-}
 
-// Helper method to get payment mode string
-String _getPaymentModeString() {
-  switch (selectedPaymentMode.value) {
-    case PaymentMode.fullPayment:
-      return 'FULL';
-    case PaymentMode.partialPayment:
-      return 'DUES';
-    case PaymentMode.emi:
-      return 'EMI';
+  // Helper method to get payment mode string
+  String _getPaymentModeString() {
+    switch (selectedPaymentMode.value) {
+      case PaymentMode.fullPayment:
+        return 'FULL';
+      case PaymentMode.partialPayment:
+        return 'DUES';
+      case PaymentMode.emi:
+        return 'EMI';
+    }
   }
-}
 
-// Helper method to get down payment amount
-double _getDownPaymentAmount() {
-  switch (selectedPaymentMode.value) {
-    case PaymentMode.fullPayment:
-      return totalPayableAmount.value;
-    case PaymentMode.partialPayment:
-    case PaymentMode.emi:
-      return double.tryParse(downPaymentController.text) ?? 0.0;
+  // Helper method to get down payment amount
+  double _getDownPaymentAmount() {
+    switch (selectedPaymentMode.value) {
+      case PaymentMode.fullPayment:
+        return totalPayableAmount.value;
+      case PaymentMode.partialPayment:
+      case PaymentMode.emi:
+        return double.tryParse(downPaymentController.text) ?? 0.0;
+    }
   }
-}
 
-// Helper method to get payment retriable date
-String _getPaymentRetriableDate() {
-  if (selectedPaymentMode.value == PaymentMode.partialPayment) {
-    return convertDateFormat(paymentRetrievalDateController.text);
+  // Helper method to get payment retriable date
+  String _getPaymentRetriableDate() {
+    if (selectedPaymentMode.value == PaymentMode.partialPayment) {
+      return convertDateFormat(paymentRetrievalDateController.text);
+    }
+    return '';
   }
-  return '';
-}
 
   /// Validate Step 2
   bool validateStep2() {
@@ -650,6 +856,18 @@ String _getPaymentRetriableDate() {
 
   String? validateColor(String? value) {
     return value == null || value.isEmpty ? 'Please select a color' : null;
+  }
+
+  String? validateRam(String? value) {
+    return value == null || value.isEmpty
+        ? 'Please select a Ram Varient'
+        : null;
+  }
+
+  String? validateRom(String? value) {
+    return value == null || value.isEmpty
+        ? 'Please select a Rom Varient'
+        : null;
   }
 
   String? validateQuantity(String? value) {
@@ -718,7 +936,9 @@ String _getPaymentRetriableDate() {
   }
 
   String? validatePaymentMethod(String? value) {
-    return value == null || value.isEmpty ? 'Please select payment method' : null;
+    return value == null || value.isEmpty
+        ? 'Please select payment method'
+        : null;
   }
 
   String? validatePayableAmount(String? value) {
@@ -762,19 +982,21 @@ String _getPaymentRetriableDate() {
   /// Reset form
   void resetForm() {
     salesFormKey.currentState?.reset();
-    
+
     // Reset step
     currentStep.value = 1;
-    
+
     // Reset product details
     selectedCategory.value = '';
     selectedCompany.value = '';
     selectedModel.value = '';
+    selectedRam.value = '';
+    selectedRom.value = '';
     selectedColor.value = '';
     productDescriptionController.clear();
     quantityController.text = '1';
     unitPriceController.clear();
-    
+
     // Reset customer details
     customerNameController.clear();
     phoneNumberController.clear();
@@ -784,7 +1006,7 @@ String _getPaymentRetriableDate() {
     stateController.clear();
     pincodeController.clear();
     customerFound.value = false;
-    
+
     // Reset payment details
     selectedPaymentMode.value = PaymentMode.fullPayment;
     selectedPaymentMethod.value = '';
@@ -793,30 +1015,39 @@ String _getPaymentRetriableDate() {
     paymentRetrievalDateController.clear();
     selectedEMITenure.value = '';
     monthlyEMIController.clear();
-    
+
     // Reset price calculation fields
     gstPercentageController.text = '12';
     extraChargesController.text = '0';
     accessoriesCostController.text = '0';
     repairChargesController.text = '0';
     totalDiscountController.text = '0';
-    
+
     // Reset calculated values
     baseAmount.value = 0.0;
     amountWithoutGST.value = 0.0;
     gstAmount.value = 0.0;
     gstPercentage.value = 12.0;
     totalPayableAmount.value = 0.0;
-    
+
     // Reset dropdown lists
     companies.clear();
     models.clear();
-    
+    ramOptions.clear();
+    romOptions.clear();
+
+    // Reset inventory state
+    isFromInventory.value = false;
+    inventoryItem = null;
+
     // Reset page controller
     pageController.animateToPage(
       0,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+
+    // Navigate back to inventory if we came from there
+    Get.back();
   }
 }
