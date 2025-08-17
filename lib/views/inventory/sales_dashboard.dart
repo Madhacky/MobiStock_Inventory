@@ -54,7 +54,6 @@ class SalesStockDashboard extends StatelessWidget {
   }
 }
 
-sale-inventory-dashboard
 
 // widgets/business_summary_card.dart
 class BusinessSummaryCard extends StatelessWidget {
