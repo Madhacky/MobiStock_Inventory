@@ -21,17 +21,79 @@ class InventorySalesStockController extends GetxController {
   var lowStockAlerts = Rx<LowStockAlertModel?>(null);
   var companyStocks = <CompanyStockModel>[].obs;
   var businessSummary = Rx<BusinessSummaryModel?>(null);
+  final Rx<BusinessSummaryModel?> businessSummaryCardsData =
+      Rx<BusinessSummaryModel?>(null);
+
   var currentCategory = 'CHARGER'.obs; // Track current category
   RxList<String> itemCategory = RxList<String>(); // Categories from API
 
   @override
   void onInit() {
     super.onInit();
+    // fetchBusinesssummaryegories();
     // Fetch categories first, then inventory data
     fetchItemCategories().then((_) {
       fetchInventoryData();
+       fetchBusinesssummaryegories();
     });
   }
+
+  final RxBool isbusinessSummaryCardsLoading = false.obs;
+  final RxBool hasbusinessSummaryCardsError = false.obs;
+  // final RxString businessSummaryCardsErrorMessage = ''.obs;
+  final RxString businessSummaryCardsErrorMessage = ''.obs;
+
+  Future<void> fetchBusinesssummaryegories() async {
+    try {
+      isbusinessSummaryCardsLoading.value = true;
+      hasbusinessSummaryCardsError.value = false;
+      businessSummaryCardsErrorMessage.value = '';
+
+      log("🔄 Fetching item categories from API");
+
+      dio.Response? response = await _apiService.requestGetForApi(
+        url:
+            "${_config.baseUrl}/inventory/business-summary", // Add this to your AppConfig
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+       
+        final summaryResponse = BusinessSummaryModel.fromJson(response.data);
+        businessSummaryCardsData.value = summaryResponse;
+        log(
+          "Summary Cards loaded successfully gskjgshbkakbgabgabg ${businessSummaryCardsData.value}}",
+        );
+      } else {
+        hasbusinessSummaryCardsError.value = true;
+        businessSummaryCardsErrorMessage.value =
+            'Failed to fetch summary data. Status: ${response?.statusCode}';
+
+        log("❌ No response received for item categories");
+      }
+    } catch (error) {
+      hasbusinessSummaryCardsError.value = true;
+      businessSummaryCardsErrorMessage.value = 'Error: $error';
+      log("❌ Error in fetchItemCategories: $error");
+      // Use fallback categories on error
+    } finally {
+      isbusinessSummaryCardsLoading.value = false;
+    }
+  }
+
+  // Fixed getter methods for easy access to summary data
+  int get totalCompaniesAvailable =>
+      businessSummaryCardsData.value?.payload.totalCompanies ?? 0;
+  int get totalStockAvailable =>
+      businessSummaryCardsData.value?.payload.totalStockAvailable ?? 0;
+  int get totalModelsAvailable =>
+      businessSummaryCardsData.value?.payload.totalModelsAvailable ?? 0;
+  int get monthlyPhoneSold =>
+      businessSummaryCardsData.value?.payload.totalUnitsSold ?? 0;
+  String get topSellingBrandAndModel =>
+      businessSummaryCardsData.value?.payload.topSellingBrandAndModel ?? '';
+  double get totalRevenue =>
+      businessSummaryCardsData.value?.payload.totalRevenue ?? 0.0;
 
   // New method to fetch item categories from API
   Future<void> fetchItemCategories() async {
@@ -40,21 +102,23 @@ class InventorySalesStockController extends GetxController {
       log("🔄 Fetching item categories from API");
 
       dio.Response? response = await _apiService.requestGetForApi(
-        url: "${_config.baseUrl}/inventory/item-types", // Add this to your AppConfig
+        url:
+            "${_config.baseUrl}/inventory/item-types", // Add this to your AppConfig
         authToken: true,
       );
 
       if (response != null) {
         if (response.statusCode == 200) {
-          final data = response.data is String 
-              ? json.decode(response.data) 
-              : response.data;
+          final data =
+              response.data is String
+                  ? json.decode(response.data)
+                  : response.data;
 
           if (data is List) {
             // Clear existing categories and add new ones
             itemCategory.clear();
             itemCategory.addAll(data.cast<String>());
-            
+
             // Set default category if current category is not in the list
             if (itemCategory.isNotEmpty) {
               if (!itemCategory.contains(currentCategory.value)) {
@@ -66,7 +130,9 @@ class InventorySalesStockController extends GetxController {
             log("Categories: ${itemCategory.join(', ')}");
             log("Current category set to: ${currentCategory.value}");
           } else {
-            throw Exception('Expected List<String> but got ${data.runtimeType}');
+            throw Exception(
+              'Expected List<String> but got ${data.runtimeType}',
+            );
           }
         } else {
           log("❌ Failed to fetch categories. Status: ${response.statusCode}");
@@ -82,7 +148,7 @@ class InventorySalesStockController extends GetxController {
       // Use fallback categories on error
       _setFallbackCategories();
       Get.snackbar(
-        'Warning', 
+        'Warning',
         'Failed to fetch categories. Using default categories.',
         snackPosition: SnackPosition.BOTTOM,
       );
@@ -96,14 +162,14 @@ class InventorySalesStockController extends GetxController {
     itemCategory.clear();
     itemCategory.addAll([
       'SMARTPHONE',
-      'CHARGER', 
+      'CHARGER',
       'EARPHONES',
       'HEADPHONES',
       'BLUETOOTH_SPEAKER',
       'COVER',
       'SCREEN_GUARD',
       'USB_CABLE',
-      'POWER_BANK'
+      'POWER_BANK',
     ]);
     currentCategory.value = 'SMARTPHONE';
     log("📦 Using fallback categories");
@@ -254,17 +320,6 @@ class InventorySalesStockController extends GetxController {
     // Find top selling brand (company with highest stock for this example)
     final topBrand = companyStocks.reduce(
       (a, b) => a.totalStock > b.totalStock ? a : b,
-    );
-
-    businessSummary.value = BusinessSummaryModel(
-      totalCompanies: totalCompanies,
-      totalModelsAvailable: totalModels,
-      totalStockAvailable: totalStock,
-      totalSoldUnits:
-          67, // Mock data - you can calculate this based on your logic
-      topSellingBrand: topBrand.company,
-      totalRevenue:
-          3982500.0, // Mock data - you can calculate this based on your logic
     );
 
     log("📊 Business Summary calculated for ${currentCategory.value}:");

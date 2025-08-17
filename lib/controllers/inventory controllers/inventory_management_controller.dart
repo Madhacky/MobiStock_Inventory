@@ -933,8 +933,8 @@ void _onModelChanged() async {
 
       if (response != null && response.statusCode == 200) {
         final data = response.data is String ? json.decode(response.data) : response.data;
-        final summaryResponse = SummaryCardsResponse.fromJson(data);
-        summaryCardsData.value = summaryResponse.payload;
+        final summaryResponse = SummaryCardsModel.fromJson(data);
+        summaryCardsData.value = summaryResponse;
         log("Summary Cards loaded successfully");
       } else if (response?.statusCode == 401 || response?.statusCode == 403) {
         hasSummaryCardsError.value = true;
@@ -954,10 +954,10 @@ void _onModelChanged() async {
   }
 
   // Fixed getter methods for easy access to summary data
-  int get totalCompaniesAvailable => summaryCardsData.value?.totalCompanies ?? 0;
-  int get totalStockAvailable => summaryCardsData.value?.totalStock ?? 0;
-  int get lowStockAlert => summaryCardsData.value?.lowStockCount ?? 0;
-  int get monthlyPhoneSold => summaryCardsData.value?.totalPhonesSold ?? 0;
+  int get totalCompaniesAvailable => summaryCardsData.value?.payload.totalCompanies ?? 0;
+  int get totalStockAvailable => summaryCardsData.value?.payload.totalStock ?? 0;
+  int get lowStockAlert => summaryCardsData.value?.payload.lowStockCount ?? 0;
+  int get monthlyPhoneSold => summaryCardsData.value?.payload.thisMonthPhonesSold ?? 0;
 
   // Session handling
   Future<void> _handleSessionExpired() async {

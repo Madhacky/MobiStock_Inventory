@@ -129,6 +129,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       {
                         'title': 'Monthly Phone Sold',
                         'value': controller.monthlyPhoneSold.toString(),
+                        
                         'subtitle': 'Total Monthly finance',
                         'icon': Icons.trending_up,
                         'color': Color(0xFF51CF66),

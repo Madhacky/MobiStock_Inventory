@@ -26,7 +26,7 @@ class SalesStockDashboard extends StatelessWidget {
 
                 Obx(() {
                   if (controller.isLoading.value &&
-                      controller.businessSummary.value == null) {
+                      controller.isbusinessSummaryCardsLoading.value == null) {
                     return ShimmerDashboardLoading();
                   }
                   return Column(
@@ -54,6 +54,8 @@ class SalesStockDashboard extends StatelessWidget {
   }
 }
 
+sale-inventory-dashboard
+
 // widgets/business_summary_card.dart
 class BusinessSummaryCard extends StatelessWidget {
   final InventorySalesStockController controller =
@@ -62,8 +64,7 @@ class BusinessSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final summary = controller.businessSummary.value;
-      if (summary == null) return const SizedBox.shrink();
+     
 
       return Container(
         padding: const EdgeInsets.all(20),
@@ -115,84 +116,85 @@ class BusinessSummaryCard extends StatelessWidget {
 
             // Metric Cards Grid (2 cards per row) - Fixed responsive layout
             Column(
-              children: [
-                Row(
                   children: [
-                    Expanded(
-                      child: _buildMetricCard(
-                        icon: Icons.business_outlined,
-                        title: 'Companies',
-                        value: '${summary.totalCompanies}',
-                        color: const Color(0xFF8B5CF6),
-                        subtitle: 'Active',
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMetricCard(
+                            icon: Icons.business_outlined,
+                            title: 'Companies',
+                            value: '${controller.totalCompaniesAvailable}',
+                            color: const Color(0xFF8B5CF6),
+                            subtitle: 'Active',
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildMetricCard(
+                            icon: Icons.phone_android_outlined,
+                            title: 'Models',
+                            value: '${controller.totalModelsAvailable}',
+                            color: const Color(0xFF06B6D4),
+                            subtitle: 'Available',
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildMetricCard(
-                        icon: Icons.phone_android_outlined,
-                        title: 'Models',
-                        value: '${summary.totalModelsAvailable}',
-                        color: const Color(0xFF06B6D4),
-                        subtitle: 'Available',
-                      ),
+                    const SizedBox(height: 8),
+                
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMetricCard(
+                            icon: Icons.inventory_outlined,
+                            title: 'Stock',
+                            value: '${controller.totalStockAvailable}',
+                            color: const Color(0xFF10B981),
+                            subtitle: 'In inventory',
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildMetricCard(
+                            icon: Icons.trending_up_outlined,
+                            title: 'Sold Units',
+                            value: '${controller.monthlyPhoneSold}',
+                            color: const Color(0xFFF59E0B),
+                            subtitle: 'Total sales',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMetricCard(
+                            icon: Icons.emoji_events_outlined,
+                            title: 'Top Brand',
+                            value: controller.topSellingBrandAndModel,
+                            color: const Color(0xFFEF4444),
+                            subtitle: 'Best seller',
+                            isTextValue: true,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildMetricCard(
+                            icon: Icons.currency_rupee_outlined,
+                            title: 'Revenue',
+                            value:
+                                '₹${(controller.totalRevenue / 100000).toStringAsFixed(1)}L',
+                            color: const Color(0xFF8B5CF6),
+                            subtitle: 'Total earnings',
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-                const SizedBox(height: 8),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricCard(
-                        icon: Icons.inventory_outlined,
-                        title: 'Stock',
-                        value: '${summary.totalStockAvailable}',
-                        color: const Color(0xFF10B981),
-                        subtitle: 'In inventory',
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildMetricCard(
-                        icon: Icons.trending_up_outlined,
-                        title: 'Sold Units',
-                        value: '${summary.totalSoldUnits}',
-                        color: const Color(0xFFF59E0B),
-                        subtitle: 'Total sales',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricCard(
-                        icon: Icons.emoji_events_outlined,
-                        title: 'Top Brand',
-                        value: summary.topSellingBrand,
-                        color: const Color(0xFFEF4444),
-                        subtitle: 'Best seller',
-                        isTextValue: true,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildMetricCard(
-                        icon: Icons.currency_rupee_outlined,
-                        title: 'Revenue',
-                        value:
-                            '₹${(summary.totalRevenue / 100000).toStringAsFixed(1)}L',
-                        color: const Color(0xFF8B5CF6),
-                        subtitle: 'Total earnings',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
             ),
+              
 
             const SizedBox(height: 20),
 
