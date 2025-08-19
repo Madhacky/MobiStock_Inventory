@@ -1,6 +1,6 @@
 class Withdraw {
   final int id;
-  final List<int> date;
+  final DateTime date; // changed from List<int> to DateTime
   final double amount;
   final String withdrawnBy;
   final String purpose;
@@ -20,7 +20,7 @@ class Withdraw {
   factory Withdraw.fromJson(Map<String, dynamic> json) {
     return Withdraw(
       id: json['id'] ?? 0,
-      date: List<int>.from(json['date'] ?? []),
+      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(), // parse string date
       amount: (json['amount'] ?? 0).toDouble(),
       withdrawnBy: json['withdrawnBy'] ?? '',
       purpose: json['purpose'] ?? '',
@@ -32,7 +32,7 @@ class Withdraw {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'date': date,
+      'date': date.toIso8601String().split('T').first, // save in yyyy-MM-dd format
       'amount': amount,
       'withdrawnBy': withdrawnBy,
       'purpose': purpose,
@@ -41,11 +41,10 @@ class Withdraw {
     };
   }
 
-  DateTime get formattedDate {
-    if (date.length >= 3) {
-      return DateTime(date[0], date[1], date[2]);
-    }
-    return DateTime.now();
+  String get formattedDate {
+    return "${date.year.toString().padLeft(4, '0')}-"
+           "${date.month.toString().padLeft(2, '0')}-"
+           "${date.day.toString().padLeft(2, '0')}"; // yyyy-MM-dd
   }
 
   String get formattedAmount {

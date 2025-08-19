@@ -6,7 +6,6 @@ import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 
 class WithdrawController extends GetxController {
-  
   @override
   void dispose() {
     scrollController.dispose();
@@ -56,7 +55,7 @@ class WithdrawController extends GetxController {
   var withdrawnByOptions = <String>['All'].obs;
   var purposes = <String>['All'].obs;
   var paymentModes = <String>['All'].obs;
-  
+
   final TextEditingController searchController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final int pageSize = 10;
@@ -132,7 +131,7 @@ class WithdrawController extends GetxController {
 
     try {
       isFormLoading.value = true;
-      
+
       final withdrawalData = {
         'date': dateController.text,
         'amount': double.parse(amountController.text),
@@ -149,10 +148,8 @@ class WithdrawController extends GetxController {
       );
 
       if (response != null && response.statusCode == 201) {
-      
-        
         clearForm();
-          Get.snackbar(
+        Get.snackbar(
           'Success',
           'Withdrawal recorded successfully!',
           backgroundColor: const Color(0xFF10B981),
@@ -161,14 +158,14 @@ class WithdrawController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
         loadWithdrawals(refresh: true);
-        
+
         // Get.back();
       } else {
         String errorMessage = 'Failed to record withdrawal';
         if (response?.data != null && response!.data['message'] != null) {
           errorMessage = response.data['message'];
         }
-        
+
         Get.snackbar(
           'Error',
           errorMessage,
@@ -281,51 +278,55 @@ class WithdrawController extends GetxController {
 
   void _updateFilterOptions() {
     // Update withdrawn by options
-    final withdrawnBySet = withdrawals.map((withdrawal) => withdrawal.withdrawnBy).toSet();
+    final withdrawnBySet =
+        withdrawals.map((withdrawal) => withdrawal.withdrawnBy).toSet();
     withdrawnByOptions.value = ['All', ...withdrawnBySet.toList()..sort()];
 
     // Update purposes
-    final purposeSet = withdrawals.map((withdrawal) => withdrawal.purpose).toSet();
+    final purposeSet =
+        withdrawals.map((withdrawal) => withdrawal.purpose).toSet();
     purposes.value = ['All', ...purposeSet.toList()..sort()];
 
     // Update payment modes
-    final paymentModeSet = withdrawals.map((withdrawal) => withdrawal.paymentMode).toSet();
+    final paymentModeSet =
+        withdrawals.map((withdrawal) => withdrawal.paymentMode).toSet();
     paymentModes.value = ['All', ...paymentModeSet.toList()..sort()];
   }
 
   void _applyFilters() {
-    var filtered = withdrawals.where((withdrawal) {
-      // Search filter
-      if (searchQuery.value.isNotEmpty) {
-        final query = searchQuery.value.toLowerCase();
-        if (!withdrawal.withdrawnBy.toLowerCase().contains(query) &&
-            !withdrawal.purpose.toLowerCase().contains(query) &&
-            !withdrawal.notes.toLowerCase().contains(query) &&
-            !withdrawal.paymentMode.toLowerCase().contains(query)) {
-          return false;
-        }
-      }
+    var filtered =
+        withdrawals.where((withdrawal) {
+          // Search filter
+          if (searchQuery.value.isNotEmpty) {
+            final query = searchQuery.value.toLowerCase();
+            if (!withdrawal.withdrawnBy.toLowerCase().contains(query) &&
+                !withdrawal.purpose.toLowerCase().contains(query) &&
+                !withdrawal.notes.toLowerCase().contains(query) &&
+                !withdrawal.paymentMode.toLowerCase().contains(query)) {
+              return false;
+            }
+          }
 
-      // Withdrawn by filter
-      if (selectedWithdrawnBy.value != 'All' &&
-          withdrawal.withdrawnBy != selectedWithdrawnBy.value) {
-        return false;
-      }
+          // Withdrawn by filter
+          if (selectedWithdrawnBy.value != 'All' &&
+              withdrawal.withdrawnBy != selectedWithdrawnBy.value) {
+            return false;
+          }
 
-      // Purpose filter
-      if (selectedPurpose.value != 'All' &&
-          withdrawal.purpose != selectedPurpose.value) {
-        return false;
-      }
+          // Purpose filter
+          if (selectedPurpose.value != 'All' &&
+              withdrawal.purpose != selectedPurpose.value) {
+            return false;
+          }
 
-      // Payment mode filter
-      if (selectedPaymentMode.value != 'All' &&
-          withdrawal.paymentMode != selectedPaymentMode.value) {
-        return false;
-      }
+          // Payment mode filter
+          if (selectedPaymentMode.value != 'All' &&
+              withdrawal.paymentMode != selectedPaymentMode.value) {
+            return false;
+          }
 
-      return true;
-    }).toList();
+          return true;
+        }).toList();
 
     filteredWithdrawals.value = filtered;
   }
@@ -438,8 +439,7 @@ class WithdrawController extends GetxController {
 
     return colors[purpose.toLowerCase()] ?? const Color(0xFF6B7280);
   }
-  
-  
+
   Color getPaymentModeColor(String paymentMode) {
     final colors = {
       'cash': const Color(0xFF10B981),
@@ -462,13 +462,17 @@ class WithdrawController extends GetxController {
   }
 
   double get totalWithdrawnAmount {
-    return filteredWithdrawals.fold(0.0, (sum, withdrawal) => sum + withdrawal.amount);
+    return filteredWithdrawals.fold(
+      0.0,
+      (sum, withdrawal) => sum + withdrawal.amount,
+    );
   }
 
   Map<String, double> get withdrawalsByPaymentMode {
     final Map<String, double> result = {};
     for (var withdrawal in filteredWithdrawals) {
-      result[withdrawal.paymentMode] = (result[withdrawal.paymentMode] ?? 0) + withdrawal.amount;
+      result[withdrawal.paymentMode] =
+          (result[withdrawal.paymentMode] ?? 0) + withdrawal.amount;
     }
     return result;
   }
@@ -476,7 +480,8 @@ class WithdrawController extends GetxController {
   Map<String, double> get withdrawalsByPurpose {
     final Map<String, double> result = {};
     for (var withdrawal in filteredWithdrawals) {
-      result[withdrawal.purpose] = (result[withdrawal.purpose] ?? 0) + withdrawal.amount;
+      result[withdrawal.purpose] =
+          (result[withdrawal.purpose] ?? 0) + withdrawal.amount;
     }
     return result;
   }
@@ -484,7 +489,8 @@ class WithdrawController extends GetxController {
   Map<String, int> get withdrawalCountByPerson {
     final Map<String, int> result = {};
     for (var withdrawal in filteredWithdrawals) {
-      result[withdrawal.withdrawnBy] = (result[withdrawal.withdrawnBy] ?? 0) + 1;
+      result[withdrawal.withdrawnBy] =
+          (result[withdrawal.withdrawnBy] ?? 0) + 1;
     }
     return result;
   }

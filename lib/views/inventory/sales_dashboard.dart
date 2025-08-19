@@ -14,21 +14,28 @@ class SalesStockDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: controller.fetchInventoryData,
           color: const Color(0xFF4CAF50),
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(), // Ensures pull-to-refresh works
             child: Column(
               children: [
                 buildCustomAppBar("Sales & Inventory Dashboard", isdark: true),
 
+                // Single Obx to handle all loading states
                 Obx(() {
-                  if (controller.isLoading.value &&
-                      controller.businessSummary.value == null) {
+                  // Show shimmer only when BOTH main loading states are true
+                  final isMainLoading = controller.isLoading.value;
+                  final isSummaryLoading = controller.isbusinessSummaryCardsLoading.value;
+                  final shouldShowShimmer = isMainLoading && isSummaryLoading;
+
+                  if (shouldShowShimmer) {
                     return ShimmerDashboardLoading();
                   }
+
+                  // Show content when data is available or loading is complete
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -62,9 +69,156 @@ class BusinessSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final summary = controller.businessSummary.value;
-      if (summary == null) return const SizedBox.shrink();
+      // Show loading state for business summary only
+      if (controller.isbusinessSummaryCardsLoading.value) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+                spreadRadius: 1,
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.analytics_outlined,
+                      color: Colors.grey,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Business Overview',
+                      style: AppStyles.custom(
+                        color: Color(0xFF1A1A1A),
+                        size: 20,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              
+              // Loading indicator
+              Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF4CAF50),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              Text(
+                'Loading business overview...',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }
 
+      // Show error state if there's an error
+      if (controller.hasbusinessSummaryCardsError.value) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+                spreadRadius: 1,
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Business Overview',
+                      style: AppStyles.custom(
+                        color: Color(0xFF1A1A1A),
+                        size: 20,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Failed to load business summary',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                controller.businessSummaryCardsErrorMessage.value,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => controller.fetchBusinesssummaryegories(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text('Retry'),
+              ),
+            ],
+          ),
+        );
+      }
+
+      // Show main content when data is loaded
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -72,13 +226,13 @@ class BusinessSummaryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +243,7 @@ class BusinessSummaryCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4CAF50).withValues(alpha:0.1),
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
@@ -122,7 +276,7 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.business_outlined,
                         title: 'Companies',
-                        value: '${summary.totalCompanies}',
+                        value: '${controller.totalCompaniesAvailable}',
                         color: const Color(0xFF8B5CF6),
                         subtitle: 'Active',
                       ),
@@ -132,7 +286,7 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.phone_android_outlined,
                         title: 'Models',
-                        value: '${summary.totalModelsAvailable}',
+                        value: '${controller.totalModelsAvailable}',
                         color: const Color(0xFF06B6D4),
                         subtitle: 'Available',
                       ),
@@ -147,7 +301,7 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.inventory_outlined,
                         title: 'Stock',
-                        value: '${summary.totalStockAvailable}',
+                        value: '${controller.totalStockAvailable}',
                         color: const Color(0xFF10B981),
                         subtitle: 'In inventory',
                       ),
@@ -157,7 +311,7 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.trending_up_outlined,
                         title: 'Sold Units',
-                        value: '${summary.totalSoldUnits}',
+                        value: '${controller.monthlyPhoneSold}',
                         color: const Color(0xFFF59E0B),
                         subtitle: 'Total sales',
                       ),
@@ -172,7 +326,9 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.emoji_events_outlined,
                         title: 'Top Brand',
-                        value: summary.topSellingBrand,
+                        value: controller.topSellingBrandAndModel.isEmpty 
+                            ? 'N/A' 
+                            : controller.topSellingBrandAndModel,
                         color: const Color(0xFFEF4444),
                         subtitle: 'Best seller',
                         isTextValue: true,
@@ -183,8 +339,7 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.currency_rupee_outlined,
                         title: 'Revenue',
-                        value:
-                            '₹${(summary.totalRevenue / 100000).toStringAsFixed(1)}L',
+                        value: '₹${controller.totalRevenue.toStringAsFixed(0)}',
                         color: const Color(0xFF8B5CF6),
                         subtitle: 'Total earnings',
                       ),
@@ -208,7 +363,7 @@ class BusinessSummaryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF4CAF50).withValues(alpha:0.3),
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -264,9 +419,9 @@ class BusinessSummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha:0.1), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +430,7 @@ class BusinessSummaryCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withValues(alpha:0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, color: color, size: 16),
@@ -305,7 +460,7 @@ class BusinessSummaryCard extends StatelessWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: const Color(0xFF6B7280).withValues(alpha:0.7),
+              color: const Color(0xFF6B7280).withValues(alpha: 0.7),
               fontSize: 9,
               fontWeight: FontWeight.w400,
             ),

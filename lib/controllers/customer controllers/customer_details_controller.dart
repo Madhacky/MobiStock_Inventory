@@ -62,12 +62,12 @@ class CustomerDetailsController extends GetxController {
         url: '${_config.baseUrl}/api/customers/$customerId',
         authToken: true,
       );
+log(response!.data.toString());
 
       if (response != null && response.statusCode == 200) {
         final customerResponse = CustomerDetailsResponse.fromJson(
           response.data,
         );
-
         // Update observable variables
         customerDetails.value = customerResponse.payload.customer;
         totalPurchases.value = customerResponse.payload.totalPurchases;

@@ -44,10 +44,11 @@ class StockItem {
   final int ram;
   final int rom;
   final String color;
+  final String? imei;
   final int qty;
   final String company;
   final String logo;
-  final List<int> createdDate;
+  final DateTime createdDate;
   final String description;
   final int billMobileItem;
 
@@ -59,6 +60,7 @@ class StockItem {
     required this.ram,
     required this.rom,
     required this.color,
+    this.imei,
     required this.qty,
     required this.company,
     required this.logo,
@@ -76,24 +78,18 @@ class StockItem {
       ram: json['ram'] ?? 0,
       rom: json['rom'] ?? 0,
       color: json['color'] ?? '',
+      imei: json['imei'],
       qty: json['qty'] ?? 0,
       company: json['company'] ?? '',
       logo: json['logo'] ?? '',
-      createdDate: List<int>.from(json['createdDate'] ?? []),
+      createdDate: _parseDate(json['createdDate']),
       description: json['description'] ?? '',
       billMobileItem: json['billMobileItem'] ?? 0,
     );
   }
 
-  DateTime get createdDateTime {
-    if (createdDate.length >= 3) {
-      return DateTime(createdDate[0], createdDate[1], createdDate[2]);
-    }
-    return DateTime.now();
-  }
-
   String get formattedDate {
-    return DateFormat('dd MMM yyyy').format(createdDateTime);
+    return DateFormat('dd MMM yyyy').format(createdDate);
   }
 
   String get formattedPrice {
@@ -116,4 +112,36 @@ class StockItem {
         .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
         .join(' ');
   }
+}
+
+// Helper function to parse date from various formats
+DateTime _parseDate(dynamic dateValue) {
+  if (dateValue == null) {
+    return DateTime.now();
+  }
+  
+  if (dateValue is String) {
+    try {
+      // Handle "YYYY-MM-DD" format
+      return DateTime.parse(dateValue);
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+  
+  if (dateValue is List<dynamic>) {
+    // Handle the old integer array format for backward compatibility
+    try {
+      if (dateValue.length >= 3) {
+        int year = dateValue[0] as int;
+        int month = dateValue[1] as int;
+        int day = dateValue[2] as int;
+        return DateTime(year, month, day);
+      }
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+  
+  return DateTime.now();
 }

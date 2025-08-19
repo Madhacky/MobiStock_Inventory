@@ -1,4 +1,3 @@
-
 class CustomerDetailsResponse {
   final String status;
   final String message;
@@ -160,7 +159,7 @@ class Sale {
   final String shopId;
   final String shopName;
   final String invoiceNumber;
-  final List<int> saleDate;
+  final DateTime saleDate;
   final List<SaleItem> items;
   final double gstPercentage;
   final double amountWithGst;
@@ -177,7 +176,7 @@ class Sale {
   final dynamic emi;
   final dynamic due;
   final dynamic paymentRetriableDate;
-  final List<int> createdAt;
+  final DateTime createdAt;
   final bool paid;
 
   Sale({
@@ -216,9 +215,7 @@ class Sale {
       shopId: json['shopId'] ?? '',
       shopName: json['shopName'] ?? '',
       invoiceNumber: json['invoiceNumber'] ?? '',
-      saleDate: (json['saleDate'] as List<dynamic>?)
-          ?.map((e) => e as int)
-          .toList() ?? [],
+      saleDate: _parseDateTime(json['saleDate']),
       items: (json['items'] as List<dynamic>?)
           ?.map((e) => SaleItem.fromJson(e))
           .toList() ?? [],
@@ -237,35 +234,17 @@ class Sale {
       emi: json['emi'],
       due: json['due'],
       paymentRetriableDate: json['paymentRetriableDate'],
-      createdAt: (json['createdAt'] as List<dynamic>?)
-          ?.map((e) => e as int)
-          .toList() ?? [],
+      createdAt: _parseDateTime(json['createdAt']),
       paid: json['paid'] ?? false,
     );
   }
 
-  DateTime get saleDateAsDateTime {
-    if (saleDate.length >= 3) {
-      return DateTime(saleDate[0], saleDate[1], saleDate[2]);
-    }
-    return DateTime.now();
-  }
-
-  DateTime get createdAtAsDateTime {
-    if (createdAt.length >= 5) {
-      return DateTime(createdAt[0], createdAt[1], createdAt[2], createdAt[3], createdAt[4]);
-    }
-    return DateTime.now();
-  }
-
   String get formattedSaleDate {
-    final date = saleDateAsDateTime;
-    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+    return "${saleDate.day.toString().padLeft(2, '0')}/${saleDate.month.toString().padLeft(2, '0')}/${saleDate.year}";
   }
 
   String get formattedCreatedAt {
-    final date = createdAtAsDateTime;
-    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+    return "${createdAt.day.toString().padLeft(2, '0')}/${createdAt.month.toString().padLeft(2, '0')}/${createdAt.year}";
   }
 }
 
@@ -276,10 +255,10 @@ class SaleItem {
   final String color;
   final String ram;
   final String rom;
-  final String imei;
+  final String? imei;
   final int quantity;
   final String company;
-  final double sellingPrice;
+  final double? sellingPrice;
   final bool accessoryIncluded;
 
   SaleItem({
@@ -289,10 +268,10 @@ class SaleItem {
     required this.color,
     required this.ram,
     required this.rom,
-    required this.imei,
+    this.imei,
     required this.quantity,
     required this.company,
-    required this.sellingPrice,
+    this.sellingPrice,
     required this.accessoryIncluded,
   });
 
@@ -304,17 +283,21 @@ class SaleItem {
       color: json['color'] ?? '',
       ram: json['ram'] ?? '',
       rom: json['rom'] ?? '',
-      imei: json['imei'] ?? '',
+      imei: json['imei'],
       quantity: json['quantity'] ?? 0,
       company: json['company'] ?? '',
-      sellingPrice: (json['sellingPrice'] ?? 0.0).toDouble(),
+      sellingPrice: json['sellingPrice'] != null 
+          ? (json['sellingPrice'] as num).toDouble()
+          : null,
       accessoryIncluded: json['accessoryIncluded'] ?? false,
     );
   }
 
   String get displayName => "$company $model";
   String get specifications => "$ram RAM, $rom Storage";
-  String get formattedPrice => "₹${sellingPrice.toStringAsFixed(0)}";
+  String get formattedPrice => sellingPrice != null 
+      ? "₹${sellingPrice!.toStringAsFixed(0)}" 
+      : "Price not available";
 }
 
 class DueDetail {
@@ -325,8 +308,8 @@ class DueDetail {
   final double totalPaid;
   final double remainingDue;
   final List<PartialPayment> partialPayments;
-  final List<int> creationDate;
-  final List<int> paymentRetriableDate;
+  final DateTime creationDate;
+  final DateTime paymentRetriableDate;
   final dynamic approvedBy;
   final bool paid;
 
@@ -355,39 +338,19 @@ class DueDetail {
       partialPayments: (json['partialPayments'] as List<dynamic>?)
           ?.map((e) => PartialPayment.fromJson(e))
           .toList() ?? [],
-      creationDate: (json['creationDate'] as List<dynamic>?)
-          ?.map((e) => e as int)
-          .toList() ?? [],
-      paymentRetriableDate: (json['paymentRetriableDate'] as List<dynamic>?)
-          ?.map((e) => e as int)
-          .toList() ?? [],
+      creationDate: _parseDateTime(json['creationDate']),
+      paymentRetriableDate: _parseDateTime(json['paymentRetriableDate']),
       approvedBy: json['approvedBy'],
       paid: json['paid'] ?? false,
     );
   }
 
-  DateTime get creationDateAsDateTime {
-    if (creationDate.length >= 3) {
-      return DateTime(creationDate[0], creationDate[1], creationDate[2]);
-    }
-    return DateTime.now();
-  }
-
-  DateTime get paymentRetriableDateAsDateTime {
-    if (paymentRetriableDate.length >= 3) {
-      return DateTime(paymentRetriableDate[0], paymentRetriableDate[1], paymentRetriableDate[2]);
-    }
-    return DateTime.now();
-  }
-
   String get formattedCreationDate {
-    final date = creationDateAsDateTime;
-    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+    return "${creationDate.day.toString().padLeft(2, '0')}/${creationDate.month.toString().padLeft(2, '0')}/${creationDate.year}";
   }
 
   String get formattedPaymentRetriableDate {
-    final date = paymentRetriableDateAsDateTime;
-    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+    return "${paymentRetriableDate.day.toString().padLeft(2, '0')}/${paymentRetriableDate.month.toString().padLeft(2, '0')}/${paymentRetriableDate.year}";
   }
 
   String get statusText => paid ? 'Paid' : 'Pending';
@@ -400,7 +363,7 @@ class DueDetail {
 class PartialPayment {
   final int id;
   final double paidAmount;
-  final List<int> paidDate;
+  final DateTime paidDate;
 
   PartialPayment({
     required this.id,
@@ -412,23 +375,48 @@ class PartialPayment {
     return PartialPayment(
       id: json['id'] ?? 0,
       paidAmount: (json['paidAmount'] ?? 0.0).toDouble(),
-      paidDate: (json['paidDate'] as List<dynamic>?)
-          ?.map((e) => e as int)
-          .toList() ?? [],
+      paidDate: _parseDateTime(json['paidDate']),
     );
   }
 
-  DateTime get paidDateAsDateTime {
-    if (paidDate.length >= 3) {
-      return DateTime(paidDate[0], paidDate[1], paidDate[2]);
-    }
-    return DateTime.now();
-  }
-
   String get formattedPaidDate {
-    final date = paidDateAsDateTime;
-    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+    return "${paidDate.day.toString().padLeft(2, '0')}/${paidDate.month.toString().padLeft(2, '0')}/${paidDate.year}";
   }
 
   String get formattedPaidAmount => "₹${paidAmount.toStringAsFixed(0)}";
+}
+
+// Helper function to parse DateTime from various formats
+DateTime _parseDateTime(dynamic dateValue) {
+  if (dateValue == null) {
+    return DateTime.now();
+  }
+  
+  if (dateValue is String) {
+    try {
+      return DateTime.parse(dateValue);
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+  
+  if (dateValue is List<dynamic>) {
+    // Handle the old integer array format if it still exists
+    try {
+      if (dateValue.length >= 3) {
+        int year = dateValue[0] as int;
+        int month = dateValue[1] as int;
+        int day = dateValue[2] as int;
+        int hour = dateValue.length > 3 ? dateValue[3] as int : 0;
+        int minute = dateValue.length > 4 ? dateValue[4] as int : 0;
+        int second = dateValue.length > 5 ? dateValue[5] as int : 0;
+        
+        return DateTime(year, month, day, hour, minute, second);
+      }
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+  
+  return DateTime.now();
 }

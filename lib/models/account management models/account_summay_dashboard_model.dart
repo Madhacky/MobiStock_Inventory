@@ -32,7 +32,7 @@ class AccountSummaryDashboardModel {
 
 class Payload {
   final String shopId;
-  final List<int> date;
+  final DateTime date; // changed here
   final double openingBalance;
   final double totalCredit;
   final double totalDebit;
@@ -66,37 +66,35 @@ class Payload {
   });
 
   factory Payload.fromJson(Map<String, dynamic> json) {
-  return Payload(
-    shopId: json['shopId'] ?? '',
-    date: List<int>.from(json['date'] ?? []),
-    openingBalance: (json['openingBalance'] ?? 0).toDouble(),
-    totalCredit: (json['totalCredit'] ?? 0).toDouble(),
-    totalDebit: (json['totalDebit'] ?? 0).toDouble(),
-    closingBalance: (json['closingBalance'] ?? 0).toDouble(),
-    sale: Sale.fromJson(json['sale'] ?? {}),
-    emiReceivedToday: (json['emiReceivedToday'] ?? 0).toDouble(),
-    duesRecovered: (json['duesRecovered'] ?? 0).toDouble(),
-    payBills: (json['payBills'] ?? 0).toDouble(),
-    withdrawals: (json['withdrawals'] ?? 0).toDouble(),
-    commissionReceived: (json['commissionReceived'] ?? 0).toDouble(),
-    gst: Gst.fromJson(json['gst'] ?? {}),
-    
-    creditByAccount: Map<String, double>.from(
-      (json['creditByAccount'] ?? {})
-          .map((key, value) => MapEntry(key.toString(), (value ?? 0).toDouble())),
-    ),
-    debitByAccount: Map<String, double>.from(
-      (json['debitByAccount'] ?? {})
-          .map((key, value) => MapEntry(key.toString(), (value ?? 0).toDouble())),
-    ),
-  );
-}
-
+    return Payload(
+      shopId: json['shopId'] ?? '',
+      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(), // parse string
+      openingBalance: (json['openingBalance'] ?? 0).toDouble(),
+      totalCredit: (json['totalCredit'] ?? 0).toDouble(),
+      totalDebit: (json['totalDebit'] ?? 0).toDouble(),
+      closingBalance: (json['closingBalance'] ?? 0).toDouble(),
+      sale: Sale.fromJson(json['sale'] ?? {}),
+      emiReceivedToday: (json['emiReceivedToday'] ?? 0).toDouble(),
+      duesRecovered: (json['duesRecovered'] ?? 0).toDouble(),
+      payBills: (json['payBills'] ?? 0).toDouble(),
+      withdrawals: (json['withdrawals'] ?? 0).toDouble(),
+      commissionReceived: (json['commissionReceived'] ?? 0).toDouble(),
+      gst: Gst.fromJson(json['gst'] ?? {}),
+      creditByAccount: Map<String, double>.from(
+        (json['creditByAccount'] ?? {})
+            .map((key, value) => MapEntry(key.toString(), (value ?? 0).toDouble())),
+      ),
+      debitByAccount: Map<String, double>.from(
+        (json['debitByAccount'] ?? {})
+            .map((key, value) => MapEntry(key.toString(), (value ?? 0).toDouble())),
+      ),
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
       'shopId': shopId,
-      'date': date,
+      'date': date.toIso8601String(), // convert DateTime -> String
       'openingBalance': openingBalance,
       'totalCredit': totalCredit,
       'totalDebit': totalDebit,

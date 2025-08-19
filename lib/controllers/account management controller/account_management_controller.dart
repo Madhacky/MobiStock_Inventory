@@ -6,6 +6,8 @@ import 'package:smartbecho/models/account%20management%20models/account_summary_
 import 'package:smartbecho/models/account%20management%20models/account_summay_dashboard_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/debuggers.dart';
 
 class AccountManagementController extends GetxController {
   // Utility methods
@@ -17,13 +19,14 @@ class AccountManagementController extends GetxController {
   // Observable variables
   var selectedTab = 'account-summary'.obs;
   var isLoading = false.obs;
-  var accountData = Rxn<AccountSummaryModel>();
 
   final Rx<AccountSummaryDashboardModel?> accountDashboardData =
       Rx<AccountSummaryDashboardModel?>(null);
 
   // API service instance
   final ApiServices _apiService = ApiServices();
+  final AppConfig _config = AppConfig.instance;
+
   // Loading states
   final RxBool isLoadingMore = false.obs;
   final RxBool isStatsLoading = false.obs;
@@ -37,29 +40,7 @@ class AccountManagementController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadAccountData();
     fetchAccountSummaryDashboard();
-  }
-
-  void loadAccountData() {
-    isLoading.value = true;
-
-    // Simulate API call
-    Future.delayed(Duration(seconds: 1), () {
-      accountData.value = AccountSummaryModel(
-        openingBalance: 25000,
-        inCounterCash: 15000,
-        inAccountBalance: 35000,
-        totalSales: 120000,
-        totalPaidBills: 45000,
-        totalCommission: 8500,
-        netBalance: 83500,
-        closingBalance: 108500,
-        cashPercentage: 30,
-        accountPercentage: 70,
-      );
-      isLoading.value = false;
-    });
   }
 
   void onTabChanged(String tabId) {
@@ -74,9 +55,7 @@ class AccountManagementController extends GetxController {
     }
   }
 
-  void refreshData() {
-    loadAccountData();
-  }
+  void refreshData() {}
 
   void toggleNavBar() {
     navBarExpanded.value = !navBarExpanded.value;
@@ -92,19 +71,19 @@ class AccountManagementController extends GetxController {
     }
   }
 
-  // Base URLs for sales API
-  String get accountSummaryDashboardUrl =>
-      'https://backend-production-91e4.up.railway.app/api/ledger/analytics/daily?date=2025-08-06';
+
 
   // Fetch account summary dashboard data from API
+
+
   Future<void> fetchAccountSummaryDashboard() async {
     try {
       isStatsLoading.value = true;
-
+      String todaysDate= getTodayDate();
       log("Fetching account summary dashboard...");
 
       dio.Response? response = await _apiService.requestGetForApi(
-        url: accountSummaryDashboardUrl,
+        url: "${_config.baseUrl}/api/ledger/analytics/daily?date=$todaysDate",
         authToken: true,
       );
 
@@ -173,12 +152,9 @@ class AccountManagementController extends GetxController {
       accountDashboardData.value?.payload.sale.pendingEMI ?? 0.0;
 
   Map<String, double> get creditByAccount =>
-  {"Money In": accountDashboardData.value?.payload.totalCredit??0.0,
-  "Money Out": accountDashboardData.value?.payload.totalDebit??0.0
-  };
+      accountDashboardData.value?.payload.creditByAccount ?? {};
   Map<String, double> get debitByAccount =>
-        {"Money Out": accountDashboardData.value?.payload.totalDebit??0.0};
-
+      accountDashboardData.value?.payload.debitByAccount ?? {};
 
   // Format amount for display
   String get formattedOpeningBalance => '₹${openingBalance.toStringAsFixed(2)}';
