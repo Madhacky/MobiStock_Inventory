@@ -991,7 +991,7 @@ class TodaysRetrievalDuesScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        customer.email,
+                        customer.email??"",
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                     ],

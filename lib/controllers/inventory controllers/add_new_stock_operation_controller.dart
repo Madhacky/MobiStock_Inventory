@@ -23,7 +23,7 @@ class AddNewStockOperationController extends GetxController {
   final duesController = TextEditingController();
 
   // Observable variables
-  var isPaid = true.obs;
+  var isPaid = false.obs; // Changed default to false
   var isAddingBill = false.obs;
   var hasAddBillError = false.obs;
   var addBillErrorMessage = ''.obs;
@@ -51,6 +51,15 @@ class AddNewStockOperationController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCategories();
+    _initializeCalculation();
+  }
+
+  void _initializeCalculation() {
+    // Initialize with default values
+    gstController.text = '0';
+    withoutGstController.text = '0';
+    amountController.text = '0';
+    duesController.text = '0';
   }
 
   // Fetch categories from API
@@ -171,20 +180,30 @@ class AddNewStockOperationController extends GetxController {
             item.company.value.isEmpty ||
             item.model.value.isEmpty ||
             item.sellingPrice.value.isEmpty ||
-            item.qty.value.isEmpty) {
+            item.qty.value.isEmpty ||
+            item.color.value.isEmpty) {
           hasAddBillError.value = true;
           addBillErrorMessage.value =
               'Please fill all required fields for Item ${i + 1}';
           return;
         }
+
+        // Validate RAM/ROM for SMARTPHONE and TABLET
+        if ((item.category.value == 'SMARTPHONE' || item.category.value == 'TABLET') &&
+            (item.ram.value.isEmpty || item.rom.value.isEmpty)) {
+          hasAddBillError.value = true;
+          addBillErrorMessage.value =
+              'Please select RAM and ROM for Item ${i + 1}';
+          return;
+        }
       }
 
-      // Check if file is selected (optional based on your requirements)
-      if (selectedFile.value == null) {
-        hasAddBillError.value = true;
-        addBillErrorMessage.value = 'Please select an invoice file';
-        return;
-      }
+      // File is optional based on the API
+      // if (selectedFile.value == null) {
+      //   hasAddBillError.value = true;
+      //   addBillErrorMessage.value = 'Please select an invoice file';
+      //   return;
+      // }
 
       isAddingBill.value = true;
       hasAddBillError.value = false;
@@ -200,48 +219,48 @@ class AddNewStockOperationController extends GetxController {
     }
   }
 
- Map<String, dynamic> _prepareBillData() {
-  // Prepare items array
-  List<Map<String, dynamic>> itemsArray = billItems.map((item) {
-    Map<String, dynamic> itemData = {
-      "company": item.company.value,
-      "model": item.model.value,
-      "sellingPrice": double.tryParse(item.sellingPrice.value) ?? 0.0,  // Convert to double
-      "color": item.color.value,
-      "qty": int.tryParse(item.qty.value) ?? 0,  // Convert to int
-      "itemCategory": item.category.value,
-      "description": item.description.value.isEmpty ? "" : item.description.value,  // Use empty string instead of "none"
-    };
+  Map<String, dynamic> _prepareBillData() {
+    // Prepare items array
+    List<Map<String, dynamic>> itemsArray = billItems.map((item) {
+      Map<String, dynamic> itemData = {
+        "company": item.company.value,
+        "model": item.model.value,
+        "sellingPrice": item.sellingPrice.value, // Keep as string as per API
+        "color": item.color.value,
+        "qty": item.qty.value, // Keep as string as per API
+        "itemCategory": item.category.value,
+        "description": item.description.value.isEmpty ? "" : item.description.value,
+      };
 
-    // Only add RAM and ROM if category is SMARTPHONE or TABLET
-    if (item.category.value == "SMARTPHONE" || item.category.value == 'TABLET') {
-      itemData["ram"] = int.tryParse(item.ram.value) ?? 0;
-      itemData["rom"] = int.tryParse(item.rom.value) ?? 0;
+      // Only add RAM and ROM if category is SMARTPHONE or TABLET
+      if (item.category.value == "SMARTPHONE" || item.category.value == 'TABLET') {
+        itemData["ram"] = int.tryParse(item.ram.value) ?? 0;
+        itemData["rom"] = int.tryParse(item.rom.value) ?? 0;
+      }
+
+      return itemData;
+    }).toList();
+
+    // Helper function to safely parse string to number
+    double parseToDouble(String value) {
+      if (value.isEmpty) return 0.0;
+      return double.tryParse(value) ?? 0.0;
     }
 
-    return itemData;
-  }).toList();
-
-  // Helper function to safely parse string to double
-  double parseToDouble(String value) {
-    if (value.isEmpty) return 0.0;
-    return double.tryParse(value) ?? 0.0;
+    // Prepare main bill data - matching the API structure
+    return {
+      "companyName": companyNameController.text.trim(),
+      "isPaid": isPaid.value,
+      "amount": parseToDouble(amountController.text.trim()),
+      "withoutGst": withoutGstController.text.trim(), // Keep as string as per API
+      "gst": parseToDouble(gstController.text.trim()),
+      "dues": parseToDouble(duesController.text.trim()),
+      "items": itemsArray,
+    };
   }
 
-  // Prepare main bill data
-  return {
-    "companyName": companyNameController.text.trim(),
-    "isPaid": isPaid.value,
-    "amount": parseToDouble(amountController.text.trim()),        // Convert to double
-    "withoutGst": parseToDouble(withoutGstController.text.trim()), // Convert to double
-    "gst": parseToDouble(gstController.text.trim()),             // Convert to double
-    "dues": parseToDouble(duesController.text.trim()),           // Convert to double
-    "items": itemsArray,
-  };
-}
-
   Future<void> _sendBillToAPI() async {
-    const String apiUrl = "https://backend-production-91e4.up.railway.app/bill/add";
+    const String apiUrl = "https://backend-production-91e4.up.railway.app/api/purchase-bills";
 
     try {
       // Prepare bill data as JSON string
@@ -255,7 +274,7 @@ class AddNewStockOperationController extends GetxController {
       // Prepare form data
       Map<String, dynamic> formDataMap = {'bill': billJsonString};
 
-      // Add file if selected
+      // Add file if selected (optional)
       if (selectedFile.value != null) {
         File file = File(selectedFile.value!.path);
         if (!await file.exists()) {
@@ -296,13 +315,14 @@ class AddNewStockOperationController extends GetxController {
 
           Get.snackbar(
             'Success',
-            'Bill created successfully! Bill ID: $billId',
+            'Purchase Bill created successfully! Bill ID: $billId',
             backgroundColor: Colors.green,
             colorText: Colors.white,
             duration: const Duration(seconds: 3),
           );
 
           _clearForm();
+          Get.back(); // Go back after successful creation
 
         } else {
           String errorMessage = 'Unknown error';
@@ -335,6 +355,9 @@ class AddNewStockOperationController extends GetxController {
           break;
         case dio.DioExceptionType.badResponse:
           errorMessage = 'Server error: ${e.response?.statusCode}';
+          if (e.response?.data != null) {
+            errorMessage += ' - ${e.response?.data}';
+          }
           break;
         case dio.DioExceptionType.cancel:
           errorMessage = 'Request was cancelled';
@@ -363,7 +386,7 @@ class AddNewStockOperationController extends GetxController {
     duesController.clear();
 
     // Reset observables
-    isPaid.value = true;
+    isPaid.value = false; // Reset to default unpaid
     hasAddBillError.value = false;
     addBillErrorMessage.value = '';
 
@@ -376,6 +399,9 @@ class AddNewStockOperationController extends GetxController {
       item.dispose();
     }
     billItems.clear();
+
+    // Reset calculation
+    _initializeCalculation();
   }
 
   void cancelAddBill() {
@@ -388,72 +414,94 @@ class AddNewStockOperationController extends GetxController {
 
   void removeItem(int index) {
     if (index >= 0 && index < billItems.length) {
+      billItems[index].dispose();
       billItems.removeAt(index);
       calculateTotals(); // Recalculate totals after removing item
     }
   }
 
   void calculateTotals() {
-    double totalAmount = 0;
+    double totalItemAmount = 0;
+    
+    // Calculate total from all items
     for (var item in billItems) {
-      if (item.sellingPrice.isNotEmpty && item.qty.isNotEmpty) {
+      if (item.sellingPrice.value.isNotEmpty && item.qty.value.isNotEmpty) {
         double price = double.tryParse(item.sellingPrice.value) ?? 0;
         int quantity = int.tryParse(item.qty.value) ?? 0;
-        totalAmount += price * quantity;
+        totalItemAmount += price * quantity;
       }
     }
 
     double gstRate = double.tryParse(gstController.text) ?? 0;
-    double withoutGstAmount = totalAmount / (1 + (gstRate / 100));
     
-    withoutGstController.text = withoutGstAmount.toStringAsFixed(2);
-    amountController.text = totalAmount.toStringAsFixed(2);
-
-    if (!isPaid.value) {
-      duesController.text = totalAmount.toStringAsFixed(2);
+    // If GST rate is provided, calculate without GST amount
+    if (gstRate > 0) {
+      double withoutGstAmount = totalItemAmount / (1 + (gstRate / 100));
+      withoutGstController.text = withoutGstAmount.toStringAsFixed(2);
+      amountController.text = totalItemAmount.toStringAsFixed(2);
     } else {
-      duesController.text = '0';
+      // If no GST, without GST amount equals total amount
+      withoutGstController.text = totalItemAmount.toStringAsFixed(2);
+      amountController.text = totalItemAmount.toStringAsFixed(2);
+    }
+
+    // Calculate dues based on payment status
+    if (!isPaid.value) {
+      duesController.text = totalItemAmount.toStringAsFixed(2);
+    } else {
+      duesController.text = '0.00';
     }
   }
 
   // Method to update item field and trigger calculation
   void updateItemField(int index, String field, String value) {
-  if (index >= 0 && index < billItems.length) {
-    switch (field) {
-      case 'category':
-        billItems[index].category.value = value;
-        break;
-      case 'company':
-        billItems[index].company.value = value;
-        break;
-      case 'model':
-        billItems[index].model.value = value;
-        break;
-      case 'ram':
-        billItems[index].ram.value = value;
-        break;
-      case 'rom':
-        billItems[index].rom.value = value;
-        break;
-      case 'color':
-        billItems[index].color.value = value;
-        break;
-      case 'sellingPrice':
-        billItems[index].sellingPrice.value = value;
-        billItems[index].priceController.text = value;
-        break;
-      case 'qty':
-        billItems[index].qty.value = value;
-        billItems[index].qtyController.text = value;
-        break;
-      case 'description':
-        billItems[index].description.value = value;
-        billItems[index].descriptionController.text = value;
-        break;
+    if (index >= 0 && index < billItems.length) {
+      switch (field) {
+        case 'category':
+          billItems[index].category.value = value;
+          // No controller for category since it's dropdown
+          break;
+        case 'company':
+          billItems[index].company.value = value;
+          billItems[index].companyController.text = value;
+          break;
+        case 'model':
+          billItems[index].model.value = value;
+          billItems[index].modelController.text = value;
+          break;
+        case 'ram':
+          billItems[index].ram.value = value;
+          billItems[index].ramController.text = value;
+          break;
+        case 'rom':
+          billItems[index].rom.value = value;
+          billItems[index].romController.text = value;
+          break;
+        case 'color':
+          billItems[index].color.value = value;
+          billItems[index].colorController.text = value;
+          break;
+        case 'sellingPrice':
+          billItems[index].sellingPrice.value = value;
+          billItems[index].priceController.text = value;
+          break;
+        case 'qty':
+          billItems[index].qty.value = value;
+          billItems[index].qtyController.text = value;
+          break;
+        case 'description':
+          billItems[index].description.value = value;
+          billItems[index].descriptionController.text = value;
+          break;
+      }
+      calculateTotals();
     }
+  }
+
+  // Method to handle GST changes
+  void onGstChanged(String value) {
     calculateTotals();
   }
-}
 
   @override
   void onClose() {
@@ -483,9 +531,12 @@ class BillItem {
   RxString qty = ''.obs;
   RxString description = ''.obs;
 
-  // Add controllers for various fields
+  // Add controllers for text fields (no category controller since it's dropdown)
   late TextEditingController companyController;
   late TextEditingController modelController;
+  late TextEditingController ramController;
+  late TextEditingController romController;
+  late TextEditingController colorController;
   late TextEditingController priceController;
   late TextEditingController qtyController;
   late TextEditingController descriptionController;
@@ -493,9 +544,16 @@ class BillItem {
   BillItem() {
     companyController = TextEditingController();
     modelController = TextEditingController();
+    ramController = TextEditingController();
+    romController = TextEditingController();
+    colorController = TextEditingController();
     priceController = TextEditingController();
     qtyController = TextEditingController();
     descriptionController = TextEditingController();
+    
+    // Set default quantity
+    qty.value = '1';
+    qtyController.text = '1';
     
     // Sync controllers with observable values
     _setupControllerListeners();
@@ -503,6 +561,26 @@ class BillItem {
 
   void _setupControllerListeners() {
     // Listen to controller changes and update observables
+    companyController.addListener(() {
+      company.value = companyController.text;
+    });
+    
+    modelController.addListener(() {
+      model.value = modelController.text;
+    });
+    
+    ramController.addListener(() {
+      ram.value = ramController.text;
+    });
+    
+    romController.addListener(() {
+      rom.value = romController.text;
+    });
+    
+    colorController.addListener(() {
+      color.value = colorController.text;
+    });
+    
     priceController.addListener(() {
       sellingPrice.value = priceController.text;
     });
@@ -519,9 +597,11 @@ class BillItem {
   void dispose() {
     companyController.dispose();
     modelController.dispose();
+    ramController.dispose();
+    romController.dispose();
+    colorController.dispose();
     priceController.dispose();
     qtyController.dispose();
     descriptionController.dispose();
   }
-
 }

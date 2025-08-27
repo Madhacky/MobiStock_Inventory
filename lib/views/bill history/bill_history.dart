@@ -63,139 +63,168 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           ],
         ),
       ),
-      floatingActionButton: buildFloatingActionButtons()
+      floatingActionButton: buildFloatingActionButtons(),
     );
   }
 
-  Widget _buildStatsSection(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(16),
-      child: Obx(() {
-        if (controller.isLoadingStats.value) {
-          return Container(
-            height: 120,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF1E293B),
-                strokeWidth: 2,
-              ),
+Widget _buildStatsSection(BuildContext context) {
+  return Container(
+    margin: EdgeInsets.symmetric(vertical: 16),
+    height: 130, // Fixed height for the stats section
+    child: Obx(() {
+      if (controller.isLoadingStats.value) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFF1E293B),
+              strokeWidth: 2,
             ),
-          );
-        }
-
-        final stats = controller.stockStats.value;
-        if (stats == null) {
-          return SizedBox.shrink();
-        }
-
-        return Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    'Last Month',
-                    stats.lastMonthStock.toString(),
-                    Icons.calendar_month,
-                    Color(0xFF8B5CF6),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'Today Added',
-                    stats.todayStock.toString(),
-                    Icons.today,
-                    Color(0xFF10B981),
-                    onTap:
-                        () => showStockItemsDialog(
-                          context,
-                          stats,
-                          StockWhenAdded.today,
-                        ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'This Month',
-                    stats.thisMonthStock.toString(),
-                    Icons.date_range,
-                    Color(0xFF3B82F6),
-                    onTap:
-                        () => showStockItemsDialog(
-                          context,
-                          stats,
-                          StockWhenAdded.thisMonth,
-                        ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: _buildStatCard(
-                    'Total Stock',
-                    stats.totalStocks.toString(),
-                    Icons.inventory_2,
-                    Color(0xFF1E293B),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         );
-      }),
-    );
-  }
+      }
 
-  Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color, {
-    void Function()? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha:0.05),
-              blurRadius: 8,
-              offset: Offset(0, 2),
+      final stats = controller.stockStats.value;
+      if (stats == null) {
+        return SizedBox.shrink();
+      }
+
+      return ListView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          _buildStatCard(
+            'Last Month\nadded stock',
+            stats.lastMonthStock.toString(),
+            Icons.calendar_month,
+            Color(0xFF8B5CF6),
+            width: 140, // Fixed width for consistent card sizes
+          ),
+          SizedBox(width: 12),
+          _buildStatCard(
+            'Today Added\nstock',
+            stats.todayStock.toString(),
+            Icons.today,
+            Color(0xFF10B981),
+            width: 140,
+            onTap: () => showStockItemsDialog(
+              context,
+              stats,
+              StockWhenAdded.today,
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 20),
-            SizedBox(height: 4),
+          ),
+          SizedBox(width: 12),
+          _buildStatCard(
+            'This Month\nadded stock',
+            stats.thisMonthStock.toString(),
+            Icons.date_range,
+            Color(0xFF3B82F6),
+            width: 140,
+            onTap: () => showStockItemsDialog(
+              context,
+              stats,
+              StockWhenAdded.thisMonth,
+            ),
+          ),
+          SizedBox(width: 12),
+          _buildStatCard(
+            'Total available\nStock',
+            stats.totalStocks.toString(),
+            Icons.inventory_2,
+            Color(0xFF1E293B),
+            width: 140,
+          ),
+          SizedBox(width: 12),
+          _buildStatCard(
+            'View This Month\nonline Added Stock',
+            'Tap to View',
+            Icons.arrow_forward_ios,
+            Color(0xFF059669),
+            width: 140,
+            onTap: () => controller.navigateToThisMonthStock(),
+          ),
+          SizedBox(width: 16), // Extra padding at the end
+        ],
+      );
+    }),
+  );
+}
+
+// Updated _buildStatCard method to support fixed width
+Widget _buildStatCard(
+  String label,
+  String value,
+  IconData icon,
+  Color color, {
+  void Function()? onTap,
+  double width = 140, // Default width parameter
+}) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(12), // Add border radius for better touch feedback
+    child: Container(
+      width: width,
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+        // Add subtle border for tappable cards
+        border: onTap != null 
+          ? Border.all(color: color.withValues(alpha: 0.2), width: 1)
+          : null,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 24),
+          SizedBox(height: 8),
+          if (value.isNotEmpty) ...[
             Text(
               value,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
-            ),
-            SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
               textAlign: TextAlign.center,
             ),
+            SizedBox(height: 4),
           ],
-        ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+          // Add subtle tap indicator for interactive cards
+          if (onTap != null) ...[
+            SizedBox(height: 4),
+            Container(
+              width: 20,
+              height: 2,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ],
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildFilterButton(BuildContext context) {
     return Container(
@@ -250,7 +279,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
             ),
             child: IconButton(
               onPressed: () => controller.refreshBills(),
@@ -306,7 +335,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                   onPressed: () => Get.back(),
                   icon: Icon(Icons.close),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.withValues(alpha:0.1),
+                    backgroundColor: Colors.grey.withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -510,7 +539,6 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -566,9 +594,9 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: enabled ? Colors.white : Colors.grey.withValues(alpha:0.05),
+            color: enabled ? Colors.white : Colors.grey.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: DropdownButtonFormField<String>(
             value: value,
@@ -656,14 +684,14 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.08),
+              color: Colors.grey.withValues(alpha: 0.08),
               spreadRadius: 0,
               blurRadius: 12,
               offset: Offset(0, 4),
             ),
           ],
           border: Border.all(
-            color: controller.getStatusColor(bill).withValues(alpha:0.15),
+            color: controller.getStatusColor(bill).withValues(alpha: 0.15),
             width: 1,
           ),
         ),
@@ -678,10 +706,10 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
                   colors: [
                     controller
                         .getCompanyColor(bill.companyName)
-                        .withValues(alpha:0.1),
+                        .withValues(alpha: 0.1),
                     controller
                         .getCompanyColor(bill.companyName)
-                        .withValues(alpha:0.05),
+                        .withValues(alpha: 0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -1055,7 +1083,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
       shape: const CircleBorder(),
       children: [
         buildSpeedDialChild(
-          label: 'Stock History',
+          label: 'View Purchased Item',
           backgroundColor: const Color(0xFF51CF66),
           icon: Icons.inventory_2,
           onTap: () => Get.toNamed(AppRoutes.stockList),

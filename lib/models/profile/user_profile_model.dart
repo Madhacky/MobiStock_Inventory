@@ -28,12 +28,12 @@ class UserProfile {
   final String shopStoreName;
   final String email;
   final String? password;
-  final List<int>? passwordUpdatedAt;
+  final String? passwordUpdatedAt;   // <-- Changed from List<int> to String
   final ShopAddress? shopAddress;
   final List<SocialMediaLink> socialMediaLinks;
   final List<ShopImage> images;
   final int status;
-  final List<int>? creationDate;
+  final String? creationDate;        // <-- Changed from List<int> to String
   final String? gstnumber;
   final String? adhaarNumer;
 
@@ -60,26 +60,18 @@ class UserProfile {
       shopStoreName: json['shopStoreName'] ?? '',
       email: json['email'] ?? '',
       password: json['password'],
-      passwordUpdatedAt: json['passwordUpdatedAt'] != null 
-          ? List<int>.from(json['passwordUpdatedAt']) 
-          : null,
+      passwordUpdatedAt: json['passwordUpdatedAt'],   // String
       shopAddress: json['shopAddress'] != null 
           ? ShopAddress.fromJson(json['shopAddress']) 
           : null,
-      socialMediaLinks: json['socialMediaLinks'] != null
-          ? (json['socialMediaLinks'] as List)
-              .map((item) => SocialMediaLink.fromJson(item))
-              .toList()
-          : [],
-      images: json['images'] != null
-          ? (json['images'] as List)
-              .map((item) => ShopImage.fromJson(item))
-              .toList()
-          : [],
+      socialMediaLinks: (json['socialMediaLinks'] as List? ?? [])
+          .map((item) => SocialMediaLink.fromJson(item))
+          .toList(),
+      images: (json['images'] as List? ?? [])
+          .map((item) => ShopImage.fromJson(item))
+          .toList(),
       status: json['status'] ?? json['Status'] ?? 0,
-      creationDate: json['creationDate'] != null 
-          ? List<int>.from(json['creationDate']) 
-          : null,
+      creationDate: json['creationDate'],   // String
       gstnumber: json['gstnumber'],
       adhaarNumer: json['adhaarNumer'],
     );

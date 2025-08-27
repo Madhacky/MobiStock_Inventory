@@ -70,7 +70,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
 
   Widget _buildCustomAppBar() {
     return buildCustomAppBar(
-      "Customer Dues Management",
+      "Dues Management",
       isdark: true,
       actionItem: IconButton(
         onPressed: controller.showAnalyticsModal,
@@ -96,25 +96,25 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           children: [
             _buildSummaryCard(
               'Total Dues\nGiven',
-              '₹${_formatAmount(summary.totalGiven)}',
+              '₹${summary.totalGiven}',
               Icons.account_balance_wallet_outlined,
               Color(0xFF6C5CE7),
             ),
             _buildSummaryCard(
               'Total\nCollected',
-              '₹${_formatAmount(summary.totalCollected)}',
+              '₹${summary.totalCollected}',
               Icons.check_circle_outline,
               Color(0xFF51CF66),
             ),
             _buildSummaryCard(
               'Total\nRemaining',
-              '₹${_formatAmount(summary.totalRemaining)}',
+              '₹${summary.totalRemaining}',
               Icons.error_outline,
               Color(0xFFFF6B6B),
             ),
             _buildSummaryCard(
-              'This Month\n',
-              '₹${_formatAmount(summary.thisMonthCollection)}',
+              'This Month\nCollected',
+              '₹${summary.thisMonthCollection}',
               Icons.calendar_today_outlined,
               Color(0xFF4ECDC4),
             ),
@@ -547,7 +547,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        customer.name,
+                        customer.name??"",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -557,7 +557,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        'ID: ${customer.customerId}',
+                        'ID: ${customer.id}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -640,17 +640,17 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                   ),
                 ),
                 SizedBox(width: 8),
-                Expanded(
+              isDuesSection?  Expanded(
                   child: _buildActionButton(
                     'Notify',
                     Icons.notifications_outlined,
                     Colors.orange,
                     onPressed: () => controller.notifyCustomer(
                       customer.customerId, 
-                      customer.name,
+                      customer.name??"",
                     ),
                   ),
-                ),
+                ):SizedBox.shrink(),
               ],
             ),
           ),
@@ -672,7 +672,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           ),
         ),
         Text(
-          '₹${_formatAmount(amount)}',
+          '₹${amount}',
           style: TextStyle(
             fontSize: isHighlight ? 13 : 12,
             fontWeight: isHighlight ? FontWeight.w700 : FontWeight.w600,
@@ -1086,13 +1086,13 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  String _formatAmount(double amount) {
-    if (amount >= 100000) {
-      return '${(amount / 100000).toStringAsFixed(1)}L';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K';
-    } else {
-      return amount.toStringAsFixed(0);
-    }
-  }
+  // String _formatAmount(double amount) {
+  //   if (amount >= 100000) {
+  //     return '${(amount / 100000).toStringAsFixed(1)}L';
+  //   } else if (amount >= 1000) {
+  //     return '${(amount / 1000).toStringAsFixed(1)}K';
+  //   } else {
+  //     return amount.toStringAsFixed(0);
+  //   }
+  // }
 }

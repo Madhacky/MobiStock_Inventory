@@ -151,36 +151,36 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
           child: buildCustomAppBar(
             "Sales Details",
             isdark: true,
-            actionItem: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.download, color: Colors.black87),
-                  onPressed: () {
-                    // Download invoice logic
-                    Get.snackbar(
-                      'Download',
-                      'Downloading invoice...',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.green.withValues(alpha:0.8),
-                      colorText: Colors.white,
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.share, color: Colors.black87),
-                  onPressed: () {
-                    // Share logic
-                    Get.snackbar(
-                      'Share',
-                      'Sharing sale details...',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.blue.withValues(alpha:0.8),
-                      colorText: Colors.white,
-                    );
-                  },
-                ),
-              ],
-            ),
+            // actionItem: Row(
+            //   children: [
+            //     IconButton(
+            //       icon: Icon(Icons.download, color: Colors.black87),
+            //       onPressed: () {
+            //         // Download invoice logic
+            //         Get.snackbar(
+            //           'Download',
+            //           'Downloading invoice...',
+            //           snackPosition: SnackPosition.BOTTOM,
+            //           backgroundColor: Colors.green.withValues(alpha:0.8),
+            //           colorText: Colors.white,
+            //         );
+            //       },
+            //     ),
+            //     IconButton(
+            //       icon: Icon(Icons.share, color: Colors.black87),
+            //       onPressed: () {
+            //         // Share logic
+            //         Get.snackbar(
+            //           'Share',
+            //           'Sharing sale details...',
+            //           snackPosition: SnackPosition.BOTTOM,
+            //           backgroundColor: Colors.blue.withValues(alpha:0.8),
+            //           colorText: Colors.white,
+            //         );
+            //       },
+            //     ),
+            //   ],
+            // ),
           ),
         ),
 
@@ -326,10 +326,10 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                         color: Colors.black87,
                       ),
                     ),
-                    Text(
-                      '${sale.formattedTime}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
+                    // Text(
+                    //   '${sale.formattedTime}',d
+                    //   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    // ),
                   ],
                 ),
               ),

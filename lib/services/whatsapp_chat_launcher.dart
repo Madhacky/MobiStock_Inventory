@@ -240,7 +240,7 @@ class WhatsAppService {
     String? customMessage,
     bool detailed = false,
   }) async {
-    String phoneNumber = customerDue.customer.primaryPhone;
+    String phoneNumber = customerDue.customer.primaryPhone??"";
     
     String message = detailed 
         ? WhatsAppDueMessageService.generateDetailedDueMessage(
@@ -274,7 +274,7 @@ class WhatsAppService {
     required String businessName,
     String? customMessage,
   }) async {
-    String phoneNumber = customerDue.customer.primaryPhone;
+    String phoneNumber = customerDue.customer.primaryPhone??"";
     int daysPastDue = WhatsAppDueMessageService.daysPastDue(customerDue);
     
     String message = WhatsAppDueMessageService.generateOverdueReminderMessage(
@@ -321,7 +321,7 @@ class WhatsAppService {
     required String businessName,
     required double paidAmount,
   }) async {
-    String phoneNumber = customerDue.customer.primaryPhone;
+    String phoneNumber = customerDue.customer.primaryPhone??"";
     
     String message = WhatsAppDueMessageService.generatePaymentReceivedMessage(
       customerDue: customerDue,

@@ -1,10 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/Inventory_crud_operation_controller.dart';
-import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/image_uploader_widget.dart';
@@ -363,20 +361,39 @@ class AddNewMobileInventoryForm extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Color Dropdown
-            Obx(
-              () => buildStyledDropdown(
-                labelText: 'Color',
-                hintText: 'Select Color',
-                value:
-                    controller.selectedAddColor.value.isEmpty
-                        ? null
-                        : controller.selectedAddColor.value,
-                items: controller.colorOptions,
-                onChanged: (value) => controller.onAddColorChanged(value ?? ''),
-                validator: controller.validateColor,
-              ),
-            ),
+            // Color Dropdown (Updated to support both dropdown and text field)
+            Obx(() {
+              if (controller.isColorTypeable.value) {
+                return buildStyledTextField(
+                  labelText: 'Color',
+                  controller: controller.colorTextController,
+                  hintText: 'Enter color',
+                  validator: controller.validateColor,
+                  onChanged: controller.onColorTextChanged,
+                );
+              } else {
+                return buildStyledDropdown(
+                  labelText: 'Color',
+                  hintText: 'Select Color',
+                  value:
+                      controller.selectedAddColor.value.isEmpty
+                          ? null
+                          : controller.selectedAddColor.value,
+                  items: controller.colorOptions,
+                  onChanged: (value) => controller.onAddColorChanged(value ?? ''),
+                  validator: controller.validateColor,
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.edit, size: 16),
+                    onPressed: () {
+                      controller.isColorTypeable.value = true;
+                      controller.colorTextController.text =
+                          controller.selectedAddColor.value;
+                    },
+                    tooltip: 'Type custom color',
+                  ),
+                );
+              }
+            }),
 
             const SizedBox(height: 24),
             _buildSectionTitle('Pricing & Stock', Icons.inventory),
@@ -415,7 +432,6 @@ class AddNewMobileInventoryForm extends StatelessWidget {
               controller: controller.purchasePriceController,
               hintText: 'Purchase price',
               keyboardType: TextInputType.number,
-             // validator: controller.validateQuantity,
             ),
             const SizedBox(height: 8),
 
@@ -424,7 +440,6 @@ class AddNewMobileInventoryForm extends StatelessWidget {
               controller: controller.supplierDetailsController,
               hintText: 'Supplier info',
               keyboardType: TextInputType.text,
-             // validator: controller.validateQuantity,
             ),
             const SizedBox(height: 24),
             _buildSectionTitle('Product Image', Icons.image),
@@ -531,7 +546,6 @@ class AddNewMobileInventoryForm extends StatelessWidget {
               ),
             ),
 
-            // Error Message Display
             // Error Message Display
             Obx(
               () =>

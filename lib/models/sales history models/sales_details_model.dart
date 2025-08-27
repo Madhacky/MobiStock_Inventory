@@ -108,8 +108,8 @@ class SaleDues {
   final double totalPaid;
   final double remainingDue;
   final List<PartialPayment> partialPayments;
-  final List<int> creationDate;
-  final List<int> paymentRetriableDate;
+  final String creationDate;
+  final String paymentRetriableDate;
   final bool paid;
 
   SaleDues({
@@ -131,15 +131,14 @@ class SaleDues {
       totalDue: (json['totalDue'] ?? 0.0).toDouble(),
       totalPaid: (json['totalPaid'] ?? 0.0).toDouble(),
       remainingDue: (json['remainingDue'] ?? 0.0).toDouble(),
-      partialPayments: (json['partialPayments'] as List?)
-          ?.map((payment) => PartialPayment.fromJson(payment))
-          .toList() ?? [],
-      creationDate: List<int>.from(json['creationDate'] ?? []),
-      paymentRetriableDate: List<int>.from(json['paymentRetriableDate'] ?? []),
+      partialPayments: (json['partialPayments'] as List? ?? [])
+          .map((payment) => PartialPayment.fromJson(payment))
+          .toList(),
+      creationDate: json['creationDate'] ?? '',
+      paymentRetriableDate: json['paymentRetriableDate'] ?? '',
       paid: json['paid'] ?? false,
     );
   }
-
   String get formattedTotalDue => '₹${totalDue.toStringAsFixed(2)}';
   String get formattedTotalPaid => '₹${totalPaid.toStringAsFixed(2)}';
   String get formattedRemainingDue => '₹${remainingDue.toStringAsFixed(2)}';

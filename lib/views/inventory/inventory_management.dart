@@ -1645,7 +1645,7 @@ class InventoryManagementScreen extends StatelessWidget {
           SpeedDialChild(
             child: Icon(Icons.add, color: Colors.white),
             backgroundColor: Color(0xFF51CF66),
-            label: 'Add New Mobile',
+            label: 'Add Online Product',
             labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             onTap: controller.addNewItem,
           ),

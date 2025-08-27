@@ -4,6 +4,7 @@ import 'package:smartbecho/bindings/account%20management%20bimding/account_manag
 import 'package:smartbecho/bindings/auth%20bindings/auth_binding.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_history_bindings.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_operation_binding.dart';
+import 'package:smartbecho/bindings/bill%20history%20bindings/this_month_added_stock_binding.dart';
 import 'package:smartbecho/bindings/customer%20dues%20bindings/customer_dues_management_binding.dart';
 import 'package:smartbecho/bindings/customer%20dues%20bindings/customer_dues_operations_binding.dart';
 import 'package:smartbecho/bindings/customer%20dues%20bindings/todays_retrieval_dues_binding.dart';
@@ -32,6 +33,7 @@ import 'package:smartbecho/views/auth/verify_email.dart';
 import 'package:smartbecho/views/bill%20history/bill_history.dart';
 import 'package:smartbecho/views/bill%20history/components/bill_analytics.dart';
 import 'package:smartbecho/views/bill%20history/components/stock_history.dart';
+import 'package:smartbecho/views/bill%20history/components/this_month_aaded_page.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_dues_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_invoice_details.dart';
@@ -205,6 +207,13 @@ class AppPages {
       transition: Transition.leftToRight,
       transitionDuration: Duration(milliseconds: 300),
       binding: BillHistoryBindings(),
+    ),
+      GetPage(
+      name: AppRoutes.thisMonthAddedStock,
+      page: () => ThisMonthStockScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: ThisMonthStockBinding(),
     ),
     GetPage(
       name: AppRoutes.billDetails,

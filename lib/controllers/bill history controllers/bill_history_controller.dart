@@ -562,6 +562,10 @@ class BillHistoryController extends GetxController {
     Get.toNamed(AppRoutes.billAnalytics);
   }
 
+
+void navigateToThisMonthStock() {
+  Get.toNamed(AppRoutes.thisMonthAddedStock);
+}
   // Filter methods for bills
   void onCompanyChanged(String? company) {
     selectedCompany.value = company ?? 'All';

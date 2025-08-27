@@ -14,6 +14,7 @@ class InventoryCrudOperationController extends GetxController{
     priceController.dispose();
     companyTextController.dispose();
     modelTextController.dispose();
+    colorTextController.dispose();
     super.onClose();
   }
 
@@ -30,11 +31,9 @@ class InventoryCrudOperationController extends GetxController{
   final TextEditingController priceController = TextEditingController();
   final TextEditingController purchasePriceController = TextEditingController();
   final TextEditingController supplierDetailsController = TextEditingController();
-
-
-  
   final TextEditingController companyTextController = TextEditingController();
   final TextEditingController modelTextController = TextEditingController();
+  final TextEditingController colorTextController = TextEditingController();
 
   // Form Values
   final RxString selectedAddCompany = ''.obs;
@@ -61,6 +60,7 @@ class InventoryCrudOperationController extends GetxController{
   // Dropdown mode flags
   final RxBool isCompanyTypeable = false.obs;
   final RxBool isModelTypeable = false.obs;
+  final RxBool isColorTypeable = false.obs;
 
   @override
   void onInit() {
@@ -89,6 +89,7 @@ class InventoryCrudOperationController extends GetxController{
         
         // Set typeable mode if no companies available
         isCompanyTypeable.value = companies.isEmpty;
+        isColorTypeable.value = colorOptions.isEmpty;
         
         log("✅ Filters loaded successfully");
       } else {
@@ -99,6 +100,7 @@ class InventoryCrudOperationController extends GetxController{
       // Enable typeable mode if API fails
       isCompanyTypeable.value = true;
       isModelTypeable.value = true;
+      isColorTypeable.value = true;
     } finally {
       isLoadingFilters.value = false;
     }
@@ -234,6 +236,11 @@ class InventoryCrudOperationController extends GetxController{
     selectedAddColor.value = color;
   }
 
+  /// Handle color text input
+  void onColorTextChanged(String text) {
+    selectedAddColor.value = text;
+  }
+
   /// Handle image selection
   void onImageSelected(File? image) {
     selectedImage.value = image;
@@ -263,7 +270,10 @@ class InventoryCrudOperationController extends GetxController{
   }
 
   String? validateColor(String? value) {
-    return value == null || value.isEmpty ? 'Please select a color' : null;
+    String colorValue = isColorTypeable.value 
+        ? colorTextController.text 
+        : (value ?? '');
+    return colorValue.isEmpty ? 'Please select or enter a color' : null;
   }
 
   String? validatePrice(String? value) {
@@ -301,110 +311,113 @@ class InventoryCrudOperationController extends GetxController{
     supplierDetailsController.clear();
     companyTextController.clear();
     modelTextController.clear();
+    colorTextController.clear();
     hasAddMobileError.value = false;
     addMobileErrorMessage.value = '';
     models.clear();
     isModelTypeable.value = false;
+    isColorTypeable.value = false;
   }
 
-  /// Add mobile to inventory
   /// Add mobile to inventory with multipart file upload
-Future<void> addMobileToInventory() async {
-  if (!addMobileFormKey.currentState!.validate()) {
-    return;
-  }
-
-  try {
-    isAddingMobile.value = true;
-    hasAddMobileError.value = false;
-    addMobileErrorMessage.value = '';
-
-    // Get final values (from dropdown or text input)
-    String finalCompany = selectedAddCompany.value.isNotEmpty 
-        ? selectedAddCompany.value 
-        : companyTextController.text;
-    String finalModel = selectedAddModel.value.isNotEmpty 
-        ? selectedAddModel.value 
-        : modelTextController.text;
-
-    // Create FormData for multipart request
-    dio.FormData formData = dio.FormData.fromMap({
-      'company': finalCompany,
-      'model': finalModel,
-      'ram': selectedAddRam.value,
-      'rom': selectedAddStorage.value,
-      'color': selectedAddColor.value,
-      'qty': quantityController.text,
-      'sellingPrice': priceController.text,
-      'purchasePrice': purchasePriceController.text,
-      'supplierDetails': supplierDetailsController.text,
-      'itemCategory':"SMARTPHONE"
-    });
-
-    // Add file if selected
-    if (selectedImage.value != null) {
-      String fileName = "${finalCompany}_${finalModel}_${selectedAddColor.value}.${selectedImage.value!.path.split('.').last}";
-      formData.files.add(
-        MapEntry(
-          'file',
-          await dio.MultipartFile.fromFile(
-            selectedImage.value!.path,
-            filename: fileName,
-          ),
-        ),
-      );
+  Future<void> addMobileToInventory() async {
+    if (!addMobileFormKey.currentState!.validate()) {
+      return;
     }
 
-    // Use the multipart API method
-    dio.Response? response = await _apiService.requestMultipartApi(
-      url: _config.addInventoryItem,
-      formData: formData,
-      authToken: true,
-    );
+    try {
+      isAddingMobile.value = true;
+      hasAddMobileError.value = false;
+      addMobileErrorMessage.value = '';
 
-    if (response != null && response.statusCode == 200) {
+      // Get final values (from dropdown or text input)
+      String finalCompany = selectedAddCompany.value.isNotEmpty 
+          ? selectedAddCompany.value 
+          : companyTextController.text;
+      String finalModel = selectedAddModel.value.isNotEmpty 
+          ? selectedAddModel.value 
+          : modelTextController.text;
+      String finalColor = selectedAddColor.value.isNotEmpty 
+          ? selectedAddColor.value 
+          : colorTextController.text;
+
+      // Create FormData for multipart request
+      dio.FormData formData = dio.FormData.fromMap({
+        'company': finalCompany,
+        'model': finalModel,
+        'ram': selectedAddRam.value,
+        'rom': selectedAddStorage.value,
+        'color': finalColor,
+        'qty': quantityController.text,
+        'sellingPrice': priceController.text,
+        'purchasePrice': purchasePriceController.text,
+        'supplierDetails': supplierDetailsController.text,
+        'itemCategory':"SMARTPHONE"
+      });
+
+      // Add file if selected
+      if (selectedImage.value != null) {
+        String fileName = "${finalCompany}_${finalModel}_${finalColor}.${selectedImage.value!.path.split('.').last}";
+        formData.files.add(
+          MapEntry(
+            'file',
+            await dio.MultipartFile.fromFile(
+              selectedImage.value!.path,
+              filename: fileName,
+            ),
+          ),
+        );
+      }
+
+      // Use the multipart API method
+      dio.Response? response = await _apiService.requestMultipartApi(
+        url: _config.addInventoryItem,
+        formData: formData,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        Get.snackbar(
+          'Success',
+          'Mobile added to inventory successfully!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFF10B981),
+          colorText: Colors.white,
+          icon: const Icon(Icons.check_circle, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+        );
+
+        resetAddMobileForm();
+        // Reload filters to get updated data
+        loadInitialFilters();
+        
+      } else {
+        String errorMessage = 'Failed to add mobile to inventory';
+        if (response?.data != null) {
+          errorMessage = response?.data['message'] ?? errorMessage;
+        }
+        throw Exception(errorMessage);
+      }
+    } catch (error) {
+      hasAddMobileError.value = true;
+      addMobileErrorMessage.value = 'Error adding mobile: $error';
+      log("❌ Error in addMobileToInventory: $error");
+
       Get.snackbar(
-        'Success',
-        'Mobile added to inventory successfully!',
+        'Error',
+        'Failed to add mobile to inventory. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF10B981),
+        backgroundColor: Colors.red,
         colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
+        icon: const Icon(Icons.error, color: Colors.white),
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
       );
-
-      resetAddMobileForm();
-      // Reload filters to get updated data
-      loadInitialFilters();
-
-      
-    } else {
-      String errorMessage = 'Failed to add mobile to inventory';
-      if (response?.data != null) {
-        errorMessage = response?.data['message'] ?? errorMessage;
-      }
-      throw Exception(errorMessage);
+    } finally {
+      isAddingMobile.value = false;
     }
-  } catch (error) {
-    hasAddMobileError.value = true;
-    addMobileErrorMessage.value = 'Error adding mobile: $error';
-    log("❌ Error in addMobileToInventory: $error");
-
-    Get.snackbar(
-      'Error',
-      'Failed to add mobile to inventory. Please try again.',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      icon: const Icon(Icons.error, color: Colors.white),
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-    );
-  } finally {
-    isAddingMobile.value = false;
   }
-}
 
   /// Cancel add mobile form
   void cancelAddMobile() {

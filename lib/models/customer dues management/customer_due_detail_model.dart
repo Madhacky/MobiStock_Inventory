@@ -4,8 +4,8 @@ class CustomerDueDetailsModel {
   final double totalDue;
   final double totalPaid;
   final double remainingDue;
-  final List<int> creationDate;
-  final List<int> paymentRetriableDate;
+  final String creationDate;
+  final String paymentRetriableDate;
   final String? approvedBy;
   final Customer customer;
   final List<PartialPaymentDetail> partialPayments;
@@ -30,13 +30,13 @@ class CustomerDueDetailsModel {
       totalDue: (json['totalDue'] ?? 0).toDouble(),
       totalPaid: (json['totalPaid'] ?? 0).toDouble(),
       remainingDue: (json['remainingDue'] ?? 0).toDouble(),
-      creationDate: List<int>.from(json['creationDate'] ?? []),
-      paymentRetriableDate: List<int>.from(json['paymentRetriableDate'] ?? []),
+      creationDate: json['creationDate'] ?? '',
+      paymentRetriableDate: json['paymentRetriableDate'] ?? '',
       approvedBy: json['approvedBy'],
       customer: Customer.fromJson(json['customer'] ?? {}),
-      partialPayments: (json['partialPayments'] as List<dynamic>?)
-          ?.map((item) => PartialPaymentDetail.fromJson(item))
-          .toList() ?? [],
+      partialPayments: (json['partialPayments'] as List<dynamic>? ?? [])
+          .map((item) => PartialPaymentDetail.fromJson(item))
+          .toList(),
       paid: json['paid'] ?? false,
     );
   }
@@ -58,17 +58,19 @@ class CustomerDueDetailsModel {
 
   // Helper methods
   DateTime get creationDateTime {
-    if (creationDate.length >= 3) {
-      return DateTime(creationDate[0], creationDate[1], creationDate[2]);
+    try {
+      return DateTime.parse(creationDate);
+    } catch (_) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 
-  DateTime get paymentRetriableDatetime {
-    if (paymentRetriableDate.length >= 3) {
-      return DateTime(paymentRetriableDate[0], paymentRetriableDate[1], paymentRetriableDate[2]);
+  DateTime get paymentRetriableDateTime {
+    try {
+      return DateTime.parse(paymentRetriableDate);
+    } catch (_) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 
   double get paymentProgress {
@@ -81,33 +83,35 @@ class CustomerDueDetailsModel {
 }
 
 class Customer {
-  final int id;
-  final String name;
-  final String email;
-  final String primaryPhone;
-  final String primaryAddress;
-  final String location;
-  final List<String> alternatePhones;
+  final int? id;
+  final String? name;
+  final String? email;
+  final String? primaryPhone;
+  final String? primaryAddress;
+  final String? location;
+  final List<String>? alternatePhones;
 
   Customer({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.primaryPhone,
-    required this.primaryAddress,
-    required this.location,
-    required this.alternatePhones,
+    this.id,
+    this.name,
+    this.email,
+    this.primaryPhone,
+    this.primaryAddress,
+    this.location,
+    this.alternatePhones,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      primaryPhone: json['primaryPhone'] ?? '',
-      primaryAddress: json['primaryAddress'] ?? '',
-      location: json['location'] ?? '',
-      alternatePhones: List<String>.from(json['alternatePhones'] ?? []),
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      primaryPhone: json['primaryPhone'],
+      primaryAddress: json['primaryAddress'],
+      location: json['location'],
+      alternatePhones: json['alternatePhones'] != null 
+          ? List<String>.from(json['alternatePhones']) 
+          : null,
     );
   }
 
@@ -127,7 +131,7 @@ class Customer {
 class PartialPaymentDetail {
   final int id;
   final double paidAmount;
-  final List<int> paidDate;
+  final String paidDate; // Changed from List<int> to String
 
   PartialPaymentDetail({
     required this.id,
@@ -139,7 +143,7 @@ class PartialPaymentDetail {
     return PartialPaymentDetail(
       id: json['id'] ?? 0,
       paidAmount: (json['paidAmount'] ?? 0).toDouble(),
-      paidDate: List<int>.from(json['paidDate'] ?? []),
+      paidDate: json['paidDate'] ?? '', // Handle as String
     );
   }
 
@@ -152,9 +156,10 @@ class PartialPaymentDetail {
   }
 
   DateTime get paidDateTime {
-    if (paidDate.length >= 3) {
-      return DateTime(paidDate[0], paidDate[1], paidDate[2]);
+    try {
+      return DateTime.parse(paidDate);
+    } catch (_) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 }

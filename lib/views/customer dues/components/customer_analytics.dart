@@ -236,7 +236,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${_formatAmount(data.collected)}',
+                      '₹${data.collected}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -256,7 +256,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${_formatAmount(data.remaining)}',
+                      '₹${data.remaining}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -288,12 +288,12 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
     return Colors.red;
   }
 
-  String _formatAmount(double amount) {
-    if (amount >= 1000000) {
-      return "${(amount / 1000000).toStringAsFixed(1)}M";
-    } else if (amount >= 1000) {
-      return "${(amount / 1000).toStringAsFixed(1)}K";
-    }
-    return amount.toStringAsFixed(0);
-  }
+  // String _formatAmount(double amount) {
+  //   if (amount >= 1000000) {
+  //     return "${(amount / 1000000).toStringAsFixed(1)}M";
+  //   } else if (amount >= 1000) {
+  //     return "${(amount / 1000).toStringAsFixed(1)}K";
+  //   }
+  //   return amount.toStringAsFixed(0);
+  // }
 }

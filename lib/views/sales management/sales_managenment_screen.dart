@@ -164,7 +164,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ),
               SizedBox(width: 12),
               _buildStatCard(
-                'UPI Payments',
+                "Today's UPI Payments",
                 controller.formattedUpiAmount,
                 Icons.qr_code,
                 Color(0xFF3B82F6),
@@ -176,7 +176,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
           Row(
             children: [
               _buildStatCard(
-                'Cash Payments',
+                "Today's Cash Payments",
                 controller.formattedCashAmount,
                 Icons.money,
                 Color(0xFF8B5CF6),
@@ -184,7 +184,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ),
               SizedBox(width: 12),
               _buildStatCard(
-                'Phones Sold',
+                "Today's Phones Sold",
                 controller.totalPhonesSold.toString(),
                 Icons.phone_android,
                 Color(0xFFF59E0B),
@@ -196,7 +196,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
           Row(
             children: [
               _buildStatCard(
-                'EMI Payments',
+                "Today's Down Payments",
                 controller.formattedTotalEmi,
                 Icons.schedule,
                 Color(0xFFEF4444),
@@ -204,7 +204,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
               ),
               SizedBox(width: 12),
               _buildStatCard(
-                'Card Payments',
+                "Today's Card Payments",
                 controller.formattedCardAmount,
                 Icons.credit_card,
                 Color(0xFF06B6D4),
@@ -510,6 +510,21 @@ void _showFilterBottomSheet(BuildContext context) {
           // Company and Payment Method Row
           Row(
             children: [
+               Expanded(
+                child: Obx(
+                  () => buildStyledDropdown(
+                    labelText: 'Item Category',
+                    hintText: 'Select Category',
+                    value: controller.selectedItemCategory.value?.isEmpty == true 
+                        ? null 
+                        : controller.selectedItemCategory.value,
+                    items: controller.itemCategoryOptions,
+                    onChanged: controller.onItemCategoryChanged,
+                  ),
+                ),
+              ),
+              SizedBox(width: 12),
+
               Expanded(
                 child: Obx(
                   () => buildStyledDropdown(
@@ -523,20 +538,7 @@ void _showFilterBottomSheet(BuildContext context) {
                   ),
                 ),
               ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Obx(
-                  () => buildStyledDropdown(
-                    labelText: 'Payment Method',
-                    hintText: 'Select Method',
-                    value: controller.selectedPaymentMethod.value?.isEmpty == true 
-                        ? null 
-                        : controller.selectedPaymentMethod.value,
-                    items: controller.paymentMethodOptions,
-                    onChanged: controller.onPaymentMethodChanged,
-                  ),
-                ),
-              ),
+              
             ],
           ),
 
@@ -548,13 +550,13 @@ void _showFilterBottomSheet(BuildContext context) {
               Expanded(
                 child: Obx(
                   () => buildStyledDropdown(
-                    labelText: 'Item Category',
-                    hintText: 'Select Category',
-                    value: controller.selectedItemCategory.value?.isEmpty == true 
+                    labelText: 'Payment Method',
+                    hintText: 'Select Method',
+                    value: controller.selectedPaymentMethod.value?.isEmpty == true 
                         ? null 
-                        : controller.selectedItemCategory.value,
-                    items: controller.itemCategoryOptions,
-                    onChanged: controller.onItemCategoryChanged,
+                        : controller.selectedPaymentMethod.value,
+                    items: controller.paymentMethodOptions,
+                    onChanged: controller.onPaymentMethodChanged,
                   ),
                 ),
               ),
@@ -1184,7 +1186,7 @@ Future<void> _selectDate(BuildContext context, bool isStartDate) async {
             Row(
               children: [
                 _buildStatCard(
-                  'Total Revenue',
+                  'This Month\nTotal Revenue',
                   controller.formattedTotalSaleAmount,
                   Icons.shopping_cart,
                   Color(0xFF10B981),
@@ -1192,7 +1194,7 @@ Future<void> _selectDate(BuildContext context, bool isStartDate) async {
                 ),
                 SizedBox(width: 12),
                 _buildStatCard(
-                  'Units Sold',
+                  'This Month\nUnits Sold',
                   controller.formattedTotalUnitsSold,
                   Icons.phone_android,
                   Color(0xFFF59E0B),
@@ -1204,7 +1206,7 @@ Future<void> _selectDate(BuildContext context, bool isStartDate) async {
             Row(
               children: [
                 _buildStatCard(
-                  'EMI Sales',
+                  'This Month\nEMI Sales',
                   controller.formattedTotalEmiSalesAmount,
                   Icons.credit_card,
                   Color(0xFF8B5CF6),
@@ -1212,7 +1214,7 @@ Future<void> _selectDate(BuildContext context, bool isStartDate) async {
                 ),
                 SizedBox(width: 12),
                 _buildStatCard(
-                  'Avg. Sale Value',
+                  'This Month\nAvg. Sale Value',
                   controller.formattedAverageSaleAmount,
                   Icons.money,
                   Color(0xFF00BAD1),

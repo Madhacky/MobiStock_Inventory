@@ -1,6 +1,7 @@
-
 import 'package:intl/intl.dart';
-import 'package:smartbecho/models/customer%20dues%20management/customer_due_detail_model.dart';class WhatsAppDueMessageService {
+import 'package:smartbecho/models/customer%20dues%20management/customer_due_detail_model.dart';
+
+class WhatsAppDueMessageService {
   
   // Generate personalized due message
   static String generateDueMessage({
@@ -14,7 +15,7 @@ import 'package:smartbecho/models/customer%20dues%20management/customer_due_deta
     String message = '''
 🔔 *Pending Due Alert*
 
-Dear ${customer.name},
+Dear ${customer.name ?? 'Customer'},
 
 You have the following outstanding dues with *$businessName*:
 
@@ -22,7 +23,7 @@ You have the following outstanding dues with *$businessName*:
 • Total Due: ₹${customerDue.totalDue.toStringAsFixed(2)}
 • Total Paid: ₹${customerDue.totalPaid.toStringAsFixed(2)}
 • Remaining Due: ₹${customerDue.remainingDue.toStringAsFixed(2)}
-• Due Date: ${dateFormat.format(customerDue.paymentRetriableDatetime)}
+• Due Date: ${dateFormat.format(customerDue.paymentRetriableDateTime)}
 
 ${_getPaymentStatusEmoji(customerDue)} *Payment Status:* ${_getPaymentStatus(customerDue)}
 
@@ -47,7 +48,7 @@ $businessName
     String message = '''
 🔔 *Pending Due Alert*
 
-Dear ${customer.name},
+Dear ${customer.name ?? 'Customer'},
 
 You have the following outstanding dues with *$businessName*:
 
@@ -55,7 +56,7 @@ You have the following outstanding dues with *$businessName*:
 • Total Due: ₹${customerDue.totalDue.toStringAsFixed(2)}
 • Total Paid: ₹${customerDue.totalPaid.toStringAsFixed(2)}
 • Remaining Due: ₹${customerDue.remainingDue.toStringAsFixed(2)}
-• Due Date: ${dateFormat.format(customerDue.paymentRetriableDatetime)}
+• Due Date: ${dateFormat.format(customerDue.paymentRetriableDateTime)}
 • Payment Progress: ${customerDue.paymentProgress.toStringAsFixed(1)}%
 
 ${_getPaymentStatusEmoji(customerDue)} *Payment Status:* ${_getPaymentStatus(customerDue)}
@@ -93,7 +94,7 @@ ${_getPaymentStatusEmoji(customerDue)} *Payment Status:* ${_getPaymentStatus(cus
     String message = '''
 ⚠️ *URGENT: Payment Overdue Alert*
 
-Dear ${customer.name},
+Dear ${customer.name ?? 'Customer'},
 
 This is a reminder that your payment is overdue$overdueText.
 
@@ -101,7 +102,7 @@ This is a reminder that your payment is overdue$overdueText.
 • Total Due: ₹${customerDue.totalDue.toStringAsFixed(2)}
 • Amount Paid: ₹${customerDue.totalPaid.toStringAsFixed(2)}
 • *Remaining Due: ₹${customerDue.remainingDue.toStringAsFixed(2)}*
-• Original Due Date: ${dateFormat.format(customerDue.paymentRetriableDatetime)}
+• Original Due Date: ${dateFormat.format(customerDue.paymentRetriableDateTime)}
 
 ${customMessage ?? 'Please settle this payment immediately to avoid service interruption and additional charges.'}
 
@@ -126,7 +127,7 @@ $businessName
     String message = '''
 ✅ *Payment Received - Thank You!*
 
-Dear ${customer.name},
+Dear ${customer.name ?? 'Customer'},
 
 We have successfully received your payment of ₹${paidAmount.toStringAsFixed(2)}.
 
@@ -173,7 +174,7 @@ You have the following outstanding dues with *$businessName*:
 
     // Add each due row
     for (var due in customerDues) {
-      message += '''│ ${due.totalDue.toStringAsFixed(2).padLeft(11)} │ ${due.totalPaid.toStringAsFixed(2).padLeft(11)} │ ${due.remainingDue.toStringAsFixed(2).padLeft(11)} │ ${dateFormat.format(due.paymentRetriableDatetime).padLeft(11)} │
+      message += '''│ ${due.totalDue.toStringAsFixed(2).padLeft(11)} │ ${due.totalPaid.toStringAsFixed(2).padLeft(11)} │ ${due.remainingDue.toStringAsFixed(2).padLeft(11)} │ ${dateFormat.format(due.paymentRetriableDateTime).padLeft(11)} │
 ''';
     }
 
@@ -225,14 +226,13 @@ $businessName
 
   // Check if payment is overdue
   static bool isOverdue(CustomerDueDetailsModel customerDue) {
-    return DateTime.now().isAfter(customerDue.paymentRetriableDatetime) && 
+    return DateTime.now().isAfter(customerDue.paymentRetriableDateTime) && 
            !customerDue.isFullyPaid;
   }
 
   // Calculate days past due
   static int daysPastDue(CustomerDueDetailsModel customerDue) {
     if (!isOverdue(customerDue)) return 0;
-    return DateTime.now().difference(customerDue.paymentRetriableDatetime).inDays;
+    return DateTime.now().difference(customerDue.paymentRetriableDateTime).inDays;
   }
 }
-

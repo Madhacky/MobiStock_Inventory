@@ -170,7 +170,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         physics: AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
-            _buildCustomAppBar(dueDetails.customer.name),
+            _buildCustomAppBar(dueDetails.customer.name ?? ""),
             _buildCustomerHeaderCard(dueDetails),
             _buildQuickActionButtons(dueDetails),
             _buildSummaryCards(dueDetails),
@@ -204,7 +204,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6C5CE7).withValues(alpha:0.3),
+            color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -219,12 +219,12 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                 width: 70,
                 height: 70,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha:0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
                   child: Text(
-                    _getInitials(dueDetails.customer.name),
+                    _getInitials(dueDetails.customer.name ?? ""),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -239,7 +239,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      dueDetails.customer.name,
+                      dueDetails.customer.name ?? "",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -250,21 +250,21 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                     Text(
                       'Due ID: #${dueDetails.duesId}',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha:0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
                     Text(
                       'Customer ID: ${dueDetails.customer.id}',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha:0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
                     Text(
                       'Date: ${_formatDate(dueDetails.creationDateTime)}',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha:0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -297,9 +297,9 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha:0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha:0.3)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
       ),
       child: Text(
         statusText,
@@ -322,7 +322,8 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
               icon: Icons.call,
               label: 'Call',
               color: Color(0xFF4CAF50),
-              onTap: () => _makePhoneCall(dueDetails.customer.primaryPhone),
+              onTap:
+                  () => _makePhoneCall(dueDetails.customer.primaryPhone ?? ""),
             ),
           ),
           SizedBox(width: 12),
@@ -363,7 +364,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 0,
               blurRadius: 10,
               offset: Offset(0, 2),
@@ -375,7 +376,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withValues(alpha:0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),
@@ -447,7 +448,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -460,7 +461,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withValues(alpha:0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -503,7 +504,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -552,7 +553,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -591,48 +592,50 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
   }
 
   Widget _buildCustomerInfoCard(CustomerDueDetailsModel dueDetails) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha: 0.08),
+          spreadRadius: 0,
+          blurRadius: 20,
+          offset: Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Customer Information', Icons.person),
+          SizedBox(height: 16),
+          _buildInfoRow('Name', dueDetails.customer.name ?? ""),
+          SizedBox(height: 12),
+          _buildInfoRow('Email', dueDetails.customer.email ?? ""),
+          SizedBox(height: 12),
+          _buildInfoRow('Phone', dueDetails.customer.primaryPhone ?? ""),
+          SizedBox(height: 12),
+          _buildInfoRow('Address', dueDetails.customer.primaryAddress ?? ""),
+          SizedBox(height: 12),
+          _buildInfoRow('Location', dueDetails.customer.location ?? ""),
+          // Fix: Check for null before accessing alternatePhones
+          if (dueDetails.customer.alternatePhones != null && 
+              dueDetails.customer.alternatePhones!.isNotEmpty) ...[
+            SizedBox(height: 12),
+            _buildInfoRow(
+              'Alternate Phones',
+              dueDetails.customer.alternatePhones!.join(', '),
+            ),
+          ],
         ],
       ),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionHeader('Customer Information', Icons.person),
-            SizedBox(height: 16),
-            _buildInfoRow('Name', dueDetails.customer.name),
-            SizedBox(height: 12),
-            _buildInfoRow('Email', dueDetails.customer.email),
-            SizedBox(height: 12),
-            _buildInfoRow('Phone', dueDetails.customer.primaryPhone),
-            SizedBox(height: 12),
-            _buildInfoRow('Address', dueDetails.customer.primaryAddress),
-            SizedBox(height: 12),
-            _buildInfoRow('Location', dueDetails.customer.location),
-            if (dueDetails.customer.alternatePhones.isNotEmpty) ...[
-              SizedBox(height: 12),
-              _buildInfoRow(
-                'Alternate Phones',
-                dueDetails.customer.alternatePhones.join(', '),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPaymentHistorySection(CustomerDueDetailsModel dueDetails) {
     return Container(
@@ -642,7 +645,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -788,7 +791,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+            color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: Color(0xFF6C5CE7), size: 20),
@@ -955,8 +958,6 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
     );
   }
 
-  
-
   void _showNotifyDialog(CustomerDueDetailsModel dueDetails) {
     showDialog(
       context: context,
@@ -974,8 +975,8 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
               ElevatedButton(
                 onPressed: () async {
                   await controller.notifyCustomer(
-                    dueDetails.customer.id,
-                    dueDetails.customer.name,
+                    dueDetails.customer.id ?? 0,
+                    dueDetails.customer.name ?? "",
                   );
                   Navigator.pop(context);
                 },
@@ -1026,20 +1027,32 @@ Remaining Due: ₹${_formatAmount(dueDetails.remainingDue)}
       'Success',
       'Details copied to clipboard',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.withValues(alpha:0.8),
+      backgroundColor: Colors.green.withValues(alpha: 0.8),
       colorText: Colors.white,
     );
   }
 
   // Helper methods
   String _getInitials(String name) {
-    List<String> nameParts = name.split(' ');
+    // Handle null, empty, or whitespace-only strings
+    if (name.trim().isEmpty) {
+      return 'U';
+    }
+
+    List<String> nameParts =
+        name
+            .trim()
+            .split(' ')
+            .where((part) => part.isNotEmpty) // Filter out empty parts
+            .toList();
+
     if (nameParts.length >= 2) {
       return '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
     } else if (nameParts.isNotEmpty) {
       return nameParts[0][0].toUpperCase();
     }
-    return 'U';
+
+    return 'U'; // Default fallback
   }
 
   String _formatAmount(double amount) {

@@ -4,8 +4,8 @@ class DueDetails {
   final double totalDue;
   final double totalPaid;
   final double remainingDue;
-  final List<int> creationDate;
-  final List<int> paymentRetriableDate;
+  final DateTime? creationDate;          // ✅ changed to DateTime
+  final DateTime? paymentRetriableDate;  // ✅ changed to DateTime
   final bool paid;
 
   DueDetails({
@@ -13,8 +13,8 @@ class DueDetails {
     required this.totalDue,
     required this.totalPaid,
     required this.remainingDue,
-    required this.creationDate,
-    required this.paymentRetriableDate,
+    this.creationDate,
+    this.paymentRetriableDate,
     required this.paid,
   });
 
@@ -24,36 +24,36 @@ class DueDetails {
       totalDue: (json['totalDue'] ?? 0).toDouble(),
       totalPaid: (json['totalPaid'] ?? 0).toDouble(),
       remainingDue: (json['remainingDue'] ?? 0).toDouble(),
-      creationDate: List<int>.from(json['creationDate'] ?? []),
-      paymentRetriableDate: List<int>.from(json['paymentRetriableDate'] ?? []),
+      creationDate: json['creationDate'] != null
+          ? DateTime.tryParse(json['creationDate'])
+          : null,
+      paymentRetriableDate: json['paymentRetriableDate'] != null
+          ? DateTime.tryParse(json['paymentRetriableDate'])
+          : null,
       paid: json['paid'] ?? false,
     );
   }
 
   // Helper method to get formatted creation date
   String get formattedCreationDate {
-    if (creationDate.length >= 3) {
-      return '${creationDate[2].toString().padLeft(2, '0')}/${creationDate[1].toString().padLeft(2, '0')}/${creationDate[0]}';
-    }
-    return 'N/A';
+    if (creationDate == null) return 'N/A';
+    return "${creationDate!.day.toString().padLeft(2, '0')}/"
+           "${creationDate!.month.toString().padLeft(2, '0')}/"
+           "${creationDate!.year}";
   }
 
   // Helper method to get formatted payment retriable date
   String get formattedPaymentRetriableDate {
-    if (paymentRetriableDate.length >= 3) {
-      return '${paymentRetriableDate[2].toString().padLeft(2, '0')}/${paymentRetriableDate[1].toString().padLeft(2, '0')}/${paymentRetriableDate[0]}';
-    }
-    return 'N/A';
+    if (paymentRetriableDate == null) return 'N/A';
+    return "${paymentRetriableDate!.day.toString().padLeft(2, '0')}/"
+           "${paymentRetriableDate!.month.toString().padLeft(2, '0')}/"
+           "${paymentRetriableDate!.year}";
   }
 
   // Helper method to get days since due
   int get daysSinceDue {
-    if (paymentRetriableDate.length >= 3) {
-      DateTime dueDate = DateTime(paymentRetriableDate[0], paymentRetriableDate[1], paymentRetriableDate[2]);
-      DateTime today = DateTime.now();
-      return today.difference(dueDate).inDays;
-    }
-    return 0;
+    if (paymentRetriableDate == null) return 0;
+    return DateTime.now().difference(paymentRetriableDate!).inDays;
   }
 }
 
@@ -61,7 +61,7 @@ class DueDetails {
 class RetrievalDueCustomer {
   final int id;
   final String name;
-  final String email;
+  final String? email;
   final String primaryPhone;
   final String location;
   final String primaryAddress;
@@ -70,7 +70,7 @@ class RetrievalDueCustomer {
   RetrievalDueCustomer({
     required this.id,
     required this.name,
-    required this.email,
+    this.email,
     required this.primaryPhone,
     required this.location,
     required this.primaryAddress,
@@ -81,7 +81,7 @@ class RetrievalDueCustomer {
     return RetrievalDueCustomer(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
-      email: json['email'] ?? '',
+      email: json['email'],
       primaryPhone: json['primaryPhone'] ?? '',
       location: json['location'] ?? '',
       primaryAddress: json['primaryAddress'] ?? '',
@@ -92,7 +92,7 @@ class RetrievalDueCustomer {
     );
   }
 
-  // Helper method to get aggregated dues (for backward compatibility)
+  // Aggregated dues
   DueDetails get dues {
     if (duesList.isEmpty) {
       return DueDetails(
@@ -100,51 +100,44 @@ class RetrievalDueCustomer {
         totalDue: 0.0,
         totalPaid: 0.0,
         remainingDue: 0.0,
-        creationDate: [],
-        paymentRetriableDate: [],
+        creationDate: null,
+        paymentRetriableDate: null,
         paid: true,
       );
     }
 
-    // Aggregate all dues for this customer
-    double totalDue = duesList.fold(0.0, (sum, due) => sum + due.totalDue);
-    double totalPaid = duesList.fold(0.0, (sum, due) => sum + due.totalPaid);
-    double remainingDue = duesList.fold(0.0, (sum, due) => sum + due.remainingDue);
-    
-    // Find the earliest due date
-    DateTime? earliestDueDate;
-    List<int> earliestPaymentRetriableDate = [];
-    
+    double totalDue = duesList.fold(0.0, (sum, d) => sum + d.totalDue);
+    double totalPaid = duesList.fold(0.0, (sum, d) => sum + d.totalPaid);
+    double remainingDue = duesList.fold(0.0, (sum, d) => sum + d.remainingDue);
+
+    // Find earliest retriable date
+    DateTime? earliestDate;
     for (var due in duesList) {
-      if (due.paymentRetriableDate.length >= 3) {
-        DateTime dueDate = DateTime(due.paymentRetriableDate[0], due.paymentRetriableDate[1], due.paymentRetriableDate[2]);
-        if (earliestDueDate == null || dueDate.isBefore(earliestDueDate)) {
-          earliestDueDate = dueDate;
-          earliestPaymentRetriableDate = due.paymentRetriableDate;
+      if (due.paymentRetriableDate != null) {
+        if (earliestDate == null || due.paymentRetriableDate!.isBefore(earliestDate)) {
+          earliestDate = due.paymentRetriableDate;
         }
       }
     }
 
-    // Use the first due's creation date and ID for simplicity
     return DueDetails(
       id: duesList.first.id,
       totalDue: totalDue,
       totalPaid: totalPaid,
       remainingDue: remainingDue,
       creationDate: duesList.first.creationDate,
-      paymentRetriableDate: earliestPaymentRetriableDate,
+      paymentRetriableDate: earliestDate,
       paid: remainingDue <= 0,
     );
   }
 
-  // Helper method to get status based on remaining due
+  // Status helpers
   String get status {
     if (dues.remainingDue <= 0) return 'Paid';
     if (dues.daysSinceDue > 0) return 'Overdue';
     return 'Due Today';
   }
 
-  // Helper method to get status color
   String get statusColor {
     if (dues.remainingDue <= 0) return '#51CF66'; // Green
     if (dues.daysSinceDue > 0) return '#FF6B6B'; // Red

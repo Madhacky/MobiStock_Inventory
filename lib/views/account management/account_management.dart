@@ -64,8 +64,8 @@ class AccountManagementScreen extends StatelessWidget {
         NavItemModel(
       id: 'gst-ledger',
       label: 'GST Ledger',
-      icon: Icons.credit_card_outlined,
-      activeIcon: Icons.credit_card,
+      icon: Icons.file_copy,
+      activeIcon: Icons.file_copy,
       color: Color.fromARGB(255, 231, 195, 154),
     ),
   ];

@@ -1003,7 +1003,7 @@ class GenericDoubleBarChart extends StatelessWidget {
                       : (primaryLabel ?? 'Primary');
 
               return BarTooltipItem(
-                '$key\n$label: ${_formatValue(value)}',
+                '$key\n$label: ${value}',
                 const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -1143,15 +1143,15 @@ class GenericDoubleBarChart extends StatelessWidget {
   String _formatValue(double value) {
     if (dataType == ChartDataType.revenue) {
       if (value >= 1000000) {
-        return '\$${(value / 1000000).toStringAsFixed(1)}M';
+        return value.toString();
       } else if (value >= 1000) {
-        return '\$${(value / 1000).toStringAsFixed(1)}K';
+        return value.toString();
       } else {
-        return '\$${value.toStringAsFixed(0)}';
+        return value.toString();
       }
     } else {
       if (value >= 1000) {
-        return '${(value / 1000).toStringAsFixed(1)}K';
+        return value.toString();
       } else {
         return value.toStringAsFixed(0);
       }

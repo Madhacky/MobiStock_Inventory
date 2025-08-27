@@ -197,7 +197,7 @@ class PartialPayment {
 class CustomerDue {
   final int id;
   final String shopId;
-  final String name;
+  final String? name;
   final String? profileUrl;
   final double totalDue;
   final double totalPaid;
@@ -207,7 +207,7 @@ class CustomerDue {
   final int customerId;
   final int saleId;
   final List<PartialPayment> partialPayments;
-  final List<int>? retrievalDate; // [year, month, day]
+  final DateTime? retrievalDate; // ✅ changed from List<int> to DateTime?
 
   CustomerDue({
     required this.id,
@@ -229,7 +229,7 @@ class CustomerDue {
     return CustomerDue(
       id: json['id'] ?? 0,
       shopId: json['shopId'] ?? '',
-      name: json['name'] ?? '',
+      name: json['name'],
       profileUrl: json['profileUrl'],
       totalDue: (json['totalDue'] ?? 0).toDouble(),
       totalPaid: (json['totalPaid'] ?? 0).toDouble(),
@@ -239,11 +239,12 @@ class CustomerDue {
       customerId: json['customerId'] ?? 0,
       saleId: json['saleId'] ?? 0,
       partialPayments: (json['partialPayments'] as List<dynamic>?)
-          ?.map((item) => PartialPayment.fromJson(item))
-          .toList() ?? [],
-      retrievalDate: json['retrivalDate'] != null 
-          ? List<int>.from(json['retrivalDate']) 
-          : null,
+              ?.map((item) => PartialPayment.fromJson(item))
+              .toList() ??
+          [],
+      retrievalDate: json['retrivalDate'] != null
+          ? DateTime.tryParse(json['retrivalDate'])
+          : null, // ✅ safe parse
     );
   }
 
@@ -260,8 +261,8 @@ class CustomerDue {
       'description': description,
       'customerId': customerId,
       'saleId': saleId,
-      'partialPayments': partialPayments.map((item) => item.toJson()).toList(),
-      'retrivalDate': retrievalDate,
+      'partialPayments': partialPayments.map((e) => e.toJson()).toList(),
+      'retrivalDate': retrievalDate?.toIso8601String(), // ✅ store as ISO string
     };
   }
 
@@ -302,16 +303,10 @@ class CustomerDue {
   }
 
   String? get formattedRetrievalDate {
-    if (retrievalDate == null || retrievalDate!.length < 3) return null;
-    try {
-      final year = retrievalDate![0];
-      final month = retrievalDate![1];
-      final day = retrievalDate![2];
-      return "${day.toString().padLeft(2, '0')}/${month.toString().padLeft(2, '0')}/$year";
-    } catch (e) {
-      return null;
-    }
+    if (retrievalDate == null) return null;
+    return "${retrievalDate!.day.toString().padLeft(2, '0')}/${retrievalDate!.month.toString().padLeft(2, '0')}/${retrievalDate!.year}";
   }
+
 
   // Get payment summary
   String get paymentSummary {
@@ -331,29 +326,14 @@ class CustomerDue {
 
   // Check if payment is due (you can customize this logic)
   bool get isOverdue {
-    if (retrievalDate == null || retrievalDate!.length < 3) return false;
-    if (isFullyPaid) return false;
-    
-    try {
-      final dueDate = DateTime(retrievalDate![0], retrievalDate![1], retrievalDate![2]);
-      return DateTime.now().isAfter(dueDate);
-    } catch (e) {
-      return false;
-    }
+    if (retrievalDate == null || isFullyPaid) return false;
+    return DateTime.now().isAfter(retrievalDate!);
   }
 
   // Get days until due or overdue days
-  int get daysUntilDue {
-    if (retrievalDate == null || retrievalDate!.length < 3) return 0;
-    if (isFullyPaid) return 0;
-    
-    try {
-      final dueDate = DateTime(retrievalDate![0], retrievalDate![1], retrievalDate![2]);
-      final now = DateTime.now();
-      return dueDate.difference(now).inDays;
-    } catch (e) {
-      return 0;
-    }
+ int get daysUntilDue {
+    if (retrievalDate == null || isFullyPaid) return 0;
+    return retrievalDate!.difference(DateTime.now()).inDays;
   }
 
   String get dueDateStatus {
@@ -411,7 +391,7 @@ class CustomerDue {
     int? customerId,
     int? saleId,
     List<PartialPayment>? partialPayments,
-    List<int>? retrievalDate,
+    DateTime? retrievalDate,
   }) {
     return CustomerDue(
       id: id ?? this.id,

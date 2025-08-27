@@ -82,9 +82,9 @@ class RetrievalDueController extends GetxController {
      
 
       Map<String, dynamic> requestData = {
-        'customerId': customerId,
-        'message': 'Payment reminder for your due amount',
-        'type': 'payment_reminder',
+        'customerIds':[ customerId],
+        // 'message': 'Payment reminder for your due amount',
+        // 'type': 'payment_reminder',
       };
 
       dio.Response? response = await _apiService.requestPostForApi(

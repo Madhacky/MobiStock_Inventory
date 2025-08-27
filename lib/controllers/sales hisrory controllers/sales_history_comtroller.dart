@@ -86,7 +86,8 @@ class SalesManagementController extends GetxController {
   final List<String> paymentModeOptions = [
     'All Modes',
     'FULL',
-    'EMI'
+    'EMI',
+    'DUES'
   ];
 
   final List<String> sortByOptions = [
@@ -396,6 +397,7 @@ class SalesManagementController extends GetxController {
       isStatsLoading.value = false;
     }
   }
+  
 
   // Fetch sales stats from API
   Future<void> fetchSalesStats() async {

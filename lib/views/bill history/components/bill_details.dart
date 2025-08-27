@@ -789,17 +789,17 @@ Widget _buildBillSummary(Bill bill) {
           //   ),
           // ),
           // SizedBox(width: 12),
-          Expanded(
-            child: FloatingActionButton.extended(
-              onPressed: () => _shareBill(bill),
-              backgroundColor: Color(0xFF3B82F6),
-              foregroundColor: Colors.white,
-              icon: Icon(Icons.share),
-              label: Text('Share'),
-              heroTag: "share",
-            ),
-          ),
-          SizedBox(width: 12),
+          // Expanded(
+          //   child: FloatingActionButton.extended(
+          //     onPressed: () => _shareBill(bill),
+          //     backgroundColor: Color(0xFF3B82F6),
+          //     foregroundColor: Colors.white,
+          //     icon: Icon(Icons.share),
+          //     label: Text('Share'),
+          //     heroTag: "share",
+          //   ),
+          // ),
+          // SizedBox(width: 12),
           Expanded(
             child: FloatingActionButton.extended(
               onPressed: () => _downloadBill(bill),

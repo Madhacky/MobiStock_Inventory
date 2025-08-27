@@ -361,29 +361,29 @@ class StockHistoryPage extends GetView<BillHistoryController> {
               ],
             ),
             
-            SizedBox(height: 16),
+            // SizedBox(height: 16),
             
-            // Time Period Selection
-            Obx(() => buildStyledDropdown(
-              labelText: 'Time Period',
-              hintText: 'Select Period',
-              value: controller.stockTimePeriodType.value,
-              items: controller.timePeriodOptions,
-              onChanged: controller.onStockTimePeriodTypeChanged,
-            )),
+            // // Time Period Selection
+            // Obx(() => buildStyledDropdown(
+            //   labelText: 'Time Period',
+            //   hintText: 'Select Period',
+            //   value: controller.stockTimePeriodType.value,
+            //   items: controller.timePeriodOptions,
+            //   onChanged: controller.onStockTimePeriodTypeChanged,
+            // )),
             
-            SizedBox(height: 16),
+            // SizedBox(height: 16),
             
-            // Date Selection based on Time Period Type
-            Obx(() {
-              if (controller.stockTimePeriodType.value == 'Month/Year') {
-                return _buildStockMonthYearSelection();
-              } else {
-                return _buildStockCustomDateSelection(context);
-              }
-            }),
+            // // Date Selection based on Time Period Type
+            // Obx(() {
+            //   if (controller.stockTimePeriodType.value == 'Month/Year') {
+            //     return _buildStockMonthYearSelection();
+            //   } else {
+            //     return _buildStockCustomDateSelection(context);
+            //   }
+            // }),
             
-            SizedBox(height: 16),
+            // SizedBox(height: 16),
             
             // Sort Option
             Obx(() => buildStyledDropdown(

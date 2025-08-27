@@ -1047,7 +1047,6 @@ if (_getPaymentModeString() == "EMI") {
       curve: Curves.easeInOut,
     );
 
-    // Navigate back to inventory if we came from there
-    Get.back();
+  
   }
 }

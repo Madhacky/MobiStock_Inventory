@@ -362,7 +362,7 @@ class BillAnalyticsScreen extends StatelessWidget {
 
               // Chart Section
               GenericDoubleBarChart(
-                title: 'Monthly Purchase vs Payment',
+                title: 'Monthly Purchase vs Payment Summary',
                 payload: controller.purchaseData,
                 secondaryPayload: controller.paidData,
                 primaryLabel: 'Purchase Amount',
@@ -398,19 +398,19 @@ class BillAnalyticsScreen extends StatelessWidget {
       children: [
         _buildSummaryCard(
           'Total Purchase',
-          '₹${_formatAmount(controller.totalPurchaseAmount)}',
+          '₹${controller.totalPurchaseAmount}',
           Icons.shopping_cart,
           Colors.blue,
         ),
         _buildSummaryCard(
           'Total Paid',
-          '₹${_formatAmount(controller.totalPaidAmount)}',
+          '₹${controller.totalPaidAmount}',
           Icons.payment,
           Colors.green,
         ),
         _buildSummaryCard(
           'Outstanding',
-          '₹${_formatAmount(controller.totalOutstanding)}',
+          '₹${controller.totalOutstanding}',
           Icons.account_balance_wallet,
           Colors.orange,
         ),
@@ -556,7 +556,7 @@ class BillAnalyticsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${_formatAmount(data.totalPurchase)}',
+                      '₹${data.totalPurchase}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -576,7 +576,7 @@ class BillAnalyticsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${_formatAmount(data.totalPaid)}',
+                      '₹${data.totalPaid}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -596,7 +596,7 @@ class BillAnalyticsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '₹${_formatAmount(data.totalPurchase - data.totalPaid)}',
+                      '₹${data.totalPurchase - data.totalPaid}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -626,15 +626,15 @@ class BillAnalyticsScreen extends StatelessWidget {
     return Colors.red;
   }
 
-  String _formatAmount(double amount) {
-    if (amount >= 10000000) {
-      return '${(amount / 10000000).toStringAsFixed(1)}Cr';
-    } else if (amount >= 100000) {
-      return '${(amount / 100000).toStringAsFixed(1)}L';
-    } else if (amount >= 1000) {
-      return '${(amount / 1000).toStringAsFixed(1)}K';
-    } else {
-      return amount.toStringAsFixed(0);
-    }
-  }
+  // String _formatAmount(double amount) {
+  //   if (amount >= 10000000) {
+  //     return '${(amount / 10000000).toStringAsFixed(1)}Cr';
+  //   } else if (amount >= 100000) {
+  //     return '${(amount / 100000).toStringAsFixed(1)}L';
+  //   } else if (amount >= 1000) {
+  //     return '${(amount / 1000).toStringAsFixed(1)}K';
+  //   } else {
+  //     return amount.toStringAsFixed(0);
+  //   }
+  // }
 }

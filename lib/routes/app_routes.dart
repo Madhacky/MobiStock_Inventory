@@ -36,6 +36,8 @@ class AppRoutes {
   static const String billDetails = '/bill-details';
   static const String addNewStock = '/add-bill';
   static const String stockList = '/stock-list';
+  static const String thisMonthAddedStock = '/this-month-added-stock';
+
   static const String billAnalytics = '/bill-Analytics';
 
 

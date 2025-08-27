@@ -149,10 +149,10 @@ class CustomerDuesController extends GetxController {
         }
       } else if (timePeriodType.value == 'Custom Range') {
         if (startDate.value != null) {
-          queryParams['start'] = _formatDateForAPI(startDate.value!);
+          queryParams['startDate'] = _formatDateForAPI(startDate.value!);
         }
         if (endDate.value != null) {
-          queryParams['end'] = _formatDateForAPI(endDate.value!);
+          queryParams['endDate'] = _formatDateForAPI(endDate.value!);
         }
       }
 
