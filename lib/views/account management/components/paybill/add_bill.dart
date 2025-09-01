@@ -526,37 +526,37 @@ class AddPayBillPage extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child:  Container(
-              height: 48,
-              child: ElevatedButton(
-                onPressed: controller.generateInvoice,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF10B981),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.receipt_long, size: 18),
-                    SizedBox(width: 8),
-                    Text(
-                      'Generate Invoice',
-                      style: AppStyles.custom(
-                        weight: FontWeight.w600,
-                        size: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        // const SizedBox(width: 8),
+        // Expanded(
+        //   child:  Container(
+        //       height: 48,
+        //       child: ElevatedButton(
+        //         onPressed: controller.generateInvoice,
+        //         style: ElevatedButton.styleFrom(
+        //           backgroundColor: const Color(0xFF10B981),
+        //           foregroundColor: Colors.white,
+        //           shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(12),
+        //           ),
+        //           elevation: 0,
+        //         ),
+        //         child: Row(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(Icons.receipt_long, size: 18),
+        //             SizedBox(width: 8),
+        //             Text(
+        //               'Generate Invoice',
+        //               style: AppStyles.custom(
+        //                 weight: FontWeight.w600,
+        //                 size: 14,
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+            // ),
+          // ),
         
       ],
     );

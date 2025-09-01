@@ -46,7 +46,7 @@ class PayBillsResponse {
 
 class PayBill {
   final int id;
-  final List<int> date;
+  final String date; // Changed from List<int> to String
   final String company;
   final String paidToPerson;
   final String purpose;
@@ -72,7 +72,7 @@ class PayBill {
   factory PayBill.fromJson(Map<String, dynamic> json) {
     return PayBill(
       id: json['id'] ?? 0,
-      date: List<int>.from(json['date'] ?? []),
+      date: json['date'] ?? '', // Changed to handle string date
       company: json['company'] ?? '',
       paidToPerson: json['paidToPerson'] ?? '',
       purpose: json['purpose'] ?? '',
@@ -84,11 +84,13 @@ class PayBill {
     );
   }
 
+  // Updated to parse string date format
   DateTime get formattedDate {
-    if (date.length >= 3) {
-      return DateTime(date[0], date[1], date[2]);
+    try {
+      return DateTime.parse(date);
+    } catch (e) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 
   String get formattedAmount {

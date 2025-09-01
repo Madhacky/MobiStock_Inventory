@@ -186,7 +186,8 @@ class AddWithdrawPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Source Selection
-            _buildSourceSelection(),
+            // In your form widget
+controller.buildPaymentMethodDropdown(),
             const SizedBox(height: 16),
 
             // Purpose Field
@@ -289,117 +290,7 @@ class AddWithdrawPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSourceSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Source *',
-          style: TextStyle(
-            color: Color(0xFF6B7280),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Obx(() => Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: controller.selectedSource.value == 'CASH'
-                      ? const Color(0xFF10B981)
-                      : Colors.grey.withValues(alpha:0.2),
-                ),
-              ),
-              child: ListTile(
-                leading: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha:0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(
-                    Icons.money,
-                    color: Color(0xFF10B981),
-                    size: 16,
-                  ),
-                ),
-                title: const Text(
-                  'Cash',
-                  style: TextStyle(
-                    color: Color(0xFF1A1A1A),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                trailing: Radio<String>(
-                  value: 'CASH',
-                  groupValue: controller.selectedSource.value,
-                  onChanged: (value) {
-                    controller.selectedSource.value = value!;
-                  },
-                  activeColor: const Color(0xFF10B981),
-                ),
-                onTap: () {
-                  controller.selectedSource.value = 'CASH';
-                },
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: controller.selectedSource.value == 'ACCOUNT'
-                      ? const Color(0xFF3B82F6)
-                      : Colors.grey.withValues(alpha:0.2),
-                ),
-              ),
-              child: ListTile(
-                leading: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(
-                    Icons.account_balance,
-                    color: Color(0xFF3B82F6),
-                    size: 16,
-                  ),
-                ),
-                title: const Text(
-                  'Account',
-                  style: TextStyle(
-                    color: Color(0xFF1A1A1A),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                trailing: Radio<String>(
-                  value: 'ACCOUNT',
-                  groupValue: controller.selectedSource.value,
-                  onChanged: (value) {
-                    controller.selectedSource.value = value!;
-                  },
-                  activeColor: const Color(0xFF3B82F6),
-                ),
-                onTap: () {
-                  controller.selectedSource.value = 'ACCOUNT';
-                },
-              ),
-            ),
-          ],
-        )),
-      ],
-    );
-  }
+
 
  
 

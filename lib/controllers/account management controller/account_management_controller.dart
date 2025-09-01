@@ -71,15 +71,12 @@ class AccountManagementController extends GetxController {
     }
   }
 
-
-
   // Fetch account summary dashboard data from API
-
 
   Future<void> fetchAccountSummaryDashboard() async {
     try {
       isStatsLoading.value = true;
-      String todaysDate= getTodayDate();
+      String todaysDate = getTodayDate();
       log("Fetching account summary dashboard...");
 
       dio.Response? response = await _apiService.requestGetForApi(
@@ -151,10 +148,11 @@ class AccountManagementController extends GetxController {
   double get pendingEMI =>
       accountDashboardData.value?.payload.sale.pendingEMI ?? 0.0;
 
-  Map<String, double> get creditByAccount =>
-      accountDashboardData.value?.payload.creditByAccount ?? {};
-  Map<String, double> get debitByAccount =>
-      accountDashboardData.value?.payload.debitByAccount ?? {};
+  Map<String, double> get moneyInOut => {
+    "Money Out": accountDashboardData.value?.payload.totalCredit ?? 0,
+    "Money In": accountDashboardData.value?.payload.totalDebit ?? 0,
+  };
+
 
   // Format amount for display
   String get formattedOpeningBalance => '₹${openingBalance.toStringAsFixed(2)}';

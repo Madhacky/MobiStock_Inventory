@@ -345,12 +345,12 @@ class _GenericPieChartState extends State<GenericPieChart> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //_buildTitle(),
+          _buildTitle(),
           const SizedBox(height: 20),
           _buildChart(pieData),
           if (widget.showLegend) ...[
-          //  const SizedBox(height: 20),
-          //  _buildLegend(pieData),
+           const SizedBox(height: 20),
+           _buildLegend(pieData),
           ],
         ],
       ),

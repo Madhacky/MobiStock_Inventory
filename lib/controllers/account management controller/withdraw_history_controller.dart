@@ -4,6 +4,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/models/account%20management%20models/withdraw_history_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/custom_dropdown.dart';
 
 class WithdrawController extends GetxController {
   @override
@@ -32,7 +33,20 @@ class WithdrawController extends GetxController {
 
   // Form state
   var isFormLoading = false.obs;
-  var selectedSource = 'CASH'.obs;
+  var selectedPaymentMethod = 'CASH'.obs; // Changed from selectedSource
+
+  // Payment method options
+  final List<String> paymentMethodOptions = [
+    "CASH",
+    "BANK",
+    "UPI",
+    "CREDIT_CARD",
+    "DEBIT_CARD",
+    "CHEQUE",
+    "OTHERS",
+    "GIVEN_SALE_DUES",
+    "EMI_PENDING"
+  ];
 
   // Observable variables
   var isLoading = false.obs;
@@ -101,6 +115,21 @@ class WithdrawController extends GetxController {
     return null;
   }
 
+  // Payment method validation
+  String? validatePaymentMethod(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select a payment method';
+    }
+    return null;
+  }
+
+  // Payment method change handler
+  void onPaymentMethodChanged(String? paymentMethod) {
+    if (paymentMethod != null) {
+      selectedPaymentMethod.value = paymentMethod;
+    }
+  }
+
   // Date picker
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -138,7 +167,7 @@ class WithdrawController extends GetxController {
         'withdrawnBy': withdrawnByController.text,
         'purpose': purposeController.text,
         'notes': notesController.text.isEmpty ? '' : notesController.text,
-        'paymentMode': selectedSource.value,
+        'paymentMode': selectedPaymentMethod.value, // Updated field name
       };
 
       final response = await _apiService.requestPostForApi(
@@ -197,7 +226,7 @@ class WithdrawController extends GetxController {
     withdrawnByController.clear();
     purposeController.clear();
     notesController.clear();
-    selectedSource.value = 'CASH';
+    selectedPaymentMethod.value = 'CASH'; // Updated
   }
 
   // Reset form
@@ -410,6 +439,43 @@ class WithdrawController extends GetxController {
         selectedPaymentMode.value != 'All';
   }
 
+  // Helper method to format payment method display text
+  String getPaymentMethodDisplayText(String paymentMethod) {
+    switch (paymentMethod) {
+      case 'CASH':
+        return 'Cash';
+      case 'BANK':
+        return 'Bank Transfer';
+      case 'UPI':
+        return 'UPI';
+      case 'CREDIT_CARD':
+        return 'Credit Card';
+      case 'DEBIT_CARD':
+        return 'Debit Card';
+      case 'CHEQUE':
+        return 'Cheque';
+      case 'OTHERS':
+        return 'Others';
+      case 'GIVEN_SALE_DUES':
+        return 'Given Sale Dues';
+      case 'EMI_PENDING':
+        return 'EMI Pending';
+      default:
+        return paymentMethod;
+    }
+  }
+
+  Widget buildPaymentMethodDropdown() {
+    return Obx(() => buildStyledDropdown(
+      labelText: 'Payment Method',
+      hintText: 'Select Payment Method',
+      value: selectedPaymentMethod.value,
+      items: paymentMethodOptions,
+      onChanged: onPaymentMethodChanged,
+      validator: validatePaymentMethod,
+    ));
+  }
+
   Color getWithdrawnByColor(String withdrawnBy) {
     final colors = {
       'jane smith': const Color(0xFF3B82F6),
@@ -443,10 +509,14 @@ class WithdrawController extends GetxController {
   Color getPaymentModeColor(String paymentMode) {
     final colors = {
       'cash': const Color(0xFF10B981),
-      'account': const Color(0xFF3B82F6),
-      'card': const Color(0xFF8B5CF6),
+      'bank': const Color(0xFF3B82F6),
       'upi': const Color(0xFFF59E0B),
+      'credit_card': const Color(0xFF8B5CF6),
+      'debit_card': const Color(0xFF06B6D4),
       'cheque': const Color(0xFFEF4444),
+      'others': const Color(0xFF6B7280),
+      'given_sale_dues': const Color(0xFFEC4899),
+      'emi_pending': const Color(0xFF84CC16),
     };
 
     return colors[paymentMode.toLowerCase()] ?? const Color(0xFF6B7280);

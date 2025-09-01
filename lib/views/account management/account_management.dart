@@ -378,25 +378,25 @@ class AccountManagementScreen extends StatelessWidget {
           children: [
             _buildSummaryCard(
               "Today's Opening\nCash",
-              controller.formatAmount(controller.openingBalance),
+              controller.openingBalance.toString(),
               Icons.account_balance_wallet_outlined,
               Color(0xFF6C5CE7),
             ),
             _buildSummaryCard(
               "Today's Closing\nCash",
-              controller.formatAmount(controller.closingBalance),
+              controller.closingBalance.toString(),
               Icons.payments_outlined,
               Color(0xFF51CF66),
             ),
             _buildSummaryCard(
               "Today's Sales",
-              controller.formatAmount(controller.totalSale),
+              controller.totalSale.toString(),
               Icons.shopping_cart_outlined,
               Color(0xFFFF9500),
             ),
             _buildSummaryCard(
               "Today's EMI Collected",
-              controller.formatAmount(controller.emiReceivedToday),
+              controller.emiReceivedToday.toString(),
               Icons.account_balance_outlined,
               Color(0xFF4ECDC4),
             ),
@@ -574,25 +574,25 @@ class AccountManagementScreen extends StatelessWidget {
       final metrics = [
         {
           'title': 'Due Payments Collected',
-          'value': controller.formatAmount(controller.duesRecovered),
+          'value': controller.duesRecovered.toString(),
           'icon': Icons.receipt_outlined,
           'color': Color(0xFFFF6B6B),
         },
         {
           'title': "Today's Bills Paid",
-          'value': controller.formatAmount(controller.payBills),
+          'value': controller.payBills.toString(),
           'icon': Icons.monetization_on_outlined,
           'color': Color(0xFF51CF66),
         },
         {
           'title': "Today's Withdrawals",
-          'value': controller.formatAmount(controller.withdrawals),
+          'value': controller.withdrawals.toString(),
           'icon': Icons.savings_outlined,
           'color': Color(0xFF4ECDC4),
         },
         {
           'title': 'Total Commission',
-          'value': controller.formatAmount(controller.commissionReceived),
+          'value': controller.commissionReceived.toString(),
           'icon': Icons.account_balance_outlined,
           'color': Color(0xFF6C5CE7),
         },
@@ -743,23 +743,17 @@ class AccountManagementScreen extends StatelessWidget {
         return _buildChartError();
       }
 
-      if (controller.creditByAccount.isEmpty) {
+      if (controller.moneyInOut.isEmpty) {
         return _buildNoDataState();
       }
 
-      return GenericDoubleBarChart(
-        title: 'Cash vs Account Balance',
-        payload: controller.creditByAccount,
-        secondaryPayload: controller.creditByAccount,
-        primaryLabel: 'Cash Amount',
-        secondaryLabel: 'Account Balance',
-        primaryBarColor: Colors.green[500],
-        secondaryBarColor: Colors.red[400],
+      return GenericPieChart(
+        title: 'Money In vs Money Out',
+        payload: controller.moneyInOut,showPercentages: true,
+       showLegend: true,
         screenWidth: controller.screenWidth,
-        isSmallScreen: controller.isSmallScreen,
-        chartHeight: 300,
-        dataType: ChartDataType.revenue,
-        showTotals: true,
+        isSmallScreen: controller.isSmallScreen,chartRadius: 50,
+     
       );
     });
   }

@@ -59,11 +59,15 @@ class PayBillsController extends GetxController {
 
   // Form Dropdown options
  final List<String> formPaymentModes = [
-  'Cash',
-  'Bank Transfer',
-  'UPI',
-  'Credit Card',
-  'Debit Card',
+    "CASH",
+    "BANK",
+    "UPI",
+    "CREDIT_CARD",
+    "DEBIT_CARD",
+    "CHEQUE",
+    "OTHERS",
+    "GIVEN_SALE_DUES",
+    "EMI_PENDING"
 ];
 
 

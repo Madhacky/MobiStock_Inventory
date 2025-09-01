@@ -33,9 +33,22 @@ class CommissionReceivedController extends GetxController {
   final TextEditingController confirmedByController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  // Predefined received mode options
+  final List<String> receivedModeFormOptions = [
+    "CASH",
+    "BANK",
+    "UPI",
+    "CREDIT_CARD",
+    "DEBIT_CARD",
+    "CHEQUE",
+    "OTHERS",
+    "GIVEN_SALE_DUES",
+    "EMI_PENDING"
+  ];
+
   // Form state
   var isFormLoading = false.obs;
-  var selectedReceivedModeForm = 'cash'.obs; // For form submission
+  var selectedReceivedModeForm = 'CASH'.obs; // Changed default to match predefined options
   var selectedFile = Rxn<File>();
 
   // Observable variables
@@ -111,6 +124,47 @@ class CommissionReceivedController extends GetxController {
       return 'Enter a valid amount';
     }
     return null;
+  }
+
+  // Validation for received mode
+  String? validateReceivedMode(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select a payment mode';
+    }
+    return null;
+  }
+
+  // Method to get display name for received mode
+  String getReceivedModeDisplayName(String mode) {
+    switch (mode) {
+      case 'CASH':
+        return 'Cash';
+      case 'BANK':
+        return 'Bank Transfer';
+      case 'UPI':
+        return 'UPI';
+      case 'CREDIT_CARD':
+        return 'Credit Card';
+      case 'DEBIT_CARD':
+        return 'Debit Card';
+      case 'CHEQUE':
+        return 'Cheque';
+      case 'OTHERS':
+        return 'Others';
+      case 'GIVEN_SALE_DUES':
+        return 'Given Sale Dues';
+      case 'EMI_PENDING':
+        return 'EMI Pending';
+      default:
+        return mode;
+    }
+  }
+
+  // Method to set received mode for form
+  void setReceivedModeForm(String? mode) {
+    if (mode != null) {
+      selectedReceivedModeForm.value = mode;
+    }
   }
 
   // Date picker
@@ -249,7 +303,7 @@ class CommissionReceivedController extends GetxController {
     amountController.clear();
     confirmedByController.clear();
     descriptionController.clear();
-    selectedReceivedModeForm.value = 'cash';
+    selectedReceivedModeForm.value = 'CASH'; // Reset to default
     selectedFile.value = null;
   }
 
@@ -340,7 +394,7 @@ class CommissionReceivedController extends GetxController {
     final confirmedBySet = commissions.map((commission) => commission.confirmedBy).toSet();
     confirmedByOptions.value = ['All', ...confirmedBySet.toList()..sort()];
 
-    // Update received mode options
+    // Update received mode options - now using predefined options
     final receivedModeSet = commissions.map((commission) => commission.receivedMode).toSet();
     receivedModeOptions.value = ['All', ...receivedModeSet.toList()..sort()];
   }
@@ -502,10 +556,19 @@ class CommissionReceivedController extends GetxController {
 
   Color getReceivedModeColor(String receivedMode) {
     final colors = {
+      'CASH': const Color(0xFF10B981),
       'cash': const Color(0xFF10B981),
+      'BANK': const Color(0xFF3B82F6),
       'neft': const Color(0xFF3B82F6),
+      'UPI': const Color(0xFF8B5CF6),
       'upi': const Color(0xFF8B5CF6),
-      'cheque': const Color(0xFFF59E0B),
+      'CREDIT_CARD': const Color(0xFFF59E0B),
+      'DEBIT_CARD': const Color(0xFFF97316),
+      'CHEQUE': const Color(0xFFEF4444),
+      'cheque': const Color(0xFFEF4444),
+      'OTHERS': const Color(0xFF6B7280),
+      'GIVEN_SALE_DUES': const Color(0xFF8B5CF6),
+      'EMI_PENDING': const Color(0xFFEF4444),
       'rtgs': const Color(0xFFEF4444),
       'account': const Color(0xFF3B82F6),
     };
@@ -515,10 +578,19 @@ class CommissionReceivedController extends GetxController {
 
   IconData getReceivedModeIcon(String receivedMode) {
     final icons = {
+      'CASH': Icons.money,
       'cash': Icons.money,
+      'BANK': Icons.account_balance,
       'neft': Icons.account_balance,
+      'UPI': Icons.phone_android,
       'upi': Icons.phone_android,
+      'CREDIT_CARD': Icons.credit_card,
+      'DEBIT_CARD': Icons.credit_card_outlined,
+      'CHEQUE': Icons.note,
       'cheque': Icons.note,
+      'OTHERS': Icons.more_horiz,
+      'GIVEN_SALE_DUES': Icons.sell_outlined,
+      'EMI_PENDING': Icons.schedule,
       'rtgs': Icons.account_balance_wallet,
       'account': Icons.account_balance,
     };

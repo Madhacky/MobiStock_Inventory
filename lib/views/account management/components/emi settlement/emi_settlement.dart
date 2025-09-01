@@ -876,10 +876,10 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildDetailRow(
-                                'Settlement ID',
-                                settlement.id.toString(),
-                              ),
+                              // _buildDetailRow(
+                              //   'Settlement ID',
+                              //   settlement.id.toString(),
+                              // ),
                               _buildDetailRow(
                                 'Company',
                                 settlement.companyName,
@@ -892,7 +892,7 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                                 'Confirmed By',
                                 settlement.confirmedBy,
                               ),
-                              _buildDetailRow('Shop ID', settlement.shopId),
+                              // _buildDetailRow('Shop ID', settlement.shopId),
                               _buildDetailRow(
                                 'Date',
                                 DateFormat(
@@ -901,85 +901,85 @@ class _EmiSettlementPageState extends State<EmiSettlementPage>
                               ),
                               _buildDetailRow('Status', 'Settled'),
 
-                              const SizedBox(height: 24),
+                              // const SizedBox(height: 24),
 
-                              // Action buttons
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        // Handle download/export
-                                        Navigator.pop(context);
-                                        Get.snackbar(
-                                          'Download',
-                                          'Settlement details downloaded',
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: const Color(
-                                            0xFF10B981,
-                                          ),
-                                          colorText: Colors.white,
-                                        );
-                                      },
-                                      icon: const Icon(
-                                        Icons.download,
-                                        size: 16,
-                                      ),
-                                      label: const Text('Download'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xFF3B82F6,
-                                        ),
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: OutlinedButton.icon(
-                                      onPressed: () {
-                                        // Handle share
-                                        Navigator.pop(context);
-                                        Get.snackbar(
-                                          'Share',
-                                          'Settlement details shared',
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: const Color(
-                                            0xFF10B981,
-                                          ),
-                                          colorText: Colors.white,
-                                        );
-                                      },
-                                      icon: const Icon(Icons.share, size: 16),
-                                      label: const Text('Share'),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: const Color(
-                                          0xFF3B82F6,
-                                        ),
-                                        side: const BorderSide(
-                                          color: Color(0xFF3B82F6),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // // Action buttons
+                              // Row(
+                              //   children: [
+                              //     Expanded(
+                              //       child: ElevatedButton.icon(
+                              //         onPressed: () {
+                              //           // Handle download/export
+                              //           Navigator.pop(context);
+                              //           Get.snackbar(
+                              //             'Download',
+                              //             'Settlement details downloaded',
+                              //             snackPosition: SnackPosition.BOTTOM,
+                              //             backgroundColor: const Color(
+                              //               0xFF10B981,
+                              //             ),
+                              //             colorText: Colors.white,
+                              //           );
+                              //         },
+                              //         icon: const Icon(
+                              //           Icons.download,
+                              //           size: 16,
+                              //         ),
+                              //         label: const Text('Download'),
+                              //         style: ElevatedButton.styleFrom(
+                              //           backgroundColor: const Color(
+                              //             0xFF3B82F6,
+                              //           ),
+                              //           foregroundColor: Colors.white,
+                              //           padding: const EdgeInsets.symmetric(
+                              //             vertical: 12,
+                              //           ),
+                              //           shape: RoundedRectangleBorder(
+                              //             borderRadius: BorderRadius.circular(
+                              //               8,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     const SizedBox(width: 12),
+                              //     Expanded(
+                              //       child: OutlinedButton.icon(
+                              //         onPressed: () {
+                              //           // Handle share
+                              //           Navigator.pop(context);
+                              //           Get.snackbar(
+                              //             'Share',
+                              //             'Settlement details shared',
+                              //             snackPosition: SnackPosition.BOTTOM,
+                              //             backgroundColor: const Color(
+                              //               0xFF10B981,
+                              //             ),
+                              //             colorText: Colors.white,
+                              //           );
+                              //         },
+                              //         icon: const Icon(Icons.share, size: 16),
+                              //         label: const Text('Share'),
+                              //         style: OutlinedButton.styleFrom(
+                              //           foregroundColor: const Color(
+                              //             0xFF3B82F6,
+                              //           ),
+                              //           side: const BorderSide(
+                              //             color: Color(0xFF3B82F6),
+                              //           ),
+                              //           padding: const EdgeInsets.symmetric(
+                              //             vertical: 12,
+                              //           ),
+                              //           shape: RoundedRectangleBorder(
+                              //             borderRadius: BorderRadius.circular(
+                              //               8,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),

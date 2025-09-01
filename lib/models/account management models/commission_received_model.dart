@@ -1,6 +1,6 @@
 class Commission {
   final int id;
-  final List<int> date;
+  final String date; 
   final String company;
   final double amount;
   final String receivedMode;
@@ -22,7 +22,7 @@ class Commission {
   factory Commission.fromJson(Map<String, dynamic> json) {
     return Commission(
       id: json['id'] ?? 0,
-      date: List<int>.from(json['date'] ?? []),
+      date: json['date'] ?? '', // Changed to handle string date
       company: json['company'] ?? '',
       amount: (json['amount'] ?? 0).toDouble(),
       receivedMode: json['receivedMode'] ?? '',
@@ -45,14 +45,23 @@ class Commission {
     };
   }
 
+  // Updated to parse string date format
   DateTime get formattedDate {
-    if (date.length >= 3) {
-      return DateTime(date[0], date[1], date[2]);
+    try {
+      return DateTime.parse(date);
+    } catch (e) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 
   String get formattedAmount {
+    if (amount >= 10000000) {
+      return '₹${(amount / 10000000).toStringAsFixed(1)}Cr';
+    } else if (amount >= 100000) {
+      return '₹${(amount / 100000).toStringAsFixed(1)}L';
+    } else if (amount >= 1000) {
+      return '₹${(amount / 1000).toStringAsFixed(1)}K';
+    }
     return '₹${amount.toStringAsFixed(0)}';
   }
 }

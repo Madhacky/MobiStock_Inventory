@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 class EmiSettlement {
   final int id;
   final String companyName;
-  final List<int> date;
+  final String date;
   final double amount;
   final String confirmedBy;
   final String shopId;
@@ -21,7 +21,7 @@ class EmiSettlement {
     return EmiSettlement(
       id: json['id'] ?? 0,
       companyName: json['companyName'] ?? '',
-      date: List<int>.from(json['date'] ?? []),
+      date: json['date'] ?? '',
       amount: (json['amount'] ?? 0.0).toDouble(),
       confirmedBy: json['confirmedBy'] ?? '',
       shopId: json['shopId'] ?? '',
@@ -39,11 +39,12 @@ class EmiSettlement {
     };
   }
 
-  DateTime get formattedDate {
-    if (date.length >= 3) {
-      return DateTime(date[0], date[1], date[2]);
+ DateTime get formattedDate {
+    try {
+      return DateTime.parse(date);
+    } catch (e) {
+      return DateTime.now();
     }
-    return DateTime.now();
   }
 
   String get formattedAmount {

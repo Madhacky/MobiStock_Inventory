@@ -6,8 +6,11 @@ import 'package:smartbecho/utils/custom_back_button.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'dart:io';
 
+import 'package:smartbecho/utils/custom_dropdown.dart';
+
 class AddCommissionPage extends StatelessWidget {
-  final CommissionReceivedController controller = Get.find<CommissionReceivedController>();
+  final CommissionReceivedController controller =
+      Get.find<CommissionReceivedController>();
 
   AddCommissionPage({Key? key}) : super(key: key);
 
@@ -98,10 +101,10 @@ class AddCommissionPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha:0.1),
+                color: const Color(0xFF10B981).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF10B981).withValues(alpha:0.2),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.2),
                 ),
               ),
               child: const Icon(
@@ -147,7 +150,7 @@ class AddCommissionPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -187,7 +190,32 @@ class AddCommissionPage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Received Mode Selection
-            _buildReceivedModeSelection(),
+            Obx(
+              () => buildStyledDropdown(
+                labelText: 'Payment Mode',
+                hintText: 'Select payment mode',
+                items:
+                    controller.receivedModeFormOptions
+                        .map(
+                          (mode) => controller.getReceivedModeDisplayName(mode),
+                        )
+                        .toList(),
+                value: controller.getReceivedModeDisplayName(
+                  controller.selectedReceivedModeForm.value,
+                ),
+                onChanged: (displayName) {
+                  // Find the actual value from display name
+                  final actualValue = controller.receivedModeFormOptions
+                      .firstWhere(
+                        (mode) =>
+                            controller.getReceivedModeDisplayName(mode) ==
+                            displayName,
+                      );
+                  controller.setReceivedModeForm(actualValue);
+                },
+                validator: controller.validateReceivedMode,
+              ),
+            ),
             const SizedBox(height: 16),
 
             // Confirmed By Field
@@ -228,7 +256,7 @@ class AddCommissionPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF10B981).withValues(alpha:0.1),
+            color: const Color(0xFF10B981).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF10B981), size: 16),
@@ -263,7 +291,7 @@ class AddCommissionPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: TextFormField(
             controller: controller.dateController,
@@ -295,118 +323,6 @@ class AddCommissionPage extends StatelessWidget {
     );
   }
 
-  Widget _buildReceivedModeSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Received Mode *',
-          style: TextStyle(
-            color: Color(0xFF6B7280),
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Obx(() => Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: controller.selectedReceivedMode.value == 'cash'
-                      ? const Color(0xFF10B981)
-                      : Colors.grey.withValues(alpha:0.2),
-                ),
-              ),
-              child: ListTile(
-                leading: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha:0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(
-                    Icons.money,
-                    color: Color(0xFF10B981),
-                    size: 16,
-                  ),
-                ),
-                title: const Text(
-                  'Cash',
-                  style: TextStyle(
-                    color: Color(0xFF1A1A1A),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                trailing: Radio<String>(
-                  value: 'cash',
-                  groupValue: controller.selectedReceivedMode.value,
-                  onChanged: (value) {
-                    controller.selectedReceivedMode.value = value!;
-                  },
-                  activeColor: const Color(0xFF10B981),
-                ),
-                onTap: () {
-                  controller.selectedReceivedMode.value = 'cash';
-                },
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: controller.selectedReceivedMode.value == 'account'
-                      ? const Color(0xFF3B82F6)
-                      : Colors.grey.withValues(alpha:0.2),
-                ),
-              ),
-              child: ListTile(
-                leading: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(
-                    Icons.account_balance,
-                    color: Color(0xFF3B82F6),
-                    size: 16,
-                  ),
-                ),
-                title: const Text(
-                  'Account',
-                  style: TextStyle(
-                    color: Color(0xFF1A1A1A),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                trailing: Radio<String>(
-                  value: 'account',
-                  groupValue: controller.selectedReceivedMode.value,
-                  onChanged: (value) {
-                    controller.selectedReceivedMode.value = value!;
-                  },
-                  activeColor: const Color(0xFF3B82F6),
-                ),
-                onTap: () {
-                  controller.selectedReceivedMode.value = 'account';
-                },
-              ),
-            ),
-          ],
-        )),
-      ],
-    );
-  }
-
   Widget _buildFileUploadSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,61 +336,66 @@ class AddCommissionPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        Obx(() => Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: controller.selectedFile.value != null
-                  ? const Color(0xFF10B981)
-                  : Colors.grey.withValues(alpha:0.2),
-            ),
-          ),
-          child: InkWell(
-            onTap: controller.pickFile,
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Icon(
+        Obx(
+          () => Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color:
                     controller.selectedFile.value != null
-                        ? Icons.check_circle
-                        : Icons.cloud_upload_outlined,
-                    size: 32,
-                    color: controller.selectedFile.value != null
                         ? const Color(0xFF10B981)
-                        : const Color(0xFF6B7280),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    controller.selectedFile.value != null
-                        ? 'File Selected: ${controller.selectedFile.value!.path.split('/').last}'
-                        : 'Tap to upload file',
-                    style: TextStyle(
-                      color: controller.selectedFile.value != null
-                          ? const Color(0xFF10B981)
-                          : const Color(0xFF6B7280),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                        : Colors.grey.withValues(alpha: 0.2),
+              ),
+            ),
+            child: InkWell(
+              onTap: controller.pickFile,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Icon(
+                      controller.selectedFile.value != null
+                          ? Icons.check_circle
+                          : Icons.cloud_upload_outlined,
+                      size: 32,
+                      color:
+                          controller.selectedFile.value != null
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFF6B7280),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  if (controller.selectedFile.value == null)
-                    const Text(
-                      'PDF, JPG, PNG files supported',
+                    const SizedBox(height: 8),
+                    Text(
+                      controller.selectedFile.value != null
+                          ? 'File Selected: ${controller.selectedFile.value!.path.split('/').last}'
+                          : 'Tap to upload file',
                       style: TextStyle(
-                        color: Color(0xFF9CA3AF),
-                        fontSize: 12,
+                        color:
+                            controller.selectedFile.value != null
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFF6B7280),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                ],
+                    if (controller.selectedFile.value == null)
+                      const Text(
+                        'PDF, JPG, PNG files supported',
+                        style: TextStyle(
+                          color: Color(0xFF9CA3AF),
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -503,10 +424,7 @@ class AddCommissionPage extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     'Reset',
-                    style: AppStyles.custom(
-                      weight: FontWeight.w600,
-                      size: 13,
-                    ),
+                    style: AppStyles.custom(weight: FontWeight.w600, size: 13),
                   ),
                 ],
               ),
@@ -519,9 +437,10 @@ class AddCommissionPage extends StatelessWidget {
             () => SizedBox(
               height: 48,
               child: ElevatedButton(
-                onPressed: controller.isFormLoading.value
-                    ? null
-                    : controller.saveCommission,
+                onPressed:
+                    controller.isFormLoading.value
+                        ? null
+                        : controller.saveCommission,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF10B981),
                   foregroundColor: Colors.white,
@@ -530,29 +449,30 @@ class AddCommissionPage extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: controller.isFormLoading.value
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.save, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Record Commission',
-                            style: AppStyles.custom(
-                              weight: FontWeight.w600,
-                              size: 13,
-                            ),
+                child:
+                    controller.isFormLoading.value
+                        ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
                           ),
-                        ],
-                      ),
+                        )
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.save, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Record Commission',
+                              style: AppStyles.custom(
+                                weight: FontWeight.w600,
+                                size: 13,
+                              ),
+                            ),
+                          ],
+                        ),
               ),
             ),
           ),

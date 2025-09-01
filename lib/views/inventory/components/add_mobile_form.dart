@@ -326,7 +326,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 Expanded(
                   child: Obx(
                     () => buildStyledDropdown(
-                      labelText: 'RAM',
+                      labelText: 'RAM (GB)',
                       hintText: 'Select RAM',
                       value:
                           controller.selectedAddRam.value.isEmpty
@@ -343,7 +343,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 Expanded(
                   child: Obx(
                     () => buildStyledDropdown(
-                      labelText: 'Storage (ROM)',
+                      labelText: 'Storage (ROM) (GB)',
                       hintText: 'Select Storage',
                       value:
                           controller.selectedAddStorage.value.isEmpty

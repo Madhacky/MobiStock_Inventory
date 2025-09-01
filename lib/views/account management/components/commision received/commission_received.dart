@@ -658,7 +658,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                 ),
                 const SizedBox(height: 10),
 
-                Row(
+                Wrap(crossAxisAlignment: WrapCrossAlignment.start,
                   children: [
                     const Icon(
                       Icons.payment_outlined,
@@ -960,7 +960,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                             ),
                             const SizedBox(width: 6),
                             const Text(
-                              'Description',
+                              'Notes',
                               style: TextStyle(
                                 color: Color(0xFF374151),
                                 fontSize: 13,
@@ -1064,59 +1064,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
 
                 const SizedBox(height: 16),
 
-                // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          // Add share functionality
-                        },
-                        icon: const Icon(Icons.share_outlined, size: 16),
-                        label: const Text(
-                          'Share',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3B82F6),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          // Navigate to edit screen
-                          Get.toNamed(
-                            '/edit-commission',
-                            arguments: commission,
-                          );
-                        },
-                        icon: const Icon(Icons.edit_outlined, size: 16),
-                        label: const Text(
-                          'Edit',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF3B82F6),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                            side: const BorderSide(color: Color(0xFF3B82F6)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                
               ],
             ),
           ),
