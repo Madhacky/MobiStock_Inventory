@@ -22,7 +22,7 @@ class InventoryCrudOperationController extends GetxController{
   final ApiServices _apiService = ApiServices();
   // App config instance
   final AppConfig _config = AppConfig.instance;
-  
+
   // ADD MOBILE FORM CONTROLLERS AND VARIABLES
   final GlobalKey<FormState> addMobileFormKey = GlobalKey<FormState>();
 
@@ -30,7 +30,8 @@ class InventoryCrudOperationController extends GetxController{
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController purchasePriceController = TextEditingController();
-  final TextEditingController supplierDetailsController = TextEditingController();
+  final TextEditingController supplierDetailsController =
+      TextEditingController();
   final TextEditingController companyTextController = TextEditingController();
   final TextEditingController modelTextController = TextEditingController();
   final TextEditingController colorTextController = TextEditingController();
@@ -72,7 +73,7 @@ class InventoryCrudOperationController extends GetxController{
   Future<void> loadInitialFilters() async {
     try {
       isLoadingFilters.value = true;
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
         url: '${_config.baseUrl}/api/mobiles/filters',
         authToken: true,
@@ -80,17 +81,20 @@ class InventoryCrudOperationController extends GetxController{
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        
+
         // Update dropdown options
         companies.value = List<String>.from(data['companies'] ?? []);
-        ramOptions.value = List<String>.from(data['rams'] ?? []);
-        storageOptions.value = List<String>.from(data['roms'] ?? []);
+        ramOptions.value = sortStringList(
+          RxList<String>.from(data['rams'] ?? []),
+        );
+        storageOptions.value =sortStringList(RxList<String>.from(data['roms'] ?? []));
+
         colorOptions.value = List<String>.from(data['colors'] ?? []);
-        
+
         // Set typeable mode if no companies available
         isCompanyTypeable.value = companies.isEmpty;
         isColorTypeable.value = colorOptions.isEmpty;
-        
+
         log("✅ Filters loaded successfully");
       } else {
         throw Exception('Failed to load filters');
@@ -105,6 +109,12 @@ class InventoryCrudOperationController extends GetxController{
       isLoadingFilters.value = false;
     }
   }
+  //string num sort
+
+  RxList<String> sortStringList(RxList<String> list) {
+  final sorted = list.map(int.parse).toList()..sort();
+  return sorted.map((e) => e.toString()).toList().obs;
+}
 
   /// Load models for selected company
   Future<void> loadModelsForCompany(String company) async {
@@ -113,19 +123,20 @@ class InventoryCrudOperationController extends GetxController{
       models.clear();
       selectedAddModel.value = '';
       modelTextController.clear();
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url: '${_config.baseUrl}/api/mobiles/filters?company=${Uri.encodeComponent(company)}',
+        url:
+            '${_config.baseUrl}/api/mobiles/filters?company=${Uri.encodeComponent(company)}',
         authToken: true,
       );
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
         models.value = List<String>.from(data['models'] ?? []);
-        
+
         // Set typeable mode if no models available
         isModelTypeable.value = models.isEmpty;
-        
+
         log("✅ Models loaded for company: $company");
       } else {
         throw Exception('Failed to load models for company: $company');
@@ -162,13 +173,15 @@ class InventoryCrudOperationController extends GetxController{
 
   /// Get formatted device name for display
   String get formattedDeviceName {
-    String company = selectedAddCompany.value.isNotEmpty 
-        ? selectedAddCompany.value 
-        : companyTextController.text;
-    String model = selectedAddModel.value.isNotEmpty 
-        ? selectedAddModel.value 
-        : modelTextController.text;
-        
+    String company =
+        selectedAddCompany.value.isNotEmpty
+            ? selectedAddCompany.value
+            : companyTextController.text;
+    String model =
+        selectedAddModel.value.isNotEmpty
+            ? selectedAddModel.value
+            : modelTextController.text;
+
     if (company.isNotEmpty && model.isNotEmpty) {
       return '$company $model';
     }
@@ -177,7 +190,8 @@ class InventoryCrudOperationController extends GetxController{
 
   /// Get formatted device specs for display
   String get formattedDeviceSpecs {
-    if (selectedAddRam.value.isNotEmpty && selectedAddStorage.value.isNotEmpty) {
+    if (selectedAddRam.value.isNotEmpty &&
+        selectedAddStorage.value.isNotEmpty) {
       return '${selectedAddRam.value} RAM • ${selectedAddStorage.value} Storage';
     }
     return 'RAM & Storage will appear here';
@@ -188,7 +202,7 @@ class InventoryCrudOperationController extends GetxController{
     selectedAddCompany.value = company;
     selectedAddModel.value = '';
     modelTextController.clear();
-    
+
     if (company.isNotEmpty) {
       loadModelsForCompany(company);
     } else {
@@ -202,7 +216,7 @@ class InventoryCrudOperationController extends GetxController{
     selectedAddCompany.value = text;
     selectedAddModel.value = '';
     modelTextController.clear();
-    
+
     if (text.isNotEmpty) {
       loadModelsForCompany(text);
     } else {
@@ -248,16 +262,14 @@ class InventoryCrudOperationController extends GetxController{
 
   /// Validate form fields
   String? validateCompany(String? value) {
-    String companyValue = isCompanyTypeable.value 
-        ? companyTextController.text 
-        : (value ?? '');
+    String companyValue =
+        isCompanyTypeable.value ? companyTextController.text : (value ?? '');
     return companyValue.isEmpty ? 'Please select or enter a company' : null;
   }
 
   String? validateModel(String? value) {
-    String modelValue = isModelTypeable.value 
-        ? modelTextController.text 
-        : (value ?? '');
+    String modelValue =
+        isModelTypeable.value ? modelTextController.text : (value ?? '');
     return modelValue.isEmpty ? 'Please select or enter a model' : null;
   }
 
@@ -270,9 +282,8 @@ class InventoryCrudOperationController extends GetxController{
   }
 
   String? validateColor(String? value) {
-    String colorValue = isColorTypeable.value 
-        ? colorTextController.text 
-        : (value ?? '');
+    String colorValue =
+        isColorTypeable.value ? colorTextController.text : (value ?? '');
     return colorValue.isEmpty ? 'Please select or enter a color' : null;
   }
 
@@ -331,15 +342,18 @@ class InventoryCrudOperationController extends GetxController{
       addMobileErrorMessage.value = '';
 
       // Get final values (from dropdown or text input)
-      String finalCompany = selectedAddCompany.value.isNotEmpty 
-          ? selectedAddCompany.value 
-          : companyTextController.text;
-      String finalModel = selectedAddModel.value.isNotEmpty 
-          ? selectedAddModel.value 
-          : modelTextController.text;
-      String finalColor = selectedAddColor.value.isNotEmpty 
-          ? selectedAddColor.value 
-          : colorTextController.text;
+      String finalCompany =
+          selectedAddCompany.value.isNotEmpty
+              ? selectedAddCompany.value
+              : companyTextController.text;
+      String finalModel =
+          selectedAddModel.value.isNotEmpty
+              ? selectedAddModel.value
+              : modelTextController.text;
+      String finalColor =
+          selectedAddColor.value.isNotEmpty
+              ? selectedAddColor.value
+              : colorTextController.text;
 
       // Create FormData for multipart request
       dio.FormData formData = dio.FormData.fromMap({
@@ -352,12 +366,13 @@ class InventoryCrudOperationController extends GetxController{
         'sellingPrice': priceController.text,
         'purchasePrice': purchasePriceController.text,
         'supplierDetails': supplierDetailsController.text,
-        'itemCategory':"SMARTPHONE"
+        'itemCategory': "SMARTPHONE",
       });
 
       // Add file if selected
       if (selectedImage.value != null) {
-        String fileName = "${finalCompany}_${finalModel}_${finalColor}.${selectedImage.value!.path.split('.').last}";
+        String fileName =
+            "${finalCompany}_${finalModel}_${finalColor}.${selectedImage.value!.path.split('.').last}";
         formData.files.add(
           MapEntry(
             'file',
@@ -391,7 +406,6 @@ class InventoryCrudOperationController extends GetxController{
         resetAddMobileForm();
         // Reload filters to get updated data
         loadInitialFilters();
-        
       } else {
         String errorMessage = 'Failed to add mobile to inventory';
         if (response?.data != null) {
