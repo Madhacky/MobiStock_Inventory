@@ -23,7 +23,7 @@ class AddNewStockOperationController extends GetxController {
   final duesController = TextEditingController();
 
   // Observable variables
-  var isPaid = false.obs; // Changed default to false
+  var isPaid = false.obs;
   var isAddingBill = false.obs;
   var hasAddBillError = false.obs;
   var addBillErrorMessage = ''.obs;
@@ -40,6 +40,9 @@ class AddNewStockOperationController extends GetxController {
   var categories = <String>[].obs;
   var isLoadingCategories = false.obs;
 
+  // Flag to prevent circular calculation updates
+  var _isCalculating = false;
+
   // Dropdown options
   List<String> companies = ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Realme'];
   List<String> models = ['iPhone 14', 'iPhone 15', 'Galaxy S23', 'OnePlus 11'];
@@ -52,6 +55,7 @@ class AddNewStockOperationController extends GetxController {
     super.onInit();
     fetchCategories();
     _initializeCalculation();
+    _setupControllerListeners();
   }
 
   void _initializeCalculation() {
@@ -60,6 +64,85 @@ class AddNewStockOperationController extends GetxController {
     withoutGstController.text = '0';
     amountController.text = '0';
     duesController.text = '0';
+  }
+
+  void _setupControllerListeners() {
+    // Listen to total amount changes
+    amountController.addListener(() {
+      if (!_isCalculating) {
+        _onTotalAmountChanged();
+      }
+    });
+
+    // Listen to GST changes
+    gstController.addListener(() {
+      if (!_isCalculating) {
+        _onGstChanged();
+      }
+    });
+  }
+
+  void _onTotalAmountChanged() {
+    if (_isCalculating) return;
+    _isCalculating = true;
+
+    String totalAmountText = amountController.text.trim();
+    String gstText = gstController.text.trim();
+
+    if (totalAmountText.isNotEmpty && gstText.isNotEmpty) {
+      double totalAmount = double.tryParse(totalAmountText) ?? 0;
+      double gstRate = double.tryParse(gstText) ?? 0;
+
+      if (gstRate > 0) {
+        // Calculate without GST: Total Amount / (1 + GST/100)
+        double withoutGst = totalAmount / (1 + (gstRate / 100));
+        withoutGstController.text = withoutGst.toStringAsFixed(2);
+      } else {
+        // If no GST, without GST equals total amount
+        withoutGstController.text = totalAmount.toStringAsFixed(2);
+      }
+    }
+
+    _updateDues();
+    _isCalculating = false;
+  }
+
+  void _onGstChanged() {
+    if (_isCalculating) return;
+    _isCalculating = true;
+
+    String gstText = gstController.text.trim();
+    String totalAmountText = amountController.text.trim();
+
+    if (gstText.isNotEmpty && totalAmountText.isNotEmpty) {
+      double gstRate = double.tryParse(gstText) ?? 0;
+      double totalAmount = double.tryParse(totalAmountText) ?? 0;
+
+      if (gstRate > 0 && totalAmount > 0) {
+        // Calculate without GST: Total Amount / (1 + GST/100)
+        double withoutGst = totalAmount / (1 + (gstRate / 100));
+        withoutGstController.text = withoutGst.toStringAsFixed(2);
+      } else if (gstRate == 0 && totalAmount > 0) {
+        // If no GST, without GST equals total amount
+        withoutGstController.text = totalAmount.toStringAsFixed(2);
+      }
+    }
+
+    _updateDues();
+    _isCalculating = false;
+  }
+
+  void _updateDues() {
+    String totalAmountText = amountController.text.trim();
+    if (totalAmountText.isNotEmpty) {
+      double totalAmount = double.tryParse(totalAmountText) ?? 0;
+      
+      if (!isPaid.value) {
+        duesController.text = totalAmount.toStringAsFixed(2);
+      } else {
+        duesController.text = '0.00';
+      }
+    }
   }
 
   // Fetch categories from API
@@ -198,13 +281,6 @@ class AddNewStockOperationController extends GetxController {
         }
       }
 
-      // File is optional based on the API
-      // if (selectedFile.value == null) {
-      //   hasAddBillError.value = true;
-      //   addBillErrorMessage.value = 'Please select an invoice file';
-      //   return;
-      // }
-
       isAddingBill.value = true;
       hasAddBillError.value = false;
 
@@ -225,9 +301,9 @@ class AddNewStockOperationController extends GetxController {
       Map<String, dynamic> itemData = {
         "company": item.company.value,
         "model": item.model.value,
-        "sellingPrice": item.sellingPrice.value, // Keep as string as per API
+        "sellingPrice": item.sellingPrice.value,
         "color": item.color.value,
-        "qty": item.qty.value, // Keep as string as per API
+        "qty": item.qty.value,
         "itemCategory": item.category.value,
         "description": item.description.value.isEmpty ? "" : item.description.value,
       };
@@ -250,11 +326,9 @@ class AddNewStockOperationController extends GetxController {
     // Prepare main bill data - matching the API structure
     return {
       "companyName": companyNameController.text.trim(),
-      "isPaid": isPaid.value,
       "amount": parseToDouble(amountController.text.trim()),
-      "withoutGst": withoutGstController.text.trim(), // Keep as string as per API
+      "withoutGst": withoutGstController.text.trim(),
       "gst": parseToDouble(gstController.text.trim()),
-      "dues": parseToDouble(duesController.text.trim()),
       "items": itemsArray,
     };
   }
@@ -386,7 +460,7 @@ class AddNewStockOperationController extends GetxController {
     duesController.clear();
 
     // Reset observables
-    isPaid.value = false; // Reset to default unpaid
+    isPaid.value = false;
     hasAddBillError.value = false;
     addBillErrorMessage.value = '';
 
@@ -416,50 +490,15 @@ class AddNewStockOperationController extends GetxController {
     if (index >= 0 && index < billItems.length) {
       billItems[index].dispose();
       billItems.removeAt(index);
-      calculateTotals(); // Recalculate totals after removing item
     }
   }
 
-  void calculateTotals() {
-    double totalItemAmount = 0;
-    
-    // Calculate total from all items
-    for (var item in billItems) {
-      if (item.sellingPrice.value.isNotEmpty && item.qty.value.isNotEmpty) {
-        double price = double.tryParse(item.sellingPrice.value) ?? 0;
-        int quantity = int.tryParse(item.qty.value) ?? 0;
-        totalItemAmount += price * quantity;
-      }
-    }
-
-    double gstRate = double.tryParse(gstController.text) ?? 0;
-    
-    // If GST rate is provided, calculate without GST amount
-    if (gstRate > 0) {
-      double withoutGstAmount = totalItemAmount / (1 + (gstRate / 100));
-      withoutGstController.text = withoutGstAmount.toStringAsFixed(2);
-      amountController.text = totalItemAmount.toStringAsFixed(2);
-    } else {
-      // If no GST, without GST amount equals total amount
-      withoutGstController.text = totalItemAmount.toStringAsFixed(2);
-      amountController.text = totalItemAmount.toStringAsFixed(2);
-    }
-
-    // Calculate dues based on payment status
-    if (!isPaid.value) {
-      duesController.text = totalItemAmount.toStringAsFixed(2);
-    } else {
-      duesController.text = '0.00';
-    }
-  }
-
-  // Method to update item field and trigger calculation
+  // Method to update item field (no longer triggers total calculation)
   void updateItemField(int index, String field, String value) {
     if (index >= 0 && index < billItems.length) {
       switch (field) {
         case 'category':
           billItems[index].category.value = value;
-          // No controller for category since it's dropdown
           break;
         case 'company':
           billItems[index].company.value = value;
@@ -494,13 +533,17 @@ class AddNewStockOperationController extends GetxController {
           billItems[index].descriptionController.text = value;
           break;
       }
-      calculateTotals();
     }
   }
 
-  // Method to handle GST changes
+  // Method to handle GST changes (kept for backward compatibility)
   void onGstChanged(String value) {
-    calculateTotals();
+    // This will be handled by the listener automatically
+  }
+
+  // Method to handle payment status change
+  void onPaymentStatusChanged() {
+    _updateDues();
   }
 
   @override
@@ -531,7 +574,7 @@ class BillItem {
   RxString qty = ''.obs;
   RxString description = ''.obs;
 
-  // Add controllers for text fields (no category controller since it's dropdown)
+  // Add controllers for text fields
   late TextEditingController companyController;
   late TextEditingController modelController;
   late TextEditingController ramController;

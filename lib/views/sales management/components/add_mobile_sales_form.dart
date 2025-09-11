@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smartbecho/controllers/sales%20hisrory%20controllers/add_mobile_sales_controller.dart';
+import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
+import 'package:smartbecho/services/payment_types.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
@@ -15,7 +18,7 @@ class MobileSalesForm extends StatelessWidget {
     final SalesCrudOperationController controller =
     Get.isRegistered<SalesCrudOperationController>()?
         Get.find<SalesCrudOperationController>():Get.put(SalesCrudOperationController());
-
+final InventoryItem item  = Get.arguments['inventoryItem'];
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: _buildAppBar(controller),
@@ -29,7 +32,7 @@ class MobileSalesForm extends StatelessWidget {
                 controller: controller.pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _buildStep1(controller),
+                  _buildStep1(controller,item),
                   _buildStep2(controller),
                 ],
               ),
@@ -151,12 +154,12 @@ class MobileSalesForm extends StatelessWidget {
     );
   }
 
-  Widget _buildStep1(SalesCrudOperationController controller) {
+  Widget _buildStep1(SalesCrudOperationController controller , InventoryItem item) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildProductDetailsSection(controller),
+          _buildProductDetailsSection(controller,item),
           _buildCustomerDetailsSection(controller),
           _buildStep1Navigation(controller),
         ],
@@ -176,7 +179,7 @@ class MobileSalesForm extends StatelessWidget {
     );
   }
 
-  Widget _buildProductDetailsSection(SalesCrudOperationController controller) {
+  Widget _buildProductDetailsSection(SalesCrudOperationController controller , InventoryItem item) {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -274,7 +277,7 @@ class MobileSalesForm extends StatelessWidget {
                       // RAM Dropdown
                       Expanded(
                         child: buildStyledDropdown(
-                          labelText: 'RAM',
+                          labelText: 'RAM (GB)',
                           hintText: 'Select RAM',
                           value: controller.selectedRam.value.isEmpty
                               ? null
@@ -288,7 +291,7 @@ class MobileSalesForm extends StatelessWidget {
                       // ROM Dropdown
                       Expanded(
                         child: buildStyledDropdown(
-                          labelText: 'Storage (ROM)',
+                          labelText: 'Storage (ROM) (GB)',
                           hintText: 'Select Storage',
                           value: controller.selectedRom.value.isEmpty
                               ? null
@@ -337,6 +340,10 @@ class MobileSalesForm extends StatelessWidget {
                     hintText: '1',
                     keyboardType: TextInputType.number,
                     validator: controller.validateQuantity,
+                     inputFormatters: [
+      FilteringTextInputFormatter.digitsOnly,
+      MaxValueInputFormatter(item.quantity), // 👈 pass max quantity
+    ],
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -386,6 +393,7 @@ class MobileSalesForm extends StatelessWidget {
               controller: controller.customerNameController,
               hintText: 'Enter customer name',
               validator: controller.validateCustomerName,
+              
             ),
             const SizedBox(height: 16),
 
@@ -397,6 +405,10 @@ class MobileSalesForm extends StatelessWidget {
               keyboardType: TextInputType.phone,
               validator: controller.validatePhoneNumber,
               onChanged: controller.onPhoneNumberChanged,
+               inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly, // Allow only digits
+    LengthLimitingTextInputFormatter(10),   // Limit to 10 digits
+  ],
               suffixIcon: controller.isLoadingCustomer.value
                   ? const SizedBox(
                       width: 20,
@@ -416,6 +428,7 @@ class MobileSalesForm extends StatelessWidget {
               hintText: 'Enter your email',
               keyboardType: TextInputType.emailAddress,
               validator: controller.validateEmail,
+
             ),
             const SizedBox(height: 16),
 
@@ -741,7 +754,7 @@ class MobileSalesForm extends StatelessWidget {
           value: controller.selectedPaymentMethod.value.isEmpty
               ? null
               : controller.selectedPaymentMethod.value,
-          items: controller.paymentMethods,
+          items: PaymentTypes.paymentMethods,
           onChanged: (value) => controller.onPaymentMethodChanged(value ?? ''),
           validator: controller.validatePaymentMethod,
         ),
@@ -769,7 +782,7 @@ class MobileSalesForm extends StatelessWidget {
           value: controller.selectedPaymentMethod.value.isEmpty
               ? null
               : controller.selectedPaymentMethod.value,
-          items: controller.paymentMethods,
+          items: PaymentTypes.paymentMethods,
           onChanged: (value) => controller.onPaymentMethodChanged(value ?? ''),
           validator: controller.validatePaymentMethod,
         ),
@@ -809,7 +822,7 @@ class MobileSalesForm extends StatelessWidget {
           value: controller.selectedPaymentMethod.value.isEmpty
               ? null
               : controller.selectedPaymentMethod.value,
-          items: controller.paymentMethods,
+          items: PaymentTypes.paymentMethods,
           onChanged: (value) => controller.onPaymentMethodChanged(value ?? ''),
           validator: controller.validatePaymentMethod,
         ),
@@ -1030,5 +1043,27 @@ class MobileSalesForm extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+
+
+class MaxValueInputFormatter extends TextInputFormatter {
+  final int max;
+
+  MaxValueInputFormatter(this.max);
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) return newValue;
+
+    final int? value = int.tryParse(newValue.text);
+    if (value == null) return oldValue;
+
+    if (value > max) {
+      return oldValue; // Reject change if input exceeds max
+    }
+
+    return newValue;
   }
 }

@@ -7,10 +7,23 @@ class SaleDetailResponse {
   final String invoiceNumber;
   final String saleDate;
   final double totalPayableAmount;
+  final double? unitPrice;
+  final double withoutGst;
+  final double withGst;
+  final double gst;
   final String customerName;
   final List<SaleItem> items;
+  final double extraCharges;
+  final double accessoriesCost;
+  final double repairCharges;
+  final double totalAmount;
+  final double totalDiscount;
+  final double downPayment;
   final SaleDues? dues;
   final SaleEmi? emi;
+  final Shop shop;
+  final Customer customer;
+  final bool paid;
 
   SaleDetailResponse({
     required this.saleId,
@@ -19,10 +32,23 @@ class SaleDetailResponse {
     required this.invoiceNumber,
     required this.saleDate,
     required this.totalPayableAmount,
+    this.unitPrice,
+    required this.withoutGst,
+    required this.withGst,
+    required this.gst,
     required this.customerName,
     required this.items,
+    required this.extraCharges,
+    required this.accessoriesCost,
+    required this.repairCharges,
+    required this.totalAmount,
+    required this.totalDiscount,
+    required this.downPayment,
     this.dues,
     this.emi,
+    required this.shop,
+    required this.customer,
+    required this.paid,
   });
 
   factory SaleDetailResponse.fromJson(Map<String, dynamic> json) {
@@ -33,16 +59,37 @@ class SaleDetailResponse {
       invoiceNumber: json['invoiceNumber'] ?? '',
       saleDate: json['saleDate'] ?? '',
       totalPayableAmount: (json['totalPayableAmount'] ?? 0.0).toDouble(),
+      unitPrice: json['unitPrice']?.toDouble(),
+      withoutGst: (json['withoutGst'] ?? 0.0).toDouble(),
+      withGst: (json['withGst'] ?? 0.0).toDouble(),
+      gst: (json['gst'] ?? 0.0).toDouble(),
       customerName: json['customerName'] ?? '',
       items: (json['items'] as List?)
           ?.map((item) => SaleItem.fromJson(item))
           .toList() ?? [],
+      extraCharges: (json['extraCharges'] ?? 0.0).toDouble(),
+      accessoriesCost: (json['accessoriesCost'] ?? 0.0).toDouble(),
+      repairCharges: (json['repairCharges'] ?? 0.0).toDouble(),
+      totalAmount: (json['totalAmount'] ?? 0.0).toDouble(),
+      totalDiscount: (json['totalDiscount'] ?? 0.0).toDouble(),
+      downPayment: (json['downPayment'] ?? 0.0).toDouble(),
       dues: json['dues'] != null ? SaleDues.fromJson(json['dues']) : null,
       emi: json['emi'] != null ? SaleEmi.fromJson(json['emi']) : null,
+      shop: Shop.fromJson(json['shop']),
+      customer: Customer.fromJson(json['customer']),
+      paid: json['paid'] ?? false,
     );
   }
 
   String get formattedAmount => '₹${totalPayableAmount.toStringAsFixed(2)}';
+  String get formattedTotalAmount => '₹${totalAmount.toStringAsFixed(2)}';
+  String get formattedWithoutGst => '₹${withoutGst.toStringAsFixed(2)}';
+  String get formattedWithGst => '₹${withGst.toStringAsFixed(2)}';
+  String get formattedDownPayment => '₹${downPayment.toStringAsFixed(2)}';
+  String get formattedExtraCharges => '₹${extraCharges.toStringAsFixed(2)}';
+  String get formattedAccessoriesCost => '₹${accessoriesCost.toStringAsFixed(2)}';
+  String get formattedRepairCharges => '₹${repairCharges.toStringAsFixed(2)}';
+  String get formattedTotalDiscount => '₹${totalDiscount.toStringAsFixed(2)}';
   
   String get formattedDate {
     try {
@@ -61,6 +108,8 @@ class SaleDetailResponse {
       return '';
     }
   }
+
+  String get paymentStatus => paid ? 'Paid' : 'Pending';
 }
 
 class SaleItem {
@@ -98,7 +147,7 @@ class SaleItem {
   }
 
   String get formattedPrice => sellingPrice != null ? '₹${sellingPrice!.toStringAsFixed(2)}' : 'N/A';
-  String get specifications => '$ram + $rom';
+  String get specifications => '$ram GB + $rom GB';
 }
 
 class SaleDues {
@@ -139,6 +188,7 @@ class SaleDues {
       paid: json['paid'] ?? false,
     );
   }
+
   String get formattedTotalDue => '₹${totalDue.toStringAsFixed(2)}';
   String get formattedTotalPaid => '₹${totalPaid.toStringAsFixed(2)}';
   String get formattedRemainingDue => '₹${remainingDue.toStringAsFixed(2)}';
@@ -176,28 +226,141 @@ class PartialPayment {
 }
 
 class SaleEmi {
-  // Add EMI fields based on your actual EMI structure
-  final int? id;
-  final double? monthlyAmount;
-  final int? tenure;
-  final double? totalAmount;
+  final int id;
+  final Customer customer;
+  final double totalEmiAmount;
+  final double monthlyEmi;
+  final int totalMonths;
+  final int paidMonths;
+  final String startDate;
 
   SaleEmi({
-    this.id,
-    this.monthlyAmount,
-    this.tenure,
-    this.totalAmount,
+    required this.id,
+    required this.customer,
+    required this.totalEmiAmount,
+    required this.monthlyEmi,
+    required this.totalMonths,
+    required this.paidMonths,
+    required this.startDate,
   });
 
   factory SaleEmi.fromJson(Map<String, dynamic> json) {
     return SaleEmi(
-      id: json['id'],
-      monthlyAmount: json['monthlyAmount']?.toDouble(),
-      tenure: json['tenure'],
-      totalAmount: json['totalAmount']?.toDouble(),
+      id: json['id'] ?? 0,
+      customer: Customer.fromJson(json['customer'] ?? {}),
+      totalEmiAmount: (json['totalEmiAmount'] ?? 0.0).toDouble(),
+      monthlyEmi: (json['monthlyEmi'] ?? 0.0).toDouble(),
+      totalMonths: json['totalMonths'] ?? 0,
+      paidMonths: json['paidMonths'] ?? 0,
+      startDate: json['startDate'] ?? '',
     );
   }
 
-  String get formattedMonthlyAmount => monthlyAmount != null ? '₹${monthlyAmount!.toStringAsFixed(2)}' : 'N/A';
-  String get formattedTotalAmount => totalAmount != null ? '₹${totalAmount!.toStringAsFixed(2)}' : 'N/A';
+  String get formattedMonthlyEmi => '₹${monthlyEmi.toStringAsFixed(2)}';
+  String get formattedTotalEmiAmount => '₹${totalEmiAmount.toStringAsFixed(2)}';
+  String get formattedStartDate {
+    try {
+      final DateTime parsedDate = DateTime.parse(startDate);
+      return '${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}';
+    } catch (e) {
+      return startDate;
+    }
+  }
+
+  int get remainingMonths => totalMonths - paidMonths;
+  double get remainingAmount => monthlyEmi * remainingMonths;
+  double get paidAmount => monthlyEmi * paidMonths;
+  double get completionPercentage => totalMonths > 0 ? (paidMonths / totalMonths) * 100 : 0.0;
+  
+  String get formattedRemainingAmount => '₹${remainingAmount.toStringAsFixed(2)}';
+  String get formattedPaidAmount => '₹${paidAmount.toStringAsFixed(2)}';
+}
+
+class Shop {
+  final int id;
+  final String shopId;
+  final String shopStoreName;
+  final String email;
+  final String phone;
+  final String? shopAddress;
+  final String? profilePhotoUrl;
+  final int status;
+  final String gstnumber;
+  final String adhaarNumber;
+  final String creationDate;
+
+  Shop({
+    required this.id,
+    required this.shopId,
+    required this.shopStoreName,
+    required this.email,
+    required this.phone,
+    this.shopAddress,
+    this.profilePhotoUrl,
+    required this.status,
+    required this.gstnumber,
+    required this.adhaarNumber,
+    required this.creationDate,
+  });
+
+  factory Shop.fromJson(Map<String, dynamic> json) {
+    return Shop(
+      id: json['id'] ?? 0,
+      shopId: json['shopId'] ?? '',
+      shopStoreName: json['shopStoreName'] ?? '',
+      email: json['email'] ?? '',
+      phone: json['phone'] ?? '',
+      shopAddress: json['shopAddress'],
+      profilePhotoUrl: json['profilePhotoUrl'],
+      status: json['status'] ?? json['Status'] ?? 1,
+      gstnumber: json['gstnumber'] ?? '',
+      adhaarNumber: json['adhaarNumber'] ?? '',
+      creationDate: json['creationDate'] ?? '',
+    );
+  }
+}
+
+class Customer {
+  final int id;
+  final String name;
+  final String? email;
+  final String primaryPhone;
+  final String primaryAddress;
+  final String shopId;
+  final String? profilePhotoUrl;
+  final String location;
+  final List<String> alternatePhones;
+  final String createdAt;
+
+  Customer({
+    required this.id,
+    required this.name,
+    this.email,
+    required this.primaryPhone,
+    required this.primaryAddress,
+    required this.shopId,
+    this.profilePhotoUrl,
+    required this.location,
+    required this.alternatePhones,
+    required this.createdAt,
+  });
+
+  factory Customer.fromJson(Map<String, dynamic> json) {
+    return Customer(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      email: json['email'],
+      primaryPhone: json['primaryPhone'] ?? '',
+      primaryAddress: json['primaryAddress'] ?? '',
+      shopId: json['shopId'] ?? '',
+      profilePhotoUrl: json['profilePhotoUrl'],
+      location: json['location'] ?? '',
+      alternatePhones: List<String>.from(json['alternatePhones'] ?? []),
+      createdAt: json['createdAt'] ?? '',
+    );
+  }
+
+  String get displayName => name.isNotEmpty ? name : 'Unknown Customer';
+  String get displayPhone => primaryPhone.isNotEmpty ? primaryPhone : 'No phone';
+  String get displayAddress => primaryAddress.isNotEmpty ? primaryAddress : 'No address';
 }

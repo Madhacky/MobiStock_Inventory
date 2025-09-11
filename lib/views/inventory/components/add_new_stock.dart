@@ -111,16 +111,16 @@ class AddNewStockForm extends StatelessWidget {
 
             // Company Name
             buildStyledTextField(
-              labelText: 'Company Name *',
+              labelText: 'Vendor Name *',
               controller: controller.companyNameController,
-              hintText: 'Enter company name',
+              hintText: 'Enter vendor name',
               validator: controller.validateCompanyName,
             ),
             const SizedBox(height: 16),
 
-            // Payment Status
-            _buildPaymentStatusToggle(controller),
-            const SizedBox(height: 16),
+            // // Payment Status
+            // _buildPaymentStatusToggle(controller),
+            // const SizedBox(height: 16),
 
             // GST and Without GST Row
             Row(
@@ -132,9 +132,6 @@ class AddNewStockForm extends StatelessWidget {
                     hintText: '0',
                     keyboardType: TextInputType.number,
                     validator: controller.validateGst,
-                    onChanged: (value) {
-                      controller.onGstChanged(value);
-                    },
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -146,7 +143,7 @@ class AddNewStockForm extends StatelessWidget {
                     prefixText: '₹ ',
                     keyboardType: TextInputType.number,
                     readOnly: true,
-                    // fillColor: Colors.grey.withValues(alpha: 0.1),
+                  //  fillColor: Colors.grey.withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -158,27 +155,26 @@ class AddNewStockForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: buildStyledTextField(
-                    labelText: 'Total Amount',
+                    labelText: 'Total Amount *',
                     controller: controller.amountController,
                     hintText: '0.00',
                     prefixText: '₹ ',
                     keyboardType: TextInputType.number,
-                    readOnly: true,
-                    // fillColor: Colors.grey.withValues(alpha: 0.1),
+                    validator: controller.validateAmount,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: buildStyledTextField(
-                    labelText: 'Dues',
-                    controller: controller.duesController,
-                    hintText: '0.00',
-                    prefixText: '₹ ',
-                    keyboardType: TextInputType.number,
-                    readOnly: true,
-                    // fillColor: Colors.grey.withValues(alpha: 0.1),
-                  ),
-                ),
+                // const SizedBox(width: 16),
+                // Expanded(
+                //   child: buildStyledTextField(
+                //     labelText: 'Dues',
+                //     controller: controller.duesController,
+                //     hintText: '0.00',
+                //     prefixText: '₹ ',
+                //     keyboardType: TextInputType.number,
+                //     readOnly: true,
+                //    // fillColor: Colors.grey.withValues(alpha: 0.1),
+                //   ),
+                // ),
               ],
             ),
 
@@ -438,7 +434,7 @@ class AddNewStockForm extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       controller.isPaid.value = true;
-                      controller.calculateTotals();
+                      controller.onPaymentStatusChanged();
                     },
                     child: Container(
                       height: 48,
@@ -482,7 +478,7 @@ class AddNewStockForm extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       controller.isPaid.value = false;
-                      controller.calculateTotals();
+                      controller.onPaymentStatusChanged();
                     },
                     child: Container(
                       height: 48,
@@ -743,7 +739,7 @@ class AddNewStockForm extends StatelessWidget {
 
         // Selling Price
         buildStyledTextField(
-          labelText: 'Purchase Price *',
+          labelText: 'Selling Price *',
           controller: item.priceController,
           hintText: '0',
           prefixText: '₹ ',

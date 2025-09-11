@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Widget buildStyledTextField({
   required String labelText,
@@ -14,6 +15,7 @@ Widget buildStyledTextField({
   int? maxLines,
   bool readOnly = false,
   bool enabled = true,
+  List<TextInputFormatter>? inputFormatters,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,6 +40,7 @@ Widget buildStyledTextField({
           ),
         ),
         child: TextFormField(
+          inputFormatters: inputFormatters  ,
           controller: controller,
           keyboardType: keyboardType,
           maxLines: maxLines,

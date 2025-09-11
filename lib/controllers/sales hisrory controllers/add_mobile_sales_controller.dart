@@ -131,8 +131,8 @@ class SalesCrudOperationController extends GetxController {
   final RxList<String> colorOptions = <String>[].obs;
   final RxList<String> ramOptions = <String>[].obs; // New RAM options
   final RxList<String> romOptions = <String>[].obs; // New ROM options
-  final RxList<String> paymentMethods =
-      <String>['UPI', 'Cash', 'Card', 'Bank Transfer'].obs;
+  // final RxList<String> paymentMethods =
+  //     <String>['UPI', 'Cash', 'Card', 'Bank Transfer'].obs;
   final RxList<String> emiTenureOptions =
       <String>['3', '6', '9', '12', '18', '24'].obs;
 
@@ -215,49 +215,49 @@ class SalesCrudOperationController extends GetxController {
     }
   }
 
-  /// Calculate prices based on inputs
-  void calculatePrices() {
-    try {
-      // Get values with defaults
-      double quantity = double.tryParse(quantityController.text) ?? 1.0;
-      double unitPrice = double.tryParse(unitPriceController.text) ?? 0.0;
-      double gstPercent = double.tryParse(gstPercentageController.text) ?? 12.0;
-      double extraCharges = double.tryParse(extraChargesController.text) ?? 0.0;
-      double accessoriesCost =
-          double.tryParse(accessoriesCostController.text) ?? 0.0;
-      double repairCharges =
-          double.tryParse(repairChargesController.text) ?? 0.0;
-      double totalDiscount =
-          double.tryParse(totalDiscountController.text) ?? 0.0;
+/// Calculate prices based on inputs
+void calculatePrices() {
+  try {
+    // Get values with defaults
+    double quantity = double.tryParse(quantityController.text) ?? 1.0;
+    double unitPrice = double.tryParse(unitPriceController.text) ?? 0.0;
+    double gstPercent = double.tryParse(gstPercentageController.text) ?? 12.0;
+    double extraCharges = double.tryParse(extraChargesController.text) ?? 0.0;
+    double accessoriesCost =
+        double.tryParse(accessoriesCostController.text) ?? 0.0;
+    double repairCharges =
+        double.tryParse(repairChargesController.text) ?? 0.0;
+    double totalDiscount =
+        double.tryParse(totalDiscountController.text) ?? 0.0;
 
-      // Calculate base amount (quantity * unit price + extras - discount)
-      baseAmount.value =
-          (quantity * unitPrice) +
-          extraCharges +
-          accessoriesCost +
-          repairCharges -
-          totalDiscount;
+    // Calculate base amount (quantity * unit price + extras - discount)
+    // This is the total amount INCLUDING GST
+    baseAmount.value =
+        (quantity * unitPrice) +
+        extraCharges +
+        accessoriesCost +
+        repairCharges -
+        totalDiscount;
 
-      // Calculate amount without GST
-      amountWithoutGST.value = baseAmount.value;
+    // Total payable amount is same as base amount (total including GST)
+    totalPayableAmount.value = baseAmount.value;
 
-      // Calculate GST amount
-      gstPercentage.value = gstPercent;
-      gstAmount.value = (amountWithoutGST.value * gstPercent) / 100;
+    // Calculate amount without GST using the formula:
+    // Amount without GST = Total Amount / (1 + GST%/100)
+    gstPercentage.value = gstPercent;
+    amountWithoutGST.value = baseAmount.value / (1 + (gstPercent / 100));
 
-      // Calculate total payable amount
-      totalPayableAmount.value = amountWithoutGST.value + gstAmount.value;
+    // Calculate GST amount
+    gstAmount.value = baseAmount.value - amountWithoutGST.value;
 
-      // Auto-update payable amount field for full payment
-      if (selectedPaymentMode.value == PaymentMode.fullPayment) {
-        payableAmountController.text = totalPayableAmount.value.toStringAsFixed(
-          2,
-        );
-      }
-    } catch (e) {
-      log('Error calculating prices: $e');
+    // Auto-update payable amount field for full payment
+    if (selectedPaymentMode.value == PaymentMode.fullPayment) {
+      payableAmountController.text = totalPayableAmount.value.toStringAsFixed(2);
     }
+  } catch (e) {
+    log('Error calculating prices: $e');
   }
+}
 
   /// Load initial filter data (categories, colors, RAM, ROM, etc.)
   Future<void> loadInitialFilters() async {
