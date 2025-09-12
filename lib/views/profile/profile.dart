@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 import 'package:smartbecho/controllers/profile/user_profile_controller.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -968,14 +969,16 @@ class ProfileScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             child: TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Get.find<AuthController>().logout();
+              },
               icon: Icon(
-                Icons.delete_outline,
+                Icons.logout,
                 size: 18,
                 color: Colors.red[600],
               ),
               label: Text(
-                'Delete Account',
+                'LogOut',
                 style: TextStyle(color: Colors.red[600]),
               ),
               style: TextButton.styleFrom(

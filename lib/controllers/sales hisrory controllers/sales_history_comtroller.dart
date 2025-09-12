@@ -546,14 +546,7 @@ class SalesManagementController extends GetxController {
       errorMessage.value = 'Error: $error';
       log("❌ Error in fetchSalesHistory: $error");
 
-      // Show error snackbar
-      Get.snackbar(
-        'Error',
-        'Failed to load sales history: $error',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
-        colorText: Colors.white,
-      );
+   
     } finally {
       isLoading.value = false;
       isLoadingMore.value = false;
@@ -598,13 +591,7 @@ class SalesManagementController extends GetxController {
       detailErrorMessage.value = 'Error: $error';
       log("❌ Error in fetchSaleDetail: $error");
       
-      Get.snackbar(
-        'Error',
-        'Failed to load sale details: $error',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
-        colorText: Colors.white,
-      );
+     
     } finally {
       isLoadingDetail.value = false;
     }
