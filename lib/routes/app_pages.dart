@@ -38,6 +38,7 @@ import 'package:smartbecho/views/customer%20dues/components/customer_dues_detail
 import 'package:smartbecho/views/customer/components/customer%20details/customer_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_invoice_details.dart';
 import 'package:smartbecho/views/generate%20inventory/generate_inventory.dart';
+import 'package:smartbecho/views/hsn-code/presentation/hsn_code_screen.dart';
 import 'package:smartbecho/views/inventory/components/add_new_stock.dart';
 import 'package:smartbecho/views/bill%20history/components/bill_details.dart';
 import 'package:smartbecho/views/customer%20dues/components/add_customer_due.dart';
@@ -272,6 +273,14 @@ class AppPages {
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 300),
       binding: AccountManagementBinding(),
+    ),
+    //HSN code management
+    GetPage(
+      name: AppRoutes.hsnCodeManagement,
+      page: () => HsnCodeScreen(),
+      transition: Transition.fade,
+      transitionDuration: Duration(milliseconds: 300),
+      middlewares:[ AuthMiddleware()],
     ),
     //sales  management
     GetPage(

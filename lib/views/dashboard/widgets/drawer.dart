@@ -71,10 +71,18 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     DrawerMenuItem(
       title: 'Account Management',
       subtitle: 'Manage Account data',
-      icon: Icons.groups_3_sharp,
+      icon: Icons.receipt_long_outlined,
       color: Color(0xFFf093fb),
       category: 'Reports',
     ),
+    DrawerMenuItem(
+      title: 'HSN Code Management',
+      subtitle: 'Manage HSN Codes',
+      icon: Icons.people_alt_outlined,
+      color: const Color(0xFF26A69A),
+      category: 'Inventory',
+    ),
+
     DrawerMenuItem(
       title: 'Bill History',
       subtitle: 'Finance overview',
@@ -132,7 +140,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: Offset(2, 0),
           ),
@@ -174,7 +182,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFF667eea).withValues(alpha:0.3),
+                            color: Color(0xFF667eea).withValues(alpha: 0.3),
                             blurRadius: 15,
                             offset: Offset(0, 5),
                           ),
@@ -216,10 +224,10 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF00b894).withValues(alpha:0.1),
+                    color: Color(0xFF00b894).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Color(0xFF00b894).withValues(alpha:0.2),
+                      color: Color(0xFF00b894).withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -268,7 +276,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: Offset(0, 2),
                 ),
@@ -348,11 +356,16 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color:
-                  isSelected ? item.color.withValues(alpha:0.1) : Colors.transparent,
+                  isSelected
+                      ? item.color.withValues(alpha: 0.1)
+                      : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
               border:
                   isSelected
-                      ? Border.all(color: item.color.withValues(alpha:0.3), width: 1)
+                      ? Border.all(
+                        color: item.color.withValues(alpha: 0.3),
+                        width: 1,
+                      )
                       : null,
             ),
             child: Row(
@@ -362,7 +375,9 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                   height: 44,
                   decoration: BoxDecoration(
                     color:
-                        isSelected ? item.color : item.color.withValues(alpha:0.1),
+                        isSelected
+                            ? item.color
+                            : item.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -459,7 +474,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF667eea).withValues(alpha:0.3),
+                        color: Color(0xFF667eea).withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: Offset(0, 4),
                       ),
@@ -519,8 +534,10 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       case 4:
         Get.toNamed(AppRoutes.accountManagement);
       case 5:
-        Get.toNamed(AppRoutes.billHistory);
+        Get.toNamed(AppRoutes.hsnCodeManagement);
       case 6:
+        Get.toNamed(AppRoutes.billHistory);
+      case 7:
         Get.toNamed(AppRoutes.customerDuesManagement);
       case 9:
         Get.toNamed(AppRoutes.generateInventory);
