@@ -1,4 +1,6 @@
 // stock_item_model.dart
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 class StockItemsResponse {
@@ -36,6 +38,8 @@ class StockItemsResponse {
   }
 }
 
+
+
 class StockItem {
   final String itemCategory;
   final String shopId;
@@ -50,6 +54,11 @@ class StockItem {
   final String logo;
   final DateTime createdDate;
   final String description;
+  final double withGstAmount;
+  final double withoutGstAmount;
+  final String? hsnCode;
+  final double gstAmount;
+  final String? colorImeiMapping;
   final int billMobileItem;
 
   StockItem({
@@ -66,6 +75,11 @@ class StockItem {
     required this.logo,
     required this.createdDate,
     required this.description,
+    required this.withGstAmount,
+    required this.withoutGstAmount,
+    this.hsnCode,
+    required this.gstAmount,
+    this.colorImeiMapping,
     required this.billMobileItem,
   });
 
@@ -84,33 +98,137 @@ class StockItem {
       logo: json['logo'] ?? '',
       createdDate: _parseDate(json['createdDate']),
       description: json['description'] ?? '',
+      withGstAmount: (json['withGstAmount'] ?? 0).toDouble(),
+      withoutGstAmount: (json['withoutGstAmount'] ?? 0).toDouble(),
+      hsnCode: json['hsnCode'],
+      gstAmount: (json['gstAmount'] ?? 0).toDouble(),
+      colorImeiMapping: json['colorImeiMapping'],
       billMobileItem: json['billMobileItem'] ?? 0,
     );
   }
 
-  String get formattedDate {
-    return DateFormat('dd MMM yyyy').format(createdDate);
+  static DateTime _parseDate(dynamic dateValue) {
+    if (dateValue == null) return DateTime.now();
+    
+    try {
+      if (dateValue is String) {
+        return DateTime.parse(dateValue);
+      } else if (dateValue is int) {
+        return DateTime.fromMillisecondsSinceEpoch(dateValue);
+      }
+      return DateTime.now();
+    } catch (e) {
+      return DateTime.now();
+    }
   }
 
-  String get formattedPrice {
-    final formatter = NumberFormat('#,##,###');
-    return '₹${formatter.format(sellingPrice)}';
+  Map<String, dynamic> toJson() {
+    return {
+      'itemCategory': itemCategory,
+      'shopId': shopId,
+      'model': model,
+      'sellingPrice': sellingPrice,
+      'ram': ram,
+      'rom': rom,
+      'color': color,
+      'imei': imei,
+      'qty': qty,
+      'company': company,
+      'logo': logo,
+      'createdDate': createdDate.toIso8601String().split('T')[0],
+      'description': description,
+      'withGstAmount': withGstAmount,
+      'withoutGstAmount': withoutGstAmount,
+      'hsnCode': hsnCode,
+      'gstAmount': gstAmount,
+      'colorImeiMapping': colorImeiMapping,
+      'billMobileItem': billMobileItem,
+    };
+  }
+
+  // Computed properties
+  String get categoryDisplayName {
+    return itemCategory.replaceAll('_', ' ').toUpperCase();
   }
 
   String get ramRomDisplay {
-    if (itemCategory.toLowerCase().contains('smartphone') || 
-        itemCategory.toLowerCase().contains('tablet') ||
-        itemCategory.toLowerCase().contains('phone')) {
-      return '${ram}GB/${rom}GB';
+    if (ram > 0 && rom > 0) {
+      return '$ram GB / $rom GB';
     }
     return '';
   }
 
-  String get categoryDisplayName {
-    return itemCategory
-        .split('_')
-        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
-        .join(' ');
+  String get formattedPrice {
+    return '₹${sellingPrice.toStringAsFixed(2)}';
+  }
+
+  String get formattedWithGst {
+    return '₹${withGstAmount.toStringAsFixed(2)}';
+  }
+
+  String get formattedWithoutGst {
+    return '₹${withoutGstAmount.toStringAsFixed(2)}';
+  }
+
+  String get formattedGstAmount {
+    return '₹${gstAmount.toStringAsFixed(2)}';
+  }
+
+  String get formattedDate {
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${createdDate.day} ${months[createdDate.month - 1]} ${createdDate.year}';
+  }
+
+  double get gstPercentage {
+    if (withoutGstAmount > 0) {
+      return (gstAmount / withoutGstAmount) * 100;
+    }
+    return 0.0;
+  }
+
+  // Parse colorImeiMapping JSON string to Map
+  Map<String, List<String>>? get parsedColorImeiMapping {
+    if (colorImeiMapping == null || colorImeiMapping!.isEmpty) {
+      return null;
+    }
+    
+    try {
+      // Parse the JSON string
+      final decoded = json.decode(colorImeiMapping!);
+      
+      // Convert to Map<String, List<String>>
+      Map<String, List<String>> result = {};
+      decoded.forEach((key, value) {
+        if (value is List) {
+          result[key.toString()] = value.map((e) => e.toString()).toList();
+        }
+      });
+      
+      return result.isEmpty ? null : result;
+    } catch (e) {
+      print('Error parsing colorImeiMapping: $e');
+      return null;
+    }
+  }
+
+  // Get total IMEI count across all colors
+  int get totalImeiCount {
+    final mapping = parsedColorImeiMapping;
+    if (mapping == null) return 0;
+    
+    int count = 0;
+    mapping.forEach((color, imeis) {
+      count += imeis.length;
+    });
+    return count;
+  }
+
+  // Get IMEI list for current color
+  List<String>? get currentColorImeis {
+    final mapping = parsedColorImeiMapping;
+    if (mapping == null) return null;
+    return mapping[color];
   }
 }
 

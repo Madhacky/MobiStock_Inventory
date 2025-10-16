@@ -18,6 +18,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:smartbecho/services/user_preference.dart';
+import 'package:smartbecho/services/user_profile_service.dart';
 
 // API Response Models with proper null safety
 class TodayStatsModel {
@@ -252,6 +253,7 @@ class DashboardController extends GetxController
   final ApiServices _apiService = ApiServices();
   final AppConfig _config = AppConfig.instance;
   RxBool isGridView = true.obs;
+final UserProfileService _userProfileService = Get.put<UserProfileService>(UserProfileService());
 
   // Global loading states
   RxBool isAllDataLoading = true.obs;
@@ -264,7 +266,7 @@ class DashboardController extends GetxController
     _initializeAnimations();
     _initializeData();
     _startAnimations();
-
+ _userProfileService.fetchAndSaveUserProfile();
     // Load all dashboard data using Future.wait
     fetchAllDashboardData();
   }

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/services/user_profile_service.dart';
 import 'package:smartbecho/utils/debuggers.dart';
 
 enum PaymentMode { fullPayment, partialPayment, emi }
@@ -143,7 +144,7 @@ class SalesCrudOperationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+checkGSTAvailability(); 
     // Check if we're coming from inventory page
     final arguments = Get.arguments;
     if (arguments != null && arguments is Map<String, dynamic>) {
@@ -480,6 +481,52 @@ void calculatePrices() {
       models.clear();
     }
   }
+
+  // Add these properties at the top of your controller class
+final RxBool shouldShowGST = false.obs;
+final RxString shopGSTNumber = ''.obs;
+final RxString itemSource = ''.obs;
+
+// Add this method in your controller
+Future<void> checkGSTAvailability() async {
+  try {
+    // Get shop GST number from UserProfileService
+    final userProfileService = Get.find<UserProfileService>();
+    final profileData = await userProfileService.getUserProfileData();
+    
+    shopGSTNumber.value = profileData['gstNumber'] ?? '';
+    
+    // Get inventory item from arguments
+    final InventoryItem item = Get.arguments['inventoryItem'];
+    itemSource.value = item.source ?? '';
+    
+    // Show GST only if:
+    // 1. Shop has GST number
+    // 2. Item source is "OFFLINE"
+    shouldShowGST.value = shopGSTNumber.value.isNotEmpty && 
+                          itemSource.value.toUpperCase() == 'OFFLINE';
+    
+    // If GST should not be shown, set GST percentage to 0
+    if (!shouldShowGST.value) {
+      gstPercentageController.text = '0';
+      gstPercentage.value = 0.0;
+    } else {
+      // Set default GST if needed (e.g., 18%)
+      if (gstPercentageController.text.isEmpty) {
+        gstPercentageController.text = '18';
+        gstPercentage.value = 18.0;
+      }
+    }
+    
+    calculatePrices();
+  } catch (e) {
+    log("❌ Error checking GST availability: $e");
+    shouldShowGST.value = false;
+    gstPercentageController.text = '0';
+    gstPercentage.value = 0.0;
+  }
+}
+
 
   /// Handle company selection
   void onCompanyChanged(String company) {

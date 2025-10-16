@@ -576,7 +576,7 @@ class _InventoryDashboardState extends State<InventoryDashboard>
     double delay,
   ) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
@@ -595,7 +595,7 @@ class _InventoryDashboardState extends State<InventoryDashboard>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [color, color.withOpacity(0.8)],
@@ -1022,7 +1022,7 @@ Widget _buildAnimatedChartCard({
             Text(
               label,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 9,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF64748B),
               ),
@@ -1322,20 +1322,20 @@ Widget _buildAnimatedChartCard({
               ),
             ],
           ),
-          const SizedBox(height: 36),
-          Obx(
-            () => SizedBox(
-              height: 200,
-              child: CustomPaint(
-                painter: CustomerAnalyticsChartPainter(
-                  totalCustomers: controller.totalCustomers,
-                  repeatedCustomers: controller.repeatedCustomers,
-                  newCustomers: controller.newCustomersThisMonth,
-                ),
-                size: Size.infinite,
-              ),
-            ),
-          ),
+          // const SizedBox(height: 36),
+          // Obx(
+          //   () => SizedBox(
+          //     height: 200,
+          //     child: CustomPaint(
+          //       painter: CustomerAnalyticsChartPainter(
+          //         totalCustomers: controller.totalCustomers,
+          //         repeatedCustomers: controller.repeatedCustomers,
+          //         newCustomers: controller.newCustomersThisMonth,
+          //       ),
+          //       size: Size.infinite,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 20),
           Obx(
             () => Row(

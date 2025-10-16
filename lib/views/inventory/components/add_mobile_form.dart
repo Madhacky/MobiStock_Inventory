@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -14,7 +13,6 @@ class AddNewMobileInventoryForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the controller instance
     final InventoryCrudOperationController controller =
         Get.find<InventoryCrudOperationController>();
 
@@ -68,7 +66,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ADD NEW MOBILE',
+                    'ADD ONLINE PRODUCT',
                     style: AppStyles.custom(
                       color: const Color(0xFF1A1A1A),
                       size: 16,
@@ -113,7 +111,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                                 : controller.companyTextController.text
                             : controller.selectedAddCompany.value,
                       )
-                      .withValues(alpha:0.1),
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: controller
@@ -124,7 +122,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                                   : controller.companyTextController.text
                               : controller.selectedAddCompany.value,
                         )
-                        .withValues(alpha:0.2),
+                        .withValues(alpha: 0.2),
                   ),
                 ),
                 child: Icon(
@@ -178,7 +176,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                                   : controller.companyTextController.text
                               : controller.selectedAddCompany.value,
                         )
-                        .withValues(alpha:0.1),
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -205,13 +203,13 @@ class AddNewMobileInventoryForm extends StatelessWidget {
 
   Widget _buildFormContent(InventoryCrudOperationController controller) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -226,7 +224,26 @@ class AddNewMobileInventoryForm extends StatelessWidget {
             _buildSectionTitle('Device Information', Icons.phone_android),
             const SizedBox(height: 16),
 
-            // Company Field (Dropdown or TextField)
+            // Category Dropdown - NEW
+            Obx(() {
+              if (controller.isLoadingCategories.value) {
+                return buildShimmerTextField();
+              }
+
+              return buildStyledDropdown(
+                labelText: 'Category',
+                hintText: 'Select Category',
+                value: controller.selectedCategory.value.isEmpty
+                    ? null
+                    : controller.selectedCategory.value,
+                items: controller.categories,
+                onChanged: (value) => controller.onCategoryChanged(value ?? ''),
+                validator: controller.validateCategory,
+              );
+            }),
+            const SizedBox(height: 16),
+
+            // Company Field
             Obx(() {
               if (controller.isLoadingFilters.value) {
                 return buildShimmerTextField();
@@ -244,13 +261,11 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 return buildStyledDropdown(
                   labelText: 'Company',
                   hintText: 'Select Company',
-                  value:
-                      controller.selectedAddCompany.value.isEmpty
-                          ? null
-                          : controller.selectedAddCompany.value,
+                  value: controller.selectedAddCompany.value.isEmpty
+                      ? null
+                      : controller.selectedAddCompany.value,
                   items: controller.companies,
-                  onChanged:
-                      (value) => controller.onAddCompanyChanged(value ?? ''),
+                  onChanged: (value) => controller.onAddCompanyChanged(value ?? ''),
                   validator: controller.validateCompany,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.edit, size: 16),
@@ -266,7 +281,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
             }),
             const SizedBox(height: 16),
 
-            // Model Field (Dropdown or TextField)
+            // Model Field
             Obx(() {
               if (controller.isLoadingModels.value) {
                 return buildShimmerTextField();
@@ -298,13 +313,11 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 return buildStyledDropdown(
                   labelText: 'Model',
                   hintText: 'Select Model',
-                  value:
-                      controller.selectedAddModel.value.isEmpty
-                          ? null
-                          : controller.selectedAddModel.value,
+                  value: controller.selectedAddModel.value.isEmpty
+                      ? null
+                      : controller.selectedAddModel.value,
                   items: controller.models,
-                  onChanged:
-                      (value) => controller.onAddModelChanged(value ?? ''),
+                  onChanged: (value) => controller.onAddModelChanged(value ?? ''),
                   validator: controller.validateModel,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.edit, size: 16),
@@ -318,50 +331,52 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 );
               }
             }),
+
+            // RAM and Storage Row - CONDITIONAL
+            Obx(() {
+              if (controller.shouldShowRamRom) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: buildStyledDropdown(
+                            labelText: 'RAM (GB)',
+                            hintText: 'Select RAM',
+                            value: controller.selectedAddRam.value.isEmpty
+                                ? null
+                                : controller.selectedAddRam.value,
+                            items: controller.ramOptions,
+                            enabled: true,
+                            onChanged: (value) => controller.onAddRamChanged(value ?? ''),
+                            validator: controller.validateRam,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: buildStyledDropdown(
+                            labelText: 'Storage (ROM) (GB)',
+                            hintText: 'Select Storage',
+                            value: controller.selectedAddStorage.value.isEmpty
+                                ? null
+                                : controller.selectedAddStorage.value,
+                            items: controller.storageOptions,
+                            enabled: true,
+                            onChanged: (value) => controller.onAddStorageChanged(value ?? ''),
+                            validator: controller.validateStorage,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            }),
             const SizedBox(height: 16),
 
-            // RAM and Storage Row
-            Row(
-              children: [
-                Expanded(
-                  child: Obx(
-                    () => buildStyledDropdown(
-                      labelText: 'RAM (GB)',
-                      hintText: 'Select RAM',
-                      value:
-                          controller.selectedAddRam.value.isEmpty
-                              ? null
-                              : controller.selectedAddRam.value,
-                      items: controller.ramOptions,
-                      onChanged:
-                          (value) => controller.onAddRamChanged(value ?? ''),
-                      validator: controller.validateRam,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Obx(
-                    () => buildStyledDropdown(
-                      labelText: 'Storage (ROM) (GB)',
-                      hintText: 'Select Storage',
-                      value:
-                          controller.selectedAddStorage.value.isEmpty
-                              ? null
-                              : controller.selectedAddStorage.value,
-                      items: controller.storageOptions,
-                      onChanged:
-                          (value) =>
-                              controller.onAddStorageChanged(value ?? ''),
-                      validator: controller.validateStorage,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Color Dropdown (Updated to support both dropdown and text field)
+            // Color Dropdown
             Obx(() {
               if (controller.isColorTypeable.value) {
                 return buildStyledTextField(
@@ -375,10 +390,9 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 return buildStyledDropdown(
                   labelText: 'Color',
                   hintText: 'Select Color',
-                  value:
-                      controller.selectedAddColor.value.isEmpty
-                          ? null
-                          : controller.selectedAddColor.value,
+                  value: controller.selectedAddColor.value.isEmpty
+                      ? null
+                      : controller.selectedAddColor.value,
                   items: controller.colorOptions,
                   onChanged: (value) => controller.onAddColorChanged(value ?? ''),
                   validator: controller.validateColor,
@@ -394,6 +408,20 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 );
               }
             }),
+
+            const SizedBox(height: 24),
+            _buildSectionTitle('Product Description', Icons.description),
+            const SizedBox(height: 16),
+
+            // Product Description - REQUIRED
+            buildStyledTextField(
+              labelText: 'Product Description',
+              controller: controller.descriptionController,
+              hintText: 'Enter product description',
+              keyboardType: TextInputType.multiline,
+              maxLines: 3,
+              validator: controller.validateDescription,
+            ),
 
             const SizedBox(height: 24),
             _buildSectionTitle('Pricing & Stock', Icons.inventory),
@@ -425,22 +453,98 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
 
-            buildStyledTextField(
-              labelText: 'Purchase Price (optional)',
-              controller: controller.purchasePriceController,
-              hintText: 'Purchase price',
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 24),
+            _buildSectionTitle('Purchase Information', Icons.shopping_bag),
+            const SizedBox(height: 16),
 
+            // Purchased From - REQUIRED
             buildStyledTextField(
-              labelText: 'Supplier Details (optional)',
-              controller: controller.supplierDetailsController,
-              hintText: 'Supplier info',
+              labelText: 'Purchased From',
+              controller: controller.purchasedFromController,
+              hintText: 'e.g., Amazon, Flipkart, Local Store',
               keyboardType: TextInputType.text,
+              validator: controller.validatePurchasedFrom,
             ),
+            const SizedBox(height: 16),
+
+            // Purchase Date - REQUIRED
+            Obx(() => InkWell(
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: Get.context!,
+                  initialDate: controller.selectedPurchaseDate.value ?? DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime.now(),
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: const ColorScheme.light(
+                          primary: Color(0xFF6366F1),
+                          onPrimary: Colors.white,
+                          onSurface: Color(0xFF1A1A1A),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+                if (picked != null) {
+                  controller.onPurchaseDateChanged(picked);
+                }
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Purchase Date',
+                    style: TextStyle(
+                      color: Color(0xFF374151),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF9FAFB),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 18, color: Color(0xFF6B7280)),
+                        const SizedBox(width: 12),
+                        Text(
+                          controller.selectedPurchaseDate.value != null
+                              ? controller.formatDateForApi(controller.selectedPurchaseDate.value!)
+                              : 'Select purchase date',
+                          style: TextStyle(
+                            color: controller.selectedPurchaseDate.value != null
+                                ? const Color(0xFF1A1A1A)
+                                : const Color(0xFF9CA3AF),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
+            const SizedBox(height: 16),
+
+            // Purchase Notes - OPTIONAL
+            buildStyledTextField(
+              labelText: 'Purchase Notes (optional)',
+              controller: controller.purchaseNotesController,
+              hintText: 'Any additional notes about the purchase',
+              keyboardType: TextInputType.multiline,
+              maxLines: 2,
+            ),
+
             const SizedBox(height: 24),
             _buildSectionTitle('Product Image', Icons.image),
             const SizedBox(height: 16),
@@ -450,12 +554,12 @@ class AddNewMobileInventoryForm extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha:0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
               ),
               child: ImageUploadWidget(
-                labelText: 'Mobile Logo/Image',
+                labelText: 'Product Logo/Image',
                 uploadText: 'Upload Image',
                 onImageSelected: controller.onImageSelected,
               ),
@@ -471,12 +575,11 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                     child: Container(
                       height: 48,
                       child: OutlinedButton(
-                        onPressed:
-                            controller.isAddingMobile.value
-                                ? null
-                                : controller.cancelAddMobile,
+                        onPressed: controller.isAddingMobile.value
+                            ? null
+                            : controller.cancelAddMobile,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
+                          side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -492,15 +595,14 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Container(
                       height: 48,
                       child: ElevatedButton(
-                        onPressed:
-                            controller.isAddingMobile.value
-                                ? null
-                                : controller.addMobileToInventory,
+                        onPressed: controller.isAddingMobile.value
+                            ? null
+                            : controller.addMobileToInventory,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF6366F1),
                           shape: RoundedRectangleBorder(
@@ -508,37 +610,37 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child:
-                            controller.isAddingMobile.value
-                                ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                        child: controller.isAddingMobile.value
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 2),
+                                  Text(
+                                    'Add to Inventory',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      overflow: TextOverflow.fade,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                )
-                                : const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      'Add to Inventory',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                ],
+                              ),
                       ),
                     ),
                   ),
@@ -548,40 +650,39 @@ class AddNewMobileInventoryForm extends StatelessWidget {
 
             // Error Message Display
             Obx(
-              () =>
-                  controller.hasAddMobileError.value
-                      ? Container(
-                        margin: const EdgeInsets.only(top: 16),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha:0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.red.withValues(alpha:0.3),
-                          ),
+              () => controller.hasAddMobileError.value
+                  ? Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.3),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                controller.addMobileErrorMessage.value,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              controller.addMobileErrorMessage.value,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ],
-                        ),
-                      )
-                      : const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         ),
@@ -596,7 +697,7 @@ class AddNewMobileInventoryForm extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withValues(alpha:0.1),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF6366F1), size: 16),

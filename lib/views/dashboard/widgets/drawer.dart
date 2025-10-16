@@ -48,32 +48,11 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       color: Color(0xFF667eea),
     ),
     DrawerMenuItem(
-      title: 'Sales Management',
-      subtitle: 'Track & manage sales',
-      icon: Icons.point_of_sale_rounded,
-      color: Color(0xFF43e97b),
-      category: 'Core',
-    ),
-    DrawerMenuItem(
       title: 'Inventory Management',
       subtitle: 'Stock control & tracking',
       icon: Icons.inventory_2_rounded,
       color: Color(0xFF667eea),
       category: 'Core',
-    ),
-    DrawerMenuItem(
-      title: 'Customer Management',
-      subtitle: 'Manage customer data',
-      icon: Icons.people_rounded,
-      color: Color(0xFF4facfe),
-      category: 'Relations',
-    ),
-    DrawerMenuItem(
-      title: 'Account Management',
-      subtitle: 'Manage Account data',
-      icon: Icons.groups_3_sharp,
-      color: Color(0xFFf093fb),
-      category: 'Reports',
     ),
     DrawerMenuItem(
       title: 'Bill History',
@@ -83,11 +62,40 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       category: 'Finance',
     ),
     DrawerMenuItem(
+      title: 'Customer Management',
+      subtitle: 'Manage customer data',
+      icon: Icons.people_rounded,
+      color: Color(0xFF4facfe),
+      category: 'Relations',
+    ),
+    DrawerMenuItem(
+      title: 'Sales Management',
+      subtitle: 'Track & manage sales',
+      icon: Icons.point_of_sale_rounded,
+      color: Color(0xFF43e97b),
+      category: 'Core',
+    ),
+
+    DrawerMenuItem(
       title: 'Dues Management',
       subtitle: 'Track pending payments',
       icon: Icons.receipt_rounded,
       color: Color(0xFF74b9ff),
       category: 'Finance',
+    ),
+    DrawerMenuItem(
+      title: 'Account Management',
+      subtitle: 'Manage Account data',
+      icon: Icons.groups_3_sharp,
+      color: Color(0xFFf093fb),
+      category: 'Reports',
+    ),
+    DrawerMenuItem(
+      title: 'HSN Code Management',
+      subtitle: 'Manage HSN Codes',
+      icon: Icons.qr_code,
+      color: const Color(0xFF26A69A),
+      category: 'Inventory',
     ),
     DrawerMenuItem(
       title: 'Poster Generation',
@@ -97,13 +105,13 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       category: 'Marketing',
       isNew: true,
     ),
-    DrawerMenuItem(
-      title: 'Reports & Analytics',
-      subtitle: 'Business insights',
-      icon: Icons.analytics_rounded,
-      color: Color(0xFF9c88ff),
-      category: 'Reports',
-    ),
+    // DrawerMenuItem(
+    //   title: 'Reports & Analytics',
+    //   subtitle: 'Business insights',
+    //   icon: Icons.analytics_rounded,
+    //   color: Color(0xFF9c88ff),
+    //   category: 'Reports',
+    // ),
     DrawerMenuItem(
       title: 'Generate Inventory',
       subtitle: 'App preferences',
@@ -111,13 +119,13 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
       color: Color(0xFFfa709a),
       category: 'Marketing',
     ),
-    DrawerMenuItem(
-      title: 'Settings',
-      subtitle: 'App preferences',
-      icon: Icons.settings_rounded,
-      color: Color(0xFF8e8e93),
-      category: 'System',
-    ),
+    // DrawerMenuItem(
+    //   title: 'Settings',
+    //   subtitle: 'App preferences',
+    //   icon: Icons.settings_rounded,
+    //   color: Color(0xFF8e8e93),
+    //   category: 'System',
+    // ),
   ];
 
   @override
@@ -132,7 +140,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: Offset(2, 0),
           ),
@@ -174,7 +182,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFF667eea).withValues(alpha:0.3),
+                            color: Color(0xFF667eea).withValues(alpha: 0.3),
                             blurRadius: 15,
                             offset: Offset(0, 5),
                           ),
@@ -216,10 +224,10 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF00b894).withValues(alpha:0.1),
+                    color: Color(0xFF00b894).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Color(0xFF00b894).withValues(alpha:0.2),
+                      color: Color(0xFF00b894).withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -268,7 +276,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: Offset(0, 2),
                 ),
@@ -348,11 +356,16 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color:
-                  isSelected ? item.color.withValues(alpha:0.1) : Colors.transparent,
+                  isSelected
+                      ? item.color.withValues(alpha: 0.1)
+                      : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
               border:
                   isSelected
-                      ? Border.all(color: item.color.withValues(alpha:0.3), width: 1)
+                      ? Border.all(
+                        color: item.color.withValues(alpha: 0.3),
+                        width: 1,
+                      )
                       : null,
             ),
             child: Row(
@@ -362,7 +375,9 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                   height: 44,
                   decoration: BoxDecoration(
                     color:
-                        isSelected ? item.color : item.color.withValues(alpha:0.1),
+                        isSelected
+                            ? item.color
+                            : item.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -459,7 +474,7 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF667eea).withValues(alpha:0.3),
+                        color: Color(0xFF667eea).withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: Offset(0, 4),
                       ),
@@ -511,17 +526,25 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     print(_selectedIndex);
     switch (_selectedIndex) {
       case 1:
-        Get.toNamed(AppRoutes.salesManagement);
-      case 2:
         Get.toNamed(AppRoutes.inventory_management);
+
+      case 2:
+        Get.toNamed(AppRoutes.billHistory);
+
       case 3:
         Get.toNamed(AppRoutes.customerManagement);
       case 4:
-        Get.toNamed(AppRoutes.accountManagement);
+        Get.toNamed(AppRoutes.salesManagement);
+
       case 5:
-        Get.toNamed(AppRoutes.billHistory);
-      case 6:
         Get.toNamed(AppRoutes.customerDuesManagement);
+
+      case 6:
+        Get.toNamed(AppRoutes.accountManagement);
+      case 7:
+        Get.toNamed(AppRoutes.hsnCodeManagement);
+      case 8:
+        // Get.toNamed(AppRoutes.posterGeneration);
       case 9:
         Get.toNamed(AppRoutes.generateInventory);
 

@@ -6,6 +6,7 @@ import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
+import 'package:smartbecho/views/bill%20history/components/stock_item_details_page.dart';
 
 class StockHistoryPage extends GetView<BillHistoryController> {
   
@@ -19,7 +20,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar("Stock History", isdark: true),
+            buildCustomAppBar("Purchased Items", isdark: true),
             
             // Loading indicator
             Obx(
@@ -578,21 +579,30 @@ class StockHistoryPage extends GetView<BillHistoryController> {
     });
   }
 
-  Widget _buildStockItemCard(StockItem stockItem) {
-    return Container(
+  
+Widget _buildStockItemCard(StockItem stockItem) {
+  return GestureDetector(
+    onTap: () {
+      Get.to(
+        () => StockItemDetailsPage(stockItem: stockItem),
+        transition: Transition.rightToLeft,
+        duration: Duration(milliseconds: 300),
+      );
+    },
+    child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: controller.getCategoryColor(stockItem.itemCategory).withValues(alpha:0.15),
+          color: controller.getCategoryColor(stockItem.itemCategory).withValues(alpha: 0.15),
           width: 1,
         ),
       ),
@@ -605,8 +615,8 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  controller.getCategoryColor(stockItem.itemCategory).withValues(alpha:0.1),
-                  controller.getCategoryColor(stockItem.itemCategory).withValues(alpha:0.05),
+                  controller.getCategoryColor(stockItem.itemCategory).withValues(alpha: 0.1),
+                  controller.getCategoryColor(stockItem.itemCategory).withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -755,14 +765,25 @@ class StockHistoryPage extends GetView<BillHistoryController> {
                       ],
                     ),
                   ),
+                  
+                  // Tap indicator
+                  SizedBox(height: 4),
+                  Center(
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: Colors.grey[400],
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildSpecRow(IconData icon, String text) {
     return Row(

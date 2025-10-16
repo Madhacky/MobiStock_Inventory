@@ -1089,6 +1089,12 @@ Widget _buildStatCard(
           onTap: () => Get.toNamed(AppRoutes.stockList),
         ),
         buildSpeedDialChild(
+          label: 'Online added Products',
+          backgroundColor: const Color(0xFF00CEC9),
+          icon: Icons.add,
+          onTap: () => Get.toNamed(AppRoutes.onlineAddedProducts),
+        ),
+        buildSpeedDialChild(
           label: 'Add New Stock',
           backgroundColor: const Color(0xFF00CEC9),
           icon: Icons.add,

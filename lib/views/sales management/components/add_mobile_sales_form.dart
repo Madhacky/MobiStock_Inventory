@@ -556,131 +556,188 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
       ],
     );
   }
+Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
+  return Container(
+    margin: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha:0.08),
+          blurRadius: 20,
+          offset: const Offset(0, 4),
+          spreadRadius: 1,
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle('Price Calculation', Icons.calculate),
+          const SizedBox(height: 16),
 
-  Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle('Price Calculation', Icons.calculate),
-            const SizedBox(height: 16),
-
-            // GST Percentage and Extra Charges Row
-            Row(
-              children: [
-                Expanded(
-                  child: buildStyledTextField(
-                    labelText: 'GST Percentage (%)',
-                    controller: controller.gstPercentageController,
-                    hintText: '12',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => controller.calculatePrices(),
+          // Conditionally show GST field
+          Obx(() {
+            if (controller.shouldShowGST.value) {
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: buildStyledTextField(
+                          labelText: 'GST Percentage (%)',
+                          controller: controller.gstPercentageController,
+                          hintText: '18',
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) => controller.calculatePrices(),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: buildStyledTextField(
+                          labelText: 'Extra Charges (₹)',
+                          controller: controller.extraChargesController,
+                          hintText: '0',
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) => controller.calculatePrices(),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: buildStyledTextField(
+                  const SizedBox(height: 16),
+                ],
+              );
+            } else {
+              // Only show Extra Charges when GST is hidden
+              return Column(
+                children: [
+                  // Info message
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline, 
+                             color: Colors.blue.shade700, 
+                             size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            controller.shopGSTNumber.value.isEmpty
+                                ? 'GST not applicable - Shop GST number not registered'
+                                : 'GST not applicable for online source items',
+                            style: TextStyle(
+                              color: Colors.blue.shade700,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  buildStyledTextField(
                     labelText: 'Extra Charges (₹)',
                     controller: controller.extraChargesController,
                     hintText: '0',
                     keyboardType: TextInputType.number,
                     onChanged: (value) => controller.calculatePrices(),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }
+          }),
 
-            // Accessories Cost and Repair Charges Row
-            Row(
-              children: [
-                Expanded(
-                  child: buildStyledTextField(
-                    labelText: 'Accessories Cost (₹)',
-                    controller: controller.accessoriesCostController,
-                    hintText: '0',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => controller.calculatePrices(),
-                  ),
+          // Accessories Cost and Repair Charges Row
+          Row(
+            children: [
+              Expanded(
+                child: buildStyledTextField(
+                  labelText: 'Accessories Cost (₹)',
+                  controller: controller.accessoriesCostController,
+                  hintText: '0',
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) => controller.calculatePrices(),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: buildStyledTextField(
-                    labelText: 'Repair Charges (₹)',
-                    controller: controller.repairChargesController,
-                    hintText: '0',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => controller.calculatePrices(),
-                  ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: buildStyledTextField(
+                  labelText: 'Repair Charges (₹)',
+                  controller: controller.repairChargesController,
+                  hintText: '0',
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) => controller.calculatePrices(),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Total Discount
-            buildStyledTextField(
-              labelText: 'Total Discount (₹)',
-              controller: controller.totalDiscountController,
-              hintText: '0',
-              keyboardType: TextInputType.number,
-              onChanged: (value) => controller.calculatePrices(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPriceSummary(SalesCrudOperationController controller) {
-    return Obx(() => Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Price Summary',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          
-          _buildSummaryRow('Base Amount:', '₹${controller.baseAmount.value.toStringAsFixed(2)}'),
-          _buildSummaryRow('Amount without GST:', '₹${controller.amountWithoutGST.value.toStringAsFixed(2)}'),
-          _buildSummaryRow('GST (${controller.gstPercentage.value.toStringAsFixed(1)}%):', '₹${controller.gstAmount.value.toStringAsFixed(2)}'),
-          const Divider(height: 16),
-          _buildSummaryRow(
-            'Total Payable Amount:', 
-            '₹${controller.totalPayableAmount.value.toStringAsFixed(2)}',
-            isTotal: true,
+          const SizedBox(height: 16),
+
+          // Total Discount
+          buildStyledTextField(
+            labelText: 'Total Discount (₹)',
+            controller: controller.totalDiscountController,
+            hintText: '0',
+            keyboardType: TextInputType.number,
+            onChanged: (value) => controller.calculatePrices(),
           ),
         ],
       ),
-    ));
-  }
+    ),
+  );
+}
 
+  Widget _buildPriceSummary(SalesCrudOperationController controller) {
+  return Obx(() => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade50,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.grey.shade200),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Price Summary',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+        const SizedBox(height: 12),
+        
+        _buildSummaryRow('Base Amount:', '₹${controller.baseAmount.value.toStringAsFixed(2)}'),
+        
+        // Conditionally show "Amount without GST" only if GST is applicable
+        if (controller.shouldShowGST.value)
+          _buildSummaryRow('Amount without GST:', '₹${controller.amountWithoutGST.value.toStringAsFixed(2)}'),
+        
+        // Conditionally show GST row only if GST is applicable
+        if (controller.shouldShowGST.value)
+          _buildSummaryRow('GST (${controller.gstPercentage.value.toStringAsFixed(1)}%):', '₹${controller.gstAmount.value.toStringAsFixed(2)}'),
+        
+        const Divider(height: 16),
+        _buildSummaryRow(
+          'Total Payable Amount:', 
+          '₹${controller.totalPayableAmount.value.toStringAsFixed(2)}',
+          isTotal: true,
+        ),
+      ],
+    ),
+  ));
+}
   Widget _buildSummaryRow(String label, String value, {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

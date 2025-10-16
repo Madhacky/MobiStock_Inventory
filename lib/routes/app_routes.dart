@@ -39,6 +39,7 @@ class AppRoutes {
   static const String thisMonthAddedStock = '/this-month-added-stock';
 
   static const String billAnalytics = '/bill-Analytics';
+  static const String onlineAddedProducts = '/online-added-products';
 
 
 
@@ -51,6 +52,8 @@ class AppRoutes {
   //account management\
   static const String accountManagement = '/account-management';
 
+  //hsn code management
+  static const String hsnCodeManagement = '/hsn-code-management';
 
   //sales management
   static const String salesManagement = '/sales-management';

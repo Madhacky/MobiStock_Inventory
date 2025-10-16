@@ -87,14 +87,13 @@ class InventoryController extends GetxController {
   final RxList<String> availableROMs = <String>[].obs;
   final RxList<String> availableColors = <String>[].obs;
 
-
   // Store all inventory data for local filtering
   final RxList<InventoryItem> allInventoryData = <InventoryItem>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-
+    getGstNum();
     // Initialize scroll controller for lazy loading
     scrollController = ScrollController();
     scrollController.addListener(_onScroll);
@@ -119,22 +118,29 @@ class InventoryController extends GetxController {
     // Initial data fetch
     loadInitialData();
   }
-void _onScrollPositionChanged() {
-  // Show button when scrolled down more than 200 pixels
-  if (scrollController.hasClients) {
-    showScrollToTop.value = scrollController.offset > 200;
-  }
-}
 
-void scrollToTop() {
-  if (scrollController.hasClients) {
-    scrollController.animateTo(
-      0.0,
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+  void _onScrollPositionChanged() {
+    // Show button when scrolled down more than 200 pixels
+    if (scrollController.hasClients) {
+      showScrollToTop.value = scrollController.offset > 200;
+    }
   }
-}
+
+  void scrollToTop() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        0.0,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+  Future<String> get gstNumber => getGstNum();
+  Future<String> getGstNum() async {
+    String gstNumber = await SharedPreferencesHelper.getGstNumber()??"No GST Number Available";
+    
+    return gstNumber;
+  }
 
   @override
   void onClose() {
@@ -145,93 +151,95 @@ void scrollToTop() {
 
   /// Load initial data - filters and inventory
   Future<void> loadInitialData() async {
-   await fetchFiltersData();
-   await fetchInventoryData(isInitial: true);
+    await fetchFiltersData();
+    await fetchInventoryData(isInitial: true);
     await getSummaryCards();
   }
 
   /// Fetch filter options from API (all available options)
   Future<void> fetchFiltersData() async {
-  try {
-    isFiltersLoading.value = true;
-    hasFiltersError.value = false;
-    filtersErrorMessage.value = '';
+    try {
+      isFiltersLoading.value = true;
+      hasFiltersError.value = false;
+      filtersErrorMessage.value = '';
 
-    final jsessionId = await SecureStorageHelper.getJSessionId();
-    
-    if (jsessionId == null || jsessionId.isEmpty) {
+      final jsessionId = await SecureStorageHelper.getJSessionId();
+
+      if (jsessionId == null || jsessionId.isEmpty) {
+        hasFiltersError.value = true;
+        filtersErrorMessage.value = 'No session found. Please login again.';
+        return;
+      }
+
+      dio.Response? response = await _apiService.requestGetWithJSessionId(
+        url: _config.getInventoryFilters,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
+        final filterResponse = FilterResponse.fromJson(data);
+
+        // Store all filter options
+        allCompanies.assignAll(filterResponse.companies);
+        allCategories.assignAll(filterResponse.itemCategories);
+        allModels.assignAll(filterResponse.models);
+        allRAMs.assignAll(filterResponse.rams);
+        allROMs.assignAll(filterResponse.roms);
+        allColors.assignAll(filterResponse.colors);
+
+        // Initialize available options properly
+        _initializeCascadingFilters();
+
+        log("✅ Filters loaded successfully");
+        log("Companies: ${allCompanies.length}");
+        log("Categories: ${allCategories.length}");
+        log("Models: ${allModels.length}");
+        log("RAMs: ${allRAMs.length}");
+        log("ROMs: ${allROMs.length}");
+        log("Colors: ${allColors.length}");
+      } else if (response?.statusCode == 401 || response?.statusCode == 403) {
+        hasFiltersError.value = true;
+        filtersErrorMessage.value = 'Session expired. Please login again.';
+        await _handleSessionExpired();
+      } else {
+        hasFiltersError.value = true;
+        filtersErrorMessage.value =
+            'Failed to fetch filters. Status: ${response?.statusCode}';
+      }
+    } catch (error) {
       hasFiltersError.value = true;
-      filtersErrorMessage.value = 'No session found. Please login again.';
-      return;
+      filtersErrorMessage.value = 'Error: $error';
+      log("❌ Error in fetchFiltersData: $error");
+    } finally {
+      isFiltersLoading.value = false;
     }
-
-    dio.Response? response = await _apiService.requestGetWithJSessionId(
-      url: _config.getInventoryFilters,
-      authToken: true,
-    );
-
-    if (response != null && response.statusCode == 200) {
-      final data = response.data is String ? json.decode(response.data) : response.data;
-      final filterResponse = FilterResponse.fromJson(data);
-
-      // Store all filter options
-      allCompanies.assignAll(filterResponse.companies);
-      allCategories.assignAll(filterResponse.itemCategories);
-      allModels.assignAll(filterResponse.models);
-      allRAMs.assignAll(filterResponse.rams);
-      allROMs.assignAll(filterResponse.roms);
-      allColors.assignAll(filterResponse.colors);
-
-      // Initialize available options properly
-      _initializeCascadingFilters();
-
-      log("✅ Filters loaded successfully");
-      log("Companies: ${allCompanies.length}");
-      log("Categories: ${allCategories.length}");
-      log("Models: ${allModels.length}");
-      log("RAMs: ${allRAMs.length}");
-      log("ROMs: ${allROMs.length}");
-      log("Colors: ${allColors.length}");
-        
-    } else if (response?.statusCode == 401 || response?.statusCode == 403) {
-      hasFiltersError.value = true;
-      filtersErrorMessage.value = 'Session expired. Please login again.';
-      await _handleSessionExpired();
-    } else {
-      hasFiltersError.value = true;
-      filtersErrorMessage.value = 'Failed to fetch filters. Status: ${response?.statusCode}';
-    }
-  } catch (error) {
-    hasFiltersError.value = true;
-    filtersErrorMessage.value = 'Error: $error';
-    log("❌ Error in fetchFiltersData: $error");
-  } finally {
-    isFiltersLoading.value = false;
   }
-}
 
+  void _initializeCascadingFilters() {
+    // Show all companies and categories initially
+    availableCompanies.assignAll(allCompanies);
+    availableCategories.assignAll(allCategories);
 
-void _initializeCascadingFilters() {
-  // Show all companies and categories initially
-  availableCompanies.assignAll(allCompanies);
-  availableCategories.assignAll(allCategories);
-  
-  // Hide dependent filters until parent is selected
-  availableModels.clear();
-  availableRAMs.clear();
-  availableROMs.clear();
-  availableColors.clear();
-  
-  log("🔗 Initialized cascading filters");
-  log("Available companies: ${availableCompanies.length}");
-  log("Available categories: ${availableCategories.length}");
-}
+    // Hide dependent filters until parent is selected
+    availableModels.clear();
+    availableRAMs.clear();
+    availableROMs.clear();
+    availableColors.clear();
+
+    log("🔗 Initialized cascading filters");
+    log("Available companies: ${availableCompanies.length}");
+    log("Available categories: ${availableCategories.length}");
+  }
 
   /// Fetch all inventory data for local cascading filter logic
   Future<void> fetchAllInventoryData() async {
     try {
       final jsessionId = await SecureStorageHelper.getJSessionId();
-      
+
       if (jsessionId == null || jsessionId.isEmpty) {
         return;
       }
@@ -246,14 +254,18 @@ void _initializeCascadingFilters() {
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data is String ? json.decode(response.data) : response.data;
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
         final payload = data['payload'];
         final pageData = payload['page'];
         final List<dynamic> jsonList = pageData['content'];
-        
-        List<InventoryItem> allItems = jsonList.map((item) => InventoryItem.fromJson(item)).toList();
+
+        List<InventoryItem> allItems =
+            jsonList.map((item) => InventoryItem.fromJson(item)).toList();
         allInventoryData.assignAll(allItems);
-        
+
         log("✅ Loaded ${allInventoryData.length} items for filtering");
       }
     } catch (error) {
@@ -262,173 +274,181 @@ void _initializeCascadingFilters() {
   }
 
   /// Update cascading filters based on current selection
- void _updateCascadingFilters() async {
-  log("🔗 Updating cascading filters...");
-  log("Selected Company: '${selectedCompany.value}'");
-  log("Selected Category: '${selectedCategory.value}'");
-  log("Selected Model: '${selectedModel.value}'");
+  void _updateCascadingFilters() async {
+    log("🔗 Updating cascading filters...");
+    log("Selected Company: '${selectedCompany.value}'");
+    log("Selected Category: '${selectedCategory.value}'");
+    log("Selected Model: '${selectedModel.value}'");
 
-  // Update models based on company/category selection
-  await _updateAvailableModels();
-  
-  // Update specs based on model selection
-  await _updateAvailableSpecs();
-}
+    // Update models based on company/category selection
+    await _updateAvailableModels();
 
-Future<void> _updateAvailableModels() async {
-  if (selectedCompany.value.isEmpty && selectedCategory.value.isEmpty) {
-    availableModels.clear();
-    log("🔄 No company/category selected, clearing models");
-    return;
+    // Update specs based on model selection
+    await _updateAvailableSpecs();
   }
 
-  try {
-    // Build query parameters for filtered models
-    Map<String, String> params = {};
-    if (selectedCompany.value.isNotEmpty) {
-      params['company'] = selectedCompany.value;
-    }
-    if (selectedCategory.value.isNotEmpty) {
-      params['itemType'] = selectedCategory.value;
+  Future<void> _updateAvailableModels() async {
+    if (selectedCompany.value.isEmpty && selectedCategory.value.isEmpty) {
+      availableModels.clear();
+      log("🔄 No company/category selected, clearing models");
+      return;
     }
 
-    String queryString = params.entries
-        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
-    
-    // Use your existing filter API with parameters
-    String apiUrl = '${_config.getInventoryFilters}?$queryString';
-    log("🔄 Fetching filtered models: $apiUrl");
+    try {
+      // Build query parameters for filtered models
+      Map<String, String> params = {};
+      if (selectedCompany.value.isNotEmpty) {
+        params['company'] = selectedCompany.value;
+      }
+      if (selectedCategory.value.isNotEmpty) {
+        params['itemType'] = selectedCategory.value;
+      }
 
-    final jsessionId = await SecureStorageHelper.getJSessionId();
-    if (jsessionId == null || jsessionId.isEmpty) return;
+      String queryString = params.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+          )
+          .join('&');
 
-    dio.Response? response = await _apiService.requestGetWithJSessionId(
-      url: apiUrl,
-      authToken: true,
-    );
+      // Use your existing filter API with parameters
+      String apiUrl = '${_config.getInventoryFilters}?$queryString';
+      log("🔄 Fetching filtered models: $apiUrl");
 
-    if (response != null && response.statusCode == 200) {
-      final data = response.data is String ? json.decode(response.data) : response.data;
-      final filterResponse = FilterResponse.fromJson(data);
-      
-      // Update available models from filtered response
-      availableModels.assignAll(filterResponse.models);
-      log("✅ Updated models: ${availableModels.length} available");
-      
-    } else {
-      log("❌ Failed to fetch filtered models: ${response?.statusCode}");
-      // Fallback: use all models (not ideal but prevents empty dropdown)
+      final jsessionId = await SecureStorageHelper.getJSessionId();
+      if (jsessionId == null || jsessionId.isEmpty) return;
+
+      dio.Response? response = await _apiService.requestGetWithJSessionId(
+        url: apiUrl,
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
+        final filterResponse = FilterResponse.fromJson(data);
+
+        // Update available models from filtered response
+        availableModels.assignAll(filterResponse.models);
+        log("✅ Updated models: ${availableModels.length} available");
+      } else {
+        log("❌ Failed to fetch filtered models: ${response?.statusCode}");
+        // Fallback: use all models (not ideal but prevents empty dropdown)
+        availableModels.assignAll(allModels);
+      }
+    } catch (error) {
+      log("❌ Error fetching filtered models: $error");
+      // Fallback: use all models
       availableModels.assignAll(allModels);
     }
-  } catch (error) {
-    log("❌ Error fetching filtered models: $error");
-    // Fallback: use all models
-    availableModels.assignAll(allModels);
-  }
-}
-
-/// Update available specs using API call with current filters
-Future<void> _updateAvailableSpecs() async {
-  if (selectedModel.value.isEmpty) {
-    availableRAMs.clear();
-    availableROMs.clear();
-    availableColors.clear();
-    log("🔄 No model selected, clearing specs");
-    return;
   }
 
-  try {
-    // Build query parameters for filtered specs
-    Map<String, String> params = {
-      'model': selectedModel.value,
-    };
-    
-    if (selectedCompany.value.isNotEmpty) {
-      params['company'] = selectedCompany.value;
-    }
-    if (selectedCategory.value.isNotEmpty) {
-      params['itemType'] = selectedCategory.value;
+  /// Update available specs using API call with current filters
+  Future<void> _updateAvailableSpecs() async {
+    if (selectedModel.value.isEmpty) {
+      availableRAMs.clear();
+      availableROMs.clear();
+      availableColors.clear();
+      log("🔄 No model selected, clearing specs");
+      return;
     }
 
-    String queryString = params.entries
-        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
-    
-    // Use your existing filter API with parameters
-    String apiUrl = '${_config.getInventoryFilters}?$queryString';
-    log("🔄 Fetching filtered specs: $apiUrl");
+    try {
+      // Build query parameters for filtered specs
+      Map<String, String> params = {'model': selectedModel.value};
 
-    final jsessionId = await SecureStorageHelper.getJSessionId();
-    if (jsessionId == null || jsessionId.isEmpty) return;
+      if (selectedCompany.value.isNotEmpty) {
+        params['company'] = selectedCompany.value;
+      }
+      if (selectedCategory.value.isNotEmpty) {
+        params['itemType'] = selectedCategory.value;
+      }
 
-    dio.Response? response = await _apiService.requestGetWithJSessionId(
-      url: apiUrl,
-      authToken: true,
-    );
+      String queryString = params.entries
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+          )
+          .join('&');
 
-    if (response != null && response.statusCode == 200) {
-      final data = response.data is String ? json.decode(response.data) : response.data;
-      final filterResponse = FilterResponse.fromJson(data);
-      
-      // Update available specs from filtered response
-      List<String> rams = filterResponse.rams;
-      List<String> roms = filterResponse.roms;
-      List<String> colors = filterResponse.colors;
+      // Use your existing filter API with parameters
+      String apiUrl = '${_config.getInventoryFilters}?$queryString';
+      log("🔄 Fetching filtered specs: $apiUrl");
 
-      // Sort RAMs and ROMs properly
-      rams.sort((a, b) {
-        try {
-          int aVal = int.parse(a.replaceAll(RegExp(r'[^0-9]'), ''));
-          int bVal = int.parse(b.replaceAll(RegExp(r'[^0-9]'), ''));
-          return aVal.compareTo(bVal);
-        } catch (e) {
-          return a.compareTo(b);
-        }
-      });
+      final jsessionId = await SecureStorageHelper.getJSessionId();
+      if (jsessionId == null || jsessionId.isEmpty) return;
 
-      roms.sort((a, b) {
-        try {
-          int aVal = int.parse(a.replaceAll(RegExp(r'[^0-9]'), ''));
-          int bVal = int.parse(b.replaceAll(RegExp(r'[^0-9]'), ''));
-          return aVal.compareTo(bVal);
-        } catch (e) {
-          return a.compareTo(b);
-        }
-      });
+      dio.Response? response = await _apiService.requestGetWithJSessionId(
+        url: apiUrl,
+        authToken: true,
+      );
 
-      colors.sort();
+      if (response != null && response.statusCode == 200) {
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
+        final filterResponse = FilterResponse.fromJson(data);
 
-      availableRAMs.assignAll(rams);
-      availableROMs.assignAll(roms);
-      availableColors.assignAll(colors);
-      
-      log("✅ Updated specs - RAMs: ${rams.length}, ROMs: ${roms.length}, Colors: ${colors.length}");
-      
-    } else {
-      log("❌ Failed to fetch filtered specs: ${response?.statusCode}");
+        // Update available specs from filtered response
+        List<String> rams = filterResponse.rams;
+        List<String> roms = filterResponse.roms;
+        List<String> colors = filterResponse.colors;
+
+        // Sort RAMs and ROMs properly
+        rams.sort((a, b) {
+          try {
+            int aVal = int.parse(a.replaceAll(RegExp(r'[^0-9]'), ''));
+            int bVal = int.parse(b.replaceAll(RegExp(r'[^0-9]'), ''));
+            return aVal.compareTo(bVal);
+          } catch (e) {
+            return a.compareTo(b);
+          }
+        });
+
+        roms.sort((a, b) {
+          try {
+            int aVal = int.parse(a.replaceAll(RegExp(r'[^0-9]'), ''));
+            int bVal = int.parse(b.replaceAll(RegExp(r'[^0-9]'), ''));
+            return aVal.compareTo(bVal);
+          } catch (e) {
+            return a.compareTo(b);
+          }
+        });
+
+        colors.sort();
+
+        availableRAMs.assignAll(rams);
+        availableROMs.assignAll(roms);
+        availableColors.assignAll(colors);
+
+        log(
+          "✅ Updated specs - RAMs: ${rams.length}, ROMs: ${roms.length}, Colors: ${colors.length}",
+        );
+      } else {
+        log("❌ Failed to fetch filtered specs: ${response?.statusCode}");
+        // Fallback: use all specs
+        availableRAMs.assignAll(allRAMs);
+        availableROMs.assignAll(allROMs);
+        availableColors.assignAll(allColors);
+      }
+    } catch (error) {
+      log("❌ Error fetching filtered specs: $error");
       // Fallback: use all specs
       availableRAMs.assignAll(allRAMs);
       availableROMs.assignAll(allROMs);
       availableColors.assignAll(allColors);
     }
-  } catch (error) {
-    log("❌ Error fetching filtered specs: $error");
-    // Fallback: use all specs
-    availableRAMs.assignAll(allRAMs);
-    availableROMs.assignAll(allROMs);
-    availableColors.assignAll(allColors);
   }
-}
-
 
   /// Handle scroll for lazy loading
   void _onScroll() {
-    if (scrollController.position.pixels >= 
+    if (scrollController.position.pixels >=
         scrollController.position.maxScrollExtent - 100) {
-      
-      if (!isLoadingMore.value && 
-          hasMoreData.value && 
+      if (!isLoadingMore.value &&
+          hasMoreData.value &&
           searchQuery.value.trim().isEmpty &&
           !isInventoryDataLoading.value) {
         log("🔄 Loading more data - Current page: ${currentPage.value}");
@@ -445,84 +465,84 @@ Future<void> _updateAvailableSpecs() async {
   }
 
   /// Handle company selection change
-void _onCompanyChanged() async {
-  log("🏢 Company changed: '${selectedCompany.value}'");
-  
-  // Reset dependent filters when company changes
-  selectedModel.value = '';
-  selectedRAM.value = '';
-  selectedROM.value = '';
-  selectedColor.value = '';
-  
-  // Clear dependent filter options immediately
-  availableModels.clear();
-  availableRAMs.clear();
-  availableROMs.clear();
-  availableColors.clear();
-  
-  // Show loading for models
-  isModelsLoading.value = true;
-  
-  // Update cascading filters
-   _updateCascadingFilters();
-  
-  isModelsLoading.value = false;
-  
-  // Fetch filtered inventory data
-  _onFilterChanged();
-}
+  void _onCompanyChanged() async {
+    log("🏢 Company changed: '${selectedCompany.value}'");
 
-/// Handle category selection change
-void _onCategoryChanged() async {
-  log("📂 Category changed: '${selectedCategory.value}'");
-  
-  // Reset dependent filters when category changes
-  selectedModel.value = '';
-  selectedRAM.value = '';
-  selectedROM.value = '';
-  selectedColor.value = '';
-  
-  // Clear dependent filter options immediately
-  availableModels.clear();
-  availableRAMs.clear();
-  availableROMs.clear();
-  availableColors.clear();
-  
-  // Show loading for models if company is also selected
-  if (selectedCompany.value.isNotEmpty || selectedCategory.value.isNotEmpty) {
+    // Reset dependent filters when company changes
+    selectedModel.value = '';
+    selectedRAM.value = '';
+    selectedROM.value = '';
+    selectedColor.value = '';
+
+    // Clear dependent filter options immediately
+    availableModels.clear();
+    availableRAMs.clear();
+    availableROMs.clear();
+    availableColors.clear();
+
+    // Show loading for models
     isModelsLoading.value = true;
-     _updateCascadingFilters();
-    isModelsLoading.value = false;
-  }
-  
-  _onFilterChanged();
-}
 
-/// Handle model selection change
-void _onModelChanged() async {
-  log("📱 Model changed: '${selectedModel.value}'");
-  
-  // Reset dependent filters when model changes
-  selectedRAM.value = '';
-  selectedROM.value = '';
-  selectedColor.value = '';
-  
-  // Clear dependent filter options immediately
-  availableRAMs.clear();
-  availableROMs.clear();
-  availableColors.clear();
-  
-  // Show loading for specs
-  isSpecsLoading.value = true;
-  
-  // Update cascading filters
-   _updateCascadingFilters();
-  
-  isSpecsLoading.value = false;
-  
-  // Fetch filtered inventory data
-  _onFilterChanged();
-}
+    // Update cascading filters
+    _updateCascadingFilters();
+
+    isModelsLoading.value = false;
+
+    // Fetch filtered inventory data
+    _onFilterChanged();
+  }
+
+  /// Handle category selection change
+  void _onCategoryChanged() async {
+    log("📂 Category changed: '${selectedCategory.value}'");
+
+    // Reset dependent filters when category changes
+    selectedModel.value = '';
+    selectedRAM.value = '';
+    selectedROM.value = '';
+    selectedColor.value = '';
+
+    // Clear dependent filter options immediately
+    availableModels.clear();
+    availableRAMs.clear();
+    availableROMs.clear();
+    availableColors.clear();
+
+    // Show loading for models if company is also selected
+    if (selectedCompany.value.isNotEmpty || selectedCategory.value.isNotEmpty) {
+      isModelsLoading.value = true;
+      _updateCascadingFilters();
+      isModelsLoading.value = false;
+    }
+
+    _onFilterChanged();
+  }
+
+  /// Handle model selection change
+  void _onModelChanged() async {
+    log("📱 Model changed: '${selectedModel.value}'");
+
+    // Reset dependent filters when model changes
+    selectedRAM.value = '';
+    selectedROM.value = '';
+    selectedColor.value = '';
+
+    // Clear dependent filter options immediately
+    availableRAMs.clear();
+    availableROMs.clear();
+    availableColors.clear();
+
+    // Show loading for specs
+    isSpecsLoading.value = true;
+
+    // Update cascading filters
+    _updateCascadingFilters();
+
+    isSpecsLoading.value = false;
+
+    // Fetch filtered inventory data
+    _onFilterChanged();
+  }
 
   /// Handle any filter change - fetch filtered data
   void _onFilterChanged() {
@@ -543,27 +563,27 @@ void _onModelChanged() async {
     if (searchQuery.value.trim().isNotEmpty) {
       params['search'] = searchQuery.value.trim();
     }
-    
+
     if (selectedCategory.value.isNotEmpty) {
       params['itemType'] = selectedCategory.value;
     }
-    
+
     if (selectedCompany.value.isNotEmpty) {
       params['company'] = selectedCompany.value;
     }
-    
+
     if (selectedModel.value.isNotEmpty) {
       params['model'] = selectedModel.value;
     }
-    
+
     if (selectedRAM.value.isNotEmpty) {
       params['ram'] = selectedRAM.value;
     }
-    
+
     if (selectedROM.value.isNotEmpty) {
       params['rom'] = selectedROM.value;
     }
-    
+
     if (selectedColor.value.isNotEmpty) {
       params['color'] = selectedColor.value;
     }
@@ -590,22 +610,26 @@ void _onModelChanged() async {
       inventoryDataerrorMessage.value = '';
 
       final jsessionId = await SecureStorageHelper.getJSessionId();
-      
+
       if (jsessionId == null || jsessionId.isEmpty) {
         hasInventoryDataError.value = true;
-        inventoryDataerrorMessage.value = 'No session found. Please login again.';
+        inventoryDataerrorMessage.value =
+            'No session found. Please login again.';
         return;
       }
 
       // Build query parameters
       Map<String, String> queryParams = _buildQueryParams();
-      
+
       // Construct URL with query parameters
       String apiUrl = '${_config.baseUrl}/inventory/shop';
       String queryString = queryParams.entries
-          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+          )
           .join('&');
-      
+
       if (queryString.isNotEmpty) {
         apiUrl += '?$queryString';
       }
@@ -618,19 +642,24 @@ void _onModelChanged() async {
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data is String ? json.decode(response.data) : response.data;
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
         final payload = data['payload'];
-        
+
         final pageData = payload['page'];
         final List<dynamic> jsonList = pageData['content'];
-        
+
         totalItems.value = pageData['totalElements'] ?? 0;
         int totalPages = pageData['totalPages'] ?? 0;
         bool isLastPage = pageData['last'] ?? true;
 
-        hasMoreData.value = !isLastPage && (pageData['number'] + 1) < totalPages;
+        hasMoreData.value =
+            !isLastPage && (pageData['number'] + 1) < totalPages;
 
-        List<InventoryItem> fetchedItems = jsonList.map((item) => InventoryItem.fromJson(item)).toList();
+        List<InventoryItem> fetchedItems =
+            jsonList.map((item) => InventoryItem.fromJson(item)).toList();
 
         if (isInitial) {
           allFetchedItems.assignAll(fetchedItems);
@@ -639,20 +668,22 @@ void _onModelChanged() async {
         } else if (isLoadMore) {
           allFetchedItems.addAll(fetchedItems);
           inventoryItems.addAll(fetchedItems);
-          log("✅ Added ${fetchedItems.length} more items. Total: ${allFetchedItems.length}");
+          log(
+            "✅ Added ${fetchedItems.length} more items. Total: ${allFetchedItems.length}",
+          );
         }
 
         log("🔄 Has more data: ${hasMoreData.value}");
-        
       } else if (response?.statusCode == 401 || response?.statusCode == 403) {
         hasInventoryDataError.value = true;
-        inventoryDataerrorMessage.value = 'Session expired. Please login again.';
+        inventoryDataerrorMessage.value =
+            'Session expired. Please login again.';
         await _handleSessionExpired();
       } else {
         hasInventoryDataError.value = true;
-        inventoryDataerrorMessage.value = 'Failed to fetch data. Status: ${response?.statusCode}';
+        inventoryDataerrorMessage.value =
+            'Failed to fetch data. Status: ${response?.statusCode}';
       }
-      
     } catch (error) {
       hasInventoryDataError.value = true;
       inventoryDataerrorMessage.value = 'Error: $error';
@@ -663,7 +694,7 @@ void _onModelChanged() async {
     }
   }
 
- /// Search by company using filter API
+  /// Search by company using filter API
   Future<void> _searchByCompany(String company) async {
     try {
       isInventoryDataLoading.value = true;
@@ -697,16 +728,16 @@ void _onModelChanged() async {
                   ? json.decode(response.data)
                   : response.data;
           final inventoryResponse = data["payload"];
-          List<InventoryItem> fetchedItems = inventoryResponse.map<InventoryItem>((val) {
-            return InventoryItem.fromJson(val);
-          }).toList();
+          List<InventoryItem> fetchedItems =
+              inventoryResponse.map<InventoryItem>((val) {
+                return InventoryItem.fromJson(val);
+              }).toList();
 
           inventoryItems.addAll(fetchedItems);
           totalItems.value = fetchedItems.length;
-          hasMoreData.value = false; 
+          hasMoreData.value = false;
 
           log("Search results loaded: ${allFetchedItems.length}");
-
         } else if (response.statusCode == 401 || response.statusCode == 403) {
           hasInventoryDataError.value = true;
           inventoryDataerrorMessage.value =
@@ -776,22 +807,23 @@ void _onModelChanged() async {
     selectedColor.value = color;
   }
 
- void clearFilters() {
-  searchQuery.value = '';
-  selectedCompany.value = '';
-  selectedCategory.value = '';
-  selectedModel.value = '';
-  selectedStockAvailability.value = '';
-  selectedRAM.value = '';
-  selectedROM.value = '';
-  selectedColor.value = '';
-  sortBy.value = 'id';
-  sortDirection.value = 'asc';
+  void clearFilters() {
+    searchQuery.value = '';
+    selectedCompany.value = '';
+    selectedCategory.value = '';
+    selectedModel.value = '';
+    selectedStockAvailability.value = '';
+    selectedRAM.value = '';
+    selectedROM.value = '';
+    selectedColor.value = '';
+    sortBy.value = 'id';
+    sortDirection.value = 'asc';
 
-  _initializeCascadingFilters();
+    _initializeCascadingFilters();
 
-  refreshData();
-}
+    refreshData();
+  }
+
   void applyFilters() {
     _resetPagination();
     fetchInventoryData(isInitial: true);
@@ -825,7 +857,8 @@ void _onModelChanged() async {
       case 'category':
         return true;
       case 'model':
-        return selectedCompany.value.isNotEmpty || selectedCategory.value.isNotEmpty;
+        return selectedCompany.value.isNotEmpty ||
+            selectedCategory.value.isNotEmpty;
       case 'ram':
       case 'rom':
       case 'color':
@@ -863,12 +896,12 @@ void _onModelChanged() async {
     Get.snackbar('Export', 'Exporting ${inventoryItems.length} items...');
   }
 
- void sellItem(InventoryItem item) {
-  Get.toNamed(AppRoutes.mobileSalesForm, arguments: {
-    'fromInventory': true,
-    'inventoryItem': item,
-  });
-}
+  void sellItem(InventoryItem item) {
+    Get.toNamed(
+      AppRoutes.mobileSalesForm,
+      arguments: {'fromInventory': true, 'inventoryItem': item},
+    );
+  }
 
   void deleteItem(String itemId, int index) {
     Get.defaultDialog(
@@ -919,10 +952,11 @@ void _onModelChanged() async {
       summaryCardsErrorMessage.value = '';
 
       final jsessionId = await SecureStorageHelper.getJSessionId();
-      
+
       if (jsessionId == null || jsessionId.isEmpty) {
         hasSummaryCardsError.value = true;
-        summaryCardsErrorMessage.value = 'No session found. Please login again.';
+        summaryCardsErrorMessage.value =
+            'No session found. Please login again.';
         return;
       }
 
@@ -932,7 +966,10 @@ void _onModelChanged() async {
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data is String ? json.decode(response.data) : response.data;
+        final data =
+            response.data is String
+                ? json.decode(response.data)
+                : response.data;
         final summaryResponse = SummaryCardsResponse.fromJson(data);
         summaryCardsData.value = summaryResponse.payload;
         log("Summary Cards loaded successfully");
@@ -942,7 +979,8 @@ void _onModelChanged() async {
         await _handleSessionExpired();
       } else {
         hasSummaryCardsError.value = true;
-        summaryCardsErrorMessage.value = 'Failed to fetch summary data. Status: ${response?.statusCode}';
+        summaryCardsErrorMessage.value =
+            'Failed to fetch summary data. Status: ${response?.statusCode}';
       }
     } catch (error) {
       hasSummaryCardsError.value = true;
@@ -954,7 +992,8 @@ void _onModelChanged() async {
   }
 
   // Fixed getter methods for easy access to summary data
-  int get totalCompaniesAvailable => summaryCardsData.value?.totalCompanies ?? 0;
+  int get totalCompaniesAvailable =>
+      summaryCardsData.value?.totalCompanies ?? 0;
   int get totalStockAvailable => summaryCardsData.value?.totalStock ?? 0;
   int get lowStockAlert => summaryCardsData.value?.lowStockCount ?? 0;
   int get monthlyPhoneSold => summaryCardsData.value?.totalPhonesSold ?? 0;

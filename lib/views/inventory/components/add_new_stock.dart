@@ -322,12 +322,12 @@ class AddNewStockForm extends StatelessWidget {
                                       color: Colors.white,
                                       size: 18,
                                     ),
-                                    SizedBox(width: 8),
+                                    SizedBox(width: 4),
                                     Text(
                                       'Create Purchase Bill',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 14,
+                                        fontSize: 13  ,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),

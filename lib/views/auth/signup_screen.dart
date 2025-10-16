@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/auth%20controllers/auth_controller.dart';
 
@@ -166,10 +167,10 @@ class SignupScreen extends StatelessWidget {
           const SizedBox(height: 20),
           _buildModernTextField(
             controller: controller.gstNumberController,
-            hintText: 'GST Number',
+            hintText: 'GST Number (Optional)',
             prefixIcon: Icons.receipt_long_outlined,
             validator: controller.validateGSTNumber,
-            isRequired: true,
+            isRequired: false,
           ),
           const SizedBox(height: 20),
           _buildModernTextField(
@@ -193,29 +194,22 @@ class SignupScreen extends StatelessWidget {
         children: [
           _buildStepTitle('Shop Address'),
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _buildModernTextField(
-                  controller: controller.contactPersonController,
-                  hintText: 'Contact Person Name',
-                  prefixIcon: Icons.person_outlined,
-                  validator: controller.validateContactPerson,
-                  isRequired: true,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildModernTextField(
-                  controller: controller.phoneNumberController,
-                  hintText: 'Phone Number',
-                  prefixIcon: Icons.phone_outlined,
-                  keyboardType: TextInputType.phone,
-                  validator: controller.validatePhoneNumber,
-                  isRequired: true,
-                ),
-              ),
-            ],
+           _buildModernTextField(
+             controller: controller.contactPersonController,
+             hintText: 'Contact Person Name',
+             prefixIcon: Icons.person_outlined,
+             validator: controller.validateContactPerson,
+             isRequired: true,
+           ),
+     const SizedBox(height: 20),
+          _buildModernTextField(
+            controller: controller.phoneNumberController,
+            hintText: 'Phone Number',
+            prefixIcon: Icons.phone_outlined,
+            keyboardType: TextInputType.phone,
+            validator: controller.validatePhoneNumber,
+            isRequired: true,
+            
           ),
           const SizedBox(height: 20),
           _buildModernTextField(
@@ -295,30 +289,16 @@ class SignupScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildStepTitle('Social Media Links'),
-        const SizedBox(height: 24),
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Color(0xFF4267B2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(Icons.add, color: Colors.white, size: 16),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Add Social Link',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+        _buildStepTitle('Social Media Links (Optional)'),
+        const SizedBox(height: 16),
+        Text(
+          'Connect your social media profiles to boost your online presence',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha:0.7),
+            fontSize: 14,
+          ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         ...controller.socialMediaLinks.map((link) => 
           _buildSocialMediaInput(controller, link)
         ).toList(),
@@ -349,11 +329,11 @@ class SignupScreen extends StatelessWidget {
               dropdownColor: Color(0xFF374151),
               style: TextStyle(color: Colors.white),
               items: [
-                DropdownMenuItem(value: 'Facebook', child: Row(children: [Icon(Icons.facebook, color: Color(0xFF4267B2), size: 16), SizedBox(width: 8), Text('Facebook')])),
-                DropdownMenuItem(value: 'Instagram', child: Row(children: [Icon(Icons.camera_alt, color: Color(0xFFE4405F), size: 16), SizedBox(width: 8), Text('Instagram')])),
-                DropdownMenuItem(value: 'Twitter', child: Row(children: [Icon(Icons.alternate_email, color: Color(0xFF1DA1F2), size: 16), SizedBox(width: 8), Text('Twitter')])),
-                DropdownMenuItem(value: 'LinkedIn', child: Row(children: [Icon(Icons.business, color: Color(0xFF0077B5), size: 16), SizedBox(width: 8), Text('LinkedIn')])),
-                DropdownMenuItem(value: 'YouTube', child: Row(children: [Icon(Icons.play_circle_fill, color: Color(0xFFFF0000), size: 16), SizedBox(width: 8), Text('YouTube')])),
+                DropdownMenuItem(value: 'facebook', child: Row(children: [Icon(Icons.facebook, color: Color(0xFF4267B2), size: 16), SizedBox(width: 8), Text('Facebook')])),
+                DropdownMenuItem(value: 'instagram', child: Row(children: [Icon(Icons.camera_alt, color: Color(0xFFE4405F), size: 16), SizedBox(width: 8), Text('Instagram')])),
+                DropdownMenuItem(value: 'twitter', child: Row(children: [Icon(Icons.alternate_email, color: Color(0xFF1DA1F2), size: 16), SizedBox(width: 8), Text('Twitter')])),
+                DropdownMenuItem(value: 'linkedin', child: Row(children: [Icon(Icons.business, color: Color(0xFF0077B5), size: 16), SizedBox(width: 8), Text('LinkedIn')])),
+                DropdownMenuItem(value: 'youtube', child: Row(children: [Icon(Icons.play_circle_fill, color: Color(0xFFFF0000), size: 16), SizedBox(width: 8), Text('YouTube')])),
               ],
               onChanged: (value) {
                 link['platform'] = value;
@@ -391,11 +371,13 @@ class SignupScreen extends StatelessWidget {
 
   Widget _buildAddSocialMediaButton(AuthController controller) {
     return GestureDetector(
-      onTap: controller.addSocialMediaLink,
+      onTap: controller.socialMediaLinks.length < 5 ? controller.addSocialMediaLink : null,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Color(0xFF4267B2),
+          color: controller.socialMediaLinks.length < 5 
+            ? Color(0xFF4267B2)
+            : Colors.grey.withValues(alpha:0.5),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -404,7 +386,7 @@ class SignupScreen extends StatelessWidget {
             Icon(Icons.add, color: Colors.white, size: 16),
             const SizedBox(width: 8),
             Text(
-              'Add Social Link',
+              'Add Social Link (${controller.socialMediaLinks.length}/5)',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
             ),
           ],
@@ -417,88 +399,135 @@ class SignupScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildStepTitle('Shop Images (Max 5)'),
-        const SizedBox(height: 24),
-        GestureDetector(
-          onTap: controller.addShopImage,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Color(0xFF4267B2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add_photo_alternate, color: Colors.white, size: 16),
-                const SizedBox(width: 8),
-                Text(
-                  'Add Image',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
+        _buildStepTitle('Shop Image (Optional)'),
+        const SizedBox(height: 16),
+        Text(
+          'Add one image of your shop to help customers recognize your business',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha:0.7),
+            fontSize: 14,
           ),
         ),
-        const SizedBox(height: 20),
-        Obx(() => Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: controller.shopImages.map((image) => 
-            _buildImagePreview(controller, image)
-          ).toList(),
-        )),
+        const SizedBox(height: 24),
+        Obx(() => controller.shopImage.value == null
+          ? GestureDetector(
+              onTap: controller.addShopImage,
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha:0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha:0.3),
+                    width: 2,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_photo_alternate,
+                      size: 64,
+                      color: Colors.white.withValues(alpha:0.6),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Tap to add shop image',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha:0.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : _buildImagePreview(controller),
+        ),
       ],
     );
   }
 
-  Widget _buildImagePreview(AuthController controller, File? image) {
+  Widget _buildImagePreview(AuthController controller) {
     return Container(
-      width: 120,
-      height: 120,
+      height: 200,
+      width: double.infinity,
       child: Stack(
         children: [
           Container(
-            width: 120,
-            height: 120,
+            height: 200,
+            width: double.infinity,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.white.withValues(alpha:0.3)),
-              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.white.withValues(alpha:0.3), width: 2),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: image != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      image,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : Icon(
-                    Icons.cloud_upload_outlined,
-                    color: Colors.white.withValues(alpha:0.6),
-                    size: 40,
-                  ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                controller.shopImage.value!,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          if (image != null)
-            Positioned(
-              top: 4,
-              right: 4,
-              child: GestureDetector(
-                onTap: () => controller.removeShopImage(image),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
-                  ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: controller.removeShopImage,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha:0.3),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
                 ),
               ),
             ),
+          ),
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: controller.addShopImage,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Color(0xFF4267B2),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha:0.3),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.edit, color: Colors.white, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Change',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -508,7 +537,7 @@ class SignupScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildStepTitle('Verification & Agreement'),
+        _buildStepTitle('Review & Confirm'),
         const SizedBox(height: 24),
         Container(
           padding: const EdgeInsets.all(20),
@@ -531,36 +560,67 @@ class SignupScreen extends StatelessWidget {
               const SizedBox(height: 16),
               _buildReviewItem('Shop Name:', controller.shopStoreNameController.text),
               _buildReviewItem('Email:', controller.emailController.text),
+              _buildReviewItem('Phone:', controller.phoneNumberController.text),
               _buildReviewItem('Address:', '${controller.addressLine1Controller.text}, ${controller.cityController.text}'),
-              _buildReviewItem('GST Number:', controller.gstNumberController.text),
+              if (controller.gstNumberController.text.isNotEmpty)
+                _buildReviewItem('GST Number:', controller.gstNumberController.text),
+              _buildReviewItem('Aadhaar Number:', controller.adhaarNumberController.text),
             ],
           ),
         ),
         const SizedBox(height: 24),
-        Obx(() => CheckboxListTile(
-          value: controller.agreeToTerms.value,
-          onChanged: (value) => controller.agreeToTerms.value = value ?? false,
-          activeColor: Colors.white,
-          checkColor: Color(0xFF667eea),
-          title: RichText(
-            text: TextSpan(
-              text: 'I agree to the ',
-              style: TextStyle(color: Colors.white.withValues(alpha:0.8)),
-              children: [
-                TextSpan(
-                  text: 'Terms of Service',
-                  style: TextStyle(color: Colors.white, decoration: TextDecoration.underline),
-                ),
-                TextSpan(text: ' and '),
-                TextSpan(
-                  text: 'Privacy Policy',
-                  style: TextStyle(color: Colors.white, decoration: TextDecoration.underline),
-                ),
-              ],
+        Obx(() => Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha:0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: controller.agreeToTerms.value 
+                ? Colors.green.withValues(alpha:0.5)
+                : Colors.white.withValues(alpha:0.2),
+              width: 2,
             ),
           ),
-          controlAffinity: ListTileControlAffinity.leading,
+          child: CheckboxListTile(
+            value: controller.agreeToTerms.value,
+            onChanged: (value) => controller.agreeToTerms.value = value ?? false,
+            activeColor: Colors.white,
+            checkColor: Color(0xFF667eea),
+            title: RichText(
+              text: TextSpan(
+                text: 'I agree to the ',
+                style: TextStyle(color: Colors.white.withValues(alpha:0.8)),
+                children: [
+                  TextSpan(
+                    text: 'Terms of Service',
+                    style: TextStyle(
+                      color: Colors.white, 
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(text: ' and '),
+                  TextSpan(
+                    text: 'Privacy Policy',
+                    style: TextStyle(
+                      color: Colors.white, 
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' *',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            controlAffinity: ListTileControlAffinity.leading,
+          ),
         )),
+        const SizedBox(height: 12),
         Obx(() => CheckboxListTile(
           value: controller.subscribeToNewsletter.value,
           onChanged: (value) => controller.subscribeToNewsletter.value = value ?? false,
@@ -572,6 +632,31 @@ class SignupScreen extends StatelessWidget {
           ),
           controlAffinity: ListTileControlAffinity.leading,
         )),
+        const SizedBox(height: 16),
+        if (!controller.agreeToTerms.value)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.orange.withValues(alpha:0.2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.orange.withValues(alpha:0.5)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Please agree to terms and conditions to complete registration',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -583,7 +668,7 @@ class SignupScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 100,
+            width: 120,
             child: Text(
               label,
               style: TextStyle(
@@ -594,7 +679,7 @@ class SignupScreen extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              value,
+              value.isEmpty ? '-' : value,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -618,57 +703,70 @@ class SignupScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildModernTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData prefixIcon,
-    bool obscureText = false,
-    Widget? suffixIcon,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-    bool isRequired = false,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha:0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha:0.2),
-          width: 1,
-        ),
+
+
+Widget _buildModernTextField({
+  required TextEditingController controller,
+  required String hintText,
+  required IconData prefixIcon,
+  bool obscureText = false,
+  Widget? suffixIcon,
+  TextInputType? keyboardType,
+  String? Function(String?)? validator,
+  bool isRequired = false,
+}) {
+  // Determine if this field is a phone number field
+  final bool isPhoneField =
+      keyboardType == TextInputType.phone || hintText.toLowerCase().contains('phone');
+
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: Colors.white.withValues(alpha: 0.2),
+        width: 1,
       ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        validator: validator,
-        style: TextStyle(
-          color: Colors.white,
+    ),
+    child: TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      validator: validator,
+      inputFormatters: isPhoneField
+          ? [
+              FilteringTextInputFormatter.digitsOnly, // only numbers
+              LengthLimitingTextInputFormatter(10),   // max 10 digits
+            ]
+          : null,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      decoration: InputDecoration(
+        hintText: hintText + (isRequired ? ' *' : ''),
+        hintStyle: TextStyle(
+          color: Colors.white.withValues(alpha: 0.6),
           fontSize: 16,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w400,
         ),
-        decoration: InputDecoration(
-          hintText: hintText + (isRequired ? ' *' : ''),
-          hintStyle: TextStyle(
-            color: Colors.white.withValues(alpha:0.6),
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-          prefixIcon: Icon(
-            prefixIcon,
-            color: Colors.white.withValues(alpha:0.7),
-            size: 22,
-          ),
-          suffixIcon: suffixIcon,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 18,
-          ),
+        prefixIcon: Icon(
+          prefixIcon,
+          color: Colors.white.withValues(alpha: 0.7),
+          size: 22,
+        ),
+        suffixIcon: suffixIcon,
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildNavigationButtons(AuthController controller, BuildContext context) {
     return Container(
@@ -693,7 +791,7 @@ class SignupScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       'Previous',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],
                 ),
@@ -701,67 +799,83 @@ class SignupScreen extends StatelessWidget {
             ),
           if (controller.currentStep.value > 1) const SizedBox(width: 16),
           Expanded(
-            child: Obx(() => Container(
-              height: 56,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFFF6B6B),
-                    Color(0xFFFF8E8E),
+            child: Obx(() {
+              bool isLastStep = controller.currentStep.value == 5;
+              bool isButtonDisabled = isLastStep && !controller.agreeToTerms.value;
+              
+              return Container(
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: isButtonDisabled
+                    ? LinearGradient(
+                        colors: [
+                          Colors.grey.withValues(alpha:0.5),
+                          Colors.grey.withValues(alpha:0.7),
+                        ],
+                      )
+                    : LinearGradient(
+                        colors: [
+                          Color(0xFFFF6B6B),
+                          Color(0xFFFF8E8E),
+                        ],
+                      ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: isButtonDisabled ? [] : [
+                    BoxShadow(
+                      color: Color(0xFFFF6B6B).withValues(alpha:0.3),
+                      spreadRadius: 0,
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                    ),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xFFFF6B6B).withValues(alpha:0.3),
-                    spreadRadius: 0,
-                    blurRadius: 20,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: controller.isLoading.value ? null : () {
-                    if (controller.currentStep.value == 5) {
-                      controller.signup(context);
-                    } else {
-                      controller.nextStep();
-                    }
-                  },
-                  child: Center(
-                    child: controller.isLoading.value 
-                      ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              controller.currentStep.value == 5 ? 'Complete Registration' : 'Next',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: (controller.isLoading.value || isButtonDisabled) ? null : () {
+                      if (isLastStep) {
+                        controller.signup(context);
+                      } else {
+                        controller.nextStep();
+                      }
+                    },
+                    child: Center(
+                      child: controller.isLoading.value 
+                        ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
-                            if (controller.currentStep.value < 5) ...[
-                              const SizedBox(width: 8),
-                              Icon(Icons.arrow_forward, color: Colors.white),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (isButtonDisabled)
+                                Icon(Icons.lock, color: Colors.white, size: 20),
+                              if (isButtonDisabled)
+                                const SizedBox(width: 8),
+                              Text(
+                                isLastStep ? 'Complete \nRegistration' : 'Next',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (!isLastStep) ...[
+                                const SizedBox(width: 4),
+                                Icon(Icons.arrow_forward, color: Colors.white),
+                              ],
                             ],
-                          ],
-                        ),
+                          ),
+                    ),
                   ),
                 ),
-              ),
-            )),
+              );
+            }),
           ),
         ],
       ),

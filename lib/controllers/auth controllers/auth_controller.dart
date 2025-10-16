@@ -14,6 +14,7 @@ import 'package:smartbecho/services/cookie_extractor.dart';
 import 'package:smartbecho/services/route_services.dart';
 import 'package:smartbecho/services/secure_storage_service.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
+import 'package:smartbecho/services/user_profile_service.dart';
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/toasts.dart';
 import 'package:dio/dio.dart' as dio;
@@ -59,8 +60,8 @@ class AuthController extends GetxController
   // Social Media Links
   final RxList<Map<String, dynamic>> socialMediaLinks = <Map<String, dynamic>>[].obs;
 
-  // Shop Images
-  final RxList<File?> shopImages = <File?>[].obs;
+  // Shop Images - ONLY ONE IMAGE ALLOWED
+  final Rx<File?> shopImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
 
   // Observables
@@ -121,8 +122,8 @@ class AuthController extends GetxController
     // Initialize with empty social media links
     socialMediaLinks.clear();
     
-    // Initialize with empty shop images
-    shopImages.clear();
+    // Initialize with null shop image
+    shopImage.value = null;
   }
 
   void resetAnimations() {
@@ -161,7 +162,18 @@ class AuthController extends GetxController
       case 4:
         return true; // Shop images are optional
       case 5:
-        return agreeToTerms.value;
+        // Terms and conditions must be checked
+        if (!agreeToTerms.value) {
+          Get.snackbar(
+            'Error',
+            'Please agree to terms and conditions',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+          );
+          return false;
+        }
+        return true;
       default:
         return false;
     }
@@ -171,7 +183,7 @@ class AuthController extends GetxController
   void addSocialMediaLink() {
     if (socialMediaLinks.length < 5) {
       socialMediaLinks.add({
-        'platform': 'Facebook',
+        'platform': 'facebook',
         'controller': TextEditingController(),
         'url': '',
       });
@@ -183,40 +195,31 @@ class AuthController extends GetxController
     socialMediaLinks.remove(link);
   }
 
-  // Shop Images Methods
+  // Shop Image Methods - ONLY ONE IMAGE
   Future<void> addShopImage() async {
-    if (shopImages.length < 5) {
-      try {
-        final XFile? pickedFile = await _picker.pickImage(
-          source: ImageSource.gallery,
-          maxWidth: 1024,
-          maxHeight: 1024,
-          imageQuality: 80,
-        );
-        
-        if (pickedFile != null) {
-          shopImages.add(File(pickedFile.path));
-        }
-      } catch (e) {
-        Get.snackbar(
-          'Error',
-          'Failed to pick image: ${e.toString()}',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+      
+      if (pickedFile != null) {
+        shopImage.value = File(pickedFile.path);
       }
-    } else {
+    } catch (e) {
       Get.snackbar(
-        'Limit Reached',
-        'You can only add up to 5 images',
-        backgroundColor: Colors.orange,
+        'Error',
+        'Failed to pick image: ${e.toString()}',
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     }
   }
 
-  void removeShopImage(File? image) {
-    shopImages.remove(image);
+  void removeShopImage() {
+    shopImage.value = null;
   }
 
   // Navigation methods
@@ -279,8 +282,8 @@ class AuthController extends GetxController
         }
         socialMediaLinks.clear();
         
-        // Clear shop images
-        shopImages.clear();
+        // Clear shop image
+        shopImage.value = null;
         
         // Reset step and checkboxes
         currentStep.value = 1;
@@ -329,9 +332,6 @@ class AuthController extends GetxController
     if (value.length < 8) {
       return 'Password must be at least 8 characters';
     }
-    // if (!value.contains(RegExp(r'[A-Z]'))) {
-    //   return 'Password must contain at least one uppercase letter';
-    // }
     if (!value.contains(RegExp(r'[a-z]'))) {
       return 'Password must contain at least one lowercase letter';
     }
@@ -374,11 +374,13 @@ class AuthController extends GetxController
     return null;
   }
 
+  // GST Number validation - OPTIONAL
   String? validateGSTNumber(String? value) {
+    // GST is now optional, so empty is valid
     if (value == null || value.isEmpty) {
-      return 'GST number is required';
+      return null; // Valid - optional field
     }
-    // GST number validation (15 characters)
+    // If provided, validate format (15 characters)
     if (!RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$').hasMatch(value)) {
       return 'Please enter a valid GST number (e.g., 29ABCDE1234F1Z5)';
     }
@@ -410,7 +412,9 @@ class AuthController extends GetxController
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
     }
-    if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+    // Remove any spaces or special characters for validation
+    String cleanedValue = value.replaceAll(RegExp(r'[^0-9]'), '');
+    if (!RegExp(r'^[0-9]{10}$').hasMatch(cleanedValue)) {
       return 'Please enter a valid 10-digit phone number';
     }
     return null;
@@ -563,175 +567,186 @@ class AuthController extends GetxController
       );
     }
   }
-// Signup - Fixed version with proper multipart file handling
-Future<void> signup(BuildContext context) async {
-  if (!agreeToTerms.value) {
-    ToastCustom.errorToast(context, 'Please agree to terms and conditions');
-    return;
-  }
 
-  try {
-    isLoading.value = true;
-
-    var formData = dio.FormData();
-
-    // Basic Information
-    formData.fields.add(MapEntry('shopStoreName', shopStoreNameController.text.trim()));
-    formData.fields.add(MapEntry('email', emailController.text.trim()));
-    formData.fields.add(MapEntry('password', passwordController.text.trim()));
-    formData.fields.add(MapEntry('Status', '1'));
-    formData.fields.add(MapEntry('role.id', '1'));
-
-    // Address Information
-    formData.fields.add(MapEntry('shopAddress.label', 'Shop'));
-    formData.fields.add(MapEntry('shopAddress.city', cityController.text.trim()));
-    formData.fields.add(MapEntry('shopAddress.state', stateController.text.trim()));
-    formData.fields.add(MapEntry('shopAddress.pincode', pincodeController.text.trim()));
-    formData.fields.add(MapEntry('shopAddress.country', countryController.text.trim()));
-
-    // Additional fields
-    formData.fields.add(MapEntry('GSTNumber', gstNumberController.text.trim()));
-    formData.fields.add(MapEntry('AdhaarNumber', adhaarNumberController.text.trim()));
-
-    // Optional fields
-    if (contactPersonController.text.trim().isNotEmpty) {
-      formData.fields.add(MapEntry('contactPerson', contactPersonController.text.trim()));
-    }
-    if (phoneNumberController.text.trim().isNotEmpty) {
-      formData.fields.add(MapEntry('phoneNumber', phoneNumberController.text.trim()));
-    }
-    if (addressLine1Controller.text.trim().isNotEmpty) {
-      formData.fields.add(MapEntry('shopAddress.addressLine1', addressLine1Controller.text.trim()));
-    }
-    if (addressLine2Controller.text.trim().isNotEmpty) {
-      formData.fields.add(MapEntry('shopAddress.addressLine2', addressLine2Controller.text.trim()));
-    }
-    if (landmarkController.text.trim().isNotEmpty) {
-      formData.fields.add(MapEntry('shopAddress.landmark', landmarkController.text.trim()));
+  // Signup - Fixed version matching the curl request exactly
+  Future<void> signup(BuildContext context) async {
+    // Check terms and conditions FIRST
+    if (!agreeToTerms.value) {
+      ToastCustom.errorToast(context, 'Please agree to terms and conditions');
+      return;
     }
 
-    // Social Media Links
-    for (int i = 0; i < socialMediaLinks.length; i++) {
-      var link = socialMediaLinks[i];
-      String url = link['controller']?.text?.trim() ?? '';
-      if (url.isNotEmpty) {
-        formData.fields.add(MapEntry('socialMedia[$i].platform', link['platform']));
-        formData.fields.add(MapEntry('socialMedia[$i].url', url));
+    try {
+      isLoading.value = true;
+
+      var formData = dio.FormData();
+
+      // Basic Information - matching curl field names exactly
+      formData.fields.add(MapEntry('shopStoreName', shopStoreNameController.text.trim()));
+      formData.fields.add(MapEntry('email', emailController.text.trim()));
+      formData.fields.add(MapEntry('phone', phoneNumberController.text.trim())); // Changed from phoneNumber to phone
+      formData.fields.add(MapEntry('password', passwordController.text.trim()));
+      formData.fields.add(MapEntry('Status', '1'));
+
+      // Address Information
+      formData.fields.add(MapEntry('shopAddress.label', 'Shop'));
+      formData.fields.add(MapEntry('shopAddress.city', cityController.text.trim()));
+      formData.fields.add(MapEntry('shopAddress.state', stateController.text.trim()));
+      formData.fields.add(MapEntry('shopAddress.pincode', pincodeController.text.trim()));
+      formData.fields.add(MapEntry('shopAddress.country', countryController.text.trim()));
+
+      // GST Number - Optional
+      if (gstNumberController.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry('GSTNumber', gstNumberController.text.trim()));
       }
-    }
 
-    if (shopImages.isNotEmpty) {
-      for (int i = 0; i < shopImages.length; i++) {
-        File? imageFile = shopImages[i];
-        if (imageFile != null && await imageFile.exists()) {
-          try {
-            // Get file extension
-            String extension = imageFile.path.split('.').last.toLowerCase();
-            String fileName = 'shop_image_${i + 1}.$extension';
-            
-            // Create multipart file with proper content type
-            String contentType = 'image/jpeg';
-            if (extension == 'png') contentType = 'image/png';
-            
-            formData.files.add(MapEntry(
-              'file', // This should match your backend parameter name
-              await dio.MultipartFile.fromFile(
-                imageFile.path,
-                filename: fileName,
-                contentType: dio.DioMediaType.parse(contentType),
-              ),
-            ));
-            
-            print('Added image file: $fileName, size: ${await imageFile.length()} bytes');
-          } catch (fileError) {
-            print('Error processing image file ${i + 1}: $fileError');
-            // Continue with other images even if one fails
-          }
+      // Aadhaar Number
+      formData.fields.add(MapEntry('AdhaarNumber', adhaarNumberController.text.trim()));
+
+      // Optional fields
+      if (addressLine1Controller.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry('shopAddress.addressLine1', addressLine1Controller.text.trim()));
+      }
+      if (addressLine2Controller.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry('shopAddress.addressLine2', addressLine2Controller.text.trim()));
+      }
+      if (landmarkController.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry('shopAddress.landmark', landmarkController.text.trim()));
+      }
+
+      // Social Media Links - matching curl format
+      for (int i = 0; i < socialMediaLinks.length; i++) {
+        var link = socialMediaLinks[i];
+        String url = link['controller']?.text?.trim() ?? '';
+        if (url.isNotEmpty) {
+          String platform = link['platform'].toString().toLowerCase();
+          formData.fields.add(MapEntry('socialMediaLinks[$i].platform', platform));
+          formData.fields.add(MapEntry('socialMediaLinks[$i].url', url));
         }
       }
-    }
 
-    // Newsletter subscription
-    if (subscribeToNewsletter.value) {
-      formData.fields.add(MapEntry('subscribeToNewsletter', 'true'));
-    }
+      // Shop Image - ONLY ONE IMAGE
+      if (shopImage.value != null && await shopImage.value!.exists()) {
+        try {
+          String extension = shopImage.value!.path.split('.').last.toLowerCase();
+          String fileName = 'shop_image.$extension';
+          
+          String contentType = 'image/jpeg';
+          if (extension == 'png') contentType = 'image/png';
+          
+          formData.files.add(MapEntry(
+            'file',
+            await dio.MultipartFile.fromFile(
+              shopImage.value!.path,
+              filename: fileName,
+              contentType: dio.DioMediaType.parse(contentType),
+            ),
+          ));
+          
+          print('Added image file: $fileName');
+        } catch (fileError) {
+          print('Error processing image file: $fileError');
+        }
+      }
 
-    // Debug: Print FormData contents
-    print('FormData fields count: ${formData.fields.length}');
-    print('FormData files count: ${formData.files.length}');
-    
-    for (var field in formData.fields) {
-      print('Field: ${field.key} = ${field.value}');
-    }
-    
-    for (var file in formData.files) {
-      print('File: ${file.key} = ${file.value.filename}');
-    }
+      // Debug: Print FormData contents
+      print('FormData fields count: ${formData.fields.length}');
+      print('FormData files count: ${formData.files.length}');
+      
+      for (var field in formData.fields) {
+        print('Field: ${field.key} = ${field.value}');
+      }
 
-    dio.Response? response = await _apiService.requestMultipartApi(
-      url: _config.signupEndpoint,
-      formData: formData,
-      authToken: false,
-    );
+      dio.Response? response = await _apiService.requestMultipartApi(
+        url: _config.signupEndpoint,
+        formData: formData,
+        authToken: false,
+      );
 
-    if (response != null && response.statusCode == 200) {
-      try {
-        SignupResponse signupResponse = SignupResponse.fromJson(response.data);
+      if (response != null) {
+        print('Response status code: ${response.statusCode}');
+        print('Response data: ${response.data}');
 
         if (response.statusCode == 200) {
-          if (signupResponse.payload?.email != null) {
-            await SharedPreferencesHelper.setUsername(
-              signupResponse.payload!.email!,
-            );
+          try {
+            // Check if response is already a Map or needs parsing
+            Map<String, dynamic> responseData;
+            if (response.data is String) {
+              responseData = json.decode(response.data);
+            } else {
+              responseData = response.data;
+            }
+
+            // Save user info
+            if (responseData['email'] != null) {
+              await SharedPreferencesHelper.setUsername(responseData['email']);
+            }
+
+            if (responseData['shopId'] != null) {
+              await SharedPreferencesHelper.setShopId(responseData['shopId']);
+            }
+
+            ToastCustom.successToast(context, 'Account created successfully!');
+            clearControllers();
+            RouteService.backToLogin();
+          } catch (parseError) {
+            ToastCustom.errorToast(context, 'Invalid response format');
+            print('Parse error: $parseError');
           }
-
-          if (signupResponse.payload?.shopId != null) {
-            await SharedPreferencesHelper.setShopId(
-              signupResponse.payload!.shopId!,
-            );
+        } else if (response.statusCode == 400) {
+          // Extract error message from response
+          String errorMessage = 'Signup failed';
+          try {
+            Map<String, dynamic> errorData;
+            if (response.data is String) {
+              errorData = json.decode(response.data);
+            } else {
+              errorData = response.data;
+            }
+            
+            // Get the error message from the response
+            if (errorData['message'] != null) {
+              errorMessage = errorData['message'];
+            }
+          } catch (e) {
+            print('Error parsing error response: $e');
           }
-
-          String successMessage = 'Account created successfully!';
-          ToastCustom.successToast(context, successMessage);
-
-          clearControllers();
-          RouteService.backToLogin();
+          
+          ToastCustom.errorToast(context, errorMessage);
+        } else if (response.statusCode == 500) {
+          ToastCustom.errorToast(context, "Server error. Please try again later.");
         } else {
-          ToastCustom.errorToast(
-            context,
-            "Signup failed or account already exists",
-          );
+          ToastCustom.errorToast(context, 'Signup failed. Please try again.');
         }
-      } catch (parseError) {
-        ToastCustom.errorToast(context, 'Invalid response format');
-        print('Parse error: $parseError');
-        print('Response data: ${response.data}');
-      }
-    } else {
-      if (response != null && response.statusCode == 400) {
-        ToastCustom.errorToast(
-          context,
-          "Signup failed or account already exists",
-        );
-      } else if (response != null && response.statusCode == 500) {
-        ToastCustom.errorToast(
-          context,
-          "Server error. Please try again later.",
-        );
       } else {
-        ToastCustom.errorToast(
-          context,
-          'Network error. Please check your connection.',
-        );
+        ToastCustom.errorToast(context, 'Network error. Please check your connection.');
       }
+    } catch (e) {
+      // Extract error message if available
+      String errorMessage = 'Signup failed: ${e.toString()}';
+      if (e is dio.DioException && e.response != null) {
+        try {
+          Map<String, dynamic> errorData;
+          if (e.response!.data is String) {
+            errorData = json.decode(e.response!.data);
+          } else {
+            errorData = e.response!.data;
+          }
+          
+          if (errorData['message'] != null) {
+            errorMessage = errorData['message'];
+          }
+        } catch (parseError) {
+          print('Error parsing error response: $parseError');
+        }
+      }
+      
+      ToastCustom.errorToast(context, errorMessage);
+      print('Signup error: $e');
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    ToastCustom.errorToast(context, 'Signup failed: ${e.toString()}');
-    print('Signup error: $e');
-  } finally {
-    isLoading.value = false;
   }
-}
 
   // Reset password
   Future<void> resetPassword(BuildContext context, String email) async {

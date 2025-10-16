@@ -4,6 +4,7 @@ import 'package:smartbecho/bindings/account%20management%20bimding/account_manag
 import 'package:smartbecho/bindings/auth%20bindings/auth_binding.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_history_bindings.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/bill_operation_binding.dart';
+import 'package:smartbecho/bindings/bill%20history%20bindings/online_added_product_added_binding.dart';
 import 'package:smartbecho/bindings/bill%20history%20bindings/this_month_added_stock_binding.dart';
 import 'package:smartbecho/bindings/customer%20dues%20bindings/customer_dues_management_binding.dart';
 import 'package:smartbecho/bindings/customer%20dues%20bindings/customer_dues_operations_binding.dart';
@@ -32,12 +33,14 @@ import 'package:smartbecho/views/auth/signup_screen.dart';
 import 'package:smartbecho/views/auth/verify_email.dart';
 import 'package:smartbecho/views/bill%20history/bill_history.dart';
 import 'package:smartbecho/views/bill%20history/components/bill_analytics.dart';
+import 'package:smartbecho/views/bill%20history/components/online_added_product_page.dart';
 import 'package:smartbecho/views/bill%20history/components/stock_history.dart';
 import 'package:smartbecho/views/bill%20history/components/this_month_aaded_page.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_dues_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_details.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/customer_invoice_details.dart';
 import 'package:smartbecho/views/generate%20inventory/generate_inventory.dart';
+import 'package:smartbecho/views/hsn-code/presentation/hsn_code_screen.dart';
 import 'package:smartbecho/views/inventory/components/add_new_stock.dart';
 import 'package:smartbecho/views/bill%20history/components/bill_details.dart';
 import 'package:smartbecho/views/customer%20dues/components/add_customer_due.dart';
@@ -242,6 +245,13 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       
     ),
+    GetPage(
+      name: AppRoutes.onlineAddedProducts,
+      page: () => OnlineProductsPage(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: OnlineAddedProductBinding(),
+    ),
     //customer dues management
     GetPage(
       name: AppRoutes.customerDuesManagement,
@@ -272,6 +282,13 @@ class AppPages {
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 300),
       binding: AccountManagementBinding(),
+    ),
+     GetPage(
+      name: AppRoutes.hsnCodeManagement,
+      page: () => HsnCodeScreen(),
+      transition: Transition.fade,
+      transitionDuration: Duration(milliseconds: 300),
+      middlewares:[ AuthMiddleware()],
     ),
     //sales  management
     GetPage(

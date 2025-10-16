@@ -15,6 +15,9 @@ class InventoryCrudOperationController extends GetxController{
     companyTextController.dispose();
     modelTextController.dispose();
     colorTextController.dispose();
+    descriptionController.dispose();
+    purchasedFromController.dispose();
+    purchaseNotesController.dispose();
     super.onClose();
   }
 
@@ -30,19 +33,23 @@ class InventoryCrudOperationController extends GetxController{
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController purchasePriceController = TextEditingController();
-  final TextEditingController supplierDetailsController =
-      TextEditingController();
+  final TextEditingController supplierDetailsController = TextEditingController();
   final TextEditingController companyTextController = TextEditingController();
   final TextEditingController modelTextController = TextEditingController();
   final TextEditingController colorTextController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController purchasedFromController = TextEditingController();
+  final TextEditingController purchaseNotesController = TextEditingController();
 
   // Form Values
+  final RxString selectedCategory = ''.obs;
   final RxString selectedAddCompany = ''.obs;
   final RxString selectedAddModel = ''.obs;
   final RxString selectedAddRam = ''.obs;
   final RxString selectedAddStorage = ''.obs;
   final RxString selectedAddColor = ''.obs;
   final Rx<File?> selectedImage = Rx<File?>(null);
+  final Rx<DateTime?> selectedPurchaseDate = Rx<DateTime?>(DateTime.now());
 
   // Form Loading States
   final RxBool isAddingMobile = false.obs;
@@ -50,12 +57,14 @@ class InventoryCrudOperationController extends GetxController{
   final RxString addMobileErrorMessage = ''.obs;
   final RxBool isLoadingFilters = false.obs;
   final RxBool isLoadingModels = false.obs;
+  final RxBool isLoadingCategories = false.obs;
 
   // API data for dropdowns
+  final RxList<String> categories = <String>[].obs;
   final RxList<String> companies = <String>[].obs;
   final RxList<String> models = <String>[].obs;
-  final RxList<String> ramOptions = <String>[].obs;
-  final RxList<String> storageOptions = <String>[].obs;
+  final RxList<String> ramOptions = <String>["2GB", "3GB", "4GB", "6GB", "8GB", "12GB", "16GB", "24GB", "32GB"].obs;
+  final RxList<String> storageOptions = <String>["64GB", "128GB", "256GB", "512GB", "1024GB"].obs;
   final RxList<String> colorOptions = <String>[].obs;
 
   // Dropdown mode flags
@@ -66,7 +75,50 @@ class InventoryCrudOperationController extends GetxController{
   @override
   void onInit() {
     super.onInit();
+    loadCategories();
     loadInitialFilters();
+    selectedPurchaseDate.value = DateTime.now();
+  }
+
+  /// Load categories from API
+  Future<void> loadCategories() async {
+    try {
+      isLoadingCategories.value = true;
+
+      dio.Response? response = await _apiService.requestGetForApi(
+        url: '${_config.baseUrl}/inventory/item-types',
+        authToken: true,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        categories.value = List<String>.from(response.data ?? []);
+        log("✅ Categories loaded successfully");
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (error) {
+      log("❌ Error loading categories: $error");
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
+
+  /// Check if RAM/ROM fields should be shown
+  bool get shouldShowRamRom {
+    final category = selectedCategory.value.toUpperCase();
+    final shouldShow = category == 'SMARTPHONE' || category == 'TABLET';
+    log("🔍 shouldShowRamRom: $shouldShow (Category: $category)");
+    return shouldShow;
+  }
+
+  /// Handle category selection
+  void onCategoryChanged(String category) {
+    selectedCategory.value = category;
+    // Clear RAM/ROM if category doesn't need them
+    if (!shouldShowRamRom) {
+      selectedAddRam.value = '';
+      selectedAddStorage.value = '';
+    }
   }
 
   /// Load initial filter data (companies, RAM, storage, colors)
@@ -84,10 +136,10 @@ class InventoryCrudOperationController extends GetxController{
 
         // Update dropdown options
         companies.value = List<String>.from(data['companies'] ?? []);
-        ramOptions.value = sortStringList(
-          RxList<String>.from(data['rams'] ?? []),
-        );
-        storageOptions.value =sortStringList(RxList<String>.from(data['roms'] ?? []));
+        // ramOptions.value = sortStringList(
+        //   RxList<String>.from(data['rams'] ?? ["2gb", "3gb", "4gb", "6gb", "8gb", "12gb", "16gb", "24gb", "32gb"]),
+        // );
+        // storageOptions.value = sortStringList(RxList<String>.from(data['roms'] ?? []));
 
         colorOptions.value = List<String>.from(data['colors'] ?? []);
 
@@ -109,12 +161,12 @@ class InventoryCrudOperationController extends GetxController{
       isLoadingFilters.value = false;
     }
   }
+  
   //string num sort
-
   RxList<String> sortStringList(RxList<String> list) {
-  final sorted = list.map(int.parse).toList()..sort();
-  return sorted.map((e) => e.toString()).toList().obs;
-}
+    final sorted = list.map(int.parse).toList()..sort();
+    return sorted.map((e) => e.toString()).toList().obs;
+  }
 
   /// Load models for selected company
   Future<void> loadModelsForCompany(String company) async {
@@ -260,7 +312,16 @@ class InventoryCrudOperationController extends GetxController{
     selectedImage.value = image;
   }
 
+  /// Handle purchase date selection
+  void onPurchaseDateChanged(DateTime? date) {
+    selectedPurchaseDate.value = date;
+  }
+
   /// Validate form fields
+  String? validateCategory(String? value) {
+    return value == null || value.isEmpty ? 'Please select a category' : null;
+  }
+
   String? validateCompany(String? value) {
     String companyValue =
         isCompanyTypeable.value ? companyTextController.text : (value ?? '');
@@ -274,10 +335,12 @@ class InventoryCrudOperationController extends GetxController{
   }
 
   String? validateRam(String? value) {
+    if (!shouldShowRamRom) return null; // Skip validation if not needed
     return value == null || value.isEmpty ? 'Please select RAM' : null;
   }
 
   String? validateStorage(String? value) {
+    if (!shouldShowRamRom) return null; // Skip validation if not needed
     return value == null || value.isEmpty ? 'Please select storage' : null;
   }
 
@@ -307,15 +370,31 @@ class InventoryCrudOperationController extends GetxController{
     return null;
   }
 
+  String? validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter product description';
+    }
+    return null;
+  }
+
+  String? validatePurchasedFrom(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter where purchased from';
+    }
+    return null;
+  }
+
   /// Reset add mobile form
   void resetAddMobileForm() {
     addMobileFormKey.currentState?.reset();
+    selectedCategory.value = '';
     selectedAddCompany.value = '';
     selectedAddModel.value = '';
     selectedAddRam.value = '';
     selectedAddStorage.value = '';
     selectedAddColor.value = '';
     selectedImage.value = null;
+    selectedPurchaseDate.value = DateTime.now();
     quantityController.clear();
     priceController.clear();
     purchasePriceController.clear();
@@ -323,11 +402,19 @@ class InventoryCrudOperationController extends GetxController{
     companyTextController.clear();
     modelTextController.clear();
     colorTextController.clear();
+    descriptionController.clear();
+    purchasedFromController.clear();
+    purchaseNotesController.clear();
     hasAddMobileError.value = false;
     addMobileErrorMessage.value = '';
     models.clear();
     isModelTypeable.value = false;
     isColorTypeable.value = false;
+  }
+
+  /// Format date to YYYY-MM-DD format for API
+  String formatDateForApi(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
   /// Add mobile to inventory with multipart file upload
@@ -356,20 +443,28 @@ class InventoryCrudOperationController extends GetxController{
               : colorTextController.text;
 
       // Create FormData for multipart request
-      dio.FormData formData = dio.FormData.fromMap({
-        'company': finalCompany,
+      Map<String, dynamic> formDataMap = {
         'model': finalModel,
-        'ram': selectedAddRam.value,
-        'rom': selectedAddStorage.value,
         'color': finalColor,
-        'qty': quantityController.text,
         'sellingPrice': priceController.text,
-        'purchasePrice': purchasePriceController.text,
-        'supplierDetails': supplierDetailsController.text,
-        'itemCategory': "SMARTPHONE",
-      });
+        'qty': quantityController.text,
+        'company': finalCompany,
+        'description': descriptionController.text,
+        'purchasedFrom': purchasedFromController.text,
+        'purchaseDate': formatDateForApi(selectedPurchaseDate.value ?? DateTime.now()),
+        'purchaseNotes': purchaseNotesController.text,
+        'itemCategory': selectedCategory.value,
+      };
 
-      // Add file if selected
+      // Only add RAM and ROM if category is SMARTPHONE or TABLET
+      if (shouldShowRamRom) {
+        formDataMap['ram'] = selectedAddRam.value;
+        formDataMap['rom'] = selectedAddStorage.value;
+      }
+
+      dio.FormData formData = dio.FormData.fromMap(formDataMap);
+
+      // Add file if selected, otherwise send 'null' as string
       if (selectedImage.value != null) {
         String fileName =
             "${finalCompany}_${finalModel}_${finalColor}.${selectedImage.value!.path.split('.').last}";
@@ -382,6 +477,9 @@ class InventoryCrudOperationController extends GetxController{
             ),
           ),
         );
+      } else {
+        // Send 'null' as string when no file is selected
+        formData.fields.add(const MapEntry('file', 'null'));
       }
 
       // Use the multipart API method
@@ -394,7 +492,7 @@ class InventoryCrudOperationController extends GetxController{
       if (response != null && response.statusCode == 200) {
         Get.snackbar(
           'Success',
-          'Mobile added to inventory successfully!',
+          'Product added to inventory successfully!',
           snackPosition: SnackPosition.TOP,
           backgroundColor: const Color(0xFF10B981),
           colorText: Colors.white,
@@ -407,7 +505,7 @@ class InventoryCrudOperationController extends GetxController{
         // Reload filters to get updated data
         loadInitialFilters();
       } else {
-        String errorMessage = 'Failed to add mobile to inventory';
+        String errorMessage = 'Failed to add product to inventory';
         if (response?.data != null) {
           errorMessage = response?.data['message'] ?? errorMessage;
         }
@@ -415,12 +513,12 @@ class InventoryCrudOperationController extends GetxController{
       }
     } catch (error) {
       hasAddMobileError.value = true;
-      addMobileErrorMessage.value = 'Error adding mobile: $error';
+      addMobileErrorMessage.value = 'Error adding product: $error';
       log("❌ Error in addMobileToInventory: $error");
 
       Get.snackbar(
         'Error',
-        'Failed to add mobile to inventory. Please try again.',
+        'Failed to add product to inventory. Please try again.',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

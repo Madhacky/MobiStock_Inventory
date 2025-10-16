@@ -13,6 +13,9 @@ class InventoryItem {
   final DateTime? createdDate;
   final String? description;
   final int? lowStockQty;
+  final List<String>? imeiList;
+   final String? source; 
+  final String? displayName; 
 
   InventoryItem({
     required this.id,
@@ -29,6 +32,9 @@ class InventoryItem {
     this.createdDate,
     this.description,
     this.lowStockQty,
+    this.imeiList,
+    this.source, 
+    this.displayName, 
   });
 
   factory InventoryItem.fromJson(Map<String, dynamic> json) {
@@ -47,6 +53,11 @@ class InventoryItem {
       createdDate: _parseDate(json['createdDate']),
       description: json['description'],
       lowStockQty: json['lowStockQty'],
+      imeiList: json['imeiList'] != null
+          ? List<String>.from(json['imeiList'])
+          : null,
+      source: json['source'], // ✅ added
+      displayName: json['displayName'], // ✅ added
     );
   }
 
@@ -75,6 +86,9 @@ class InventoryItem {
         ],
       if (description != null) 'description': description,
       if (lowStockQty != null) 'lowStockQty': lowStockQty,
+      if (imeiList != null) 'imeiList': imeiList,
+      if (source != null) 'source': source,
+      if (displayName != null) 'displayName': displayName, 
     };
   }
 

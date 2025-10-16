@@ -48,7 +48,6 @@ Widget buildCustomAppBar(
     ),
   );
 }
-
 SliverAppBar buildStyledSliverAppBar({
   required String title,
   required bool isDark,
@@ -62,6 +61,7 @@ SliverAppBar buildStyledSliverAppBar({
     backgroundColor: isDark ? Colors.black : Colors.grey[50],
     elevation: 0,
     automaticallyImplyLeading: false,
+    titleSpacing: 0, // Remove default spacing
     leading: Padding(
       padding: const EdgeInsets.only(left: 12.0),
       child: Container(
@@ -69,10 +69,9 @@ SliverAppBar buildStyledSliverAppBar({
           color: Colors.white.withValues(alpha: 0.2),
           shape: BoxShape.circle,
           border: Border.all(
-            color:
-                !isDark
-                    ? Colors.black.withValues(alpha: 0.3)
-                    : Colors.white.withValues(alpha: 0.3),
+            color: !isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -87,42 +86,26 @@ SliverAppBar buildStyledSliverAppBar({
         ),
       ),
     ),
-    flexibleSpace: FlexibleSpaceBar(
-      title: Container(
-        //padding: const EdgeInsets.only(top: 8, left: 0, right: 0),
-        alignment: Alignment.bottomCenter,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Title
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: isDark ? Colors.black : Colors.black87,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-
-            const Spacer(),
-
-            // Refresh Action
-            IconButton(
-              onPressed: onRefresh,
-              icon: Icon(
-                Icons.refresh,
-                color: const Color(0xFF6C5CE7),
-                size: 25,
-              ),
-              tooltip: 'Refresh',
-            ),
-          ],
-        ),
+    title: Text(
+      title,
+      style: TextStyle(
+        color: isDark ? Colors.white : Colors.black87,
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
       ),
     ),
+    centerTitle: true, // Center the title
+    actions: [
+      IconButton(
+        onPressed: onRefresh,
+        icon: Icon(
+          Icons.refresh,
+          color: const Color(0xFF6C5CE7),
+          size: 25,
+        ),
+        tooltip: 'Refresh',
+      ),
+      SizedBox(width: 8), // Add some padding on the right
+    ],
   );
 }
