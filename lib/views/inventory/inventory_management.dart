@@ -234,7 +234,7 @@ class InventoryManagementScreen extends StatelessWidget {
     List<Color> gradient,
   ) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard ),
+      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard),
       child: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -663,7 +663,7 @@ class InventoryManagementScreen extends StatelessWidget {
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
-      itemCount: 6,
+      itemCount: 8,
       itemBuilder: (context, index) => _buildShimmerCard(),
     );
   }
@@ -883,6 +883,56 @@ class InventoryManagementScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(height: 8),
+                if (item.imeiList?.isNotEmpty ?? false) ...[
+                  ListView.builder(
+                    itemCount: item.imeiList!.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          Icon(
+                            Icons.scanner,
+                            size: 10,
+                            color: Colors.grey[500],
+                          ),
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              item.imeiList![index],
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[500],
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  // Row(
+                  //   children: [
+                  //     Icon(Icons.scanner, size: 10, color: Colors.grey[500]),
+                  //     SizedBox(width: 4),
+                  //     Expanded(
+                  //       child: Text(
+                  //         (item.imeiList!.length > 1)
+                  //             ? '${item.imeiList!.length} IMEIs'
+                  //             : item.imeiList!.first,
+                  //         style: TextStyle(
+                  //           fontSize: 10,
+                  //           color: Colors.grey[500],
+                  //         ),
+                  //         overflow: TextOverflow.ellipsis,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ] else ...[
+                  SizedBox.shrink(),
+                ],
               ],
             ),
             Spacer(),
@@ -914,7 +964,7 @@ class InventoryManagementScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
-                      child: Container(
+                      child: item.quantity ==0?  SizedBox.shrink():  Container(
                         height: 32,
                         child: ElevatedButton(
                           onPressed: () => controller.sellItem(item),
@@ -1612,70 +1662,78 @@ class InventoryManagementScreen extends StatelessWidget {
     }
   }
 
- Widget buildAlternativeFloatingActionButtons() {
-  return Obx(() => Column(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      // Scroll to Top Button (shows when scrolled down)
-      if (controller.showScrollToTop.value)
-        Container(
-          margin: EdgeInsets.only(bottom: 16),
-          child: FloatingActionButton(
-            mini: true,
-            backgroundColor: Colors.white,
-            foregroundColor: Color(0xFF6C5CE7),
-            elevation: 4,
-            onPressed: controller.scrollToTop,
-            heroTag: "scrollToTop",
-            child: Icon(
-              Icons.keyboard_arrow_up,
-              size: 28,
-            ),
-          ),
-        ),
-      
-      // Main Speed Dial
-      SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        backgroundColor: Color(0xFF6C5CE7),
-        foregroundColor: Colors.white,
-        elevation: 8,
-        shape: CircleBorder(),
+  Widget buildAlternativeFloatingActionButtons() {
+    return Obx(
+      () => Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          SpeedDialChild(
-            child: Icon(Icons.add, color: Colors.white),
-            backgroundColor: Color(0xFF51CF66),
-            label: 'Add Online Product',
-            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            onTap: controller.addNewItem,
-          ),
-          // SpeedDialChild(
-          //   child: Icon(Icons.upload_file, color: Colors.white),
-          //   backgroundColor: Color(0xFF00CEC9),
-          //   label: 'Bulk Upload',
-          //   labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          //   onTap: controller.bulkUpload,
-          // ),
-          SpeedDialChild(
-            child: Icon(Icons.download, color: Colors.white),
-            backgroundColor: Color(0xFFFF9500),
-            label: 'Export Data',
-            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            onTap: null,
-            //controller.exportData,
-          ),
-          SpeedDialChild(
-            child: Icon(Icons.inventory_rounded, color: Colors.white),
+          // Scroll to Top Button (shows when scrolled down)
+          if (controller.showScrollToTop.value)
+            Container(
+              margin: EdgeInsets.only(bottom: 16),
+              child: FloatingActionButton(
+                mini: true,
+                backgroundColor: Colors.white,
+                foregroundColor: Color(0xFF6C5CE7),
+                elevation: 4,
+                onPressed: controller.scrollToTop,
+                heroTag: "scrollToTop",
+                child: Icon(Icons.keyboard_arrow_up, size: 28),
+              ),
+            ),
+
+          // Main Speed Dial
+          SpeedDial(
+            animatedIcon: AnimatedIcons.menu_close,
             backgroundColor: Color(0xFF6C5CE7),
-            label: 'Add New Stock',
-            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            onTap: controller.addNewStocks,
+            foregroundColor: Colors.white,
+            elevation: 8,
+            shape: CircleBorder(),
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.add, color: Colors.white),
+                backgroundColor: Color(0xFF51CF66),
+                label: 'Add Online Product',
+                labelStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                onTap: controller.addNewItem,
+              ),
+              // SpeedDialChild(
+              //   child: Icon(Icons.upload_file, color: Colors.white),
+              //   backgroundColor: Color(0xFF00CEC9),
+              //   label: 'Bulk Upload',
+              //   labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              //   onTap: controller.bulkUpload,
+              // ),
+              // SpeedDialChild(
+              //   child: Icon(Icons.download, color: Colors.white),
+              //   backgroundColor: Color(0xFFFF9500),
+              //   label: 'Export Data',
+              //   labelStyle: TextStyle(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              //   onTap: null,
+              //   //controller.exportData,
+              // ),
+              SpeedDialChild(
+                child: Icon(Icons.inventory_rounded, color: Colors.white),
+                backgroundColor: Color(0xFF6C5CE7),
+                label: 'Add New Stock',
+                labelStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                onTap: controller.addNewStocks,
+              ),
+            ],
           ),
         ],
       ),
-    ],
-  ));
-}
+    );
+  }
 
   Widget buildCustomAppBar(String title, {bool isdark = false}) {
     return Container(

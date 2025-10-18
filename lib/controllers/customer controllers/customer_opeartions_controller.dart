@@ -39,6 +39,42 @@ class CustomerOperationsController extends GetxController {
   final RxBool hasAddCustomerError = false.obs;
   final RxString addCustomerErrorMessage = ''.obs;
   final Rx<File?> selectedCustomerImage = Rx<File?>(null);
+  final RxString selectedStates = ''.obs;
+ final RxList<String> statesList = <String>[
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal'
+].obs;
+
+  /// Handle state selection
+  void onSelectState(String state) {
+    selectedStates.value = state;
+  }
 
   /// Handle customer image selection
   void onCustomerImageSelected(File? image) {
@@ -96,6 +132,7 @@ class CustomerOperationsController extends GetxController {
         'location': locationController.text,
         'primaryAddress': primaryAddressController.text,
         'shopId': 'SHOP001', // You might want to make this dynamic
+        'state': selectedStates.value,
       });
 
       // Add file if selected

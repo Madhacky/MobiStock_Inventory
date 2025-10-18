@@ -108,11 +108,14 @@ class SalesCrudOperationController extends GetxController {
   final RxString selectedColor = ''.obs;
   final RxString selectedRam = ''.obs; // New RAM field
   final RxString selectedRom = ''.obs; // New ROM field
+  final RxString selectedSource = ''.obs; // New Source field
+  final RxString selectedEMITenure = ''.obs;
+  final RxString selectedIMEINumbers = ''.obs;
 
   // Form Values - Payment Details
   final Rx<PaymentMode> selectedPaymentMode = PaymentMode.fullPayment.obs;
   final RxString selectedPaymentMethod = ''.obs;
-  final RxString selectedEMITenure = ''.obs;
+  
 
   // Loading States
   final RxBool isLoadingFilters = false.obs;
@@ -132,6 +135,7 @@ class SalesCrudOperationController extends GetxController {
   final RxList<String> colorOptions = <String>[].obs;
   final RxList<String> ramOptions = <String>[].obs; // New RAM options
   final RxList<String> romOptions = <String>[].obs; // New ROM options
+  final RxList<String> iMEINumbersOptiond = <String>[].obs;
   // final RxList<String> paymentMethods =
   //     <String>['UPI', 'Cash', 'Card', 'Bank Transfer'].obs;
   final RxList<String> emiTenureOptions =
@@ -184,6 +188,12 @@ checkGSTAvailability();
       }
       if (inventoryItem!.rom != null && inventoryItem!.rom!.isNotEmpty) {
         selectedRom.value = inventoryItem!.rom!;
+      }
+      if (inventoryItem!.imeiList != null && inventoryItem!.imeiList!.isNotEmpty) {
+        selectedIMEINumbers.value = inventoryItem!.imeiList!.first;
+      }
+      if (inventoryItem!.imeiList != null && inventoryItem!.imeiList!.isNotEmpty) {
+        iMEINumbersOptiond.value = inventoryItem!.imeiList!;
       }
 
       // Set text field values
@@ -560,6 +570,11 @@ Future<void> checkGSTAvailability() async {
     selectedRom.value = rom;
   }
 
+//on change imei numbers
+  void onIMEINumbersChanged(String imeiNumbers) {
+    selectedIMEINumbers.value = imeiNumbers;
+  }
+
   /// Handle quantity and unit price changes
   void onQuantityChanged(String value) {
     calculatePrices();
@@ -710,7 +725,10 @@ Future<void> checkGSTAvailability() async {
       Get.snackbar('Error', 'Please enter pincode');
       return false;
     }
-
+   if (pincodeController.text.isEmpty) {
+      Get.snackbar('Error', 'Please enter pincode');
+      return false;
+    }
     return true;
   }
 
@@ -760,6 +778,8 @@ Future<void> checkGSTAvailability() async {
             'color': selectedColor.value,
             'quantity': int.parse(quantityController.text),
             'unitPrice': unitPriceController.text,
+            'description': productDescriptionController.text,
+            'imeiNumbers': selectedIMEINumbers.value,
           },
         ],
       };
@@ -778,7 +798,7 @@ if (_getPaymentModeString() == "EMI") {
         authToken: true,
       );
 
-      if (response != null && response.statusCode == 200) {
+      if (response != null && response.statusCode == 201) {
         final responseData = response.data;
 
         Get.snackbar(
@@ -904,6 +924,19 @@ if (_getPaymentModeString() == "EMI") {
   String? validateColor(String? value) {
     return value == null || value.isEmpty ? 'Please select a color' : null;
   }
+ 
+   String? validateIMEINumbers(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter IMEI number';
+    }
+    if (value.length < 15) {
+      return 'Please enter valid IMEI number';
+    }
+    return null;
+  }
+
+
+
 
   String? validateRam(String? value) {
     return value == null || value.isEmpty
@@ -936,7 +969,9 @@ if (_getPaymentModeString() == "EMI") {
     }
     return null;
   }
-
+ String? validateE(String? value) {
+    return value == null || value.isEmpty ? 'Please enter customer name' : null;
+  }
   String? validateCustomerName(String? value) {
     return value == null || value.isEmpty ? 'Please enter customer name' : null;
   }
