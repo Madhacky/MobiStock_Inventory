@@ -16,9 +16,10 @@ class MobileSalesForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SalesCrudOperationController controller =
-    Get.isRegistered<SalesCrudOperationController>()?
-        Get.find<SalesCrudOperationController>():Get.put(SalesCrudOperationController());
-final InventoryItem item  = Get.arguments['inventoryItem'];
+        Get.isRegistered<SalesCrudOperationController>()
+            ? Get.find<SalesCrudOperationController>()
+            : Get.put(SalesCrudOperationController());
+    final InventoryItem item = Get.arguments['inventoryItem'];
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: _buildAppBar(controller),
@@ -32,7 +33,7 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
                 controller: controller.pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _buildStep1(controller,item),
+                  _buildStep1(controller, item),
                   _buildStep2(controller),
                 ],
               ),
@@ -108,9 +109,10 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
             Expanded(
               child: Container(
                 height: 2,
-                color: controller.currentStep.value >= 2
-                    ? const Color(0xFF6366F1)
-                    : Colors.grey.shade300,
+                color:
+                    controller.currentStep.value >= 2
+                        ? const Color(0xFF6366F1)
+                        : Colors.grey.shade300,
               ),
             ),
             _buildStepCircle(2, controller.currentStep.value >= 2, false),
@@ -154,12 +156,15 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
     );
   }
 
-  Widget _buildStep1(SalesCrudOperationController controller , InventoryItem item) {
+  Widget _buildStep1(
+    SalesCrudOperationController controller,
+    InventoryItem item,
+  ) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildProductDetailsSection(controller,item),
+          _buildProductDetailsSection(controller, item),
           _buildCustomerDetailsSection(controller),
           _buildStep1Navigation(controller),
         ],
@@ -179,7 +184,10 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
     );
   }
 
-  Widget _buildProductDetailsSection(SalesCrudOperationController controller , InventoryItem item) {
+  Widget _buildProductDetailsSection(
+    SalesCrudOperationController controller,
+    InventoryItem item,
+  ) {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -187,7 +195,7 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -207,13 +215,14 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
               if (controller.isLoadingFilters.value) {
                 return buildShimmerTextField();
               }
-              
+
               return buildStyledDropdown(
                 labelText: 'Category',
                 hintText: 'Select Category',
-                value: controller.selectedCategory.value.isEmpty
-                    ? null
-                    : controller.selectedCategory.value,
+                value:
+                    controller.selectedCategory.value.isEmpty
+                        ? null
+                        : controller.selectedCategory.value,
                 items: controller.categories,
                 onChanged: (value) => controller.onCategoryChanged(value ?? ''),
                 validator: controller.validateCategory,
@@ -228,13 +237,17 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
               }
 
               bool isEnabled = controller.isCategorySelected;
-              
+
               return buildStyledDropdown(
                 labelText: 'Company',
-                hintText: isEnabled ? 'Select Company' : 'Please select category first',
-                value: controller.selectedCompany.value.isEmpty
-                    ? null
-                    : controller.selectedCompany.value,
+                hintText:
+                    isEnabled
+                        ? 'Select Company'
+                        : 'Please select category first',
+                value:
+                    controller.selectedCompany.value.isEmpty
+                        ? null
+                        : controller.selectedCompany.value,
                 items: controller.companies,
                 enabled: isEnabled,
                 onChanged: (value) => controller.onCompanyChanged(value ?? ''),
@@ -250,13 +263,15 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
               }
 
               bool isEnabled = controller.isCompanySelected;
-              
+
               return buildStyledDropdown(
                 labelText: 'Model',
-                hintText: isEnabled ? 'Select Model' : 'Please select company first',
-                value: controller.selectedModel.value.isEmpty
-                    ? null
-                    : controller.selectedModel.value,
+                hintText:
+                    isEnabled ? 'Select Model' : 'Please select company first',
+                value:
+                    controller.selectedModel.value.isEmpty
+                        ? null
+                        : controller.selectedModel.value,
                 items: controller.models,
                 enabled: isEnabled,
                 onChanged: (value) => controller.onModelChanged(value ?? ''),
@@ -279,11 +294,13 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
                         child: buildStyledDropdown(
                           labelText: 'RAM (GB)',
                           hintText: 'Select RAM',
-                          value: controller.selectedRam.value.isEmpty
-                              ? null
-                              : controller.selectedRam.value,
+                          value:
+                              controller.selectedRam.value.isEmpty
+                                  ? null
+                                  : controller.selectedRam.value,
                           items: controller.ramOptions,
-                          onChanged: (value) => controller.onRamChanged(value ?? ''),
+                          onChanged:
+                              (value) => controller.onRamChanged(value ?? ''),
                           validator: controller.validateRam,
                         ),
                       ),
@@ -293,11 +310,13 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
                         child: buildStyledDropdown(
                           labelText: 'Storage (ROM) (GB)',
                           hintText: 'Select Storage',
-                          value: controller.selectedRom.value.isEmpty
-                              ? null
-                              : controller.selectedRom.value,
+                          value:
+                              controller.selectedRom.value.isEmpty
+                                  ? null
+                                  : controller.selectedRom.value,
                           items: controller.romOptions,
-                          onChanged: (value) => controller.onRomChanged(value ?? ''),
+                          onChanged:
+                              (value) => controller.onRomChanged(value ?? ''),
                           validator: controller.validateRom,
                         ),
                       ),
@@ -318,16 +337,19 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
             const SizedBox(height: 16),
 
             // Color Dropdown
-            Obx(() => buildStyledDropdown(
-              labelText: 'Color',
-              hintText: 'Select Color',
-              value: controller.selectedColor.value.isEmpty
-                  ? null
-                  : controller.selectedColor.value,
-              items: controller.colorOptions,
-              onChanged: (value) => controller.onColorChanged(value ?? ''),
-              validator: controller.validateColor,
-            )),
+            Obx(
+              () => buildStyledDropdown(
+                labelText: 'Color',
+                hintText: 'Select Color',
+                value:
+                    controller.selectedColor.value.isEmpty
+                        ? null
+                        : controller.selectedColor.value,
+                items: controller.colorOptions,
+                onChanged: (value) => controller.onColorChanged(value ?? ''),
+                validator: controller.validateColor,
+              ),
+            ),
             const SizedBox(height: 16),
 
             // Quantity and Unit Price Row
@@ -340,10 +362,12 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
                     hintText: '1',
                     keyboardType: TextInputType.number,
                     validator: controller.validateQuantity,
-                     inputFormatters: [
-      FilteringTextInputFormatter.digitsOnly,
-      MaxValueInputFormatter(item.quantity), // 👈 pass max quantity
-    ],
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      MaxValueInputFormatter(
+                        item.quantity,
+                      ), // 👈 pass max quantity
+                    ],
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -357,6 +381,29 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            // buildStyledTextField(
+            //   labelText: 'IMEI Numbers (Optional)',
+            //   controller: controller.customerNameController,
+            //   hintText: 'Enter IMEI numbers separated by commas',
+            //   validator: controller.validateCustomerName,
+              
+            // ),
+            //
+            // Color Dropdown
+            Obx(
+              () => buildStyledDropdown(
+                labelText: 'IMEI Numbers',
+                hintText: 'Select IMEI Number',
+                value:
+                    controller.selectedColor.value.isEmpty
+                        ? null
+                        : controller.selectedIMEINumbers.value,
+                items: controller.iMEINumbersOptiond,
+                onChanged: (value) => controller.onIMEINumbersChanged(value ?? ''),
+                // validator: controller.validateIMEINumbers,
+              ),
             ),
           ],
         ),
@@ -372,7 +419,7 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -393,32 +440,34 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
               controller: controller.customerNameController,
               hintText: 'Enter customer name',
               validator: controller.validateCustomerName,
-              
             ),
             const SizedBox(height: 16),
 
             // Phone Number with auto-fetch
-            Obx(() => buildStyledTextField(
-              labelText: 'Phone Number',
-              controller: controller.phoneNumberController,
-              hintText: 'Enter phone number',
-              keyboardType: TextInputType.phone,
-              validator: controller.validatePhoneNumber,
-              onChanged: controller.onPhoneNumberChanged,
-               inputFormatters: [
-    FilteringTextInputFormatter.digitsOnly, // Allow only digits
-    LengthLimitingTextInputFormatter(10),   // Limit to 10 digits
-  ],
-              suffixIcon: controller.isLoadingCustomer.value
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : controller.customerFound.value
-                      ? const Icon(Icons.check_circle, color: Colors.green)
-                      : null,
-            )),
+            Obx(
+              () => buildStyledTextField(
+                labelText: 'Phone Number',
+                controller: controller.phoneNumberController,
+                hintText: 'Enter phone number',
+                keyboardType: TextInputType.phone,
+                validator: controller.validatePhoneNumber,
+                onChanged: controller.onPhoneNumberChanged,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                  LengthLimitingTextInputFormatter(10), // Limit to 10 digits
+                ],
+                suffixIcon:
+                    controller.isLoadingCustomer.value
+                        ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : controller.customerFound.value
+                        ? const Icon(Icons.check_circle, color: Colors.green)
+                        : null,
+              ),
+            ),
             const SizedBox(height: 16),
 
             // Email
@@ -428,7 +477,6 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
               hintText: 'Enter your email',
               keyboardType: TextInputType.emailAddress,
               validator: controller.validateEmail,
-
             ),
             const SizedBox(height: 16),
 
@@ -485,7 +533,7 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
       children: [
         // Price Calculation Section
         _buildPriceCalculationSection(controller),
-        
+
         // Payment Details Section
         Container(
           margin: const EdgeInsets.all(16),
@@ -494,7 +542,7 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withValues(alpha:0.08),
+                color: Colors.grey.withValues(alpha: 0.08),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
                 spreadRadius: 1,
@@ -519,34 +567,36 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
                   ),
                 ),
                 const SizedBox(height: 8),
-                Obx(() => Row(
-                  children: [
-                    _buildPaymentModeRadio(
-                      controller,
-                      'Full Payment',
-                      PaymentMode.fullPayment,
-                    ),
-                    const SizedBox(width: 16),
-                    _buildPaymentModeRadio(
-                      controller,
-                      'Dues (Partial Payment)',
-                      PaymentMode.partialPayment,
-                    ),
-                    const SizedBox(width: 16),
-                    _buildPaymentModeRadio(
-                      controller,
-                      'EMI',
-                      PaymentMode.emi,
-                    ),
-                  ],
-                )),
+                Obx(
+                  () => Row(
+                    children: [
+                      _buildPaymentModeRadio(
+                        controller,
+                        'Full Payment',
+                        PaymentMode.fullPayment,
+                      ),
+                      const SizedBox(width: 16),
+                      _buildPaymentModeRadio(
+                        controller,
+                        'Dues (Partial Payment)',
+                        PaymentMode.partialPayment,
+                      ),
+                      const SizedBox(width: 16),
+                      _buildPaymentModeRadio(
+                        controller,
+                        'EMI',
+                        PaymentMode.emi,
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 20),
 
                 // Payment Mode Specific Fields
                 Obx(() => _buildPaymentModeFields(controller)),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Price Summary
                 _buildPriceSummary(controller),
               ],
@@ -556,188 +606,205 @@ final InventoryItem item  = Get.arguments['inventoryItem'];
       ],
     );
   }
-Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
-  return Container(
-    margin: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withValues(alpha:0.08),
-          blurRadius: 20,
-          offset: const Offset(0, 4),
-          spreadRadius: 1,
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionTitle('Price Calculation', Icons.calculate),
-          const SizedBox(height: 16),
 
-          // Conditionally show GST field
-          Obx(() {
-            if (controller.shouldShowGST.value) {
-              return Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: buildStyledTextField(
-                          labelText: 'GST Percentage (%)',
-                          controller: controller.gstPercentageController,
-                          hintText: '18',
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) => controller.calculatePrices(),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: buildStyledTextField(
-                          labelText: 'Extra Charges (₹)',
-                          controller: controller.extraChargesController,
-                          hintText: '0',
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) => controller.calculatePrices(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              );
-            } else {
-              // Only show Extra Charges when GST is hidden
-              return Column(
-                children: [
-                  // Info message
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue.shade200),
-                    ),
-                    child: Row(
+  Widget _buildPriceCalculationSection(
+    SalesCrudOperationController controller,
+  ) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle('Price Calculation', Icons.calculate),
+            const SizedBox(height: 16),
+
+            // Conditionally show GST field
+            Obx(() {
+              if (controller.shouldShowGST.value) {
+                return Column(
+                  children: [
+                    Row(
                       children: [
-                        Icon(Icons.info_outline, 
-                             color: Colors.blue.shade700, 
-                             size: 20),
-                        const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            controller.shopGSTNumber.value.isEmpty
-                                ? 'GST not applicable - Shop GST number not registered'
-                                : 'GST not applicable for online source items',
-                            style: TextStyle(
-                              color: Colors.blue.shade700,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: buildStyledTextField(
+                            labelText: 'GST Percentage (%)',
+                            controller: controller.gstPercentageController,
+                            hintText: '18',
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) => controller.calculatePrices(),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: buildStyledTextField(
+                            labelText: 'Extra Charges (₹)',
+                            controller: controller.extraChargesController,
+                            hintText: '0',
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) => controller.calculatePrices(),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  buildStyledTextField(
-                    labelText: 'Extra Charges (₹)',
-                    controller: controller.extraChargesController,
+                    const SizedBox(height: 16),
+                  ],
+                );
+              } else {
+                // Only show Extra Charges when GST is hidden
+                return Column(
+                  children: [
+                    // Info message
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.blue.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.blue.shade700,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              controller.shopGSTNumber.value.isEmpty
+                                  ? 'GST not applicable - Shop GST number not registered'
+                                  : 'GST not applicable for online source items',
+                              style: TextStyle(
+                                color: Colors.blue.shade700,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    buildStyledTextField(
+                      labelText: 'Extra Charges (₹)',
+                      controller: controller.extraChargesController,
+                      hintText: '0',
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) => controller.calculatePrices(),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }
+            }),
+
+            // Accessories Cost and Repair Charges Row
+            Row(
+              children: [
+                Expanded(
+                  child: buildStyledTextField(
+                    labelText: 'Accessories Cost (₹)',
+                    controller: controller.accessoriesCostController,
                     hintText: '0',
                     keyboardType: TextInputType.number,
                     onChanged: (value) => controller.calculatePrices(),
                   ),
-                  const SizedBox(height: 16),
-                ],
-              );
-            }
-          }),
-
-          // Accessories Cost and Repair Charges Row
-          Row(
-            children: [
-              Expanded(
-                child: buildStyledTextField(
-                  labelText: 'Accessories Cost (₹)',
-                  controller: controller.accessoriesCostController,
-                  hintText: '0',
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => controller.calculatePrices(),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: buildStyledTextField(
-                  labelText: 'Repair Charges (₹)',
-                  controller: controller.repairChargesController,
-                  hintText: '0',
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => controller.calculatePrices(),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: buildStyledTextField(
+                    labelText: 'Repair Charges (₹)',
+                    controller: controller.repairChargesController,
+                    hintText: '0',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => controller.calculatePrices(),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+              ],
+            ),
+            const SizedBox(height: 16),
 
-          // Total Discount
-          buildStyledTextField(
-            labelText: 'Total Discount (₹)',
-            controller: controller.totalDiscountController,
-            hintText: '0',
-            keyboardType: TextInputType.number,
-            onChanged: (value) => controller.calculatePrices(),
-          ),
-        ],
+            // Total Discount
+            buildStyledTextField(
+              labelText: 'Total Discount (₹)',
+              controller: controller.totalDiscountController,
+              hintText: '0',
+              keyboardType: TextInputType.number,
+              onChanged: (value) => controller.calculatePrices(),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildPriceSummary(SalesCrudOperationController controller) {
-  return Obx(() => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.grey.shade50,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.grey.shade200),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Price Summary',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1A1A1A),
-          ),
+    return Obx(
+      () => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
         ),
-        const SizedBox(height: 12),
-        
-        _buildSummaryRow('Base Amount:', '₹${controller.baseAmount.value.toStringAsFixed(2)}'),
-        
-        // Conditionally show "Amount without GST" only if GST is applicable
-        if (controller.shouldShowGST.value)
-          _buildSummaryRow('Amount without GST:', '₹${controller.amountWithoutGST.value.toStringAsFixed(2)}'),
-        
-        // Conditionally show GST row only if GST is applicable
-        if (controller.shouldShowGST.value)
-          _buildSummaryRow('GST (${controller.gstPercentage.value.toStringAsFixed(1)}%):', '₹${controller.gstAmount.value.toStringAsFixed(2)}'),
-        
-        const Divider(height: 16),
-        _buildSummaryRow(
-          'Total Payable Amount:', 
-          '₹${controller.totalPayableAmount.value.toStringAsFixed(2)}',
-          isTotal: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Price Summary',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            _buildSummaryRow(
+              'Base Amount:',
+              '₹${controller.baseAmount.value.toStringAsFixed(2)}',
+            ),
+
+            // Conditionally show "Amount without GST" only if GST is applicable
+            if (controller.shouldShowGST.value)
+              _buildSummaryRow(
+                'Amount without GST:',
+                '₹${controller.amountWithoutGST.value.toStringAsFixed(2)}',
+              ),
+
+            // Conditionally show GST row only if GST is applicable
+            if (controller.shouldShowGST.value)
+              _buildSummaryRow(
+                'GST (${controller.gstPercentage.value.toStringAsFixed(1)}%):',
+                '₹${controller.gstAmount.value.toStringAsFixed(2)}',
+              ),
+
+            const Divider(height: 16),
+            _buildSummaryRow(
+              'Total Payable Amount:',
+              '₹${controller.totalPayableAmount.value.toStringAsFixed(2)}',
+              isTotal: true,
+            ),
+          ],
         ),
-      ],
-    ),
-  ));
-}
+      ),
+    );
+  }
+
   Widget _buildSummaryRow(String label, String value, {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -757,7 +824,8 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
             style: TextStyle(
               fontSize: isTotal ? 14 : 13,
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
-              color: isTotal ? const Color(0xFF6366F1) : const Color(0xFF1A1A1A),
+              color:
+                  isTotal ? const Color(0xFF6366F1) : const Color(0xFF1A1A1A),
             ),
           ),
         ],
@@ -779,12 +847,7 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
             onChanged: (value) => controller.onPaymentModeChanged(value!),
             activeColor: const Color(0xFF6366F1),
           ),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ),
+          Expanded(child: Text(title, style: const TextStyle(fontSize: 12))),
         ],
       ),
     );
@@ -808,9 +871,10 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
         buildStyledDropdown(
           labelText: 'Payment Method',
           hintText: 'Select Payment Method',
-          value: controller.selectedPaymentMethod.value.isEmpty
-              ? null
-              : controller.selectedPaymentMethod.value,
+          value:
+              controller.selectedPaymentMethod.value.isEmpty
+                  ? null
+                  : controller.selectedPaymentMethod.value,
           items: PaymentTypes.paymentMethods,
           onChanged: (value) => controller.onPaymentMethodChanged(value ?? ''),
           validator: controller.validatePaymentMethod,
@@ -836,9 +900,10 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
         buildStyledDropdown(
           labelText: 'Payment Method',
           hintText: 'Select Payment Method',
-          value: controller.selectedPaymentMethod.value.isEmpty
-              ? null
-              : controller.selectedPaymentMethod.value,
+          value:
+              controller.selectedPaymentMethod.value.isEmpty
+                  ? null
+                  : controller.selectedPaymentMethod.value,
           items: PaymentTypes.paymentMethods,
           onChanged: (value) => controller.onPaymentMethodChanged(value ?? ''),
           validator: controller.validatePaymentMethod,
@@ -876,9 +941,10 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
         buildStyledDropdown(
           labelText: 'Payment Method',
           hintText: 'Select Payment Method',
-          value: controller.selectedPaymentMethod.value.isEmpty
-              ? null
-              : controller.selectedPaymentMethod.value,
+          value:
+              controller.selectedPaymentMethod.value.isEmpty
+                  ? null
+                  : controller.selectedPaymentMethod.value,
           items: PaymentTypes.paymentMethods,
           onChanged: (value) => controller.onPaymentMethodChanged(value ?? ''),
           validator: controller.validatePaymentMethod,
@@ -899,9 +965,10 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
         buildStyledDropdown(
           labelText: 'EMI Tenure (Months)',
           hintText: 'Select EMI Tenure',
-          value: controller.selectedEMITenure.value.isEmpty
-              ? null
-              : controller.selectedEMITenure.value,
+          value:
+              controller.selectedEMITenure.value.isEmpty
+                  ? null
+                  : controller.selectedEMITenure.value,
           items: controller.emiTenureOptions,
           onChanged: (value) => controller.onEMITenureChanged(value ?? ''),
           validator: controller.validateEMITenure,
@@ -931,7 +998,7 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
               child: OutlinedButton(
                 onPressed: () => Get.back(),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
+                  side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -986,11 +1053,12 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
               child: Container(
                 height: 48,
                 child: OutlinedButton(
-                  onPressed: controller.isProcessingSale.value
-                      ? null
-                      : controller.goToStep1,
+                  onPressed:
+                      controller.isProcessingSale.value
+                          ? null
+                          : controller.goToStep1,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
+                    side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -1011,9 +1079,10 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
               child: Container(
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: controller.isProcessingSale.value
-                      ? null
-                      : controller.completeSale,
+                  onPressed:
+                      controller.isProcessingSale.value
+                          ? null
+                          : controller.completeSale,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6366F1),
                     shape: RoundedRectangleBorder(
@@ -1021,24 +1090,26 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
                     ),
                     elevation: 0,
                   ),
-                  child: controller.isProcessingSale.value
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                  child:
+                      controller.isProcessingSale.value
+                          ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : const Text(
+                            'Complete Sale',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        )
-                      : const Text(
-                          'Complete Sale',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
                 ),
               ),
             ),
@@ -1055,7 +1126,7 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withValues(alpha:0.1),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF6366F1), size: 16),
@@ -1103,15 +1174,16 @@ Widget _buildPriceCalculationSection(SalesCrudOperationController controller) {
   }
 }
 
-
-
 class MaxValueInputFormatter extends TextInputFormatter {
   final int max;
 
   MaxValueInputFormatter(this.max);
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     if (newValue.text.isEmpty) return newValue;
 
     final int? value = int.tryParse(newValue.text);

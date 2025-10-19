@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_opeartions_controller.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
+import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/image_uploader_widget.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
 import 'package:smartbecho/utils/app_styles.dart';
@@ -250,6 +251,19 @@ class AddCustomerForm extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+             Obx(
+              () => buildStyledDropdown(
+                labelText: 'State',
+                hintText: 'Select State',
+                value:
+                    controller.selectedStates.value.isEmpty
+                        ? null
+                        : controller.selectedStates.value,
+                items: controller.statesList,
+                onChanged: (value) => controller.onSelectState(value ?? ''),
+                // validator: controller.validateIMEINumbers,
+              ),
             ),
 
             const SizedBox(height: 24),
