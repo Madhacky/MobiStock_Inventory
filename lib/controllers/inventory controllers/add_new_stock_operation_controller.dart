@@ -265,90 +265,156 @@ class AddNewStockOperationController extends GetxController {
   }
 
   void addBillToSystem() async {
-    if (addBillFormKey.currentState!.validate()) {
-      if (billItems.isEmpty) {
+  if (addBillFormKey.currentState!.validate()) {
+    if (billItems.isEmpty) {
+      hasAddBillError.value = true;
+      addBillErrorMessage.value = 'Please add at least one item';
+      return;
+    }
+
+    // Validate items
+    for (int i = 0; i < billItems.length; i++) {
+      BillItem item = billItems[i];
+      if (item.category.value.isEmpty ||
+          item.company.value.isEmpty ||
+          item.model.value.isEmpty ||
+          item.unitPrice.value.isEmpty ||
+          item.qty.value.isEmpty ||
+          item.color.value.isEmpty) {
         hasAddBillError.value = true;
-        addBillErrorMessage.value = 'Please add at least one item';
+        addBillErrorMessage.value = 'Please fill all required fields for Item ${i + 1}';
         return;
       }
 
-      // Validate items
-      for (int i = 0; i < billItems.length; i++) {
-        BillItem item = billItems[i];
-        if (item.category.value.isEmpty ||
-            item.company.value.isEmpty ||
-            item.model.value.isEmpty ||
-            item.unitPrice.value.isEmpty ||
-            item.qty.value.isEmpty ||
-            item.color.value.isEmpty) {
-          hasAddBillError.value = true;
-          addBillErrorMessage.value = 'Please fill all required fields for Item ${i + 1}';
-          return;
-        }
-
-        if ((item.category.value == 'SMARTPHONE' || item.category.value == 'TABLET') &&
-            (item.ram.value.isEmpty || item.rom.value.isEmpty)) {
-          hasAddBillError.value = true;
-          addBillErrorMessage.value = 'Please fill RAM and ROM for Item ${i + 1}';
-          return;
-        }
+      if ((item.category.value == 'SMARTPHONE' || item.category.value == 'TABLET') &&
+          (item.ram.value.isEmpty || item.rom.value.isEmpty)) {
+        hasAddBillError.value = true;
+        addBillErrorMessage.value = 'Please fill RAM and ROM for Item ${i + 1}';
+        return;
       }
 
-      isAddingBill.value = true;
-      hasAddBillError.value = false;
+      // NEW: Validate IMEIs only for SMARTPHONE/TABLET
+      if (item.category.value == 'SMARTPHONE' || item.category.value == 'TABLET') {
+        if (!_validateItemImeis(item, i)) {
+          return; // Error message already set in _validateItemImeis
+        }
+      }
+    }
 
-      try {
-        await _sendBillToAPI();
-      } catch (e) {
-        isAddingBill.value = false;
+    isAddingBill.value = true;
+    hasAddBillError.value = false;
+
+    try {
+      await _sendBillToAPI();
+    } catch (e) {
+      isAddingBill.value = false;
+      hasAddBillError.value = true;
+      addBillErrorMessage.value = 'Failed to create bill: ${e.toString()}';
+      log('Error creating bill: $e');
+    }
+  }
+}
+
+  // IMEI validation method (only for SMARTPHONE/TABLET, IMEIs optional)
+  bool _validateItemImeis(BillItem item, int itemIndex) {
+  // Get valid IMEIs (non-empty, trimmed)
+  List<String> validImeis = item.imeiList
+      .map((imei) => imei.trim())
+      .where((imei) => imei.isNotEmpty)
+      .toList();
+
+  // If no IMEIs entered, that's fine - skip validation
+  if (validImeis.isEmpty) {
+    return true;
+  }
+
+  // Check for duplicate IMEIs within the item
+  Set<String> uniqueImeis = validImeis.toSet();
+  if (uniqueImeis.length != validImeis.length) {
+    hasAddBillError.value = true;
+    addBillErrorMessage.value = 
+        'Item ${itemIndex + 1}: Duplicate IMEIs found. Each IMEI must be unique';
+    return false;
+  }
+
+  // Check for duplicate IMEIs across all SMARTPHONE/TABLET items
+  for (int j = 0; j < billItems.length; j++) {
+    if (j == itemIndex) continue; // Skip current item
+    
+    BillItem otherItem = billItems[j];
+    
+    // Only check against other SMARTPHONE/TABLET items
+    if (otherItem.category.value != 'SMARTPHONE' && 
+        otherItem.category.value != 'TABLET') {
+      continue;
+    }
+    
+    List<String> otherItemImeis = otherItem.imeiList
+        .map((imei) => imei.trim())
+        .where((imei) => imei.isNotEmpty)
+        .toList();
+    
+    // Check if any IMEI exists in another item
+    for (String imei in validImeis) {
+      if (otherItemImeis.contains(imei)) {
         hasAddBillError.value = true;
-        addBillErrorMessage.value = 'Failed to create bill: ${e.toString()}';
-        log('Error creating bill: $e');
+        addBillErrorMessage.value = 
+            'IMEI "$imei" is duplicated across multiple items';
+        return false;
       }
     }
   }
 
+  return true;
+}
+
   Map<String, dynamic> _prepareBillData() {
-    List<Map<String, dynamic>> itemsArray = billItems.map((item) {
-      Map<String, dynamic> itemData = {
-        "itemCategory": item.category.value,
-        "company": item.company.value,
-        "model": item.model.value,
-        "color": item.color.value,
-        "sellingPrice": item.sellingPrice.value,
-        "qty": item.qty.value,
-        "description": item.description.value.isEmpty ? "" : item.description.value,
-        "withoutGstAmount": double.tryParse(item.withoutGstAmount.value) ?? 0,
-        "withGstAmount": double.tryParse(item.withGstAmount.value) ?? 0,
-        "hsnCode": item.hsnCode.value,
-      };
+  List<Map<String, dynamic>> itemsArray = billItems.map((item) {
+    Map<String, dynamic> itemData = {
+      "itemCategory": item.category.value,
+      "company": item.company.value,
+      "model": item.model.value,
+      "color": item.color.value,
+      "sellingPrice": item.sellingPrice.value,
+      "qty": item.qty.value,
+      "description": item.description.value.isEmpty ? "" : item.description.value,
+      "withoutGstAmount": double.tryParse(item.withoutGstAmount.value) ?? 0,
+      "withGstAmount": double.tryParse(item.withGstAmount.value) ?? 0,
+      "hsnCode": item.hsnCode.value,
+    };
 
-      if (item.category.value == "SMARTPHONE" || item.category.value == 'TABLET') {
-        itemData["ram"] = int.tryParse(item.ram.value) ?? 0;
-        itemData["rom"] = int.tryParse(item.rom.value) ?? 0;
-      }
-
-      // Add colorImeiMapping if IMEIs are provided
-      if (item.imeiList.isNotEmpty) {
+    if (item.category.value == "SMARTPHONE" || item.category.value == 'TABLET') {
+      itemData["ram"] = int.tryParse(item.ram.value) ?? 0;
+      itemData["rom"] = int.tryParse(item.rom.value) ?? 0;
+      
+      // Add colorImeiMapping only for SMARTPHONE/TABLET with valid IMEIs
+      List<String> validImeis = item.imeiList
+          .map((imei) => imei.trim())
+          .where((imei) => imei.isNotEmpty)
+          .toList();
+      
+      if (validImeis.isNotEmpty) {
         itemData["colorImeiMapping"] = jsonEncode({
-          item.color.value: item.imeiList
+          item.color.value: validImeis
         });
       }
+    }
 
-      return itemData;
-    }).toList();
+    return itemData;
+  }).toList();
 
-    return {
-      "companyName": companyNameController.text.trim(),
-      "isPaid": isPaid.value,
-      "amount": double.tryParse(amountController.text.trim()) ?? 0,
-      "withoutGst": double.tryParse(withoutGstController.text.trim()) ?? 0,
-      "totalGstAmount": double.tryParse(totalGstAmountController.text.trim()) ?? 0,
-      "dues": isPaid.value ? 0 : (double.tryParse(amountController.text.trim()) ?? 0),
-      "date": dateController.text.trim(),
-      "items": itemsArray,
-    };
-  }
+  return {
+    "companyName": companyNameController.text.trim(),
+    "isPaid": isPaid.value,
+    "amount": double.tryParse(amountController.text.trim()) ?? 0,
+    "withoutGst": double.tryParse(withoutGstController.text.trim()) ?? 0,
+    "totalGstAmount": double.tryParse(totalGstAmountController.text.trim()) ?? 0,
+    "dues": isPaid.value ? 0 : (double.tryParse(amountController.text.trim()) ?? 0),
+    "date": dateController.text.trim(),
+    "items": itemsArray,
+  };
+}
+
 
   Future<void> _sendBillToAPI() async {
     const String apiUrl = "https://backend-production-91e4.up.railway.app/api/purchase-bills";
@@ -378,7 +444,7 @@ class AddNewStockOperationController extends GetxController {
         authToken: true,
       );
 
-      if (response != null && (response.statusCode == 201 || response.statusCode == 200)) {
+      if (response != null && response.statusCode == 201) {
         isAddingBill.value = false;
 
         Get.snackbar(
@@ -390,13 +456,14 @@ class AddNewStockOperationController extends GetxController {
         );
 
         _clearForm();
-        Get.back();
       } else {
         throw Exception('API Error: ${response?.statusCode}');
       }
     } catch (e) {
       isAddingBill.value = false;
       throw Exception('Failed to create bill: ${e.toString()}');
+    } finally {
+      // Get.back();
     }
   }
 
@@ -525,82 +592,102 @@ class BillItem {
     _setupListeners();
   }
 
-  void _setupListeners() {
-    // Listen to category changes to fetch GST and filters
-    category.listen((cat) async {
-      if (cat.isNotEmpty) {
-        log('Category changed to: $cat');
-        
-        // Fetch filter suggestions
-        Map<String, dynamic> filters = await controller.fetchFilterSuggestions(cat);
-        companySuggestions.value = filters['companies'] ?? [];
-        modelSuggestions.value = filters['models'] ?? [];
-        ramSuggestions.value = filters['rams'] ?? [];
-        romSuggestions.value = filters['roms'] ?? [];
-        colorSuggestions.value = filters['colors'] ?? [];
-        
-        log('Suggestions loaded - Companies: ${companySuggestions.length}, Models: ${modelSuggestions.length}');
-        
-        // Fetch GST percentage if user has GST number
-        if (hasGstNumber) {
-          try {
-            dio.Response? gstResponse = await controller._apiService.requestGetForApi(
-              url: 'https://backend-production-91e4.up.railway.app/api/hsn-codes/category/$cat/first',
-              authToken: true,
-            );
+  
+void _setupListeners() {
+  // Listen to category changes to fetch GST and filters
+  category.listen((cat) async {
+    if (cat.isNotEmpty) {
+      log('Category changed to: $cat');
+      
+      // Fetch filter suggestions
+      Map<String, dynamic> filters = await controller.fetchFilterSuggestions(cat);
+      companySuggestions.value = filters['companies'] ?? [];
+      modelSuggestions.value = filters['models'] ?? [];
+      ramSuggestions.value = filters['rams'] ?? [];
+      romSuggestions.value = filters['roms'] ?? [];
+      colorSuggestions.value = filters['colors'] ?? [];
+      
+      log('Suggestions loaded - Companies: ${companySuggestions.length}, Models: ${modelSuggestions.length}');
+      
+      // Fetch GST percentage if user has GST number
+      if (hasGstNumber) {
+        try {
+          dio.Response? gstResponse = await controller._apiService.requestGetForApi(
+            url: 'https://backend-production-91e4.up.railway.app/api/hsn-codes/category/$cat/first',
+            authToken: true,
+          );
+          
+          if (gstResponse != null && gstResponse.statusCode == 200) {
+            final data = gstResponse.data as Map<String, dynamic>;
+            final payload = data['payload'] as Map<String, dynamic>?;
             
-            if (gstResponse != null && gstResponse.statusCode == 200) {
-              final data = gstResponse.data as Map<String, dynamic>;
-              final payload = data['payload'] as Map<String, dynamic>?;
+            if (payload != null) {
+              // Get GST percentage
+              final gstValue = payload['gstPercentage'];
+              gstPercentage.value = (gstValue is int) ? gstValue.toDouble() : (gstValue as double? ?? 0.0);
+              gstPercentageController.text = gstPercentage.value.toString();
               
-              if (payload != null) {
-                // Get GST percentage
-                final gstValue = payload['gstPercentage'];
-                gstPercentage.value = (gstValue is int) ? gstValue.toDouble() : (gstValue as double? ?? 0.0);
-                gstPercentageController.text = gstPercentage.value.toString();
-                
-                // Get HSN code
-                hsnCode.value = payload['hsnCode']?.toString() ?? '';
-                
-                log('GST Percentage: ${gstPercentage.value}, HSN Code: ${hsnCode.value}');
-              }
+              // Get HSN code
+              hsnCode.value = payload['hsnCode']?.toString() ?? '';
+              
+              log('GST Percentage: ${gstPercentage.value}, HSN Code: ${hsnCode.value}');
             }
-          } catch (e) {
-            log('Error fetching GST data: $e');
           }
+        } catch (e) {
+          log('Error fetching GST data: $e');
         }
       }
-    });
+    }
+  });
 
-    // Listen to quantity changes to update IMEI fields
-    qty.listen((q) {
+  // Listen to quantity changes to update IMEI fields
+  // Only create IMEI fields if category is SMARTPHONE or TABLET
+  qty.listen((q) {
+    if (category.value == 'SMARTPHONE' || category.value == 'TABLET') {
       int quantity = int.tryParse(q) ?? 0;
       _updateImeiFields(quantity);
-    });
-  }
+    } else {
+      // Clear IMEI fields for non-smartphone/tablet items
+      _clearImeiFields();
+    }
+  });
+}
+
 
   void _updateImeiFields(int quantity) {
-    // Clear existing IMEI controllers
-    for (var ctrl in imeiControllers) {
-      ctrl.dispose();
-    }
-    imeiControllers.clear();
-    imeiList.clear();
-
-    // Create new IMEI controllers based on quantity
-    for (int i = 0; i < quantity; i++) {
-      TextEditingController ctrl = TextEditingController();
-      imeiControllers.add(ctrl);
-      imeiList.add('');
-      
-      // Listen to changes
-      ctrl.addListener(() {
-        if (i < imeiList.length) {
-          imeiList[i] = ctrl.text;
-        }
-      });
-    }
+  // Clear existing IMEI controllers
+  for (var ctrl in imeiControllers) {
+    ctrl.dispose();
   }
+  imeiControllers.clear();
+  imeiList.clear();
+
+  // Create new IMEI controllers based on quantity
+  for (int i = 0; i < quantity; i++) {
+    TextEditingController ctrl = TextEditingController();
+    imeiControllers.add(ctrl);
+    imeiList.add('');
+    
+    // Capture the index in a local variable to avoid closure issues
+    final index = i;
+    
+    // Listen to changes
+    ctrl.addListener(() {
+      if (index < imeiList.length) {
+        imeiList[index] = ctrl.text.trim(); // Trim whitespace
+      }
+    });
+  }
+}
+
+  // Clear IMEI fields when category changes to non-smartphone/tablet
+void _clearImeiFields() {
+  for (var ctrl in imeiControllers) {
+    ctrl.dispose();
+  }
+  imeiControllers.clear();
+  imeiList.clear();
+}
 
   void dispose() {
     companyController.dispose();

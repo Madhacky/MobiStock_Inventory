@@ -78,6 +78,19 @@ class BillHistoryController extends GetxController {
     'company',
     'qty',
   ];
+  
+
+    final TextEditingController searchheadController = TextEditingController();
+  final RxString searchQuery = ''.obs;
+  
+  // Your existing properties...
+  
+  // Add this method
+  void clearSearch() {
+    searchController.clear();
+    searchQuery.value = '';
+    // onSearchChanged();
+  }
 
   // Date controllers for custom date picker
   final TextEditingController startDateController = TextEditingController();

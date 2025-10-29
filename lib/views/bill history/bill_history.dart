@@ -43,7 +43,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
             _buildStatsSection(context),
 
             // Filter button
-            _buildFilterButton(context),
+            _buildFilterButton(context,showSearch: true),
 
             // Bills grid with lazy loading
             Expanded(
@@ -226,83 +226,159 @@ Widget _buildStatCard(
   );
 }
 
-  Widget _buildFilterButton(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => _showFilterBottomSheet(context),
-              icon: Icon(Icons.filter_list, size: 18),
-              label: Obx(() {
-                String filterText = 'Filter & Sort';
-                List<String> activeFilters = [];
-
-                if (controller.selectedCompany.value != 'All') {
-                  activeFilters.add(controller.selectedCompany.value);
-                }
-
-                if (controller.timePeriodType.value == 'Month/Year') {
-                  activeFilters.add(
-                    '${controller.getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}',
-                  );
-                } else if (controller.timePeriodType.value == 'Custom Date' &&
-                    controller.startDate.value != null &&
-                    controller.endDate.value != null) {
-                  activeFilters.add('Custom Range');
-                }
-
-                if (activeFilters.isNotEmpty) {
-                  filterText = activeFilters.join(' • ');
-                }
-
-                return Text(
-                  filterText,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  overflow: TextOverflow.ellipsis,
-                );
-              }),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF1E293B),
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+Widget _buildFilterButton(BuildContext context, {bool showSearch = false}) {
+  return Container(
+    margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha: 0.05),
+          spreadRadius: 0,
+          blurRadius: 10,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            if (showSearch) ...[
+              Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: TextField(
+                    controller: controller.searchheadController,
+                    onChanged: (_) => controller.onSearchChanged,
+                    decoration: InputDecoration(
+                      hintText: 'Search bills by vendor, invoice...',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w400,
+                      ),
+                      suffixIcon: Obx(
+                        () => controller.searchQuery.value.isNotEmpty
+                            ? IconButton(
+                                onPressed: controller.clearSearch,
+                                icon: Icon(
+                                  Icons.clear,
+                                  size: 16,
+                                  color: Colors.grey[400],
+                                ),
+                              )
+                            : SizedBox(),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
                 ),
-                elevation: 2,
               ),
-            ),
-          ),
-          SizedBox(width: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-            ),
-            child: IconButton(
+              SizedBox(width: 8),
+            ] else ...[
+              Icon(Icons.filter_list, color: Color(0xFF1E293B), size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Obx(() {
+                  String filterText = 'All Bills';
+                  List<String> activeFilters = [];
+
+                  if (controller.selectedCompany.value != 'All') {
+                    activeFilters.add(controller.selectedCompany.value);
+                  }
+
+                  if (controller.timePeriodType.value == 'Month/Year') {
+                    activeFilters.add(
+                      '${controller.getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}',
+                    );
+                  } else if (controller.timePeriodType.value == 'Custom Date' &&
+                      controller.startDate.value != null &&
+                      controller.endDate.value != null) {
+                    activeFilters.add('Custom Range');
+                  }
+
+                  if (activeFilters.isNotEmpty) {
+                    filterText = activeFilters.join(' • ');
+                  }
+
+                  return Text(
+                    filterText,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1E293B),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  );
+                }),
+              ),
+              SizedBox(width: 8),
+            ],
+            // Filter Button
+            Obx(() {
+              bool hasActiveFilters = controller.selectedCompany.value != 'All' ||
+                  controller.timePeriodType.value != 'All Time' ||
+                  (controller.startDate.value != null && 
+                   controller.endDate.value != null);
+              
+              return Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  color: hasActiveFilters ? Color(0xFF1E293B) : Colors.grey[50],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                ),
+                child: IconButton(
+                  onPressed: () => _showFilterBottomSheet(context),
+                  icon: Icon(
+                    Icons.tune,
+                    size: 18,
+                    color: hasActiveFilters ? Colors.white : Color(0xFF1E293B),
+                  ),
+                  tooltip: 'Filter & Sort',
+                ),
+              );
+            }),
+            SizedBox(width: 8),
+            IconButton(
               onPressed: () => controller.refreshBills(),
               icon: Obx(
-                () =>
-                    controller.isLoading.value
-                        ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Color(0xFF1E293B),
-                          ),
-                        )
-                        : Icon(Icons.refresh, color: Color(0xFF1E293B)),
+                () => controller.isLoading.value
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF1E293B),
+                        ),
+                      )
+                    : Icon(Icons.refresh, size: 18, color: Color(0xFF1E293B)),
               ),
               tooltip: 'Refresh',
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
   void _showFilterBottomSheet(BuildContext context) {
     Get.bottomSheet(

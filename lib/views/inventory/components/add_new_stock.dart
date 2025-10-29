@@ -250,7 +250,7 @@ class AddNewStockForm extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: controller.isAddingBill.value
                             ? null
-                            : controller.addBillToSystem,
+                            :(){controller.addBillToSystem();},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B981),
                           shape: RoundedRectangleBorder(
