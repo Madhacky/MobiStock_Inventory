@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
+import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/hsn-code/controllers/hsn_code_controller.dart';
 import 'package:smartbecho/views/hsn-code/models/hsn_code_model.dart';
@@ -37,6 +39,10 @@ class HsnCodeScreen extends StatelessWidget {
             buildCustomAppBar(
               "HSN Code Management",
               isdark: true,
+              onPressed: () {
+                Get.find<BottomNavigationController>().setIndex(0);
+                Get.back();
+              },
               actionItem: IconButton(
                 onPressed: () {
                   controller.fetchHsnCodes();
@@ -206,44 +212,44 @@ class HsnCodeScreen extends StatelessWidget {
               ),
 
               // Filter Button
-              Container(
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.teal.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    controller.searchHsnCodes(searchController.text);
-                  },
-                  icon: const Icon(Icons.filter_list, size: 18),
-                  label: const Text(
-                    'Filter',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.teal,
-                    side: BorderSide(
-                      color: Colors.teal.withOpacity(0.3),
-                      width: 1.5,
-                    ),
-                    backgroundColor: Colors.teal.withOpacity(0.05),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
+              // Container(
+              //   height: 48,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.teal.withOpacity(0.1),
+              //         blurRadius: 10,
+              //         offset: const Offset(0, 2),
+              //       ),
+              //     ],
+              //   ),
+              //   child: OutlinedButton.icon(
+              //     onPressed: () {
+              //       controller.searchHsnCodes(searchController.text);
+              //     },
+              //     icon: const Icon(Icons.filter_list, size: 18),
+              //     label: const Text(
+              //       'Filter',
+              //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              //     ),
+              //     style: OutlinedButton.styleFrom(
+              //       foregroundColor: Colors.teal,
+              //       side: BorderSide(
+              //         color: Colors.teal.withOpacity(0.3),
+              //         width: 1.5,
+              //       ),
+              //       backgroundColor: Colors.teal.withOpacity(0.05),
+              //       padding: const EdgeInsets.symmetric(
+              //         horizontal: 20,
+              //         vertical: 12,
+              //       ),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
               // Add HSN Code Button (Commented)
               // ElevatedButton.icon(
@@ -260,50 +266,50 @@ class HsnCodeScreen extends StatelessWidget {
               // ),
 
               // Export Button
-              Container(
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.teal.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    Get.snackbar(
-                      'Coming Soon',
-                      'Export feature coming soon!',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.orangeAccent,
-                      colorText: Colors.white,
-                    );
-                  },
-                  icon: const Icon(Icons.download, size: 18),
-                  label: const Text(
-                    'Export',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.teal,
-                    side: BorderSide(
-                      color: Colors.teal.withOpacity(0.3),
-                      width: 1.5,
-                    ),
-                    backgroundColor: Colors.teal.withOpacity(0.05),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
+              // Container(
+              //   height: 48,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.teal.withOpacity(0.1),
+              //         blurRadius: 10,
+              //         offset: const Offset(0, 2),
+              //       ),
+              //     ],
+              //   ),
+              //   child: OutlinedButton.icon(
+              //     onPressed: () {
+              //       Get.snackbar(
+              //         'Coming Soon',
+              //         'Export feature coming soon!',
+              //         snackPosition: SnackPosition.BOTTOM,
+              //         backgroundColor: Colors.orangeAccent,
+              //         colorText: Colors.white,
+              //       );
+              //     },
+              //     icon: const Icon(Icons.download, size: 18),
+              //     label: const Text(
+              //       'Export',
+              //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              //     ),
+              //     style: OutlinedButton.styleFrom(
+              //       foregroundColor: Colors.teal,
+              //       side: BorderSide(
+              //         color: Colors.teal.withOpacity(0.3),
+              //         width: 1.5,
+              //       ),
+              //       backgroundColor: Colors.teal.withOpacity(0.05),
+              //       padding: const EdgeInsets.symmetric(
+              //         horizontal: 20,
+              //         vertical: 12,
+              //       ),
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

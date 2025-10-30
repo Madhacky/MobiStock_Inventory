@@ -1,16 +1,21 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
+import 'package:smartbecho/controllers/dashboard_controller.dart';
+import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
 import 'package:smartbecho/models/customer%20dues%20management/monthly_dues_analytics_model.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 
 class CustomerDuesAnalyticsModal extends StatelessWidget {
-  const CustomerDuesAnalyticsModal({Key? key}) : super(key: key);
-
+  CustomerDuesAnalyticsModal({Key? key}) : super(key: key);
+  final DashboardController dashboardController =
+      Get.find<DashboardController>();
   @override
   Widget build(BuildContext context) {
     final CustomerDuesController controller =
         Get.find<CustomerDuesController>();
+
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 600;
 
@@ -119,7 +124,6 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                   children: [
                     // Summary Cards
                     // _buildSummaryCards(controller),
-
                     const SizedBox(height: 24),
 
                     // Chart
@@ -139,6 +143,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 24),
+                    _buildDuesCollectionStatus(),
 
                     // Monthly Details
                     _buildMonthlyDetails(controller),
@@ -152,9 +157,124 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
     );
   }
 
- 
+  Widget _buildDuesCollectionStatus() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Dues Collection Status',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[200]!),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: PaymentPieCard(
+                  collected: double.parse(dashboardController.collectedDues),
+                  remaining: double.parse(dashboardController.remainingDues),
+                  title: '',
+                ),
+              ),
 
- 
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Collected',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '₹${dashboardController.collectedDues}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Remaining',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '₹${dashboardController.remainingDues}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total Dues',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "₹${(double.parse(dashboardController.collectedDues) + double.parse(dashboardController.remainingDues))}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildMonthlyDetails(CustomerDuesController controller) {
     return Column(
@@ -184,7 +304,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -209,7 +329,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: _getStatusColor(
                     data.collectedPercentage,
-                  ).withValues(alpha:0.1),
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -266,11 +386,39 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                   ],
                 ),
               ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Dues',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '₹${data.remaining + data.collected}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           // Progress bar
           LinearProgressIndicator(
+            minHeight: 20,
+
+            // color: Colors.green,
+            borderRadius: BorderRadius.circular(20),
             value: data.collectedPercentage / 100,
             backgroundColor: Colors.grey[200],
             valueColor: AlwaysStoppedAnimation<Color>(
@@ -296,4 +444,170 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
   //   }
   //   return amount.toStringAsFixed(0);
   // }
+}
+
+class PaymentPieCard extends StatefulWidget {
+  final double collected;
+  final double remaining;
+  final String title;
+
+  PaymentPieCard({
+    Key? key,
+    required this.collected,
+    required this.remaining,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  State<PaymentPieCard> createState() => _PaymentPieCardState();
+}
+
+class _PaymentPieCardState extends State<PaymentPieCard> {
+  int? touchedIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = widget.collected + widget.remaining;
+    final sections = [
+      PieChartSectionData(
+        color: Colors.green,
+        value: widget.collected,
+        title: '',
+        radius: touchedIndex == 0 ? 70 : 60,
+      ),
+      PieChartSectionData(
+        color: Colors.red,
+        value: widget.remaining,
+        title: '',
+        radius: touchedIndex == 1 ? 70 : 60,
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            widget.title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+
+          // 🔸 Pie Chart
+          SizedBox(
+            height: 200,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                PieChart(
+                  PieChartData(
+                    sectionsSpace: 2,
+                    centerSpaceRadius: 45,
+                    sections: sections,
+                    pieTouchData: PieTouchData(
+                      touchCallback: (event, response) {
+                        if (response == null ||
+                            response.touchedSection == null) {
+                          setState(() => touchedIndex = -1);
+                          return;
+                        }
+                        setState(() {
+                          touchedIndex =
+                              response.touchedSection!.touchedSectionIndex;
+                        });
+
+                        final index =
+                            response.touchedSection!.touchedSectionIndex;
+                        final label = index == 0 ? "Collected" : "Remaining";
+                        final value =
+                            index == 0 ? widget.collected : widget.remaining;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "$label: ₹${value.toStringAsFixed(0)}",
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                // 🔹 Center total
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Total",
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    Text(
+                      "₹${total.toStringAsFixed(0)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // const SizedBox(height: 16),
+
+          // // 🔸 Collected & Remaining Rows
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Text(
+          //             'Collected',
+          //             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          //           ),
+          //           const SizedBox(height: 4),
+          //           Text(
+          //             '₹${widget.collected.toStringAsFixed(0)}',
+          //             style: const TextStyle(
+          //               fontSize: 16,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.green,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Text(
+          //             'Remaining',
+          //             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          //           ),
+          //           const SizedBox(height: 4),
+          //           Text(
+          //             '₹${widget.remaining.toStringAsFixed(0)}',
+          //             style: const TextStyle(
+          //               fontSize: 16,
+          //               fontWeight: FontWeight.bold,
+          //               color: Colors.red,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
+        ],
+      ),
+    );
+  }
 }

@@ -330,6 +330,7 @@ class AddNewStockOperationController extends GetxController {
       "withoutGst": withoutGstController.text.trim(),
       "gst": parseToDouble(gstController.text.trim()),
       "items": itemsArray,
+      "date":"2025-10-22",
     };
   }
 
@@ -396,8 +397,8 @@ class AddNewStockOperationController extends GetxController {
           );
 
           _clearForm();
-          Get.back(); // Go back after successful creation
-
+          // Get.back(); // Go back after successful creation
+          Get.offAllNamed('/inventory-management');
         } else {
           String errorMessage = 'Unknown error';
           if (response.data is Map<String, dynamic>) {

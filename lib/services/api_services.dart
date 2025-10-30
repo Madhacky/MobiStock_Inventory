@@ -16,26 +16,29 @@ class ApiServices {
 
   // Setup interceptors for automatic session management
   void _setupInterceptors() {
-    _dio.interceptors.add(InterceptorsWrapper(
-      onResponse: (response, handler) async {
-        // Always extract and save new JSESSIONID from response
-        await extractAndSaveSession(response);
-        handler.next(response);
-      },
-      onError: (error, handler) async {
-        // If session expired, try to refresh and retry
-        if (error.response?.statusCode == 401 || 
-            error.response?.statusCode == 403 || 
-            error.response?.statusCode == 404) {
-          
-          log("🔄 Possible session expiry (${error.response?.statusCode}), checking session...");
-          
-          // For now, just log the error. You might want to implement auto-refresh here
-          log("❌ Session might be expired. User may need to re-login.");
-        }
-        handler.next(error);
-      },
-    ));
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onResponse: (response, handler) async {
+          // Always extract and save new JSESSIONID from response
+          await extractAndSaveSession(response);
+          handler.next(response);
+        },
+        onError: (error, handler) async {
+          // If session expired, try to refresh and retry
+          if (error.response?.statusCode == 401 ||
+              error.response?.statusCode == 403 ||
+              error.response?.statusCode == 404) {
+            log(
+              "🔄 Possible session expiry (${error.response?.statusCode}), checking session...",
+            );
+
+            // For now, just log the error. You might want to implement auto-refresh here
+            log("❌ Session might be expired. User may need to re-login.");
+          }
+          handler.next(error);
+        },
+      ),
+    );
   }
 
   // Extract and save JSESSIONID from response
@@ -44,7 +47,9 @@ class ApiServices {
       final setCookieList = response.headers['set-cookie'];
       if (setCookieList != null && setCookieList.isNotEmpty) {
         for (String cookie in setCookieList) {
-          final jsessionIdMatch = RegExp(r'JSESSIONID=([^;]+)').firstMatch(cookie);
+          final jsessionIdMatch = RegExp(
+            r'JSESSIONID=([^;]+)',
+          ).firstMatch(cookie);
           if (jsessionIdMatch != null) {
             final newJSessionId = jsessionIdMatch.group(1)!;
             // Save to SecureStorage, not SharedPreferences
@@ -82,7 +87,7 @@ class ApiServices {
         queryParameters: dictParameter,
         options: Options(headers: await getHeader(authToken)),
       );
-      
+
       print("Response_data: ${response.data}");
       return response;
     } catch (error) {
@@ -129,104 +134,108 @@ class ApiServices {
     }
   }
 
-//put
-Future<Response?> requestPutForApi({
-  required String url,
-  required Map<String, dynamic> dictParameter,
-  required bool authToken,
-}) async {
-  try {
-    print("Url:  $url");
-    print("DictParameter: $dictParameter");
+  //put
+  Future<Response?> requestPutForApi({
+    required String url,
+    required Map<String, dynamic> dictParameter,
+    required bool authToken,
+  }) async {
+    try {
+      print("Url:  $url");
+      print("DictParameter: $dictParameter");
 
-    BaseOptions options = BaseOptions(
-      receiveTimeout: const Duration(minutes: 1),
-      connectTimeout: const Duration(minutes: 1),
-      headers: await getHeader(authToken),
-    );
-    _dio.options = options;
-
-    Response response = await _dio.put(
-      url,
-      data: dictParameter,
-      options: Options(
-        followRedirects: false,
-        validateStatus: (status) => true,
+      BaseOptions options = BaseOptions(
+        receiveTimeout: const Duration(minutes: 1),
+        connectTimeout: const Duration(minutes: 1),
         headers: await getHeader(authToken),
-      ),
-    );
+      );
+      _dio.options = options;
 
-    print("Response: $response");
-    print("Response_headers: ${response.headers}");
-    print("Response_real_url: ${response.realUri}");
+      Response response = await _dio.put(
+        url,
+        data: dictParameter,
+        options: Options(
+          followRedirects: false,
+          validateStatus: (status) => true,
+          headers: await getHeader(authToken),
+        ),
+      );
 
-    return response;
-  } catch (error) {
-    print("Exception_Main: $error");
-    return null;
+      print("Response: $response");
+      print("Response_headers: ${response.headers}");
+      print("Response_real_url: ${response.realUri}");
+
+      return response;
+    } catch (error) {
+      print("Exception_Main: $error");
+      return null;
+    }
   }
-}
 
   /// MULTIPART
- Future<Response?> requestMultipartApi({
-  String? url,
-  FormData? formData,
-  getx.RxDouble? percent,
-  required bool authToken,
-}) async {
-  try {
-    log("Url: $url");
-    log("formData fields: ${formData?.fields}");
-    
-    // Safe logging for files
-    if (formData?.files.isNotEmpty == true) {
-      log("formData files: ${formData?.files[0].value.filename}");
-    }
+  Future<Response?> requestMultipartApi({
+    String? url,
+    FormData? formData,
+    getx.RxDouble? percent,
+    required bool authToken,
+  }) async {
+    try {
+      log("Url: $url");
+      log("formData fields: ${formData?.fields}");
 
-    // Configure Dio options - don't set baseUrl, use empty string or remove it
-    BaseOptions options = BaseOptions(
-      receiveTimeout: const Duration(minutes: 1),
-      connectTimeout: const Duration(minutes: 1),
-      headers: await getHeader(authToken),
-    );
-
-    _dio.options = options;
-    
-    Response response = await _dio.post(
-      url!, // Use the full URL here
-      onSendProgress: percent != null ? (count, total) {
-        percent.value = (count / total) * 100;
-        print("Progress: ${percent.value}%");
-      } : null, // Only set callback if percent is not null
-      data: formData,
-      options: Options(
-        followRedirects: false,
-        validateStatus: (status) => true,
-        headers: await getHeader(authToken),
-      ),
-    );
-
-    log("Response Status: ${response.statusCode}");
-    log("Response: ${response.data}");
-    return response;
-  } catch (error) {
-    log("Exception_Main: $error");
-    log("Exception Type: ${error.runtimeType}");
-    
-    // More specific error handling
-    if (error is DioException) {
-      log("DioException Type: ${error.type}");
-      log("DioException Message: ${error.message}");
-      if (error.response != null) {
-        log("Error Response Status: ${error.response?.statusCode}");
-        log("Error Response Data: ${error.response?.data}");
+      // Safe logging for files
+      if (formData?.files.isNotEmpty == true) {
+        log("formData files: ${formData?.files[0].value.filename}");
       }
+
+      // Configure Dio options - don't set baseUrl, use empty string or remove it
+      BaseOptions options = BaseOptions(
+        receiveTimeout: const Duration(minutes: 1),
+        connectTimeout: const Duration(minutes: 1),
+        headers: await getHeader(authToken),
+      );
+
+      _dio.options = options;
+
+      Response response = await _dio.post(
+        url!, // Use the full URL here
+        onSendProgress:
+            percent != null
+                ? (count, total) {
+                  percent.value = (count / total) * 100;
+                  print("Progress: ${percent.value}%");
+                }
+                : null, // Only set callback if percent is not null
+        data: formData,
+        options: Options(
+          followRedirects: false,
+          validateStatus: (status) => true,
+          headers: await getHeader(authToken),
+        ),
+      );
+
+      log("Response Status: ${response.statusCode}");
+      log("Response: ${response.data}");
+      return response;
+    } catch (error) {
+      log("Exception_Main: $error");
+      log("Exception Type: ${error.runtimeType}");
+
+      // More specific error handling
+      if (error is DioException) {
+        log("DioException Type: ${error.type}");
+        log("DioException Message: ${error.message}");
+        if (error.response != null) {
+          log("Error Response Status: ${error.response?.statusCode}");
+          log("Error Response Data: ${error.response?.data}");
+        }
+      }
+
+      return null;
     }
-    
-    return null;
   }
-}
-//delete 
+
+  //delete
   Future<Response?> requestDeleteForApi({
     required String url,
     required Map<String, dynamic> dictParameter,
@@ -263,6 +272,7 @@ Future<Response?> requestPutForApi({
       return null;
     }
   }
+
   //patch method
   Future<Response?> requestPatchForApi({
     required String url,
@@ -310,8 +320,9 @@ Future<Response?> requestPutForApi({
   }) async {
     try {
       // Get the latest JSESSIONID from secure storage
-      String? sessionId = jsessionId ?? await SecureStorageHelper.getJSessionId();
-      
+      String? sessionId =
+          jsessionId ?? await SecureStorageHelper.getJSessionId();
+
       if (sessionId == null) {
         log("❌ No JSESSIONID found in storage");
         return null;
@@ -341,7 +352,7 @@ Future<Response?> requestPutForApi({
 
       print("Response_data: ${response.data}");
       print("Response_status: ${response.statusCode}");
-      
+
       return response;
     } catch (error) {
       print("Exception_JSESSIONID: $error");
@@ -354,9 +365,7 @@ Future<Response?> requestPutForApi({
     required String jsessionId,
     required bool authToken,
   }) async {
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+    Map<String, String> headers = {"Content-Type": "application/json"};
 
     if (authToken) {
       // Get JWT token from SharedPreferences
@@ -387,9 +396,7 @@ Future<Response?> requestPutForApi({
         "Authorization": "Bearer $jwtToken",
       };
     } else {
-      return {
-        "Content-type": "application/json",
-      };
+      return {"Content-type": "application/json"};
     }
   }
 

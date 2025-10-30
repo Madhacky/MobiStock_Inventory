@@ -663,7 +663,10 @@ Future<void> checkGSTAvailability() async {
   bool validateStep1() {
     // Validate product details
     if (selectedCategory.value.isEmpty) {
-      Get.snackbar('Error', 'Please select a category');
+      Get.snackbar('Error', 'Please select a category',
+      backgroundColor: Colors.red,
+        colorText: Colors.white
+      );
       return false;
     }
     if (selectedCompany.value.isEmpty) {

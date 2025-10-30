@@ -82,7 +82,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                 controller: _tabController,
                 children: [
                   _buildNewCustomersTab(),
-                  _buildRepeatCustomersTab(),
+                  _buildVillageDistributionTab(),
                   _buildTopCustomersTab(),
                 ],
               ),
@@ -95,19 +95,19 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
 
   Widget _buildTabBar() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      // margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             spreadRadius: 0,
             blurRadius: 4,
             offset: const Offset(0, 1),
@@ -128,7 +128,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6C5CE7).withValues(alpha:0.3),
+                color: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
                 spreadRadius: 0,
                 blurRadius: 12,
                 offset: const Offset(0, 4),
@@ -153,8 +153,11 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           overlayColor: MaterialStateProperty.all(Colors.transparent),
           dividerColor: Colors.transparent,
           tabs: [
-            _buildTab('New', Icons.person_add_outlined),
-            _buildTab('Repeat', Icons.refresh_outlined),
+            // _buildTab('New', Icons.person_add_outlined),
+            // _buildTab('Repeat', Icons.refresh_outlined),
+            // _buildTab('Top', Icons.star_outline),
+            _buildTab('Customer Analytics', Icons.person_add_outlined),
+            _buildTab('Village Distribution', Icons.refresh_outlined),
             _buildTab('Top', Icons.star_outline),
           ],
         ),
@@ -199,7 +202,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha:0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 2),
@@ -274,6 +277,391 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                       isSmallScreen: true,
                     ),
                     const SizedBox(height: 16),
+                    // // Village Distribution Filter
+                    // Container(
+                    //   padding: const EdgeInsets.all(16),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: Colors.grey.withValues(alpha: 0.1),
+                    //         spreadRadius: 1,
+                    //         blurRadius: 4,
+                    //         offset: const Offset(0, 2),
+                    //       ),
+                    //     ],
+                    //   ),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       const Text(
+                    //         'Village Distribution Filter',
+                    //         style: TextStyle(
+                    //           fontSize: 16,
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.black87,
+                    //         ),
+                    //       ),
+                    //       const SizedBox(height: 16),
+                    //       MonthYearDropdown(
+                    //         selectedMonth: _villageDistributionMonth,
+                    //         selectedYear: _villageDistributionYear,
+                    //         onMonthChanged: (month) {
+                    //           setState(() {
+                    //             _villageDistributionMonth = month;
+                    //           });
+                    //           customerAnalyticsController
+                    //               .fetchVillageDistributionChart(
+                    //                 year: _villageDistributionYear,
+                    //                 month: _villageDistributionMonth,
+                    //               );
+                    //         },
+                    //         onYearChanged: (year) {
+                    //           setState(() {
+                    //             _villageDistributionYear = year;
+                    //           });
+                    //           customerAnalyticsController
+                    //               .fetchVillageDistributionChart(
+                    //                 year: _villageDistributionYear,
+                    //                 month: _villageDistributionMonth,
+                    //               );
+                    //         },
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
+                    // commonChartloader(
+                    //   isChartLoaded:
+                    //       customerAnalyticsController
+                    //           .isVillageDistributionChartLoading,
+                    //   chartTitle: 'Village Distribution',
+                    //   chartHasError:
+                    //       customerAnalyticsController
+                    //           .hasVillageDistributionChartError,
+                    //   chartErrorMessage:
+                    //       customerAnalyticsController
+                    //           .villageDistributionChartErrorMessage,
+                    //   chartData:
+                    //       customerAnalyticsController
+                    //           .villageDistributionPayload,
+                    //   chartDataType: ChartDataType.quantity,
+                    //   chartError:
+                    //       customerAnalyticsController
+                    //           .hasVillageDistributionChartError,
+                    //   isSmallScreen: true,
+                    // ),
+                    const SizedBox(height: 16),
+                    // Obx(
+                    //   () =>
+                    //       customerAnalyticsController
+                    //               .isVillageDistributionChartLoading
+                    //               .value
+                    //           ? const SizedBox.shrink()
+                    //           : _buildLegendCard(),
+                    // ),
+                  ],
+                );
+              } else {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.1),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Filter Options',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                MonthYearDropdown(
+                                  selectedMonth: _newCustomerMonth,
+                                  selectedYear: _newCustomerYear,
+                                  onMonthChanged: (month) {
+                                    setState(() {
+                                      _newCustomerMonth = month;
+                                    });
+                                    customerAnalyticsController
+                                        .fetchMonthlyNewCustomerChart(
+                                          year: _newCustomerYear,
+                                          month: _newCustomerMonth,
+                                        );
+                                  },
+                                  onYearChanged: (year) {
+                                    setState(() {
+                                      _newCustomerYear = year;
+                                    });
+                                    customerAnalyticsController
+                                        .fetchMonthlyNewCustomerChart(
+                                          year: _newCustomerYear,
+                                          month: _newCustomerMonth,
+                                        );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          commonChartloader(
+                            isChartLoaded:
+                                customerAnalyticsController
+                                    .isMonthlyNewCustomerChartLoading,
+                            chartTitle: 'Monthly New Customers',
+                            chartHasError:
+                                customerAnalyticsController
+                                    .hasMonthlyNewCustomerChartError,
+                            chartErrorMessage:
+                                customerAnalyticsController
+                                    .monthlyNewCustomerCharterrorMessage,
+                            chartData:
+                                customerAnalyticsController
+                                    .monthlyNewCustomerPayload,
+                            chartDataType: ChartDataType.quantity,
+                            chartError:
+                                customerAnalyticsController
+                                    .hasMonthlyNewCustomerChartError,
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+
+                    Expanded(
+                      child: Column(
+                        children: [
+                          // Village Distribution Filter
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.1),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Village Distribution Filter',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                MonthYearDropdown(
+                                  selectedMonth: _villageDistributionMonth,
+                                  selectedYear: _villageDistributionYear,
+                                  onMonthChanged: (month) {
+                                    setState(() {
+                                      _villageDistributionMonth = month;
+                                    });
+                                    customerAnalyticsController
+                                        .fetchVillageDistributionChart(
+                                          year: _villageDistributionYear,
+                                          month: _villageDistributionMonth,
+                                        );
+                                  },
+                                  onYearChanged: (year) {
+                                    setState(() {
+                                      _villageDistributionYear = year;
+                                    });
+                                    customerAnalyticsController
+                                        .fetchVillageDistributionChart(
+                                          year: _villageDistributionYear,
+                                          month: _villageDistributionMonth,
+                                        );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          commonChartloader(
+                            isChartLoaded:
+                                customerAnalyticsController
+                                    .isVillageDistributionChartLoading,
+                            chartTitle: 'Village Distribution',
+                            chartHasError:
+                                customerAnalyticsController
+                                    .hasVillageDistributionChartError,
+                            chartErrorMessage:
+                                customerAnalyticsController
+                                    .villageDistributionChartErrorMessage,
+                            chartData:
+                                customerAnalyticsController
+                                    .villageDistributionPayload,
+                            chartDataType: ChartDataType.quantity,
+                            chartError:
+                                customerAnalyticsController
+                                    .hasVillageDistributionChartError,
+                            isSmallScreen: isSmallScreen,
+                          ),
+                          const SizedBox(height: 16),
+                          Obx(
+                            () =>
+                                customerAnalyticsController
+                                        .isVillageDistributionChartLoading
+                                        .value
+                                    ? const SizedBox.shrink()
+                                    : _buildLegendCard(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          // Filter Section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Filter Options',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                MonthYearDropdown(
+                  selectedMonth: _repeatCustomerMonth,
+                  selectedYear: _repeatCustomerYear,
+                  onMonthChanged: (month) {
+                    setState(() {
+                      _repeatCustomerMonth = month;
+                    });
+                    customerAnalyticsController.fetchMonthlyRepeatCustomerChart(
+                      year: _repeatCustomerYear,
+                      month: _repeatCustomerMonth,
+                    );
+                  },
+                  onYearChanged: (year) {
+                    setState(() {
+                      _repeatCustomerYear = year;
+                    });
+                    customerAnalyticsController.fetchMonthlyRepeatCustomerChart(
+                      year: _repeatCustomerYear,
+                      month: _repeatCustomerMonth,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Chart Section
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final isSmallScreen = screenWidth < 600;
+
+              return Obx(
+                () =>
+                    customerAnalyticsController
+                            .isMonthlyRepeatCustomerChartLoading
+                            .value
+                        ? GenericBarChartShimmer(
+                          title: "Monthly Repeat Customers",
+                        )
+                        : GenericLineChart(
+                          title: 'Monthly Repeat Customers',
+                          payload:
+                              customerAnalyticsController
+                                  .monthlyRepeatCustomerPayload,
+                          screenWidth: screenWidth,
+                          isSmallScreen: isSmallScreen,
+                          dataType: ChartLineDataType.users,
+                          chartHeight: 400,
+                        ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVillageDistributionTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final isSmallScreen = screenWidth < 600;
+
+              if (isSmallScreen) {
+                return Column(
+                  children: [
+                    // commonChartloader(
+                    //   isChartLoaded:
+                    //       customerAnalyticsController
+                    //           .isMonthlyNewCustomerChartLoading,
+                    //   chartTitle: 'Monthly New Customers',
+                    //   chartHasError:
+                    //       customerAnalyticsController
+                    //           .hasMonthlyNewCustomerChartError,
+                    //   chartErrorMessage:
+                    //       customerAnalyticsController
+                    //           .monthlyNewCustomerCharterrorMessage,
+                    //   chartData:
+                    //       customerAnalyticsController.monthlyNewCustomerPayload,
+                    //   chartDataType: ChartDataType.quantity,
+                    //   chartError:
+                    //       customerAnalyticsController
+                    //           .hasMonthlyNewCustomerChartError,
+                    //   isSmallScreen: true,
+                    // ),
+                    const SizedBox(height: 16),
                     // Village Distribution Filter
                     Container(
                       padding: const EdgeInsets.all(16),
@@ -282,7 +670,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withValues(alpha:0.1),
+                            color: Colors.grey.withValues(alpha: 0.1),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: const Offset(0, 2),
@@ -375,7 +763,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha:0.1),
+                                  color: Colors.grey.withValues(alpha: 0.1),
                                   spreadRadius: 1,
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
@@ -457,7 +845,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha:0.1),
+                                  color: Colors.grey.withValues(alpha: 0.1),
                                   spreadRadius: 1,
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
@@ -541,96 +929,86 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
               }
             },
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRepeatCustomersTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
           // Filter Section
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withValues(alpha:0.1),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Filter Options',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                MonthYearDropdown(
-                  selectedMonth: _repeatCustomerMonth,
-                  selectedYear: _repeatCustomerYear,
-                  onMonthChanged: (month) {
-                    setState(() {
-                      _repeatCustomerMonth = month;
-                    });
-                    customerAnalyticsController.fetchMonthlyRepeatCustomerChart(
-                      year: _repeatCustomerYear,
-                      month: _repeatCustomerMonth,
-                    );
-                  },
-                  onYearChanged: (year) {
-                    setState(() {
-                      _repeatCustomerYear = year;
-                    });
-                    customerAnalyticsController.fetchMonthlyRepeatCustomerChart(
-                      year: _repeatCustomerYear,
-                      month: _repeatCustomerMonth,
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Chart Section
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final screenWidth = constraints.maxWidth;
-              final isSmallScreen = screenWidth < 600;
+          // Container(
+          //   padding: const EdgeInsets.all(16),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     borderRadius: BorderRadius.circular(12),
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.grey.withValues(alpha: 0.1),
+          //         spreadRadius: 1,
+          //         blurRadius: 4,
+          //         offset: const Offset(0, 2),
+          //       ),
+          //     ],
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       const Text(
+          //         'Filter Options',
+          //         style: TextStyle(
+          //           fontSize: 16,
+          //           fontWeight: FontWeight.bold,
+          //           color: Colors.black87,
+          //         ),
+          //       ),
+          //       const SizedBox(height: 16),
+          //       MonthYearDropdown(
+          //         selectedMonth: _repeatCustomerMonth,
+          //         selectedYear: _repeatCustomerYear,
+          //         onMonthChanged: (month) {
+          //           setState(() {
+          //             _repeatCustomerMonth = month;
+          //           });
+          //           customerAnalyticsController.fetchMonthlyRepeatCustomerChart(
+          //             year: _repeatCustomerYear,
+          //             month: _repeatCustomerMonth,
+          //           );
+          //         },
+          //         onYearChanged: (year) {
+          //           setState(() {
+          //             _repeatCustomerYear = year;
+          //           });
+          //           customerAnalyticsController.fetchMonthlyRepeatCustomerChart(
+          //             year: _repeatCustomerYear,
+          //             month: _repeatCustomerMonth,
+          //           );
+          //         },
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // const SizedBox(height: 16),
+          // // Chart Section
+          // LayoutBuilder(
+          //   builder: (context, constraints) {
+          //     final screenWidth = constraints.maxWidth;
+          //     final isSmallScreen = screenWidth < 600;
 
-              return Obx(
-                () =>
-                    customerAnalyticsController
-                            .isMonthlyRepeatCustomerChartLoading
-                            .value
-                        ? GenericBarChartShimmer(
-                          title: "Monthly Repeat Customers",
-                        )
-                        : GenericLineChart(
-                          title: 'Monthly Repeat Customers',
-                          payload:
-                              customerAnalyticsController
-                                  .monthlyRepeatCustomerPayload,
-                          screenWidth: screenWidth,
-                          isSmallScreen: isSmallScreen,
-                          dataType: ChartLineDataType.users,
-                          chartHeight: 400,
-                        ),
-              );
-            },
-          ),
+          //     return Obx(
+          //       () =>
+          //           customerAnalyticsController
+          //                   .isMonthlyRepeatCustomerChartLoading
+          //                   .value
+          //               ? GenericBarChartShimmer(
+          //                 title: "Monthly Repeat Customers",
+          //               )
+          //               : GenericLineChart(
+          //                 title: 'Monthly Repeat Customers',
+          //                 payload:
+          //                     customerAnalyticsController
+          //                         .monthlyRepeatCustomerPayload,
+          //                 screenWidth: screenWidth,
+          //                 isSmallScreen: isSmallScreen,
+          //                 dataType: ChartLineDataType.users,
+          //                 chartHeight: 400,
+          //               ),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );
@@ -676,7 +1054,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -748,9 +1126,11 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF6C5CE7).withValues(alpha:0.1),
+        color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF6C5CE7).withValues(alpha:0.3)),
+        border: Border.all(
+          color: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -891,7 +1271,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -913,7 +1293,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFF6C5CE7).withValues(alpha:0.05),
+              color: const Color(0xFF6C5CE7).withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -1025,7 +1405,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),

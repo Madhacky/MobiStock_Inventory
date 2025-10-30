@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/sales%20hisrory%20controllers/sales_history_comtroller.dart';
 import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_history_reponse_model.dart';
@@ -63,7 +64,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                 ),
               },
             ),
-        backgroundColor: Color(0xFF6C5CE7),
+        backgroundColor: AppTheme.primaryLight,
         icon: Icon(Icons.add, color: Colors.white),
         label: Text(
           "Sell Product",
@@ -81,6 +82,10 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
     return buildCustomAppBar(
       "Sales Management",
       isdark: true,
+      onPressed: () {
+        Get.find<BottomNavigationController>().setIndex(0);
+        Get.back();
+      },
       actionItem: IconButton(
         onPressed: () => controller.refreshData(),
         icon: Icon(Icons.refresh, color: Colors.black),
@@ -124,7 +129,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected ? Color(0xFF6C5CE7) : Colors.transparent,
+            color: isSelected ? AppTheme.primaryLight : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

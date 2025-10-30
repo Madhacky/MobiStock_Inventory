@@ -3,7 +3,7 @@ import 'package:smartbecho/services/theme_config.dart';
 
 class AppTheme {
   // Light Theme Colors
-  static const Color primaryLight = Color(0xFF6C5CE7);
+  static const Color primaryLight = Color(0xFF16A085);
   static const Color primaryVariantLight = Color(0xFFA29BFE);
   static const Color secondaryLight = Color(0xFF00CEC9);
   static const Color secondaryVariantLight = Color(0xFF55EFC4);
@@ -37,17 +37,47 @@ class AppTheme {
   static const Color infoDark = Color(0xFF3B82F6);
 
   // Gradient Colors
-  static const List<Color> primaryGradientLight = [Color(0xFF6C5CE7), Color(0xFFA29BFE)];
-  static const List<Color> secondaryGradientLight = [Color(0xFF00CEC9), Color(0xFF55EFC4)];
-  static const List<Color> errorGradientLight = [Color(0xFFFF7675), Color(0xFFFF9F9F)];
-  static const List<Color> successGradientLight = [Color(0xFF00B894), Color(0xFF55EFC4)];
-  static const List<Color> infoGradientLight = [Color(0xFF74B9FF), Color(0xFF00B894)];
+  static const List<Color> primaryGradientLight = [
+    Color(0xFF6C5CE7),
+    Color(0xFFA29BFE),
+  ];
+  static const List<Color> secondaryGradientLight = [
+    Color(0xFF00CEC9),
+    Color(0xFF55EFC4),
+  ];
+  static const List<Color> errorGradientLight = [
+    Color(0xFFFF7675),
+    Color(0xFFFF9F9F),
+  ];
+  static const List<Color> successGradientLight = [
+    Color(0xFF00B894),
+    Color(0xFF55EFC4),
+  ];
+  static const List<Color> infoGradientLight = [
+    Color(0xFF74B9FF),
+    Color(0xFF00B894),
+  ];
 
-  static const List<Color> primaryGradientDark = [Color(0xFF8B7CF6), Color(0xFFB4A7F7)];
-  static const List<Color> secondaryGradientDark = [Color(0xFF14B8A6), Color(0xFF5EEAD4)];
-  static const List<Color> errorGradientDark = [Color(0xFFEF4444), Color(0xFFF87171)];
-  static const List<Color> successGradientDark = [Color(0xFF10B981), Color(0xFF6EE7B7)];
-  static const List<Color> infoGradientDark = [Color(0xFF3B82F6), Color(0xFF60A5FA)];
+  static const List<Color> primaryGradientDark = [
+    Color(0xFF8B7CF6),
+    Color(0xFFB4A7F7),
+  ];
+  static const List<Color> secondaryGradientDark = [
+    Color(0xFF14B8A6),
+    Color(0xFF5EEAD4),
+  ];
+  static const List<Color> errorGradientDark = [
+    Color(0xFFEF4444),
+    Color(0xFFF87171),
+  ];
+  static const List<Color> successGradientDark = [
+    Color(0xFF10B981),
+    Color(0xFF6EE7B7),
+  ];
+  static const List<Color> infoGradientDark = [
+    Color(0xFF3B82F6),
+    Color(0xFF60A5FA),
+  ];
 
   // Border Colors
   static Color borderLight = Colors.grey[300]!;
@@ -57,14 +87,14 @@ class AppTheme {
   static Color textPrimaryLight = Colors.black87;
   static Color textSecondaryLight = Colors.grey[600]!;
   static Color textHintLight = Colors.grey[500]!;
-  
+
   static Color textPrimaryDark = const Color(0xFFF1F5F9);
   static Color textSecondaryDark = const Color(0xFFCBD5E1);
   static Color textHintDark = const Color(0xFF94A3B8);
 
   // Shadow Colors
-  static Color shadowLight = Colors.black.withValues(alpha:0.05);
-  static Color shadowDark = Colors.black.withValues(alpha:0.3);
+  static Color shadowLight = Colors.black.withValues(alpha: 0.05);
+  static Color shadowDark = Colors.black.withValues(alpha: 0.3);
 
   // Light Theme
   static ThemeData lightTheme = ThemeData(
@@ -72,7 +102,7 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColor: primaryLight,
     scaffoldBackgroundColor: backgroundLight,
-    
+
     colorScheme: const ColorScheme.light(
       primary: primaryLight,
       secondary: secondaryLight,
@@ -97,9 +127,7 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
-      iconTheme: IconThemeData(
-        color: textPrimaryLight,
-      ),
+      iconTheme: IconThemeData(color: textPrimaryLight),
     ),
 
     // Card Theme
@@ -109,10 +137,7 @@ class AppTheme {
       shadowColor: shadowLight,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: borderLight,
-          width: 1,
-        ),
+        side: BorderSide(color: borderLight, width: 1),
       ),
     ),
 
@@ -132,10 +157,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: primaryLight, width: 2),
       ),
-      hintStyle: TextStyle(
-        color: textHintLight,
-        fontWeight: FontWeight.w400,
-      ),
+      hintStyle: TextStyle(color: textHintLight, fontWeight: FontWeight.w400),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
 
@@ -146,9 +168,7 @@ class AppTheme {
         foregroundColor: onPrimaryLight,
         elevation: 2,
         shadowColor: shadowLight,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
@@ -170,9 +190,7 @@ class AppTheme {
         fontWeight: FontWeight.w600,
         fontSize: 12,
       ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 11,
-      ),
+      unselectedLabelStyle: const TextStyle(fontSize: 11),
     ),
 
     // Text Theme
@@ -255,17 +273,10 @@ class AppTheme {
     ),
 
     // Icon Theme
-    iconTheme: IconThemeData(
-      color: textPrimaryLight,
-      size: 24,
-    ),
+    iconTheme: IconThemeData(color: textPrimaryLight, size: 24),
 
     // Divider Theme
-    dividerTheme: DividerThemeData(
-      color: borderLight,
-      thickness: 1,
-      space: 1,
-    ),
+    dividerTheme: DividerThemeData(color: borderLight, thickness: 1, space: 1),
   );
 
   // Dark Theme
@@ -274,7 +285,7 @@ class AppTheme {
     brightness: Brightness.dark,
     primaryColor: primaryDark,
     scaffoldBackgroundColor: backgroundDark,
-    
+
     colorScheme: const ColorScheme.dark(
       primary: primaryDark,
       secondary: secondaryDark,
@@ -299,9 +310,7 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
-      iconTheme: IconThemeData(
-        color: textPrimaryDark,
-      ),
+      iconTheme: IconThemeData(color: textPrimaryDark),
     ),
 
     // Card Theme
@@ -311,10 +320,7 @@ class AppTheme {
       shadowColor: shadowDark,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: borderDark,
-          width: 1,
-        ),
+        side: BorderSide(color: borderDark, width: 1),
       ),
     ),
 
@@ -334,10 +340,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: primaryDark, width: 2),
       ),
-      hintStyle: TextStyle(
-        color: textHintDark,
-        fontWeight: FontWeight.w400,
-      ),
+      hintStyle: TextStyle(color: textHintDark, fontWeight: FontWeight.w400),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
 
@@ -348,9 +351,7 @@ class AppTheme {
         foregroundColor: onPrimaryDark,
         elevation: 4,
         shadowColor: shadowDark,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
@@ -372,9 +373,7 @@ class AppTheme {
         fontWeight: FontWeight.w600,
         fontSize: 12,
       ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 11,
-      ),
+      unselectedLabelStyle: const TextStyle(fontSize: 11),
     ),
 
     // Text Theme
@@ -457,17 +456,10 @@ class AppTheme {
     ),
 
     // Icon Theme
-    iconTheme: IconThemeData(
-      color: textPrimaryDark,
-      size: 24,
-    ),
+    iconTheme: IconThemeData(color: textPrimaryDark, size: 24),
 
     // Divider Theme
-    dividerTheme: DividerThemeData(
-      color: borderDark,
-      thickness: 1,
-      space: 1,
-    ),
+    dividerTheme: DividerThemeData(color: borderDark, thickness: 1, space: 1),
   );
 
   // Utility methods for gradients
@@ -518,7 +510,7 @@ class AppTheme {
         color: isDark ? shadowDark : shadowLight,
         spreadRadius: 0,
         blurRadius: isDark ? 8 : 10,
-        offset:  Offset(0, isDark ? 4 : 2),
+        offset: Offset(0, isDark ? 4 : 2),
       ),
     ];
   }
@@ -576,14 +568,17 @@ class AppTheme {
 
   static Color shadowColor(BuildContext context) =>
       ThemeController().isDarkMode
-          ? Colors.black.withValues(alpha:0.3)
-          : Colors.black.withValues(alpha:0.05);
+          ? Colors.black.withValues(alpha: 0.3)
+          : Colors.black.withValues(alpha: 0.05);
 
   static Color accentColor(BuildContext context) =>
       ThemeController().isDarkMode ? Color(0xFFA29BFE) : Color(0xFF6C5CE7);
 
   // Gradient colors for cards and buttons
-  static List<Color> statCardGradient(BuildContext context, List<Color> lightColors) {
+  static List<Color> statCardGradient(
+    BuildContext context,
+    List<Color> lightColors,
+  ) {
     if (ThemeController().isDarkMode) {
       return lightColors
           .map((color) => Color.lerp(color, Colors.black, 0.3)!)
@@ -592,7 +587,10 @@ class AppTheme {
     return lightColors;
   }
 
-  static List<Color> actionButtonGradient(BuildContext context, List<Color> lightColors) {
+  static List<Color> actionButtonGradient(
+    BuildContext context,
+    List<Color> lightColors,
+  ) {
     if (ThemeController().isDarkMode) {
       return lightColors
           .map((color) => Color.lerp(color, Colors.black, 0.2)!)

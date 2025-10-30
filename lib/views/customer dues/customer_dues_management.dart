@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
 import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/show_network_image.dart';
@@ -10,10 +12,12 @@ import 'package:smartbecho/views/customer%20dues/components/customer_dues_detail
 
 class CustomerDuesManagementScreen extends StatefulWidget {
   @override
-  _CustomerDuesManagementScreenState createState() => _CustomerDuesManagementScreenState();
+  _CustomerDuesManagementScreenState createState() =>
+      _CustomerDuesManagementScreenState();
 }
 
-class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScreen> 
+class _CustomerDuesManagementScreenState
+    extends State<CustomerDuesManagementScreen>
     with SingleTickerProviderStateMixin {
   final CustomerDuesController controller = Get.find<CustomerDuesController>();
   final ScrollController _scrollController = ScrollController();
@@ -24,7 +28,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_onScroll);
-    
+
     // Listen to tab changes
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -42,7 +46,8 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       controller.loadMoreDues();
     }
   }
@@ -50,17 +55,29 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(
+        title: "Dues Management",
+        onPressed: () {
+          final bottomNavController = Get.find<BottomNavigationController>();
+          bottomNavController.setIndex(0);
+        },
+        actionItem: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            onPressed: controller.showAnalyticsModal,
+            icon: Icon(Icons.analytics_outlined),
+          ),
+        ),
+      ),
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
-            _buildCustomAppBar(),
+            // _buildCustomAppBar(),
             _buildSummaryCards(),
             _buildSearchAndFilters(),
             _buildTabs(),
-            Expanded(
-              child: _buildTabContent(),
-            ),
+            Expanded(child: _buildTabContent()),
           ],
         ),
       ),
@@ -72,6 +89,10 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     return buildCustomAppBar(
       "Dues Management",
       isdark: true,
+      onPressed: () {
+        final bottomNavController = Get.find<BottomNavigationController>();
+        bottomNavController.setIndex(0);
+      },
       actionItem: IconButton(
         onPressed: controller.showAnalyticsModal,
         icon: Icon(Icons.analytics_outlined),
@@ -98,7 +119,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               'Total Dues\nGiven',
               '₹${summary.totalGiven}',
               Icons.account_balance_wallet_outlined,
-              Color(0xFF6C5CE7),
+              AppTheme.primaryLight,
             ),
             _buildSummaryCard(
               'Total\nCollected',
@@ -149,47 +170,49 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.08),
+              color: Colors.grey.withValues(alpha: 0.08),
               spreadRadius: 0,
               blurRadius: 20,
               offset: Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha:0.1),
-                borderRadius: BorderRadius.circular(8),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 18),
               ),
-              child: Icon(icon, color: color, size: 18),
-            ),
-            SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+              SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 2),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-                height: 1.2,
+              SizedBox(height: 2),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey[600],
+                  height: 1.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -210,7 +233,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           ),
           child: Center(
             child: CircularProgressIndicator(
-              color: Color(0xFF6C5CE7),
+              color: AppTheme.primaryLight,
               strokeWidth: 2,
             ),
           ),
@@ -227,7 +250,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -247,20 +270,28 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                     decoration: BoxDecoration(
                       color: Colors.grey[50],
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+                      border: Border.all(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: TextField(
                       onChanged: controller.onSearchChanged,
                       decoration: InputDecoration(
                         hintText: 'Search by name, ID, or customer ID...',
-                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                        hintStyle: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[500],
+                        ),
                         prefixIcon: Icon(
                           Icons.search,
                           size: 20,
                           color: Colors.grey[500],
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -271,41 +302,47 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                   height: 44,
                   width: 44,
                   decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+                    color: AppTheme.primaryLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xFF6C5CE7).withValues(alpha:0.3)),
+                    border: Border.all(
+                      color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: IconButton(
                     onPressed: () => _showFilterBottomSheet(context),
                     icon: Icon(
                       Icons.tune,
                       size: 20,
-                      color: Color(0xFF6C5CE7),
+                      color: AppTheme.primaryLight,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            // SizedBox(height: 12),
             // Quick Filter buttons
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFilterButton(
-                    'Reset',
-                    Icons.refresh,
-                    onPressed: controller.resetFilters,
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: _buildFilterButton(
+            //         'Reset',
+            //         Icons.refresh,
+            //         onPressed: controller.resetFilters,
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFilterButton(String text, IconData icon, {VoidCallback? onPressed}) {
+  Widget _buildFilterButton(
+    String text,
+    IconData icon, {
+    VoidCallback? onPressed,
+  }) {
     return InkWell(
       onTap: onPressed,
       child: Container(
@@ -313,7 +350,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         decoration: BoxDecoration(
           color: Colors.grey[50],
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -342,7 +379,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -358,14 +395,11 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           dividerColor: Colors.transparent,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: Color(0xFF6C5CE7),
+            color: AppTheme.primaryLight,
           ),
           labelColor: Colors.white,
           unselectedLabelColor: Colors.grey[600],
-          labelStyle: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
+          labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           unselectedLabelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 14,
@@ -402,10 +436,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
       onRefresh: controller.refreshData,
       child: TabBarView(
         controller: _tabController,
-        children: [
-          _buildDuesTab(),
-          _buildPaidTab(),
-        ],
+        children: [_buildDuesTab(), _buildPaidTab()],
       ),
     );
   }
@@ -419,7 +450,10 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
       final duesCustomers = controller.allDues;
 
       if (duesCustomers.isEmpty) {
-        return _buildEmptyState('No dues found', 'All customers have paid their dues');
+        return _buildEmptyState(
+          'No dues found',
+          'All customers have paid their dues',
+        );
       }
 
       return SingleChildScrollView(
@@ -445,7 +479,10 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
       final paidCustomers = controller.paidDues;
 
       if (paidCustomers.isEmpty) {
-        return _buildEmptyState('No paid customers', 'Customers who have paid will appear here');
+        return _buildEmptyState(
+          'No paid customers',
+          'Customers who have paid will appear here',
+        );
       }
 
       return SingleChildScrollView(
@@ -470,7 +507,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              color: Color(0xFF6C5CE7),
+              color: AppTheme.primaryLight,
               strokeWidth: 3,
             ),
             SizedBox(height: 16),
@@ -488,7 +525,10 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  Widget _buildCustomerGrid(List<CustomerDue> customers, {required bool isDuesSection}) {
+  Widget _buildCustomerGrid(
+    List<CustomerDue> customers, {
+    required bool isDuesSection,
+  }) {
     return Container(
       margin: EdgeInsets.all(16),
       child: GridView.builder(
@@ -509,17 +549,20 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  Widget _buildCustomerCard(CustomerDue customer, {required bool isDuesSection}) {
+  Widget _buildCustomerCard(
+    CustomerDue customer, {
+    required bool isDuesSection,
+  }) {
     // Determine status color based on remainingDue
     Color statusColor = customer.remainingDue <= 0 ? Colors.green : Colors.red;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 15,
             offset: Offset(0, 4),
@@ -537,9 +580,10 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.grey[200],
-                  child: customer.profileUrl != null 
-                      ? cachedImage(customer.profileUrl!) 
-                      : Icon(Icons.person, color: Colors.grey[600]),
+                  child:
+                      customer.profileUrl != null
+                          ? cachedImage(customer.profileUrl!)
+                          : Icon(Icons.person, color: Colors.grey[600]),
                 ),
                 SizedBox(width: 8),
                 Expanded(
@@ -547,7 +591,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        customer.name??"",
+                        customer.name ?? "",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -558,10 +602,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                       ),
                       Text(
                         'ID: ${customer.id}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -569,7 +610,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha:0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -584,7 +625,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               ],
             ),
           ),
-          
+
           // Amount details
           Expanded(
             child: Padding(
@@ -592,18 +633,22 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildAmountRow('Total Due:', customer.totalDue, Colors.black87),
+                  _buildAmountRow(
+                    'Total Given Dues:',
+                    customer.totalDue,
+                    Colors.black87,
+                  ),
                   SizedBox(height: 4),
                   _buildAmountRow('Paid:', customer.totalPaid, Colors.green),
                   SizedBox(height: 4),
                   _buildAmountRow(
-                    'Remaining:', 
-                    customer.remainingDue, 
+                    'Remaining:',
+                    customer.remainingDue,
                     customer.remainingDue <= 0 ? Colors.green : Colors.red,
                     isHighlight: true,
                   ),
                   SizedBox(height: 8),
-                  
+
                   // Progress bar (only for dues section)
                   if (isDuesSection && customer.totalDue > 0) ...[
                     LinearProgressIndicator(
@@ -615,17 +660,14 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                     SizedBox(height: 4),
                     Text(
                       '${customer.paymentProgress.toStringAsFixed(1)}% paid',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                     ),
                   ],
                 ],
               ),
             ),
           ),
-          
+
           // Action buttons
           Container(
             padding: EdgeInsets.all(12),
@@ -640,17 +682,20 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
                   ),
                 ),
                 SizedBox(width: 8),
-              isDuesSection?  Expanded(
-                  child: _buildActionButton(
-                    'Notify',
-                    Icons.notifications_outlined,
-                    Colors.orange,
-                    onPressed: () => controller.notifyCustomer(
-                      customer.customerId, 
-                      customer.name??"",
-                    ),
-                  ),
-                ):SizedBox.shrink(),
+                isDuesSection
+                    ? Expanded(
+                      child: _buildActionButton(
+                        'Notify',
+                        Icons.notifications_outlined,
+                        Colors.orange,
+                        onPressed:
+                            () => controller.notifyCustomer(
+                              customer.customerId,
+                              customer.name ?? "",
+                            ),
+                      ),
+                    )
+                    : SizedBox.shrink(),
               ],
             ),
           ),
@@ -659,7 +704,12 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  Widget _buildAmountRow(String label, double amount, Color color, {bool isHighlight = false}) {
+  Widget _buildAmountRow(
+    String label,
+    double amount,
+    Color color, {
+    bool isHighlight = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -683,15 +733,20 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  Widget _buildActionButton(String label, IconData icon, Color color, {VoidCallback? onPressed}) {
+  Widget _buildActionButton(
+    String label,
+    IconData icon,
+    Color color, {
+    VoidCallback? onPressed,
+  }) {
     return InkWell(
       onTap: onPressed,
       child: Container(
         height: 32,
         decoration: BoxDecoration(
-          color: color.withValues(alpha:0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha:0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -721,16 +776,13 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
             child: Column(
               children: [
                 CircularProgressIndicator(
-                  color: Color(0xFF6C5CE7),
+                  color: AppTheme.primaryLight,
                   strokeWidth: 2,
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Loading more...',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -747,11 +799,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 64,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey[400]),
           SizedBox(height: 16),
           Text(
             title ?? 'No customer dues found',
@@ -764,10 +812,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           SizedBox(height: 8),
           Text(
             subtitle ?? 'Create your first due entry to get started',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -778,13 +823,10 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
   Widget _buildFloatingActionButton() {
     return FloatingActionButton.extended(
       onPressed: controller.createDueEntry,
-      backgroundColor: Color(0xFF6C5CE7),
+      backgroundColor: AppTheme.primaryLight,
       label: Text(
         'Add Due',
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
       ),
       icon: Icon(Icons.add, color: Colors.white),
     );
@@ -793,124 +835,128 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
   // Filter Bottom Sheet
   void _showFilterBottomSheet(BuildContext context) {
     Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                Text(
-                  'Filter & Sort',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Text(
+                    'Filter & Sort',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E293B),
+                    ),
+                  ),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: Icon(Icons.close),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.grey.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              // Time Period Row
+              Obx(
+                () => _buildStyledDropdown(
+                  labelText: 'Time Period',
+                  hintText: 'Select Period',
+                  value: controller.timePeriodType.value,
+                  items: controller.timePeriodOptions,
+                  onChanged: controller.onTimePeriodTypeChanged,
+                ),
+              ),
+
+              SizedBox(height: 16),
+
+              // Date Selection based on Time Period Type
+              Obx(() {
+                if (controller.timePeriodType.value == 'Month/Year') {
+                  return _buildMonthYearSelection();
+                } else {
+                  return _buildCustomDateSelection(context);
+                }
+              }),
+
+              SizedBox(height: 16),
+
+              // Sort Option
+              Obx(
+                () => _buildStyledDropdown(
+                  labelText: 'Sort By',
+                  hintText: 'Select Sort Field',
+                  value: controller.sortBy.value,
+                  items: controller.sortOptions,
+                  onChanged:
+                      (value) =>
+                          controller.onSortChanged(value ?? 'creationDate'),
+                  suffixIcon: Icon(
+                    controller.sortDir.value == 'asc'
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward,
+                    size: 16,
                     color: Color(0xFF1E293B),
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: Icon(Icons.close),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.withValues(alpha:0.1),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // Time Period Row
-            Obx(
-              () => _buildStyledDropdown(
-                labelText: 'Time Period',
-                hintText: 'Select Period',
-                value: controller.timePeriodType.value,
-                items: controller.timePeriodOptions,
-                onChanged: controller.onTimePeriodTypeChanged,
               ),
-            ),
 
-            SizedBox(height: 16),
+              SizedBox(height: 24),
 
-            // Date Selection based on Time Period Type
-            Obx(() {
-              if (controller.timePeriodType.value == 'Month/Year') {
-                return _buildMonthYearSelection();
-              } else {
-                return _buildCustomDateSelection(context);
-              }
-            }),
-
-            SizedBox(height: 16),
-
-            // Sort Option
-            Obx(
-              () => _buildStyledDropdown(
-                labelText: 'Sort By',
-                hintText: 'Select Sort Field',
-                value: controller.sortBy.value,
-                items: controller.sortOptions,
-                onChanged: (value) => controller.onSortChanged(value ?? 'creationDate'),
-                suffixIcon: Icon(
-                  controller.sortDir.value == 'asc'
-                      ? Icons.arrow_upward
-                      : Icons.arrow_downward,
-                  size: 16,
-                  color: Color(0xFF1E293B),
-                ),
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _resetFilters,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.primaryLight,
+                        side: BorderSide(color: AppTheme.primaryLight),
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text('Reset'),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Get.back(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryLight,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text('Apply'),
+                    ),
+                  ),
+                ],
               ),
-            ),
 
-            SizedBox(height: 24),
-
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _resetFilters,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Color(0xFF1E293B),
-                      side: BorderSide(color: Color(0xFF1E293B)),
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text('Reset'),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Get.back(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1E293B),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text('Apply'),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-          ],
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+            ],
+          ),
         ),
       ),
       isScrollControlled: true,
@@ -931,19 +977,22 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
             () => _buildStyledDropdown(
               labelText: 'Month',
               hintText: 'Select Month',
-              value: controller.selectedMonth.value != null
-                  ? controller.getMonthName(controller.selectedMonth.value!)
-                  : null,
+              value:
+                  controller.selectedMonth.value != null
+                      ? controller.getMonthName(controller.selectedMonth.value!)
+                      : null,
               items: List.generate(
                 12,
                 (index) => controller.getMonthName(index + 1),
               ),
               onChanged: (value) {
                 if (value != null) {
-                  final monthIndex = List.generate(
-                    12,
-                    (index) => controller.getMonthName(index + 1),
-                  ).indexOf(value) + 1;
+                  final monthIndex =
+                      List.generate(
+                        12,
+                        (index) => controller.getMonthName(index + 1),
+                      ).indexOf(value) +
+                      1;
                   controller.onMonthChanged(monthIndex);
                 }
               },
@@ -957,11 +1006,14 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               labelText: 'Year',
               hintText: 'Select Year',
               value: controller.selectedYear.value?.toString(),
-              items: List.generate(
-                6,
-                (index) => (2020 + index).toString(),
-              ).reversed.toList(),
-              onChanged: (value) => controller.onYearChanged(int.tryParse(value ?? '')),
+              items:
+                  List.generate(
+                    6,
+                    (index) => (2020 + index).toString(),
+                  ).reversed.toList(),
+              onChanged:
+                  (value) =>
+                      controller.onYearChanged(int.tryParse(value ?? '')),
             ),
           ),
         ),
@@ -1046,16 +1098,13 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: DropdownButtonFormField<String>(
             value: value,
             hint: Text(
               hintText,
-              style: const TextStyle(
-                color: Color(0xFF9CA3AF),
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -1067,19 +1116,18 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item),
-              );
-            }).toList(),
+            items:
+                items.map((String item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item),
+                  );
+                }).toList(),
             onChanged: onChanged,
-            icon: suffixIcon == null
-                ? Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Color(0xFF9CA3AF),
-                  )
-                : SizedBox.shrink(),
+            icon:
+                suffixIcon == null
+                    ? Icon(Icons.keyboard_arrow_down, color: Color(0xFF9CA3AF))
+                    : SizedBox.shrink(),
           ),
         ),
       ],

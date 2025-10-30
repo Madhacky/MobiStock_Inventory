@@ -8,6 +8,7 @@ import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_du
 import 'package:smartbecho/models/customer%20dues%20management/customer_due_detail_model.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:smartbecho/services/whatsapp_chat_launcher.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/show_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,6 +37,8 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(title: 'Customer Due Details'),
+
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Obx(() {
@@ -61,14 +64,14 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
   Widget _buildLoadingState() {
     return Column(
       children: [
-        buildCustomAppBar('Loading...', isdark: true),
+        // buildCustomAppBar('Loading...', isdark: true),
         Expanded(
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(
-                  color: Color(0xFF6C5CE7),
+                  color: AppTheme.primaryLight,
                   strokeWidth: 3,
                 ),
                 SizedBox(height: 16),
@@ -116,7 +119,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                   icon: Icon(Icons.refresh, color: Colors.white),
                   label: Text('Retry', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF6C5CE7),
+                    backgroundColor: AppTheme.primaryLight,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -170,13 +173,15 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         physics: AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
-            _buildCustomAppBar(dueDetails.customer.name ?? ""),
+            // _buildCustomAppBar(dueDetails.customer.name ?? ""),
+            // _buildCustomAppBar("Customer Due Details"),
             _buildCustomerHeaderCard(dueDetails),
+
+            // _buildCustomerInfoCard(dueDetails),
             _buildQuickActionButtons(dueDetails),
-            _buildSummaryCards(dueDetails),
-            _buildPaymentProgressCard(dueDetails),
+            // _buildSummaryCards(dueDetails),
+            // _buildPaymentProgressCard(dueDetails),
             _buildAmountDetailsCard(dueDetails),
-            _buildCustomerInfoCard(dueDetails),
             if (dueDetails.partialPayments.isNotEmpty)
               _buildPaymentHistorySection(dueDetails),
             _buildActionButtons(dueDetails),
@@ -192,90 +197,99 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
   }
 
   Widget _buildCustomerHeaderCard(CustomerDueDetailsModel dueDetails) {
-    return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF6C5CE7), Color(0xFF4C51BF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
+    return Stack(
+      children: [
+        Container(
+          margin: EdgeInsets.all(16),
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryLight,
+            // gradient: LinearGradient(
+            //   colors: [AppTheme.primaryLight, Color(0xFF4C51BF)],
+            //   begin: Alignment.topLeft,
+            //   end: Alignment.bottomRight,
+            // ),
+            borderRadius: BorderRadius.circular(20),
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: AppTheme.primaryLight.withValues(alpha: 0.3),
+            //     spreadRadius: 0,
+            //     blurRadius: 20,
+            //     offset: Offset(0, 8),
+            //   ),
+            // ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    _getInitials(dueDetails.customer.name ?? ""),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
+              Row(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _getInitials(dueDetails.customer.name ?? ""),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 36,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dueDetails.customer.name ?? "",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          'Due ID: #${dueDetails.duesId}',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          'Customer ID: ${dueDetails.customer.id}',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          'Date: ${_formatDate(dueDetails.creationDateTime)}',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // _buildStatusBadge(dueDetails),
+                ],
               ),
-              SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dueDetails.customer.name ?? "",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 6),
-                    Text(
-                      'Due ID: #${dueDetails.duesId}',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                    Text(
-                      'Customer ID: ${dueDetails.customer.id}',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                    Text(
-                      'Date: ${_formatDate(dueDetails.creationDateTime)}',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _buildStatusBadge(dueDetails),
+              _buildCustomerInfoCard(dueDetails),
             ],
           ),
-        ],
-      ),
+        ),
+        Positioned(top: 20, right: 20, child: _buildStatusBadge(dueDetails)),
+      ],
     );
   }
 
@@ -408,7 +422,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
             'Total Due',
             '₹${_formatAmount(dueDetails.totalDue)}',
             Icons.account_balance_wallet_outlined,
-            Color(0xFF6C5CE7),
+            AppTheme.primaryLight,
           ),
           _buildSummaryCard(
             'Total Paid',
@@ -592,40 +606,38 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
   }
 
   Widget _buildCustomerInfoCard(CustomerDueDetailsModel dueDetails) {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withValues(alpha: 0.08),
-          spreadRadius: 0,
-          blurRadius: 20,
-          offset: Offset(0, 4),
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: EdgeInsets.all(20),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        // color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.grey.withValues(alpha: 0.08),
+        //     spreadRadius: 0,
+        //     blurRadius: 20,
+        //     offset: Offset(0, 4),
+        //   ),
+        // ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader('Customer Information', Icons.person),
+          // _buildSectionHeader('Customer Information', Icons.person),
           SizedBox(height: 16),
           _buildInfoRow('Name', dueDetails.customer.name ?? ""),
-          SizedBox(height: 12),
+          SizedBox(height: 8),
           _buildInfoRow('Email', dueDetails.customer.email ?? ""),
-          SizedBox(height: 12),
+          SizedBox(height: 8),
           _buildInfoRow('Phone', dueDetails.customer.primaryPhone ?? ""),
-          SizedBox(height: 12),
+          SizedBox(height: 8),
           _buildInfoRow('Address', dueDetails.customer.primaryAddress ?? ""),
-          SizedBox(height: 12),
+          SizedBox(height: 8),
           _buildInfoRow('Location', dueDetails.customer.location ?? ""),
           // Fix: Check for null before accessing alternatePhones
-          if (dueDetails.customer.alternatePhones != null && 
+          if (dueDetails.customer.alternatePhones != null &&
               dueDetails.customer.alternatePhones!.isNotEmpty) ...[
-            SizedBox(height: 12),
+            SizedBox(height: 8),
             _buildInfoRow(
               'Alternate Phones',
               dueDetails.customer.alternatePhones!.join(', '),
@@ -633,9 +645,8 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
           ],
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildPaymentHistorySection(CustomerDueDetailsModel dueDetails) {
     return Container(
@@ -729,7 +740,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6C5CE7),
+                  backgroundColor: AppTheme.primaryLight,
                   padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -764,14 +775,14 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
               onPressed: () => _showNotifyDialog(dueDetails),
               icon: Icon(
                 Icons.notifications_outlined,
-                color: Color(0xFF6C5CE7),
+                color: AppTheme.primaryLight,
               ),
               label: Text(
                 'Send Reminder',
-                style: TextStyle(color: Color(0xFF6C5CE7), fontSize: 16),
+                style: TextStyle(color: AppTheme.primaryLight, fontSize: 16),
               ),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Color(0xFF6C5CE7)),
+                side: BorderSide(color: AppTheme.primaryLight),
                 padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -791,10 +802,10 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
+            color: AppTheme.primaryLight.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Color(0xFF6C5CE7), size: 20),
+          child: Icon(icon, color: AppTheme.primaryLight, size: 20),
         ),
         SizedBox(width: 12),
         Text(
@@ -849,18 +860,18 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
+              color: Colors.white,
             ),
           ),
         ),
-        SizedBox(width: 12),
+        // SizedBox(width: 10),
         Expanded(
           child: Text(
             value.isEmpty ? 'N/A' : value,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
         ),

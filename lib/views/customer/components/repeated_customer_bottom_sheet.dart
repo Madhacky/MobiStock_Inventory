@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class RepeatedCustomersModal extends StatelessWidget {
   final CustomerController controller = Get.find<CustomerController>();
@@ -30,7 +31,7 @@ class RepeatedCustomersModal extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Header
           Container(
             padding: EdgeInsets.all(20),
@@ -39,7 +40,7 @@ class RepeatedCustomersModal extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFF9500).withValues(alpha:0.1),
+                    color: Color(0xFFFF9500).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -61,13 +62,15 @@ class RepeatedCustomersModal extends StatelessWidget {
                           color: Colors.black87,
                         ),
                       ),
-                      Obx(() => Text(
-                        '${controller.repeatedCustomersList.length} customers found',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                      Obx(
+                        () => Text(
+                          '${controller.repeatedCustomersList.length} customers found',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
                         ),
-                      )),
+                      ),
                     ],
                   ),
                 ),
@@ -111,16 +114,13 @@ class RepeatedCustomersModal extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            color: Color(0xFF6C5CE7),
+            color: AppTheme.primaryLight,
             strokeWidth: 3,
           ),
           SizedBox(height: 16),
           Text(
             'Loading repeated customers...',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -134,11 +134,7 @@ class RepeatedCustomersModal extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red[300],
-            ),
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             SizedBox(height: 16),
             Text(
               'Failed to load data',
@@ -151,10 +147,7 @@ class RepeatedCustomersModal extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               controller.repeatedCustomersErrorMessage.value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
@@ -163,7 +156,7 @@ class RepeatedCustomersModal extends StatelessWidget {
               icon: Icon(Icons.refresh, size: 18),
               label: Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF6C5CE7),
+                backgroundColor: AppTheme.primaryLight,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
@@ -181,11 +174,7 @@ class RepeatedCustomersModal extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.people_outline,
-              size: 64,
-              color: Colors.grey[300],
-            ),
+            Icon(Icons.people_outline, size: 64, color: Colors.grey[300]),
             SizedBox(height: 16),
             Text(
               'No Repeated Customers',
@@ -198,10 +187,7 @@ class RepeatedCustomersModal extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               'No customers have made repeat purchases yet',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
           ],
@@ -224,125 +210,167 @@ class RepeatedCustomersModal extends StatelessWidget {
 
   Widget _buildCustomerCard(customer, int index) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 0.08),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.05),
+            color: Colors.black.withValues(alpha: 0.04),
             spreadRadius: 0,
-            blurRadius: 10,
+            blurRadius: 8,
             offset: Offset(0, 2),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          // ID Badge
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Color(0xFF6C5CE7).withValues(alpha:0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              customer.id.toString(),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF6C5CE7),
-              ),
-            ),
-          ),
-
-          SizedBox(width: 12),
-
-          // Customer Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  customer.name,
+          // Top Row: ID | Name | Address
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // LEFT: ID Badge
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryLight.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '#${customer.id.toString().padLeft(3, '0')}',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.primaryLight,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4),
-                Row(
+              ),
+              SizedBox(width: 12),
+
+              // CENTER: Name
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.phone,
-                      size: 14,
-                      color: Colors.grey[500],
-                    ),
-                    SizedBox(width: 4),
                     Text(
-                      customer.primaryPhone,
+                      customer.name ?? 'Unknown',
                       style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
-                if (customer.email != null && customer.email!.isNotEmpty) ...[
-                  SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.email,
-                        size: 14,
-                        color: Colors.grey[500],
-                      ),
-                      SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          customer.email!,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    // CENTER: Phone & Email
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.phone,
+                          size: 13,
+                          color: AppTheme.primaryLight.withValues(alpha: 0.7),
                         ),
+                        SizedBox(width: 6),
+                        Text(
+                          customer.primaryPhone ?? 'N/A',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (customer.email != null &&
+                        customer.email!.isNotEmpty) ...[
+                      SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.email,
+                            size: 13,
+                            color: AppTheme.primaryLight.withValues(alpha: 0.7),
+                          ),
+                          SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              customer.email!,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[700],
+                              ),
+                              // maxLines: 1,
+                              // overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
-                SizedBox(height: 2),
-                Row(
+                  ],
+                ),
+              ),
+              SizedBox(width: 12),
+
+              // RIGHT: Address
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 14,
-                      color: Colors.grey[500],
-                    ),
-                    SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        customer.location,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Icon(
+                        //   Icons.location_on,
+                        //   size: 13,
+                        //   color: AppTheme.primaryLight.withValues(alpha: 0.7),
+                        // ),
+                        SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            customer.location ?? 'N/A',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.end,
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+          // SizedBox(height: 12),
 
-          
+          // // Divider
+          // Divider(color: Colors.grey.withValues(alpha: 0.1), thickness: 1),
+          // SizedBox(height: 10),
+
+          // Bottom Row: Phone & Email
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // LEFT: Empty space (aligned with ID)
+              SizedBox(width: 32),
+              SizedBox(width: 12),
+
+              // RIGHT: Empty space
+              Expanded(child: SizedBox()),
+            ],
+          ),
         ],
       ),
     );

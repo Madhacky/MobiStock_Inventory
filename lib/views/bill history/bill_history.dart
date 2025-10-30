@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
@@ -15,18 +16,36 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(
+        title: "Purchase Bills",
+        // isdark: true,
+        onPressed: () {
+          final bottomNavController = Get.find<BottomNavigationController>();
+          bottomNavController.setIndex(0);
+        },
+        actionItem: IconButton(
+          onPressed: controller.showAnalyticsModal,
+          
+          icon: Icon(Icons.analytics_outlined),
+        ),
+      ),
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar(
-              "Purchase Bills",
-              isdark: true,
-              actionItem: IconButton(
-                onPressed: controller.showAnalyticsModal,
-                icon: Icon(Icons.analytics_outlined),
-              ),
-            ),
+            // buildCustomAppBar(
+            //   "Purchase Bills",
+            //   isdark: true,
+            //   onPressed: () {
+            //     final bottomNavController =
+            //         Get.find<BottomNavigationController>();
+            //     bottomNavController.setIndex(0);
+            //   },
+            //   actionItem: IconButton(
+            //     onPressed: controller.showAnalyticsModal,
+            //     icon: Icon(Icons.analytics_outlined),
+            //   ),
+            // ),
 
             // Loading indicator
             Obx(
@@ -67,164 +86,169 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-Widget _buildStatsSection(BuildContext context) {
-  return Container(
-    margin: EdgeInsets.symmetric(vertical: 16),
-    height: 130, // Fixed height for the stats section
-    child: Obx(() {
-      if (controller.isLoadingStats.value) {
-        return Container(
-          margin: EdgeInsets.symmetric(horizontal: 16),
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFF1E293B),
-              strokeWidth: 2,
+  Widget _buildStatsSection(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 16),
+      height: 130, // Fixed height for the stats section
+      child: Obx(() {
+        if (controller.isLoadingStats.value) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF1E293B),
+                strokeWidth: 2,
+              ),
             ),
-          ),
+          );
+        }
+
+        final stats = controller.stockStats.value;
+        if (stats == null) {
+          return SizedBox.shrink();
+        }
+
+        return ListView(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          children: [
+            _buildStatCard(
+              'Last Month\nadded stock',
+              stats.lastMonthStock.toString(),
+              Icons.calendar_month,
+              Color(0xFF8B5CF6),
+              width: 140, // Fixed width for consistent card sizes
+            ),
+            SizedBox(width: 12),
+            _buildStatCard(
+              'Today Added\nstock',
+              stats.todayStock.toString(),
+              Icons.today,
+              Color(0xFF10B981),
+              width: 140,
+              onTap:
+                  () => showStockItemsDialog(
+                    context,
+                    stats,
+                    StockWhenAdded.today,
+                  ),
+            ),
+            SizedBox(width: 12),
+            _buildStatCard(
+              'This Month\nadded stock',
+              stats.thisMonthStock.toString(),
+              Icons.date_range,
+              Color(0xFF3B82F6),
+              width: 140,
+              onTap:
+                  () => showStockItemsDialog(
+                    context,
+                    stats,
+                    StockWhenAdded.thisMonth,
+                  ),
+            ),
+            SizedBox(width: 12),
+            _buildStatCard(
+              'Total available\nStock',
+              stats.totalStocks.toString(),
+              Icons.inventory_2,
+              Color(0xFF1E293B),
+              width: 140,
+            ),
+            SizedBox(width: 12),
+            _buildStatCard(
+              'View This Month\nonline Added Stock',
+              'Tap to View',
+              Icons.arrow_forward_ios,
+              Color(0xFF059669),
+              width: 140,
+              onTap: () => controller.navigateToThisMonthStock(),
+            ),
+            SizedBox(width: 16), // Extra padding at the end
+          ],
         );
-      }
+      }),
+    );
+  }
 
-      final stats = controller.stockStats.value;
-      if (stats == null) {
-        return SizedBox.shrink();
-      }
-
-      return ListView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          _buildStatCard(
-            'Last Month\nadded stock',
-            stats.lastMonthStock.toString(),
-            Icons.calendar_month,
-            Color(0xFF8B5CF6),
-            width: 140, // Fixed width for consistent card sizes
-          ),
-          SizedBox(width: 12),
-          _buildStatCard(
-            'Today Added\nstock',
-            stats.todayStock.toString(),
-            Icons.today,
-            Color(0xFF10B981),
-            width: 140,
-            onTap: () => showStockItemsDialog(
-              context,
-              stats,
-              StockWhenAdded.today,
+  // Updated _buildStatCard method to support fixed width
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color, {
+    void Function()? onTap,
+    double width = 140, // Default width parameter
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(
+        12,
+      ), // Add border radius for better touch feedback
+      child: Container(
+        width: width,
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: Offset(0, 2),
             ),
-          ),
-          SizedBox(width: 12),
-          _buildStatCard(
-            'This Month\nadded stock',
-            stats.thisMonthStock.toString(),
-            Icons.date_range,
-            Color(0xFF3B82F6),
-            width: 140,
-            onTap: () => showStockItemsDialog(
-              context,
-              stats,
-              StockWhenAdded.thisMonth,
-            ),
-          ),
-          SizedBox(width: 12),
-          _buildStatCard(
-            'Total available\nStock',
-            stats.totalStocks.toString(),
-            Icons.inventory_2,
-            Color(0xFF1E293B),
-            width: 140,
-          ),
-          SizedBox(width: 12),
-          _buildStatCard(
-            'View This Month\nonline Added Stock',
-            'Tap to View',
-            Icons.arrow_forward_ios,
-            Color(0xFF059669),
-            width: 140,
-            onTap: () => controller.navigateToThisMonthStock(),
-          ),
-          SizedBox(width: 16), // Extra padding at the end
-        ],
-      );
-    }),
-  );
-}
-
-// Updated _buildStatCard method to support fixed width
-Widget _buildStatCard(
-  String label,
-  String value,
-  IconData icon,
-  Color color, {
-  void Function()? onTap,
-  double width = 140, // Default width parameter
-}) {
-  return InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(12), // Add border radius for better touch feedback
-    child: Container(
-      width: width,
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-        // Add subtle border for tappable cards
-        border: onTap != null 
-          ? Border.all(color: color.withValues(alpha: 0.2), width: 1)
-          : null,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 24),
-          SizedBox(height: 8),
-          if (value.isNotEmpty) ...[
+          ],
+          // Add subtle border for tappable cards
+          border:
+              onTap != null
+                  ? Border.all(color: color.withValues(alpha: 0.2), width: 1)
+                  : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 24),
+            SizedBox(height: 8),
+            if (value.isNotEmpty) ...[
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 4),
+            ],
             Text(
-              value,
+              label,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
+                fontSize: 11,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: 4),
-          ],
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          // Add subtle tap indicator for interactive cards
-          if (onTap != null) ...[
-            SizedBox(height: 4),
-            Container(
-              width: 20,
-              height: 2,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(1),
+            // Add subtle tap indicator for interactive cards
+            if (onTap != null) ...[
+              SizedBox(height: 4),
+              Container(
+                width: 20,
+                height: 2,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(1),
+                ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildFilterButton(BuildContext context) {
     return Container(

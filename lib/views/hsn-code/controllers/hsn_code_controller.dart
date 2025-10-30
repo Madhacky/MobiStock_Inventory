@@ -32,7 +32,7 @@ class HsnCodeController extends GetxController {
   String get itemTypesUrl =>
       'https://backend-production-91e4.up.railway.app/inventory/item-types';
   String get hsnCodeUrl =>
-      'https://backend-production-91e4.up.railway.app/api/hsn-codes';
+      'https://backend-production-91e4.up.railway.app/api/hsn-codes?';
   String get hsnCodeByIdUrl =>
       'https://backend-production-91e4.up.railway.app/api/hsn-codes';
   String get addHsnCodeAddUrl =>
@@ -71,8 +71,11 @@ class HsnCodeController extends GetxController {
         'sortDir': 'asc',
       };
 
-      if (search != null && search.isNotEmpty) {
-        params['searchTerm'] = search;
+      if (search != null) {
+        final trimmedSearch = search.trim();
+        if (trimmedSearch.isNotEmpty) {
+          params['searchTerm'] = trimmedSearch;
+        }
       }
 
       dio.Response? response = await _apiService.requestGetForApi(
@@ -245,8 +248,9 @@ class HsnCodeController extends GetxController {
   }
 
   void searchHsnCodes(String query) {
-    searchQuery.value = query;
-    fetchHsnCodes(search: query);
+    final trimmedQuery = query.trim();
+    searchQuery.value = trimmedQuery;
+    fetchHsnCodes(search: trimmedQuery);
   }
 
   void snackBar({

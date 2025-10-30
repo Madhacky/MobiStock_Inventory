@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/routes/app_pages.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         name: AppRoutes.notFound,
         page: () => PageNotFoundScreen(),
       ),
+      // home: BottomNavigationScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

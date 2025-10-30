@@ -860,6 +860,8 @@ final UserProfileService _userProfileService = Get.put<UserProfileService>(UserP
   double get remainingPercentage =>
       duesOverallSummary.value?.remainingPercentage ?? 0.0;
 
+    
+
   int get totalCustomers => customerStats.value?.totalCustomers ?? 0;
   int get repeatedCustomers => customerStats.value?.repeatedCustomers ?? 0;
   int get newCustomersThisMonth =>

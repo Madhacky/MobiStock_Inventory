@@ -160,26 +160,30 @@ class MobileSalesForm extends StatelessWidget {
     SalesCrudOperationController controller,
     InventoryItem item,
   ) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildProductDetailsSection(controller, item),
-          _buildCustomerDetailsSection(controller),
-          _buildStep1Navigation(controller),
-        ],
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildProductDetailsSection(controller, item),
+            _buildCustomerDetailsSection(controller),
+            _buildStep1Navigation(controller),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildStep2(SalesCrudOperationController controller) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPaymentSection(controller),
-          _buildStep2Navigation(controller),
-        ],
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPaymentSection(controller),
+            _buildStep2Navigation(controller),
+          ],
+        ),
       ),
     );
   }

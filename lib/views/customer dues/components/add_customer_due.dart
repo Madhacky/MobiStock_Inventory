@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_due_operations_controller.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
 import 'package:smartbecho/utils/app_styles.dart';
@@ -51,7 +52,7 @@ class AddDuesPage extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1),
+                color: AppTheme.primaryLight,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -103,15 +104,15 @@ class AddDuesPage extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withValues(alpha:0.1),
+                  color: AppTheme.primaryLight.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF6366F1).withValues(alpha:0.2),
+                    color: AppTheme.primaryLight.withValues(alpha: 0.2),
                   ),
                 ),
                 child: const Icon(
                   Icons.account_balance_wallet,
-                  color: Color(0xFF6366F1),
+                  color: AppTheme.primaryLight,
                   size: 24,
                 ),
               ),
@@ -153,19 +154,19 @@ class AddDuesPage extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withValues(alpha:0.1),
+                    color: AppTheme.primaryLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     controller.paymentDateController.text,
                     style: const TextStyle(
-                      color: Color(0xFF6366F1),
+                      color: AppTheme.primaryLight,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-              
+
               const SizedBox(width: 12),
             ],
           ),
@@ -182,7 +183,7 @@ class AddDuesPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -241,14 +242,14 @@ class AddDuesPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color:
                       controller.remainingDueAmount.value > 0
-                          ? const Color(0xFFEF4444).withValues(alpha:0.1)
-                          : Colors.green.withValues(alpha:0.1),
+                          ? const Color(0xFFEF4444).withValues(alpha: 0.1)
+                          : Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color:
                         controller.remainingDueAmount.value > 0
-                            ? const Color(0xFFEF4444).withValues(alpha:0.3)
-                            : Colors.green.withValues(alpha:0.3),
+                            ? const Color(0xFFEF4444).withValues(alpha: 0.3)
+                            : Colors.green.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -331,7 +332,9 @@ class AddDuesPage extends StatelessWidget {
                                 ? null
                                 : controller.cancelAddDue,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
+                          side: BorderSide(
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -357,7 +360,7 @@ class AddDuesPage extends StatelessWidget {
                                 ? null
                                 : controller.addDueEntry,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6366F1),
+                          backgroundColor: AppTheme.primaryLight,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -409,10 +412,10 @@ class AddDuesPage extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha:0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.red.withValues(alpha:0.3),
+                            color: Colors.red.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -453,7 +456,7 @@ class AddDuesPage extends StatelessWidget {
               height: 65,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.3)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
               ),
               child: DropdownButtonFormField<String>(
                 isDense: false,
@@ -466,7 +469,7 @@ class AddDuesPage extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.withValues(alpha:0.05),
+                  fillColor: Colors.grey.withValues(alpha: 0.05),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 6,
@@ -487,12 +490,14 @@ class AddDuesPage extends StatelessWidget {
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF6366F1).withValues(alpha:0.1),
+                                color: AppTheme.primaryLight.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
                                 Icons.person,
-                                color: Color(0xFF6366F1),
+                                color: AppTheme.primaryLight,
                                 size: 16,
                               ),
                               //  customer['profilePhoto'] != null
@@ -505,7 +510,7 @@ class AddDuesPage extends StatelessWidget {
                               //       )
                               //     : const Icon(
                               //         Icons.person,
-                              //         color: Color(0xFF6366F1),
+                              //         color: AppTheme.primaryLight,
                               //         size: 16,
                               //       ),
                             ),
@@ -541,7 +546,10 @@ class AddDuesPage extends StatelessWidget {
                     final selectedCustomer = controller.customers.firstWhere(
                       (customer) => customer['id'].toString() == value,
                     );
-                    controller.onCustomerSelected(value, selectedCustomer['name']);
+                    controller.onCustomerSelected(
+                      value,
+                      selectedCustomer['name'],
+                    );
                   }
                 },
                 isExpanded: true,
@@ -556,25 +564,25 @@ class AddDuesPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 5,),
+          SizedBox(width: 5),
           GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.addCustomer),
             child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withValues(alpha:0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFF6366F1).withValues(alpha:0.2),
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.person_add_alt_1,
-                    color: Color(0xFF6366F1),
-                    size: 24,
-                  ),
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.primaryLight.withValues(alpha: 0.2),
                 ),
+              ),
+              child: const Icon(
+                Icons.person_add_alt_1,
+                color: AppTheme.primaryLight,
+                size: 24,
+              ),
+            ),
           ),
         ],
       ),
@@ -588,10 +596,10 @@ class AddDuesPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withValues(alpha:0.1),
+            color: AppTheme.primaryLight.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: const Color(0xFF6366F1), size: 16),
+          child: Icon(icon, color: AppTheme.primaryLight, size: 16),
         ),
         const SizedBox(width: 12),
         Text(

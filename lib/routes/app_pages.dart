@@ -22,6 +22,7 @@ import 'package:smartbecho/bindings/inventory%20management%20bindings/inventory_
 import 'package:smartbecho/bindings/inventory%20management%20bindings/sales_dashboard_binding.dart';
 import 'package:smartbecho/bindings/profile/profile_binding.dart';
 import 'package:smartbecho/bindings/sales%20history%20binding/sales_management_binding.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/company_stock_detail_controller.dart';
 import 'package:smartbecho/middlewares/auth_middleware.dart';
 import 'package:smartbecho/routes/app_routes.dart';
@@ -62,7 +63,7 @@ import 'package:smartbecho/views/sales%20management/sales_managenment_screen.dar
 import 'package:smartbecho/views/splash/splash_screen.dart';
 
 class AppPages {
-  static const String initial = AppRoutes.splash;
+  static const String initial = AppRoutes.bottomNavigation;
 
   static final routes = [
     // // Splash Screen
@@ -117,6 +118,14 @@ class AppPages {
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
       binding: ProfileBinding(),
+    ),
+    //bottomNavigation
+    GetPage(
+      name: AppRoutes.bottomNavigation,
+      page: () => BottomNavigationScreen(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
     ),
     //main screens
     GetPage(

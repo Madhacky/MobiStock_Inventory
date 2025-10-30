@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/account%20management%20controller/account_management_controller.dart';
 import 'package:smartbecho/models/account%20management%20models/account_summary_model.dart';
+import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
@@ -61,7 +63,7 @@ class AccountManagementScreen extends StatelessWidget {
       activeIcon: Icons.credit_card,
       color: Color(0xFF9C27B0),
     ),
-        NavItemModel(
+    NavItemModel(
       id: 'gst-ledger',
       label: 'GST Ledger',
       icon: Icons.file_copy,
@@ -91,6 +93,10 @@ class AccountManagementScreen extends StatelessWidget {
     return buildCustomAppBar(
       "Account Management",
       isdark: true,
+      onPressed: () {
+        final bottomNavController = Get.find<BottomNavigationController>();
+        bottomNavController.setIndex(0);
+      },
       actionItem: Obx(
         () => IconButton(
           onPressed: controller.isLoading.value ? null : controller.refreshData,
@@ -749,11 +755,12 @@ class AccountManagementScreen extends StatelessWidget {
 
       return GenericPieChart(
         title: 'Money In vs Money Out',
-        payload: controller.moneyInOut,showPercentages: true,
-       showLegend: true,
+        payload: controller.moneyInOut,
+        showPercentages: true,
+        showLegend: true,
         screenWidth: controller.screenWidth,
-        isSmallScreen: controller.isSmallScreen,chartRadius: 50,
-     
+        isSmallScreen: controller.isSmallScreen,
+        chartRadius: 50,
       );
     });
   }
