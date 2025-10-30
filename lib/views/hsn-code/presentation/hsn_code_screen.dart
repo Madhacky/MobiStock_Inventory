@@ -17,6 +17,20 @@ class HsnCodeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(
+        title: "HSN Code Management",
+        isdark: true,
+        onPressed: () {
+          Get.find<BottomNavigationController>().setIndex(0);
+          Get.back();
+        },
+        actionItem: IconButton(
+          onPressed: () {
+            controller.fetchHsnCodes();
+          },
+          icon: Icon(Icons.refresh, color: Colors.white),
+        ),
+      ),
       backgroundColor: Colors.grey[100],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -36,20 +50,20 @@ class HsnCodeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar(
-              "HSN Code Management",
-              isdark: true,
-              onPressed: () {
-                Get.find<BottomNavigationController>().setIndex(0);
-                Get.back();
-              },
-              actionItem: IconButton(
-                onPressed: () {
-                  controller.fetchHsnCodes();
-                },
-                icon: Icon(Icons.refresh, color: Colors.teal),
-              ),
-            ),
+            // buildCustomAppBar(
+            //   "HSN Code Management",
+            //   isdark: true,
+            //   onPressed: () {
+            //     Get.find<BottomNavigationController>().setIndex(0);
+            //     Get.back();
+            //   },
+            //   actionItem: IconButton(
+            //     onPressed: () {
+            //       controller.fetchHsnCodes();
+            //     },
+            //     icon: Icon(Icons.refresh, color: Colors.teal),
+            //   ),
+            // ),
             Expanded(
               child: Obx(
                 () =>

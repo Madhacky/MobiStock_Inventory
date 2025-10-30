@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/app_colors.dart';
+import 'package:smartbecho/utils/app_styles.dart';
 
 Widget buildCustomAppBar(
   String title, {
@@ -187,3 +188,103 @@ class BuildAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
+class BuildFormAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final bool isdark;
+  final Widget? actionItem;
+  final VoidCallback? onPressed;
+  final String? subtitle;
+  final IconData icon;
+  final Color? iconBgColor;
+
+  const BuildFormAppBar({
+    super.key,
+    required this.title,
+    this.isdark = false,
+    this.actionItem,
+    this.onPressed,
+    this.subtitle = '',
+    required this.icon,
+    this.iconBgColor,
+  });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight + 200),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+        child: AppBar(
+       backgroundColor: AppTheme.primaryLight,
+          elevation: 0,
+          centerTitle: true,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: IconButton(
+              padding: const EdgeInsets.all(8),
+              icon: Icon(
+                Icons.arrow_back_ios_rounded,
+                color: isdark ? Colors.black : Colors.white,
+                size: 20,
+              ),
+              onPressed:
+                  onPressed ??
+                  () {
+                    Get.back();
+                  },
+            ),
+          ),
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 45.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: iconBgColor ?? Color(0xFF6366F1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppStyles.custom(
+                          color: const Color(0xFFFFFFFF),
+                          size: 16,
+                          weight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        subtitle ?? '',
+                        style: TextStyle(
+                          color: Color(0xFFCCD6EA),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [actionItem ?? SizedBox.shrink()],
+        ),
+      ),
+    );
+  }
+}

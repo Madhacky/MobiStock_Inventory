@@ -13,10 +13,11 @@ class BillDetailsPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      appBar: BuildAppBar(title: 'Bill Details', isdark: true),
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar("Bill Details", isdark: true),
+            // buildCustomAppBar("Bill Details", isdark: true),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(16),
@@ -50,17 +51,14 @@ class BillDetailsPage extends StatelessWidget {
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1E293B),
-            Color(0xFF334155),
-          ],
+          colors: [Color(0xFF1E293B), Color(0xFF334155)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF1E293B).withValues(alpha:0.3),
+            color: Color(0xFF1E293B).withValues(alpha: 0.3),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 8),
@@ -76,14 +74,10 @@ class BillDetailsPage extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha:0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.receipt_long,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                child: Icon(Icons.receipt_long, color: Colors.white, size: 24),
               ),
               SizedBox(width: 16),
               Expanded(
@@ -91,7 +85,11 @@ class BillDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () => _copyToClipboard(bill.billId.toString(), 'Bill ID'),
+                      onTap:
+                          () => _copyToClipboard(
+                            bill.billId.toString(),
+                            'Bill ID',
+                          ),
                       child: Row(
                         children: [
                           Text(
@@ -105,7 +103,7 @@ class BillDetailsPage extends StatelessWidget {
                           SizedBox(width: 8),
                           Icon(
                             Icons.copy,
-                            color: Colors.white.withValues(alpha:0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                             size: 16,
                           ),
                         ],
@@ -116,7 +114,7 @@ class BillDetailsPage extends StatelessWidget {
                       bill.companyName,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withValues(alpha:0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -127,15 +125,27 @@ class BillDetailsPage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
-          Divider(color: Colors.white.withValues(alpha:0.2)),
+          Divider(color: Colors.white.withValues(alpha: 0.2)),
           SizedBox(height: 16),
           Row(
             children: [
-              _buildHeaderInfo('Date', bill.formattedDate, Icons.calendar_today),
+              _buildHeaderInfo(
+                'Date',
+                bill.formattedDate,
+                Icons.calendar_today,
+              ),
               SizedBox(width: 24),
-              _buildHeaderInfo('Items', '${bill.totalItems}', Icons.inventory_2),
+              _buildHeaderInfo(
+                'Items',
+                '${bill.totalItems}',
+                Icons.inventory_2,
+              ),
               Spacer(),
-              _buildHeaderInfo('Amount', bill.formattedAmount, Icons.currency_rupee),
+              _buildHeaderInfo(
+                'Amount',
+                bill.formattedAmount,
+                Icons.currency_rupee,
+              ),
             ],
           ),
         ],
@@ -146,7 +156,7 @@ class BillDetailsPage extends StatelessWidget {
   Widget _buildHeaderInfo(String label, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white.withValues(alpha:0.8), size: 16),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 16),
         SizedBox(width: 6),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +165,7 @@ class BillDetailsPage extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withValues(alpha:0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -184,7 +194,7 @@ class BillDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: statusColor.withValues(alpha:0.3),
+            color: statusColor.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -208,17 +218,17 @@ class BillDetailsPage extends StatelessWidget {
     );
   }
 
-Widget _buildBillSummary(Bill bill) {
+  Widget _buildBillSummary(Bill bill) {
     // Calculate SGST and CGST (half of total GST each)
     double totalGstPercent = bill.gst;
     double sgstPercent = totalGstPercent / 2;
     double cgstPercent = totalGstPercent / 2;
-    
+
     // Calculate GST amounts
     double gstAmount = bill.amount - bill.withoutGst;
     double sgstAmount = gstAmount / 2;
     double cgstAmount = gstAmount / 2;
-    
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -226,7 +236,7 @@ Widget _buildBillSummary(Bill bill) {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -250,7 +260,7 @@ Widget _buildBillSummary(Bill bill) {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF1E293B).withValues(alpha:0.1),
+                  color: Color(0xFF1E293B).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -265,7 +275,7 @@ Widget _buildBillSummary(Bill bill) {
             ],
           ),
           SizedBox(height: 16),
-          
+
           // GST Breakdown Row 1
           Row(
             children: [
@@ -285,7 +295,7 @@ Widget _buildBillSummary(Bill bill) {
             ],
           ),
           SizedBox(height: 12),
-          
+
           // GST Breakdown Row 2
           Row(
             children: [
@@ -305,23 +315,20 @@ Widget _buildBillSummary(Bill bill) {
             ],
           ),
           SizedBox(height: 12),
-          
+
           // Total Amount Card
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF1E293B),
-                  Color(0xFF334155),
-                ],
+                colors: [Color(0xFF1E293B), Color(0xFF334155)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFF1E293B).withValues(alpha:0.3),
+                  color: Color(0xFF1E293B).withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: Offset(0, 4),
                 ),
@@ -333,7 +340,7 @@ Widget _buildBillSummary(Bill bill) {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha:0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -351,7 +358,7 @@ Widget _buildBillSummary(Bill bill) {
                         'Total Amount (With GST)',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withValues(alpha:0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -370,7 +377,7 @@ Widget _buildBillSummary(Bill bill) {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha:0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -390,14 +397,19 @@ Widget _buildBillSummary(Bill bill) {
     );
   }
 
-  Widget _buildGstSummaryCard(String title, String value, IconData icon, Color color) {
+  Widget _buildGstSummaryCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withValues(alpha:0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha:0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [
@@ -435,7 +447,7 @@ Widget _buildBillSummary(Bill bill) {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -461,7 +473,7 @@ Widget _buildBillSummary(Bill bill) {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF1E293B).withValues(alpha:0.1),
+                    color: Color(0xFF1E293B).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -480,10 +492,8 @@ Widget _buildBillSummary(Bill bill) {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: bill.items.length,
-            separatorBuilder: (context, index) => Divider(
-              height: 1,
-              color: Colors.grey[200],
-            ),
+            separatorBuilder:
+                (context, index) => Divider(height: 1, color: Colors.grey[200]),
             itemBuilder: (context, index) {
               final item = bill.items[index];
               return _buildItemCard(item, index);
@@ -496,7 +506,7 @@ Widget _buildBillSummary(Bill bill) {
 
   Widget _buildItemCard(BillItem item, int index) {
     Color companyColor = _getCompanyColor(item.company);
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -510,7 +520,7 @@ Widget _buildBillSummary(Bill bill) {
             height: 50,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [companyColor, companyColor.withValues(alpha:0.7)],
+                colors: [companyColor, companyColor.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -528,7 +538,7 @@ Widget _buildBillSummary(Bill bill) {
             ),
           ),
           SizedBox(width: 12),
-          
+
           // Item details
           Expanded(
             child: Column(
@@ -578,17 +588,14 @@ Widget _buildBillSummary(Bill bill) {
                     SizedBox(width: 4),
                     Text(
                       item.color,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          
+
           // Quantity and price
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -596,7 +603,7 @@ Widget _buildBillSummary(Bill bill) {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF10B981).withValues(alpha:0.1),
+                  color: Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -619,10 +626,7 @@ Widget _buildBillSummary(Bill bill) {
               ),
               Text(
                 'per unit',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 10, color: Colors.grey[500]),
               ),
             ],
           ),
@@ -639,7 +643,7 @@ Widget _buildBillSummary(Bill bill) {
     double totalGstPercent = bill.gst;
     double sgstPercent = totalGstPercent / 2;
     double cgstPercent = totalGstPercent / 2;
-    
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -647,7 +651,7 @@ Widget _buildBillSummary(Bill bill) {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -666,11 +670,25 @@ Widget _buildBillSummary(Bill bill) {
             ),
           ),
           SizedBox(height: 16),
-          _buildAmountRow('Subtotal (Without GST)', '₹${bill.withoutGst.toStringAsFixed(0)}', false),
+          _buildAmountRow(
+            'Subtotal (Without GST)',
+            '₹${bill.withoutGst.toStringAsFixed(0)}',
+            false,
+          ),
           SizedBox(height: 8),
-          _buildAmountRow('SGST (${sgstPercent.toStringAsFixed(1)}%)', '₹${sgstAmount.toStringAsFixed(0)}', false, Color(0xFFF59E0B)),
+          _buildAmountRow(
+            'SGST (${sgstPercent.toStringAsFixed(1)}%)',
+            '₹${sgstAmount.toStringAsFixed(0)}',
+            false,
+            Color(0xFFF59E0B),
+          ),
           SizedBox(height: 8),
-          _buildAmountRow('CGST (${cgstPercent.toStringAsFixed(1)}%)', '₹${cgstAmount.toStringAsFixed(0)}', false, Color(0xFF8B5CF6)),
+          _buildAmountRow(
+            'CGST (${cgstPercent.toStringAsFixed(1)}%)',
+            '₹${cgstAmount.toStringAsFixed(0)}',
+            false,
+            Color(0xFF8B5CF6),
+          ),
           SizedBox(height: 8),
           Divider(thickness: 2),
           SizedBox(height: 8),
@@ -694,7 +712,7 @@ Widget _buildBillSummary(Bill bill) {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -733,11 +751,10 @@ Widget _buildBillSummary(Bill bill) {
                     ),
                   ),
                   Text(
-                    bill.paid ? 'All dues have been cleared' : 'Outstanding amount: ${bill.formattedDues}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    bill.paid
+                        ? 'All dues have been cleared'
+                        : 'Outstanding amount: ${bill.formattedDues}',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -748,7 +765,12 @@ Widget _buildBillSummary(Bill bill) {
     );
   }
 
-  Widget _buildAmountRow(String label, String amount, bool isTotal, [Color? color]) {
+  Widget _buildAmountRow(
+    String label,
+    String amount,
+    bool isTotal, [
+    Color? color,
+  ]) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -856,10 +878,7 @@ Widget _buildBillSummary(Bill bill) {
         title: Text('Mark as Paid'),
         content: Text('Are you sure you want to mark this bill as fully paid?'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Get.back();

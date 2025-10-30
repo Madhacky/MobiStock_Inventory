@@ -75,12 +75,39 @@ class AccountManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(
+        title: "Account Management",
+        isdark: true,
+        onPressed: () {
+          final bottomNavController = Get.find<BottomNavigationController>();
+          bottomNavController.setIndex(0);
+        },
+        actionItem: Obx(
+          () => IconButton(
+            onPressed:
+                controller.isLoading.value ? null : controller.refreshData,
+            icon:
+                controller.isLoading.value
+                    ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.black87,
+                        ),
+                      ),
+                    )
+                    : Icon(Icons.refresh, color: Colors.black87),
+          ),
+        ),
+      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
-            _buildCustomAppBar(),
+            // _buildCustomAppBar(),
             _buildAnimatedTabBar(),
             Expanded(child: _buildTabContent()),
           ],

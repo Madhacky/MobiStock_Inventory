@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/bottom_navigation_screen.dart';
@@ -9,6 +10,10 @@ import 'package:smartbecho/utils/page_not_found.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   final apiService = ApiServices(); // This sets up the interceptors
   await dotenv.load(fileName: ".env");
   runApp(MyApp());

@@ -23,10 +23,22 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      appBar: BuildAppBar(
+        title: "Sales Management",
+        isdark: true,
+        onPressed: () {
+          Get.find<BottomNavigationController>().setIndex(0);
+          Get.back();
+        },
+        actionItem: IconButton(
+          onPressed: () => controller.refreshData(),
+          icon: Icon(Icons.refresh, color: Colors.black),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            // _buildHeader(),
             _buildTabs(),
             Expanded(
               child: Obx(() {

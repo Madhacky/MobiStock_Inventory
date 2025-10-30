@@ -19,12 +19,14 @@ class AddCommissionPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: _buildAppBar(),
-      body: Form(
-        key: controller.formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildFormHeader(), _buildFormContent()],
+      body: SafeArea(
+        child: Form(
+          key: controller.formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_buildFormHeader(), _buildFormContent()],
+            ),
           ),
         ),
       ),

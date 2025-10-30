@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_management_controller.dart';
 import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
@@ -21,13 +22,16 @@ class InventoryManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BuildAppBar(
+        onPressed: () {
+          Get.find<BottomNavigationController>().setIndex(0);
+          Get.back();
+        },
         title: 'Inventory Management',
         actionItem: IconButton(
           onPressed: () {
-            controller.refreshData;
+            controller.refreshData();
           },
           icon: Icon(Icons.refresh, size: 22),
-          
         ),
       ),
       resizeToAvoidBottomInset: false,
@@ -39,11 +43,11 @@ class InventoryManagementScreen extends StatelessWidget {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               // App Bar
-              buildStyledSliverAppBar(
-                title: 'Inventory Management',
-                isDark: false,
-                onRefresh: controller.refreshData,
-              ),
+              // buildStyledSliverAppBar(
+              //   title: 'Inventory Management',
+              //   isDark: false,
+              //   onRefresh: controller.refreshData,
+              // ),
 
               // Stats Cards
               SliverToBoxAdapter(child: _buildStatsCards(context)),

@@ -9,7 +9,7 @@ class History extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ViewHistoryController controller = Get.find<ViewHistoryController>();
+    final ViewHistoryController controller = Get.put(ViewHistoryController());
 
     return SingleChildScrollView(
       child: Column(
@@ -49,10 +49,10 @@ class History extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.withValues(alpha:0.3)),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),
@@ -94,7 +94,7 @@ class History extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: Offset(0, 4),
           ),
@@ -142,7 +142,10 @@ class History extends StatelessWidget {
           color: isActive ? Color(0xFF6C5CE7) : Colors.grey[50],
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isActive ? Color(0xFF6C5CE7) : Colors.grey.withValues(alpha:0.2),
+            color:
+                isActive
+                    ? Color(0xFF6C5CE7)
+                    : Colors.grey.withValues(alpha: 0.2),
           ),
         ),
         child: Text(
@@ -165,7 +168,7 @@ class History extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: Offset(0, 4),
           ),
@@ -175,9 +178,7 @@ class History extends StatelessWidget {
         if (controller.isLoading.value) {
           return Container(
             height: 350,
-            child: Center(
-              child:CustomLottieLoader(),
-            ),
+            child: Center(child: CustomLottieLoader()),
           );
         }
 
@@ -360,18 +361,18 @@ class History extends StatelessWidget {
                         ],
                       );
                     }).toList(),
-                gridData:  FlGridData(
-  show: true,
-  drawVerticalLine: false,
-  horizontalInterval: controller.getHorizontalInterval(),
-  getDrawingHorizontalLine: (value) {
-    return FlLine(
-      color: Colors.grey.withValues(alpha:0.2),
-      strokeWidth: 1,
-      dashArray: [5, 5],
-    );
-  },
-),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: controller.getHorizontalInterval(),
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                      strokeWidth: 1,
+                      dashArray: [5, 5],
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -561,7 +562,7 @@ class History extends StatelessWidget {
                   horizontalInterval: controller.getHorizontalInterval(),
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: Colors.grey.withValues(alpha:0.2),
+                      color: Colors.grey.withValues(alpha: 0.2),
                       strokeWidth: 1,
                       dashArray: [5, 5],
                     );

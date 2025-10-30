@@ -25,20 +25,21 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFC),
+      appBar: BuildAppBar(title: "Sales Details", isdark: true),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoadingDetail.value) {
             return _buildLoadingState();
           }
-        
+
           if (controller.hasDetailError.value) {
             return _buildErrorState();
           }
-        
+
           if (controller.saleDetail.value == null) {
             return _buildEmptyState();
           }
-        
+
           return _buildDetailContent();
         }),
       ),
@@ -137,12 +138,9 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
     return CustomScrollView(
       slivers: [
         // Modern App Bar
-        SliverToBoxAdapter(
-          child: buildCustomAppBar(
-            "Sales Details",
-            isdark: true,
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: buildCustomAppBar("Sales Details", isdark: true),
+        // ),
 
         // Content
         SliverToBoxAdapter(
@@ -180,7 +178,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -218,9 +216,10 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: sale.paid 
-                      ? Color(0xFF10B981).withValues(alpha:0.1) 
-                      : Color(0xFFF59E0B).withValues(alpha:0.1),
+                  color:
+                      sale.paid
+                          ? Color(0xFF10B981).withValues(alpha: 0.1)
+                          : Color(0xFFF59E0B).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -237,7 +236,8 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: sale.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
+                        color:
+                            sale.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
                       ),
                     ),
                   ],
@@ -346,7 +346,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -362,14 +362,10 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Color(0xFF3B82F6).withValues(alpha:0.1),
+                  color: Color(0xFF3B82F6).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: Icon(
-                  Icons.person,
-                  color: Color(0xFF3B82F6),
-                  size: 24,
-                ),
+                child: Icon(Icons.person, color: Color(0xFF3B82F6), size: 24),
               ),
               SizedBox(width: 16),
               Expanded(
@@ -398,9 +394,9 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               ),
             ],
           ),
-          
+
           SizedBox(height: 16),
-          
+
           Row(
             children: [
               Expanded(
@@ -420,7 +416,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               ),
             ],
           ),
-          
+
           if (sale.customer.displayAddress != 'No address') ...[
             SizedBox(height: 12),
             _buildInfoItem(
@@ -478,7 +474,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -504,7 +500,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Color(0xFF3B82F6).withValues(alpha:0.1),
+                  color: Color(0xFF3B82F6).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -530,7 +526,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -598,7 +594,8 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                     ],
                   ),
 
-                  if (item.accessoryIncluded && item.accessoryName.isNotEmpty) ...[
+                  if (item.accessoryIncluded &&
+                      item.accessoryName.isNotEmpty) ...[
                     SizedBox(height: 8),
                     Row(
                       children: [
@@ -635,7 +632,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -659,58 +656,76 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               ),
             ],
           ),
-          
+
           SizedBox(height: 16),
-          
+
           _buildPriceRow('Amount (without GST)', sale.formattedWithoutGst),
           SizedBox(height: 8),
-          _buildPriceRow('GST (${sale.gst.toStringAsFixed(0)}%)', '₹${(sale.withGst - sale.withoutGst).toStringAsFixed(2)}'),
+          _buildPriceRow(
+            'GST (${sale.gst.toStringAsFixed(0)}%)',
+            '₹${(sale.withGst - sale.withoutGst).toStringAsFixed(2)}',
+          ),
           SizedBox(height: 8),
           _buildPriceRow('Amount (with GST)', sale.formattedWithGst),
-          
+
           if (sale.accessoriesCost > 0) ...[
             SizedBox(height: 8),
             _buildPriceRow('Accessories Cost', sale.formattedAccessoriesCost),
           ],
-          
+
           if (sale.extraCharges > 0) ...[
             SizedBox(height: 8),
             _buildPriceRow('Extra Charges', sale.formattedExtraCharges),
           ],
-          
+
           if (sale.repairCharges > 0) ...[
             SizedBox(height: 8),
             _buildPriceRow('Repair Charges', sale.formattedRepairCharges),
           ],
-          
+
           if (sale.totalDiscount > 0) ...[
             SizedBox(height: 8),
-            _buildPriceRow('Discount', '- ${sale.formattedTotalDiscount}', 
-                isDiscount: true),
+            _buildPriceRow(
+              'Discount',
+              '- ${sale.formattedTotalDiscount}',
+              isDiscount: true,
+            ),
           ],
-          
+
           SizedBox(height: 12),
           Divider(color: Colors.grey[300]),
           SizedBox(height: 12),
-          
-          _buildPriceRow('Total Amount', sale.formattedTotalAmount, 
-              isBold: true, isTotal: true),
-          
+
+          _buildPriceRow(
+            'Total Amount',
+            sale.formattedTotalAmount,
+            isBold: true,
+            isTotal: true,
+          ),
+
           if (sale.downPayment > 0) ...[
             SizedBox(height: 8),
-            _buildPriceRow('Down Payment', sale.formattedDownPayment, 
-                isDownPayment: true),
+            _buildPriceRow(
+              'Down Payment',
+              sale.formattedDownPayment,
+              isDownPayment: true,
+            ),
             SizedBox(height: 8),
-            _buildPriceRow('Remaining', '₹${(sale.totalAmount - sale.downPayment).toStringAsFixed(2)}'),
+            _buildPriceRow(
+              'Remaining',
+              '₹${(sale.totalAmount - sale.downPayment).toStringAsFixed(2)}',
+            ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildPriceRow(String label, String value, {
-    bool isBold = false, 
-    bool isTotal = false, 
+  Widget _buildPriceRow(
+    String label,
+    String value, {
+    bool isBold = false,
+    bool isTotal = false,
     bool isDiscount = false,
     bool isDownPayment = false,
   }) {
@@ -730,10 +745,14 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
           style: TextStyle(
             fontSize: isBold ? 16 : 14,
             fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-            color: isTotal ? Color(0xFF10B981) : 
-                   isDiscount ? Colors.red[600] :
-                   isDownPayment ? Color(0xFF3B82F6) :
-                   Colors.black87,
+            color:
+                isTotal
+                    ? Color(0xFF10B981)
+                    : isDiscount
+                    ? Colors.red[600]
+                    : isDownPayment
+                    ? Color(0xFF3B82F6)
+                    : Colors.black87,
           ),
         ),
       ],
@@ -748,7 +767,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -780,8 +799,8 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                 decoration: BoxDecoration(
                   color:
                       dues.paid
-                          ? Color(0xFF10B981).withValues(alpha:0.1)
-                          : Color(0xFFF59E0B).withValues(alpha:0.1),
+                          ? Color(0xFF10B981).withValues(alpha: 0.1)
+                          : Color(0xFFF59E0B).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -887,7 +906,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -913,7 +932,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
           ),
 
           SizedBox(height: 16),
-          
+
           // EMI Progress
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -943,7 +962,9 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                   return LinearProgressIndicator(
                     value: progressValue,
                     backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xFF8B5CF6),
+                    ),
                   );
                 },
               ),
@@ -965,13 +986,16 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               ),
             ],
           ),
-          
+
           SizedBox(height: 16),
-          
+
           Row(
             children: [
               Expanded(
-                child: _buildEmiItem('Total EMI Amount', emi.formattedTotalEmiAmount),
+                child: _buildEmiItem(
+                  'Total EMI Amount',
+                  emi.formattedTotalEmiAmount,
+                ),
               ),
               Expanded(
                 child: _buildEmiItem('Paid Amount', emi.formattedPaidAmount),
@@ -981,14 +1005,14 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               ),
             ],
           ),
-          
+
           SizedBox(height: 16),
-          
+
           // Customer Info for EMI
           Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Color(0xFF8B5CF6).withValues(alpha:0.1),
+              color: Color(0xFF8B5CF6).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -1009,10 +1033,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                   SizedBox(width: 4),
                   Text(
                     emi.customer.primaryPhone,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF8B5CF6),
-                    ),
+                    style: TextStyle(fontSize: 12, color: Color(0xFF8B5CF6)),
                   ),
                 ],
               ],

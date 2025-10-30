@@ -5,6 +5,7 @@ import 'package:smartbecho/controllers/account%20management%20controller/pay_bil
 
 import 'package:smartbecho/utils/common%20file%20uploader/common_file_uploader.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
+import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
@@ -17,13 +18,22 @@ class AddPayBillPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
+      // appBar: BuildFormAppBar(
+      //   icon: Icons.receipt_long,
+      //   title: 'ADD PAY BILL',
+      //   subtitle: 'Record bill payment details',
+      //   iconBgColor: const Color(0xFF6366F1),
+      //   isdark: true,
+      // ),
       appBar: _buildAppBar(),
-      body: Form(
-        key: controller.formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildFormHeader(), _buildFormContent()],
+      body: SafeArea(
+        child: Form(
+          key: controller.formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_buildFormHeader(), _buildFormContent()],
+            ),
           ),
         ),
       ),
@@ -100,10 +110,10 @@ class AddPayBillPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFF4CAF50).withValues(alpha:0.1),
+                color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF4CAF50).withValues(alpha:0.2),
+                  color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
                 ),
               ),
               child: const Icon(
@@ -150,7 +160,7 @@ class AddPayBillPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -246,9 +256,9 @@ class AddPayBillPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha:0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
               ),
               child: CommonFileUploadWidget(
                 controller: controller.fileUploadController,
@@ -284,7 +294,7 @@ class AddPayBillPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withValues(alpha:0.1),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF6366F1), size: 16),
@@ -319,7 +329,7 @@ class AddPayBillPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: TextFormField(
             controller: controller.dateController,
@@ -369,7 +379,7 @@ class AddPayBillPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: Obx(
             () => DropdownButtonFormField<String>(
@@ -432,7 +442,7 @@ class AddPayBillPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
           child: Obx(
             () => DropdownButtonFormField<String>(
@@ -476,7 +486,6 @@ class AddPayBillPage extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildActionButtons() {
     return Row(
@@ -526,6 +535,7 @@ class AddPayBillPage extends StatelessWidget {
             ),
           ),
         ),
+
         // const SizedBox(width: 8),
         // Expanded(
         //   child:  Container(
@@ -555,9 +565,8 @@ class AddPayBillPage extends StatelessWidget {
         //           ],
         //         ),
         //       ),
-            // ),
-          // ),
-        
+        // ),
+        // ),
       ],
     );
   }

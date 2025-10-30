@@ -15,7 +15,7 @@ class PayBillsPage extends StatefulWidget {
 
 class _PayBillsPageState extends State<PayBillsPage>
     with TickerProviderStateMixin {
-  final PayBillsController controller = Get.find<PayBillsController>();
+  final PayBillsController controller = Get.put(PayBillsController());
 
   bool isFilterExpanded = false;
   late AnimationController _animationController;
@@ -65,114 +65,113 @@ class _PayBillsPageState extends State<PayBillsPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header with count and current month/year
-       Row(
-  children: [
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Payment Records',
-            style: AppStyles.custom(
-              color: const Color(0xFF1A1A1A),
-              size: 20,
-              weight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Obx(
-            () => Text(
-              '${controller.monthDisplayText} ${controller.selectedYear.value}',
-              style: const TextStyle(
-                color: Color(0xFF6B7280),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Payment Records',
+                    style: AppStyles.custom(
+                      color: const Color(0xFF1A1A1A),
+                      size: 20,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Obx(
+                    () => Text(
+                      '${controller.monthDisplayText} ${controller.selectedYear.value}',
+                      style: const TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    ),
-    // Add Pay Bill Button
-    Container(
-      margin: const EdgeInsets.only(right: 12),
-      child: InkWell(
-        onTap: () {
-          Get.to(() => AddPayBillPage());
-        },
-        borderRadius: BorderRadius.circular(25),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF4CAF50),
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF4CAF50).withValues(alpha:0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 18,
-              ),
-              const SizedBox(width: 6),
-              const Text(
-                'Add Bill',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+            // Add Pay Bill Button
+            Container(
+              margin: const EdgeInsets.only(right: 12),
+              child: InkWell(
+                onTap: () {
+                  Get.to(() => AddPayBillPage());
+                },
+                borderRadius: BorderRadius.circular(25),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4CAF50),
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, color: Colors.white, size: 18),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'Add Bill',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    ),
-    Obx(
-      () => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFF4CAF50).withValues(alpha:0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0xFF4CAF50).withValues(alpha:0.2),
-          ),
-        ),
-        child: Column(
-          children: [
-            Text(
-              '${controller.filteredPayBills.length}',
-              style: const TextStyle(
-                color: Color(0xFF4CAF50),
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
             ),
-            const Text(
-              'Bills',
-              style: TextStyle(
-                color: Color(0xFF4CAF50),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+            Obx(
+              () => Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      '${controller.filteredPayBills.length}',
+                      style: const TextStyle(
+                        color: Color(0xFF4CAF50),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const Text(
+                      'Bills',
+                      style: TextStyle(
+                        color: Color(0xFF4CAF50),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
-      ),
-    ),
-  ],
-),
 
         const SizedBox(height: 16),
 
@@ -181,10 +180,10 @@ class _PayBillsPageState extends State<PayBillsPage>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withValues(alpha:0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -243,10 +242,10 @@ class _PayBillsPageState extends State<PayBillsPage>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withValues(alpha:0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -324,10 +323,10 @@ class _PayBillsPageState extends State<PayBillsPage>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha:0.05),
+                  color: Colors.grey.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -339,10 +338,10 @@ class _PayBillsPageState extends State<PayBillsPage>
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha:0.05),
+                    color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                     ),
                   ),
                   child: Column(
@@ -513,10 +512,10 @@ class _PayBillsPageState extends State<PayBillsPage>
             padding: const EdgeInsets.all(12),
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6).withValues(alpha:0.05),
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
               ),
             ),
             child: Row(
@@ -555,7 +554,7 @@ class _PayBillsPageState extends State<PayBillsPage>
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Icon(
@@ -672,13 +671,16 @@ class _PayBillsPageState extends State<PayBillsPage>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 4),
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
+          border: Border.all(
+            color: Colors.grey.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -729,7 +731,7 @@ class _PayBillsPageState extends State<PayBillsPage>
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                    color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Icon(
@@ -748,7 +750,7 @@ class _PayBillsPageState extends State<PayBillsPage>
               decoration: BoxDecoration(
                 color: controller
                     .getPurposeColor(bill.purpose)
-                    .withValues(alpha:0.1),
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -940,7 +942,7 @@ class _PayBillsPageState extends State<PayBillsPage>
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -1016,15 +1018,15 @@ class _PayBillsPageState extends State<PayBillsPage>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF059669).withValues(alpha:0.1),
-                        const Color(0xFF10B981).withValues(alpha:0.05),
+                        const Color(0xFF059669).withValues(alpha: 0.1),
+                        const Color(0xFF10B981).withValues(alpha: 0.05),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF059669).withValues(alpha:0.2),
+                      color: const Color(0xFF059669).withValues(alpha: 0.2),
                     ),
                   ),
                   child: Column(
@@ -1145,7 +1147,7 @@ class _PayBillsPageState extends State<PayBillsPage>
                 if (bill.uploadedFileUrl.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   InkWell(
-                    onTap: ()async{
+                    onTap: () async {
                       final url = Uri.parse(bill.uploadedFileUrl);
                       if (bill.uploadedFileUrl.isNotEmpty) {
                         await launchUrl(url);
@@ -1156,15 +1158,15 @@ class _PayBillsPageState extends State<PayBillsPage>
                           snackPosition: SnackPosition.BOTTOM,
                         );
                       }
-                                        },
+                    },
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withValues(alpha:0.05),
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF3B82F6).withValues(alpha:0.2),
+                          color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -1172,7 +1174,9 @@ class _PayBillsPageState extends State<PayBillsPage>
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                              color: const Color(
+                                0xFF3B82F6,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -1318,7 +1322,7 @@ class _PayBillsPageState extends State<PayBillsPage>
                 width: 100, // Reduced from 120
                 height: 100, // Reduced from 120
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                  color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(50), // Adjusted
                 ),
                 child: const Icon(

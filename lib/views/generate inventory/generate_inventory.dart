@@ -19,11 +19,29 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(
+        title: "Generate Inventory Link",
+        isdark: true,
+        onPressed: () {
+          Get.find<BottomNavigationController>().setIndex(0);
+          Get.back();
+        },
+        actionItem: Obx(() {
+          if (controller.hasGeneratedLink.value) {
+            return IconButton(
+              onPressed: controller.refreshLink,
+              icon: Icon(Icons.refresh),
+              tooltip: 'Generate New Link',
+            );
+          }
+          return SizedBox.shrink();
+        }),
+      ),
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
-            _buildCustomAppBar(),
+            // _buildCustomAppBar(),
             Expanded(child: _buildMainContent()),
           ],
         ),
@@ -35,10 +53,11 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
     return buildCustomAppBar(
       "Generate Inventory Link",
       isdark: true,
-   onPressed: () {
-                  Get.find<BottomNavigationController>().setIndex(0);
-                  Get.back();
-                },      actionItem: Obx(() {
+      onPressed: () {
+        Get.find<BottomNavigationController>().setIndex(0);
+        Get.back();
+      },
+      actionItem: Obx(() {
         if (controller.hasGeneratedLink.value) {
           return IconButton(
             onPressed: controller.refreshLink,

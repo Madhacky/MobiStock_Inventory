@@ -20,7 +20,7 @@ class AppTheme {
   static const Color infoLight = Color(0xFF74B9FF);
 
   // Dark Theme Colors
-  static const Color primaryDark = Color(0xFF8B7CF6);
+  static const Color primaryDark = Color(0xFF16A085);
   static const Color primaryVariantDark = Color(0xFFB4A7F7);
   static const Color secondaryDark = Color(0xFF14B8A6);
   static const Color secondaryVariantDark = Color(0xFF5EEAD4);

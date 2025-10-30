@@ -15,13 +15,14 @@ class InventoryDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      appBar: BuildAppBar(title: item.company, isdark: true),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  _buildCustomAppBar(),
+                  // _buildCustomAppBar(),
                   SizedBox(height: 8),
                   _buildHeroSection(),
                   SizedBox(height: 10),
@@ -30,7 +31,8 @@ class InventoryDetailScreen extends StatelessWidget {
                   _buildPricingAndStockCard(),
                   SizedBox(height: 10),
                   _buildIMEISection(),
-                  if (item.description != null && item.description!.isNotEmpty) ...[
+                  if (item.description != null &&
+                      item.description!.isNotEmpty) ...[
                     SizedBox(height: 10),
                     _buildDescriptionCard(),
                   ],
@@ -62,10 +64,12 @@ class InventoryDetailScreen extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        placeholder: (_, __) =>
-            placeholder ?? const Center(child: CircularProgressIndicator()),
-        errorWidget: (_, __, ___) =>
-            error ?? const Center(child: Icon(Icons.broken_image)),
+        placeholder:
+            (_, __) =>
+                placeholder ?? const Center(child: CircularProgressIndicator()),
+        errorWidget:
+            (_, __, ___) =>
+                error ?? const Center(child: Icon(Icons.broken_image)),
       ),
     );
   }
@@ -109,47 +113,22 @@ class InventoryDetailScreen extends StatelessWidget {
               children: [
                 item.logo!.isNotEmpty
                     ? cachedImage(
-                        item.logo??"",
-                        fit: BoxFit.contain,
-                        width: AppConfig.screenWidth,
-                        borderRadius: BorderRadius.circular(20),
-                        placeholder: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF6C5CE7),
-                            ),
+                      item.logo ?? "",
+                      fit: BoxFit.contain,
+                      width: AppConfig.screenWidth,
+                      borderRadius: BorderRadius.circular(20),
+                      placeholder: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF6C5CE7),
                           ),
                         ),
-                        error: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.phone_android,
-                                size: 50,
-                                color: Colors.grey[400],
-                              ),
-                              SizedBox(height: 6),
-                              Text(
-                                'No Image',
-                                style: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Container(
+                      ),
+                      error: Container(
                         decoration: BoxDecoration(
                           color: Colors.grey[100],
                           borderRadius: BorderRadius.circular(20),
@@ -173,6 +152,31 @@ class InventoryDetailScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                    )
+                    : Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.phone_android,
+                            size: 50,
+                            color: Colors.grey[400],
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'No Image',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 Positioned(
                   top: 12,
                   right: 12,
@@ -279,10 +283,7 @@ class InventoryDetailScreen extends StatelessWidget {
                       SizedBox(width: 4),
                       Text(
                         'Added ${_formatDate(item.createdDate!)}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[500],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                       ),
                     ],
                   ),
@@ -313,7 +314,12 @@ class InventoryDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String value, String label, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String value,
+    String label,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       decoration: BoxDecoration(
@@ -386,7 +392,11 @@ class InventoryDetailScreen extends StatelessWidget {
                   color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.phone_android, color: Color(0xFF6C5CE7), size: 18),
+                child: Icon(
+                  Icons.phone_android,
+                  color: Color(0xFF6C5CE7),
+                  size: 18,
+                ),
               ),
               SizedBox(width: 10),
               Text(
@@ -435,7 +445,12 @@ class InventoryDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecItem(String label, String value, IconData icon, Color color) {
+  Widget _buildSpecItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -499,10 +514,16 @@ class InventoryDetailScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(7),
                 decoration: BoxDecoration(
-                  color: _getStockStatusColor(item.quantity).withValues(alpha: 0.1),
+                  color: _getStockStatusColor(
+                    item.quantity,
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.inventory, color: _getStockStatusColor(item.quantity), size: 18),
+                child: Icon(
+                  Icons.inventory,
+                  color: _getStockStatusColor(item.quantity),
+                  size: 18,
+                ),
               ),
               SizedBox(width: 10),
               Text(
@@ -543,7 +564,11 @@ class InventoryDetailScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.sell, color: Colors.white.withValues(alpha: 0.8), size: 14),
+                          Icon(
+                            Icons.sell,
+                            color: Colors.white.withValues(alpha: 0.8),
+                            size: 14,
+                          ),
                           SizedBox(width: 5),
                           Text(
                             'Selling Price',
@@ -574,10 +599,14 @@ class InventoryDetailScreen extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: _getStockStatusColor(item.quantity).withValues(alpha: 0.05),
+                    color: _getStockStatusColor(
+                      item.quantity,
+                    ).withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: _getStockStatusColor(item.quantity).withValues(alpha: 0.2),
+                      color: _getStockStatusColor(
+                        item.quantity,
+                      ).withValues(alpha: 0.2),
                     ),
                   ),
                   child: Column(
@@ -632,10 +661,7 @@ class InventoryDetailScreen extends StatelessWidget {
                 SizedBox(width: 5),
                 Text(
                   'Low stock alert at ${item.lowStockQty} units',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -671,7 +697,11 @@ class InventoryDetailScreen extends StatelessWidget {
                   color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.phonelink_lock, color: Color(0xFF6C5CE7), size: 18),
+                child: Icon(
+                  Icons.phonelink_lock,
+                  color: Color(0xFF6C5CE7),
+                  size: 18,
+                ),
               ),
               SizedBox(width: 10),
               Text(
@@ -687,36 +717,40 @@ class InventoryDetailScreen extends StatelessWidget {
           SizedBox(height: 12),
           item.imeiList != null && item.imeiList!.isNotEmpty
               ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: item.imeiList!.map((imei) {
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 6),
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Text(
-                        imei,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
-                          fontFamily: 'monospace',
-                          fontWeight: FontWeight.w500,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:
+                    item.imeiList!.map((imei) {
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                      ),
-                    );
-                  }).toList(),
-                )
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Text(
+                          imei,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+              )
               : Text(
-                  'No IMEI numbers available.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[600],
-                    fontStyle: FontStyle.italic,
-                  ),
+                'No IMEI numbers available.',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
                 ),
+              ),
         ],
       ),
     );
@@ -748,7 +782,11 @@ class InventoryDetailScreen extends StatelessWidget {
                   color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.description, color: Color(0xFF6C5CE7), size: 18),
+                child: Icon(
+                  Icons.description,
+                  color: Color(0xFF6C5CE7),
+                  size: 18,
+                ),
               ),
               SizedBox(width: 10),
               Text(
@@ -784,11 +822,12 @@ class InventoryDetailScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: item.quantity > 0
-                      ? () {
-                          Get.find<InventoryController>().sellItem(item);
-                        }
-                      : null,
+                  onPressed:
+                      item.quantity > 0
+                          ? () {
+                            Get.find<InventoryController>().sellItem(item);
+                          }
+                          : null,
                   icon: Icon(Icons.point_of_sale, size: 18),
                   label: Text(
                     'Sell Item',
@@ -849,10 +888,7 @@ class InventoryDetailScreen extends StatelessWidget {
         color: badgeColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: badgeColor.withValues(alpha: 0.3),
-            blurRadius: 6,
-          ),
+          BoxShadow(color: badgeColor.withValues(alpha: 0.3), blurRadius: 6),
         ],
       ),
       child: Text(
@@ -880,8 +916,18 @@ class InventoryDetailScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${date.day} ${months[date.month - 1]}, ${date.year}';
   }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
 import 'package:smartbecho/controllers/dashboard_controller.dart';
-import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
 import 'package:smartbecho/models/customer%20dues%20management/monthly_dues_analytics_model.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 

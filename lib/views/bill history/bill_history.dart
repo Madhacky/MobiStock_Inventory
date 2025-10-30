@@ -5,6 +5,7 @@ import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/bill%20history%20controllers/bill_history_controller.dart';
 import 'package:smartbecho/models/bill%20history/bill_history_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/common_speed_dial_fl_button_widegt.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -25,7 +26,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
         },
         actionItem: IconButton(
           onPressed: controller.showAnalyticsModal,
-          
+
           icon: Icon(Icons.analytics_outlined),
         ),
       ),
@@ -330,146 +331,148 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
 
   void _showFilterBottomSheet(BuildContext context) {
     Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                Text(
-                  'Filter & Sort',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Text(
+                    'Filter & Sort',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E293B),
+                    ),
+                  ),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () => Get.back(),
+                    icon: Icon(Icons.close),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.grey.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              // Company and Time Period Row
+              Row(
+                children: [
+                  Expanded(
+                    child: Obx(
+                      () => _buildStyledDropdown(
+                        labelText: 'Vendors',
+                        hintText: 'Select Vendor',
+                        value:
+                            controller.selectedCompany.value == 'All'
+                                ? null
+                                : controller.selectedCompany.value,
+                        items: controller.companyOptions,
+                        onChanged: controller.onCompanyChanged,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Obx(
+                      () => _buildStyledDropdown(
+                        labelText: 'Time Period',
+                        hintText: 'Select Period',
+                        value: controller.timePeriodType.value,
+                        items: controller.timePeriodOptions,
+                        onChanged: controller.onTimePeriodTypeChanged,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 16),
+
+              // Date Selection based on Time Period Type
+              Obx(() {
+                if (controller.timePeriodType.value == 'Month/Year') {
+                  return _buildMonthYearSelection();
+                } else {
+                  return _buildCustomDateSelection(context);
+                }
+              }),
+
+              SizedBox(height: 16),
+
+              // Sort Option
+              Obx(
+                () => _buildStyledDropdown(
+                  labelText: 'Sort By',
+                  hintText: 'Select Sort Field',
+                  value: controller.sortBy.value,
+                  items: controller.sortOptions,
+                  onChanged:
+                      (value) => controller.onSortChanged(value ?? 'billId'),
+                  suffixIcon: Icon(
+                    controller.sortDir.value == 'asc'
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward,
+                    size: 16,
                     color: Color(0xFF1E293B),
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: Icon(Icons.close),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.withValues(alpha: 0.1),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // Company and Time Period Row
-            Row(
-              children: [
-                Expanded(
-                  child: Obx(
-                    () => _buildStyledDropdown(
-                      labelText: 'Vendors',
-                      hintText: 'Select Vendor',
-                      value:
-                          controller.selectedCompany.value == 'All'
-                              ? null
-                              : controller.selectedCompany.value,
-                      items: controller.companyOptions,
-                      onChanged: controller.onCompanyChanged,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Obx(
-                    () => _buildStyledDropdown(
-                      labelText: 'Time Period',
-                      hintText: 'Select Period',
-                      value: controller.timePeriodType.value,
-                      items: controller.timePeriodOptions,
-                      onChanged: controller.onTimePeriodTypeChanged,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 16),
-
-            // Date Selection based on Time Period Type
-            Obx(() {
-              if (controller.timePeriodType.value == 'Month/Year') {
-                return _buildMonthYearSelection();
-              } else {
-                return _buildCustomDateSelection(context);
-              }
-            }),
-
-            SizedBox(height: 16),
-
-            // Sort Option
-            Obx(
-              () => _buildStyledDropdown(
-                labelText: 'Sort By',
-                hintText: 'Select Sort Field',
-                value: controller.sortBy.value,
-                items: controller.sortOptions,
-                onChanged:
-                    (value) => controller.onSortChanged(value ?? 'billId'),
-                suffixIcon: Icon(
-                  controller.sortDir.value == 'asc'
-                      ? Icons.arrow_upward
-                      : Icons.arrow_downward,
-                  size: 16,
-                  color: Color(0xFF1E293B),
-                ),
               ),
-            ),
 
-            SizedBox(height: 24),
+              SizedBox(height: 24),
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _resetFilters,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Color(0xFF1E293B),
-                      side: BorderSide(color: Color(0xFF1E293B)),
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _resetFilters,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Color(0xFF1E293B),
+                        side: BorderSide(color: Color(0xFF1E293B)),
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
+                      child: Text('Reset'),
                     ),
-                    child: Text('Reset'),
                   ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Get.back(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1E293B),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Get.back(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF1E293B),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
+                      child: Text('Apply'),
                     ),
-                    child: Text('Apply'),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            SizedBox(height: MediaQuery.of(Get.context!).viewInsets.bottom),
-          ],
+              SizedBox(height: MediaQuery.of(Get.context!).viewInsets.bottom),
+            ],
+          ),
         ),
       ),
       isScrollControlled: true,
@@ -1101,7 +1104,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
   Widget buildFloatingActionButtons() {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
-      backgroundColor: const Color(0xFF6C5CE7),
+      backgroundColor: AppTheme.primaryLight,
       foregroundColor: Colors.white,
       elevation: 8,
       shape: const CircleBorder(),
