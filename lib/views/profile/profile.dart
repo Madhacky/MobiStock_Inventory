@@ -13,6 +13,87 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      appBar: BuildAppBar(
+        title: "My Profile",
+        isdark: true,
+        onPressed: () {
+          Get.find<BottomNavigationController>().setIndex(0);
+          Get.back();
+        },
+        actionItem: Obx(
+          () => AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            child:
+                controller.isEditing.value
+                    ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: controller.cancelEdit,
+                          icon: Icon(Icons.close, size: 16),
+                          label: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[600],
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: controller.saveProfile,
+                          icon: Icon(Icons.save, size: 16),
+                          label: Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF51CF66),
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                      ],
+                    )
+                    : ElevatedButton.icon(
+                      onPressed: controller.toggleEditMode,
+                      icon: Icon(Icons.edit, size: 16),
+                      label: Text(
+                        'Edit',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Color(0xFF6C5CE7),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
@@ -26,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
                 physics: AlwaysScrollableScrollPhysics(),
                 child: Column(
                   children: [
-                    _buildCustomAppBar(),
+                    // _buildCustomAppBar(),
                     _buildQuickStatsCards(),
                     _buildProfileInfoCard(),
                     _buildAccountDetailsCard(),
