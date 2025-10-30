@@ -71,11 +71,12 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(title: "Customer Analytics", isdark: true),
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
-            buildCustomAppBar("Customer Analytics", isdark: true),
+            // buildCustomAppBar("Customer Analytics", isdark: true),
             _buildTabBar(),
             Expanded(
               child: TabBarView(

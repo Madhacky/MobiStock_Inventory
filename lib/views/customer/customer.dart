@@ -20,6 +20,21 @@ class CustomerManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BuildAppBar(
+        title: "Customer Management",
+        isdark: true,
+        onPressed: () {
+          Get.find<BottomNavigationController>().setIndex(0);
+          Get.back();
+        },
+        actionItem: IconButton(
+          onPressed: () {
+            // Get.toNamed(AppRoutes.customerCardView);
+            Get.toNamed(AppRoutes.customerAnalytics);
+          },
+          icon: Icon(Icons.analytics_outlined),
+        ),
+      ),
       backgroundColor: Colors.grey[50],
       floatingActionButton: buildFloatingActionButtons(),
       body: SafeArea(
@@ -27,21 +42,21 @@ class CustomerManagementScreen extends StatelessWidget {
           physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
-              buildCustomAppBar(
-                "Customer Management",
-                isdark: true,
-                onPressed: () {
-                  Get.find<BottomNavigationController>().setIndex(0);
-                  Get.back();
-                },
-                actionItem: IconButton(
-                  onPressed: () {
-                    // Get.toNamed(AppRoutes.customerCardView);
-                    Get.toNamed(AppRoutes.customerAnalytics);
-                  },
-                  icon: Icon(Icons.analytics_outlined),
-                ),
-              ),
+              // buildCustomAppBar(
+              //   "Customer Management",
+              //   isdark: true,
+              //   onPressed: () {
+              //     Get.find<BottomNavigationController>().setIndex(0);
+              //     Get.back();
+              //   },
+              //   actionItem: IconButton(
+              //     onPressed: () {
+              //       // Get.toNamed(AppRoutes.customerCardView);
+              //       Get.toNamed(AppRoutes.customerAnalytics);
+              //     },
+              //     icon: Icon(Icons.analytics_outlined),
+              //   ),
+              // ),
               _buildStatsCards(),
               _buildAdvancedSearchAndFilters(context),
               // _buildCustomerAnalyticsCard(context),
@@ -214,6 +229,7 @@ class CustomerManagementScreen extends StatelessWidget {
   Widget _buildAdvancedSearchAndFilters(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -488,95 +504,101 @@ class CustomerManagementScreen extends StatelessWidget {
 
   // Filter Bottom Sheet
   void _showFilterBottomSheet(BuildContext context) {
-    Get.bottomSheet(
-      SafeArea(
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
+    showModalBottomSheet(
+      showDragHandle: true,
+      context: context,
+      builder: (context) {
+        return SafeArea(
           child: Container(
-            // padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 16),
+            width: double.infinity,
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Container(
+              // padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // SizedBox(height: 16),
 
-                // // Search bar with enhanced design
-                // Container(
-                //   height: 44,
-                //   decoration: BoxDecoration(
-                //     color: Colors.grey[50],
-                //     borderRadius: BorderRadius.circular(12),
-                //     border: Border.all(
-                //       color: Colors.grey.withValues(alpha: 0.2),
-                //     ),
-                //   ),
-                //   child: TextField(
-                //     onChanged: controller.onSearchChanged,
-                //     decoration: InputDecoration(
-                //       hintText: 'Search by name, phone, location...',
-                //       hintStyle: TextStyle(
-                //         fontSize: 13,
-                //         color: Colors.grey[500],
-                //       ),
-                //       prefixIcon: Container(
-                //         padding: EdgeInsets.all(10),
-                //         child: Icon(
-                //           Icons.search,
-                //           size: 18,
-                //           color: AppTheme.primaryLight,
-                //         ),
-                //       ),
-                //       suffixIcon: Obx(
-                //         () =>
-                //             controller.searchQuery.value.isNotEmpty
-                //                 ? IconButton(
-                //                   onPressed: () {
-                //                     controller.searchQuery.value = '';
-                //                     controller.filterCustomers();
-                //                   },
-                //                   icon: Icon(
-                //                     Icons.clear,
-                //                     size: 16,
-                //                     color: Colors.grey[400],
-                //                   ),
-                //                 )
-                //                 : SizedBox(),
-                //       ),
-                //       border: InputBorder.none,
-                //       contentPadding: EdgeInsets.symmetric(vertical: 12),
-                //     ),
-                //   ),
-                // ),
+                  // // Search bar with enhanced design
+                  // Container(
+                  //   height: 44,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.grey[50],
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     border: Border.all(
+                  //       color: Colors.grey.withValues(alpha: 0.2),
+                  //     ),
+                  //   ),
+                  //   child: TextField(
+                  //     onChanged: controller.onSearchChanged,
+                  //     decoration: InputDecoration(
+                  //       hintText: 'Search by name, phone, location...',
+                  //       hintStyle: TextStyle(
+                  //         fontSize: 13,
+                  //         color: Colors.grey[500],
+                  //       ),
+                  //       prefixIcon: Container(
+                  //         padding: EdgeInsets.all(10),
+                  //         child: Icon(
+                  //           Icons.search,
+                  //           size: 18,
+                  //           color: AppTheme.primaryLight,
+                  //         ),
+                  //       ),
+                  //       suffixIcon: Obx(
+                  //         () =>
+                  //             controller.searchQuery.value.isNotEmpty
+                  //                 ? IconButton(
+                  //                   onPressed: () {
+                  //                     controller.searchQuery.value = '';
+                  //                     controller.filterCustomers();
+                  //                   },
+                  //                   icon: Icon(
+                  //                     Icons.clear,
+                  //                     size: 16,
+                  //                     color: Colors.grey[400],
+                  //                   ),
+                  //                 )
+                  //                 : SizedBox(),
+                  //       ),
+                  //       border: InputBorder.none,
+                  //       contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  //     ),
+                  //   ),
+                  // ),
 
-                // SizedBox(height: 12),
+                  // SizedBox(height: 12),
 
-                // Filter chips
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    _buildFilterChip('All', 'All Customers'),
-                    _buildFilterChip('New', 'New Customers'),
-                    _buildFilterChip('Regular', 'Regular Customers'),
-                    _buildFilterChip('Repeated', 'Repeated Customers'),
-                    _buildFilterChip('VIP', 'VIP Customers'),
-                  ],
-                ),
-              ],
+                  // Filter chips
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _buildFilterChip('All', 'All Customers'),
+                      _buildFilterChip('New', 'New Customers'),
+                      _buildFilterChip('Regular', 'Regular Customers'),
+                      _buildFilterChip('Repeated', 'Repeated Customers'),
+                      _buildFilterChip('VIP', 'VIP Customers'),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
+
       isScrollControlled: false,
       isDismissible: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
     );
   }
 
