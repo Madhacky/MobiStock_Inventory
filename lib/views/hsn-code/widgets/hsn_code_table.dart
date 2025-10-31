@@ -27,7 +27,7 @@ class HsnCodeTable extends StatelessWidget {
               // sortColumnIndex: sortColumnIndex,
               // sortAscending: isAscending,
               headingRowColor: MaterialStateProperty.all(
-                const Color(0xFF1A9B8E),
+               AppColors.primaryLight,
               ),
               columns: [
                 DataColumn(

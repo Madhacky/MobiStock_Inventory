@@ -62,7 +62,7 @@ class HsnCodeScreen extends StatelessWidget {
             //     onPressed: () {
             //       controller.fetchHsnCodes();
             //     },
-            //     icon: Icon(Icons.refresh, color: Colors.teal),
+            //     icon: Icon(Icons.refresh, color: AppColors.primaryLight),
             //   ),
             // ),
             Expanded(
@@ -102,13 +102,13 @@ class HsnCodeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.teal.withOpacity(0.1),
+            color: AppColors.primaryLight.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(color: Colors.teal.withOpacity(0.1), width: 1),
+        border: Border.all(color: AppColors.primaryLight.withOpacity(0.1), width: 1),
       ),
       child: Column(
         children: [
@@ -118,8 +118,8 @@ class HsnCodeScreen extends StatelessWidget {
           //       () => ToggleButtons(
           //         borderRadius: BorderRadius.circular(8),
           //         selectedColor: Colors.white,
-          //         fillColor: Colors.teal,
-          //         color: Colors.teal,
+          //         fillColor: AppColors.primaryLight,
+          //         color: AppColors.primaryLight,
           //         constraints: const BoxConstraints(
           //           minHeight: 40,
           //           minWidth: 80,
@@ -194,7 +194,7 @@ class HsnCodeScreen extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(
                       Icons.search,
-                      color: Colors.teal,
+                      color: AppColors.primaryLight,
                       size: 20,
                     ),
                     filled: true,
@@ -214,7 +214,7 @@ class HsnCodeScreen extends StatelessWidget {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(
-                        color: Colors.teal,
+                        color: AppColors.primaryLight,
                         width: 1.5,
                       ),
                     ),
@@ -233,7 +233,7 @@ class HsnCodeScreen extends StatelessWidget {
               //     borderRadius: BorderRadius.circular(10),
               //     boxShadow: [
               //       BoxShadow(
-              //         color: Colors.teal.withOpacity(0.1),
+              //         color: AppColors.primaryLight.withOpacity(0.1),
               //         blurRadius: 10,
               //         offset: const Offset(0, 2),
               //       ),
@@ -249,12 +249,12 @@ class HsnCodeScreen extends StatelessWidget {
               //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               //     ),
               //     style: OutlinedButton.styleFrom(
-              //       foregroundColor: Colors.teal,
+              //       foregroundColor: AppColors.primaryLight,
               //       side: BorderSide(
-              //         color: Colors.teal.withOpacity(0.3),
+              //         color: AppColors.primaryLight.withOpacity(0.3),
               //         width: 1.5,
               //       ),
-              //       backgroundColor: Colors.teal.withOpacity(0.05),
+              //       backgroundColor: AppColors.primaryLight.withOpacity(0.05),
               //       padding: const EdgeInsets.symmetric(
               //         horizontal: 20,
               //         vertical: 12,
@@ -272,7 +272,7 @@ class HsnCodeScreen extends StatelessWidget {
               //   icon: const Icon(Icons.add),
               //   label: const Text('Add HSN Code'),
               //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: Colors.teal,
+              //     backgroundColor: AppColors.primaryLight,
               //     padding: const EdgeInsets.symmetric(
               //       horizontal: 20,
               //       vertical: 12,
@@ -287,7 +287,7 @@ class HsnCodeScreen extends StatelessWidget {
               //     borderRadius: BorderRadius.circular(10),
               //     boxShadow: [
               //       BoxShadow(
-              //         color: Colors.teal.withOpacity(0.1),
+              //         color: AppColors.primaryLight.withOpacity(0.1),
               //         blurRadius: 10,
               //         offset: const Offset(0, 2),
               //       ),
@@ -309,12 +309,12 @@ class HsnCodeScreen extends StatelessWidget {
               //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               //     ),
               //     style: OutlinedButton.styleFrom(
-              //       foregroundColor: Colors.teal,
+              //       foregroundColor: AppColors.primaryLight,
               //       side: BorderSide(
-              //         color: Colors.teal.withOpacity(0.3),
+              //         color: AppColors.primaryLight.withOpacity(0.3),
               //         width: 1.5,
               //       ),
-              //       backgroundColor: Colors.teal.withOpacity(0.05),
+              //       backgroundColor: AppColors.primaryLight.withOpacity(0.05),
               //       padding: const EdgeInsets.symmetric(
               //         horizontal: 20,
               //         vertical: 12,
@@ -350,7 +350,7 @@ class HsnCodeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.teal,
+              color: AppColors.primaryLight,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -713,7 +713,7 @@ class HsnCodeScreen extends StatelessWidget {
                     controller.addHsnCode(data);
                   }
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryLight),
                 child: Text(isEdit ? 'Update' : 'Save'),
               ),
             ],
