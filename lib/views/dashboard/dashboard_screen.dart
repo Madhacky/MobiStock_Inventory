@@ -7,6 +7,7 @@ import 'package:smartbecho/models/dashboard_models/sales_summary_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/utils/animated_text.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 import 'package:smartbecho/views/dashboard/charts/switchable_chart.dart';
@@ -160,7 +161,7 @@ class _InventoryDashboardState extends State<InventoryDashboard>
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.1),
+              color: AppColors.errorLight.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -172,7 +173,7 @@ class _InventoryDashboardState extends State<InventoryDashboard>
             Icon(
               Icons.error_outline_rounded,
               size: 64,
-              color: Colors.red.shade400,
+              color: Colors.red,
             ),
             const SizedBox(height: 16),
             const Text(
@@ -731,62 +732,63 @@ class _InventoryDashboardState extends State<InventoryDashboard>
     );
   }
 
-Widget _buildAdvancedChartsSection() {
-  return SizedBox(
-    height: 400, // Enough to fit your tallest chart
-    width: 450,
-    child: PageView(
-      controller: PageController(viewportFraction: 0.95), // show part of next card for peek effect
-      padEnds: false, // don't add padding at the ends of the list
-      children: [
-        _buildAnimatedChartCard(
-          title: "Revenue Analytics",
-          subtitle: "Monthly performance overview with trends",
-          child: _buildEnhancedRevenueChart(),
-          height: 340,
-          gradient: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-        ),
-        _buildAnimatedChartCard(
-          title: "Customer Distribution",
-          subtitle: "Repeated vs New Customers",
-          child: _buildEnhancedCustomerChart(),
-          height: 390,
-          gradient: const [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
-        ),
-        _buildAnimatedChartCard(
-          title: "Dues Overview",
-          subtitle: "Collection status",
-          child: _buildEnhancedDuesChart(),
-          height: 350,
-          gradient: const [Color(0xFF10B981), Color(0xFF34D399)],
-        ),
-        // add more if needed
-      ],
-    ),
-  );
-}
+  Widget _buildAdvancedChartsSection() {
+    return SizedBox(
+      height: 400, // Enough to fit your tallest chart
+      width: 450,
+      child: PageView(
+        controller: PageController(
+          viewportFraction: 0.95,
+        ), // show part of next card for peek effect
+        padEnds: false, // don't add padding at the ends of the list
+        children: [
+          _buildAnimatedChartCard(
+            title: "Revenue Analytics",
+            subtitle: "Monthly performance overview with trends",
+            child: _buildEnhancedRevenueChart(),
+            height: 340,
+            gradient: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          ),
+          _buildAnimatedChartCard(
+            title: "Customer Distribution",
+            subtitle: "Repeated vs New Customers",
+            child: _buildEnhancedCustomerChart(),
+            height: 390,
+            gradient: const [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
+          ),
+          _buildAnimatedChartCard(
+            title: "Dues Overview",
+            subtitle: "Collection status",
+            child: _buildEnhancedDuesChart(),
+            height: 350,
+            gradient: const [Color(0xFF10B981), Color(0xFF34D399)],
+          ),
+          // add more if needed
+        ],
+      ),
+    );
+  }
 
-Widget _buildAnimatedChartCard({
-  required String title,
-  required String subtitle,
-  required Widget child,
-  required double height,
-  required List<Color> gradient,
-}) {
-  // You can integrate animation here if needed, or keep it simple
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    child: _buildAdvancedChartCard(
-      title: title,
-      subtitle: subtitle,
-      child: child,
-      height: height,
-      width: 350, // fixed width for carousel cards
-      gradient: gradient,
-    ),
-  );
-}
-
+  Widget _buildAnimatedChartCard({
+    required String title,
+    required String subtitle,
+    required Widget child,
+    required double height,
+    required List<Color> gradient,
+  }) {
+    // You can integrate animation here if needed, or keep it simple
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: _buildAdvancedChartCard(
+        title: title,
+        subtitle: subtitle,
+        child: child,
+        height: height,
+        width: 350, // fixed width for carousel cards
+        gradient: gradient,
+      ),
+    );
+  }
 
   Widget _buildAdvancedChartCard({
     required String title,
@@ -799,7 +801,7 @@ Widget _buildAnimatedChartCard({
   }) {
     return Container(
       height: height ?? 350,
-      width: width??350,
+      width: width ?? 350,
 
       decoration: BoxDecoration(
         color: Colors.white,

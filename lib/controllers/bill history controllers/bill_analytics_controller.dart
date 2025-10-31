@@ -7,6 +7,7 @@ import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:intl/intl.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class BillAnalyticsController extends GetxController {
   // API service instance
@@ -34,24 +35,36 @@ class BillAnalyticsController extends GetxController {
   final Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
   // Available filter options
-  final RxList<String> availableCompanies = <String>[
-    'All Companies',
-    'Apple',
-    'Samsung', 
-    'Xiaomi',
-    'OnePlus',
-    'Vivo',
-    'Oppo',
-    'Realme',
-    'Google',
-    'Nothing'
-  ].obs;
-  
-  final RxList<String> availableMonths = <String>[
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ].obs;
-  
+  final RxList<String> availableCompanies =
+      <String>[
+        'All Companies',
+        'Apple',
+        'Samsung',
+        'Xiaomi',
+        'OnePlus',
+        'Vivo',
+        'Oppo',
+        'Realme',
+        'Google',
+        'Nothing',
+      ].obs;
+
+  final RxList<String> availableMonths =
+      <String>[
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ].obs;
+
   final RxList<String> availableYears = <String>[].obs;
 
   @override
@@ -72,9 +85,9 @@ class BillAnalyticsController extends GetxController {
     // Initialize years (current year and previous years)
     final currentYear = DateTime.now().year;
     availableYears.addAll([
-      for (int i = currentYear; i >= currentYear - 5; i--) i.toString()
+      for (int i = currentYear; i >= currentYear - 5; i--) i.toString(),
     ]);
-    
+
     // Set default values
     selectedYear.value = currentYear.toString();
     selectedMonth.value = _getMonthName(DateTime.now().month);
@@ -84,17 +97,37 @@ class BillAnalyticsController extends GetxController {
 
   String _getMonthName(int monthNumber) {
     const months = [
-      '', 'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[monthNumber];
   }
 
   int _getMonthNumber(String monthName) {
     const months = {
-      'January': 1, 'February': 2, 'March': 3, 'April': 4,
-      'May': 5, 'June': 6, 'July': 7, 'August': 8,
-      'September': 9, 'October': 10, 'November': 11, 'December': 12
+      'January': 1,
+      'February': 2,
+      'March': 3,
+      'April': 4,
+      'May': 5,
+      'June': 6,
+      'July': 7,
+      'August': 8,
+      'September': 9,
+      'October': 10,
+      'November': 11,
+      'December': 12,
     };
     return months[monthName] ?? 1;
   }
@@ -119,7 +152,7 @@ class BillAnalyticsController extends GetxController {
   void onTimePeriodTypeChanged(String? type) {
     if (type != null) {
       timePeriodType.value = type;
-      
+
       // Clear custom dates when switching to Month/Year
       if (type == 'Month/Year') {
         startDate.value = null;
@@ -127,7 +160,7 @@ class BillAnalyticsController extends GetxController {
         startDateController.clear();
         endDateController.clear();
       }
-      
+
       fetchBillAnalytics();
     }
   }
@@ -145,14 +178,19 @@ class BillAnalyticsController extends GetxController {
       if (timePeriodType.value == 'Month/Year') {
         queryParams['year'] = selectedYear.value;
         queryParams['month'] = _getMonthNumber(selectedMonth.value);
-      } else if (timePeriodType.value == 'Custom Date' && 
-                 startDate.value != null && endDate.value != null) {
-        queryParams['startDate'] = DateFormat('yyyy-MM-dd').format(startDate.value!);
-        queryParams['endDate'] = DateFormat('yyyy-MM-dd').format(endDate.value!);
+      } else if (timePeriodType.value == 'Custom Date' &&
+          startDate.value != null &&
+          endDate.value != null) {
+        queryParams['startDate'] = DateFormat(
+          'yyyy-MM-dd',
+        ).format(startDate.value!);
+        queryParams['endDate'] = DateFormat(
+          'yyyy-MM-dd',
+        ).format(endDate.value!);
       }
 
       // Add company filter if not "All Companies"
-      if (selectedCompany.value.isNotEmpty && 
+      if (selectedCompany.value.isNotEmpty &&
           selectedCompany.value != 'All Companies') {
         queryParams['companyName'] = selectedCompany.value;
       }
@@ -160,7 +198,8 @@ class BillAnalyticsController extends GetxController {
       log("Fetching bill analytics with params: $queryParams");
 
       // API endpoint
-      final url = 'https://backend-production-91e4.up.railway.app/api/purchase-bills/monthly-summary';
+      final url =
+          'https://backend-production-91e4.up.railway.app/api/purchase-bills/monthly-summary';
 
       dio.Response? response = await _apiService.requestGetForApi(
         url: url,
@@ -170,12 +209,9 @@ class BillAnalyticsController extends GetxController {
 
       if (response != null && response.statusCode == 200) {
         List<dynamic> data = response.data;
-        analyticsData.value = data
-            .map((item) => BillAnalyticsModel.fromJson(item))
-            .toList();
+        analyticsData.value =
+            data.map((item) => BillAnalyticsModel.fromJson(item)).toList();
 
-  
-        
         // Force update observables
         analyticsData.refresh();
       } else {
@@ -191,7 +227,7 @@ class BillAnalyticsController extends GetxController {
         'Error',
         'Failed to load analytics: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -262,13 +298,19 @@ class BillAnalyticsController extends GetxController {
 
   // Summary calculations
   double get totalPurchaseAmount {
-    double total = analyticsData.fold(0.0, (sum, item) => sum + (item.totalPurchase ?? 0.0));
+    double total = analyticsData.fold(
+      0.0,
+      (sum, item) => sum + (item.totalPurchase ?? 0.0),
+    );
     log("Total purchase amount: $total");
     return total;
   }
 
   double get totalPaidAmount {
-    double total = analyticsData.fold(0.0, (sum, item) => sum + (item.totalPaid ?? 0.0));
+    double total = analyticsData.fold(
+      0.0,
+      (sum, item) => sum + (item.totalPaid ?? 0.0),
+    );
     log("Total paid amount: $total");
     return total;
   }

@@ -52,7 +52,7 @@ class AddDuesPage extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppTheme.primaryLight,
+                color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -104,15 +104,15 @@ class AddDuesPage extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                  color: AppColors.primaryLight.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.2),
+                    color: AppColors.primaryLight.withValues(alpha: 0.2),
                   ),
                 ),
                 child: const Icon(
                   Icons.account_balance_wallet,
-                  color: AppTheme.primaryLight,
+                  color: AppColors.primaryLight,
                   size: 24,
                 ),
               ),
@@ -154,13 +154,13 @@ class AddDuesPage extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                    color: AppColors.primaryLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     controller.paymentDateController.text,
                     style: const TextStyle(
-                      color: AppTheme.primaryLight,
+                      color: AppColors.primaryLight,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -360,7 +360,7 @@ class AddDuesPage extends StatelessWidget {
                                 ? null
                                 : controller.addDueEntry,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryLight,
+                          backgroundColor: AppColors.primaryLight,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -412,17 +412,17 @@ class AddDuesPage extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
+                          color: AppColors.errorLight.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.red.withValues(alpha: 0.3),
+                            color: AppColors.errorLight.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
                           children: [
                             const Icon(
                               Icons.error_outline,
-                              color: Colors.red,
+                              color: AppColors.errorLight,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -430,7 +430,7 @@ class AddDuesPage extends StatelessWidget {
                               child: Text(
                                 controller.addDueErrorMessage.value,
                                 style: const TextStyle(
-                                  color: Colors.red,
+                                  color: AppColors.errorLight,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -490,14 +490,14 @@ class AddDuesPage extends StatelessWidget {
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryLight.withValues(
+                                color: AppColors.primaryLight.withValues(
                                   alpha: 0.1,
                                 ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
                                 Icons.person,
-                                color: AppTheme.primaryLight,
+                                color: AppColors.primaryLight,
                                 size: 16,
                               ),
                               //  customer['profilePhoto'] != null
@@ -510,7 +510,7 @@ class AddDuesPage extends StatelessWidget {
                               //       )
                               //     : const Icon(
                               //         Icons.person,
-                              //         color: AppTheme.primaryLight,
+                              //         color: AppColors.primaryLight,
                               //         size: 16,
                               //       ),
                             ),
@@ -571,15 +571,15 @@ class AddDuesPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                color: AppColors.primaryLight.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.primaryLight.withValues(alpha: 0.2),
+                  color: AppColors.primaryLight.withValues(alpha: 0.2),
                 ),
               ),
               child: const Icon(
                 Icons.person_add_alt_1,
-                color: AppTheme.primaryLight,
+                color: AppColors.primaryLight,
                 size: 24,
               ),
             ),
@@ -596,10 +596,10 @@ class AddDuesPage extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: AppTheme.primaryLight.withValues(alpha: 0.1),
+            color: AppColors.primaryLight.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: AppTheme.primaryLight, size: 16),
+          child: Icon(icon, color: AppColors.primaryLight, size: 16),
         ),
         const SizedBox(width: 12),
         Text(

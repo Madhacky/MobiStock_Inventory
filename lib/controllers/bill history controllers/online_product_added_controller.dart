@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/models/bill%20history/online_added_product_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class OnlineProductsController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -211,8 +212,11 @@ class OnlineProductsController extends GetxController {
 
       if (response != null && response.statusCode == 200) {
         final filterResponse = ProductFilterResponse.fromJson(response.data);
-        
-        categoryOptions.value = ['All', ...filterResponse.payload.itemCategories];
+
+        categoryOptions.value = [
+          'All',
+          ...filterResponse.payload.itemCategories,
+        ];
         brandOptions.value = ['All', ...filterResponse.payload.companies];
         modelOptions.value = ['All', ...filterResponse.payload.models];
         ramOptions.value = ['All', ...filterResponse.payload.rams];
@@ -301,7 +305,7 @@ class OnlineProductsController extends GetxController {
       'Error',
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
+      backgroundColor: AppColors.errorLight,
       colorText: Colors.white,
       duration: Duration(seconds: 3),
     );

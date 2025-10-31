@@ -7,6 +7,7 @@ import 'package:smartbecho/models/account%20management%20models/account_summay_d
 import 'package:smartbecho/services/api_services.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/debuggers.dart';
 
 class AccountManagementController extends GetxController {
@@ -107,7 +108,7 @@ class AccountManagementController extends GetxController {
         'Error',
         'Failed to load sales stats: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: AppColors.errorLight.withOpacity(0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -152,7 +153,6 @@ class AccountManagementController extends GetxController {
     "Money Out": accountDashboardData.value?.payload.totalCredit ?? 0,
     "Money In": accountDashboardData.value?.payload.totalDebit ?? 0,
   };
-
 
   // Format amount for display
   String get formattedOpeningBalance => '₹${openingBalance.toStringAsFixed(2)}';

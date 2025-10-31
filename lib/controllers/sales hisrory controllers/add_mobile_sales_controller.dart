@@ -8,6 +8,7 @@ import 'package:smartbecho/models/inventory%20management/inventory_item_model.da
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/services/user_profile_service.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/debuggers.dart';
 
 enum PaymentMode { fullPayment, partialPayment, emi }
@@ -115,7 +116,6 @@ class SalesCrudOperationController extends GetxController {
   // Form Values - Payment Details
   final Rx<PaymentMode> selectedPaymentMode = PaymentMode.fullPayment.obs;
   final RxString selectedPaymentMethod = ''.obs;
-  
 
   // Loading States
   final RxBool isLoadingFilters = false.obs;
@@ -148,7 +148,7 @@ class SalesCrudOperationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-checkGSTAvailability(); 
+    checkGSTAvailability();
     // Check if we're coming from inventory page
     final arguments = Get.arguments;
     if (arguments != null && arguments is Map<String, dynamic>) {
@@ -189,10 +189,12 @@ checkGSTAvailability();
       if (inventoryItem!.rom != null && inventoryItem!.rom!.isNotEmpty) {
         selectedRom.value = inventoryItem!.rom!;
       }
-      if (inventoryItem!.imeiList != null && inventoryItem!.imeiList!.isNotEmpty) {
+      if (inventoryItem!.imeiList != null &&
+          inventoryItem!.imeiList!.isNotEmpty) {
         selectedIMEINumbers.value = inventoryItem!.imeiList!.first;
       }
-      if (inventoryItem!.imeiList != null && inventoryItem!.imeiList!.isNotEmpty) {
+      if (inventoryItem!.imeiList != null &&
+          inventoryItem!.imeiList!.isNotEmpty) {
         iMEINumbersOptiond.value = inventoryItem!.imeiList!;
       }
 
@@ -226,49 +228,51 @@ checkGSTAvailability();
     }
   }
 
-/// Calculate prices based on inputs
-void calculatePrices() {
-  try {
-    // Get values with defaults
-    double quantity = double.tryParse(quantityController.text) ?? 1.0;
-    double unitPrice = double.tryParse(unitPriceController.text) ?? 0.0;
-    double gstPercent = double.tryParse(gstPercentageController.text) ?? 12.0;
-    double extraCharges = double.tryParse(extraChargesController.text) ?? 0.0;
-    double accessoriesCost =
-        double.tryParse(accessoriesCostController.text) ?? 0.0;
-    double repairCharges =
-        double.tryParse(repairChargesController.text) ?? 0.0;
-    double totalDiscount =
-        double.tryParse(totalDiscountController.text) ?? 0.0;
+  /// Calculate prices based on inputs
+  void calculatePrices() {
+    try {
+      // Get values with defaults
+      double quantity = double.tryParse(quantityController.text) ?? 1.0;
+      double unitPrice = double.tryParse(unitPriceController.text) ?? 0.0;
+      double gstPercent = double.tryParse(gstPercentageController.text) ?? 12.0;
+      double extraCharges = double.tryParse(extraChargesController.text) ?? 0.0;
+      double accessoriesCost =
+          double.tryParse(accessoriesCostController.text) ?? 0.0;
+      double repairCharges =
+          double.tryParse(repairChargesController.text) ?? 0.0;
+      double totalDiscount =
+          double.tryParse(totalDiscountController.text) ?? 0.0;
 
-    // Calculate base amount (quantity * unit price + extras - discount)
-    // This is the total amount INCLUDING GST
-    baseAmount.value =
-        (quantity * unitPrice) +
-        extraCharges +
-        accessoriesCost +
-        repairCharges -
-        totalDiscount;
+      // Calculate base amount (quantity * unit price + extras - discount)
+      // This is the total amount INCLUDING GST
+      baseAmount.value =
+          (quantity * unitPrice) +
+          extraCharges +
+          accessoriesCost +
+          repairCharges -
+          totalDiscount;
 
-    // Total payable amount is same as base amount (total including GST)
-    totalPayableAmount.value = baseAmount.value;
+      // Total payable amount is same as base amount (total including GST)
+      totalPayableAmount.value = baseAmount.value;
 
-    // Calculate amount without GST using the formula:
-    // Amount without GST = Total Amount / (1 + GST%/100)
-    gstPercentage.value = gstPercent;
-    amountWithoutGST.value = baseAmount.value / (1 + (gstPercent / 100));
+      // Calculate amount without GST using the formula:
+      // Amount without GST = Total Amount / (1 + GST%/100)
+      gstPercentage.value = gstPercent;
+      amountWithoutGST.value = baseAmount.value / (1 + (gstPercent / 100));
 
-    // Calculate GST amount
-    gstAmount.value = baseAmount.value - amountWithoutGST.value;
+      // Calculate GST amount
+      gstAmount.value = baseAmount.value - amountWithoutGST.value;
 
-    // Auto-update payable amount field for full payment
-    if (selectedPaymentMode.value == PaymentMode.fullPayment) {
-      payableAmountController.text = totalPayableAmount.value.toStringAsFixed(2);
+      // Auto-update payable amount field for full payment
+      if (selectedPaymentMode.value == PaymentMode.fullPayment) {
+        payableAmountController.text = totalPayableAmount.value.toStringAsFixed(
+          2,
+        );
+      }
+    } catch (e) {
+      log('Error calculating prices: $e');
     }
-  } catch (e) {
-    log('Error calculating prices: $e');
   }
-}
 
   /// Load initial filter data (categories, colors, RAM, ROM, etc.)
   Future<void> loadInitialFilters() async {
@@ -493,50 +497,50 @@ void calculatePrices() {
   }
 
   // Add these properties at the top of your controller class
-final RxBool shouldShowGST = false.obs;
-final RxString shopGSTNumber = ''.obs;
-final RxString itemSource = ''.obs;
+  final RxBool shouldShowGST = false.obs;
+  final RxString shopGSTNumber = ''.obs;
+  final RxString itemSource = ''.obs;
 
-// Add this method in your controller
-Future<void> checkGSTAvailability() async {
-  try {
-    // Get shop GST number from UserProfileService
-    final userProfileService = Get.find<UserProfileService>();
-    final profileData = await userProfileService.getUserProfileData();
-    
-    shopGSTNumber.value = profileData['gstNumber'] ?? '';
-    
-    // Get inventory item from arguments
-    final InventoryItem item = Get.arguments['inventoryItem'];
-    itemSource.value = item.source ?? '';
-    
-    // Show GST only if:
-    // 1. Shop has GST number
-    // 2. Item source is "OFFLINE"
-    shouldShowGST.value = shopGSTNumber.value.isNotEmpty && 
-                          itemSource.value.toUpperCase() == 'OFFLINE';
-    
-    // If GST should not be shown, set GST percentage to 0
-    if (!shouldShowGST.value) {
+  // Add this method in your controller
+  Future<void> checkGSTAvailability() async {
+    try {
+      // Get shop GST number from UserProfileService
+      final userProfileService = Get.find<UserProfileService>();
+      final profileData = await userProfileService.getUserProfileData();
+
+      shopGSTNumber.value = profileData['gstNumber'] ?? '';
+
+      // Get inventory item from arguments
+      final InventoryItem item = Get.arguments['inventoryItem'];
+      itemSource.value = item.source ?? '';
+
+      // Show GST only if:
+      // 1. Shop has GST number
+      // 2. Item source is "OFFLINE"
+      shouldShowGST.value =
+          shopGSTNumber.value.isNotEmpty &&
+          itemSource.value.toUpperCase() == 'OFFLINE';
+
+      // If GST should not be shown, set GST percentage to 0
+      if (!shouldShowGST.value) {
+        gstPercentageController.text = '0';
+        gstPercentage.value = 0.0;
+      } else {
+        // Set default GST if needed (e.g., 18%)
+        if (gstPercentageController.text.isEmpty) {
+          gstPercentageController.text = '18';
+          gstPercentage.value = 18.0;
+        }
+      }
+
+      calculatePrices();
+    } catch (e) {
+      log("❌ Error checking GST availability: $e");
+      shouldShowGST.value = false;
       gstPercentageController.text = '0';
       gstPercentage.value = 0.0;
-    } else {
-      // Set default GST if needed (e.g., 18%)
-      if (gstPercentageController.text.isEmpty) {
-        gstPercentageController.text = '18';
-        gstPercentage.value = 18.0;
-      }
     }
-    
-    calculatePrices();
-  } catch (e) {
-    log("❌ Error checking GST availability: $e");
-    shouldShowGST.value = false;
-    gstPercentageController.text = '0';
-    gstPercentage.value = 0.0;
   }
-}
-
 
   /// Handle company selection
   void onCompanyChanged(String company) {
@@ -570,7 +574,7 @@ Future<void> checkGSTAvailability() async {
     selectedRom.value = rom;
   }
 
-//on change imei numbers
+  //on change imei numbers
   void onIMEINumbersChanged(String imeiNumbers) {
     selectedIMEINumbers.value = imeiNumbers;
   }
@@ -663,9 +667,11 @@ Future<void> checkGSTAvailability() async {
   bool validateStep1() {
     // Validate product details
     if (selectedCategory.value.isEmpty) {
-      Get.snackbar('Error', 'Please select a category',
-      backgroundColor: Colors.red,
-        colorText: Colors.white
+      Get.snackbar(
+        'Error',
+        'Please select a category',
+        backgroundColor: AppColors.errorLight,
+        colorText: Colors.white,
       );
       return false;
     }
@@ -728,7 +734,7 @@ Future<void> checkGSTAvailability() async {
       Get.snackbar('Error', 'Please enter pincode');
       return false;
     }
-   if (pincodeController.text.isEmpty) {
+    if (pincodeController.text.isEmpty) {
       Get.snackbar('Error', 'Please enter pincode');
       return false;
     }
@@ -787,12 +793,12 @@ Future<void> checkGSTAvailability() async {
         ],
       };
 
-if (_getPaymentModeString() == "EMI") {
-  saleData['emi'] = {
-    'monthlyEmi': num.parse(selectedEMITenure.value),
-    'totalMonths': num.parse(monthlyEMIController.text),
-  };
-}
+      if (_getPaymentModeString() == "EMI") {
+        saleData['emi'] = {
+          'monthlyEmi': num.parse(selectedEMITenure.value),
+          'totalMonths': num.parse(monthlyEMIController.text),
+        };
+      }
       printMapWithTypesAll(saleData);
 
       dio.Response? response = await _apiService.requestPostForApi(
@@ -826,7 +832,7 @@ if (_getPaymentModeString() == "EMI") {
         'Error',
         'Failed to complete sale. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         icon: const Icon(Icons.error, color: Colors.white),
         margin: const EdgeInsets.all(16),
@@ -927,8 +933,8 @@ if (_getPaymentModeString() == "EMI") {
   String? validateColor(String? value) {
     return value == null || value.isEmpty ? 'Please select a color' : null;
   }
- 
-   String? validateIMEINumbers(String? value) {
+
+  String? validateIMEINumbers(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter IMEI number';
     }
@@ -937,9 +943,6 @@ if (_getPaymentModeString() == "EMI") {
     }
     return null;
   }
-
-
-
 
   String? validateRam(String? value) {
     return value == null || value.isEmpty
@@ -972,9 +975,11 @@ if (_getPaymentModeString() == "EMI") {
     }
     return null;
   }
- String? validateE(String? value) {
+
+  String? validateE(String? value) {
     return value == null || value.isEmpty ? 'Please enter customer name' : null;
   }
+
   String? validateCustomerName(String? value) {
     return value == null || value.isEmpty ? 'Please enter customer name' : null;
   }
@@ -1131,7 +1136,5 @@ if (_getPaymentModeString() == "EMI") {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
-
-  
   }
 }

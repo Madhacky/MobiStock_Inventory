@@ -11,6 +11,7 @@ import 'package:smartbecho/models/inventory%20management/filter_response_model.d
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class BillHistoryController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -557,15 +558,14 @@ class BillHistoryController extends GetxController {
     }
   }
 
-
   void showAnalyticsModal() {
     Get.toNamed(AppRoutes.billAnalytics);
   }
 
+  void navigateToThisMonthStock() {
+    Get.toNamed(AppRoutes.thisMonthAddedStock);
+  }
 
-void navigateToThisMonthStock() {
-  Get.toNamed(AppRoutes.thisMonthAddedStock);
-}
   // Filter methods for bills
   void onCompanyChanged(String? company) {
     selectedCompany.value = company ?? 'All';
@@ -639,7 +639,7 @@ void navigateToThisMonthStock() {
       'Error',
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
+      backgroundColor: AppColors.errorLight,
       colorText: Colors.white,
       duration: Duration(seconds: 3),
     );

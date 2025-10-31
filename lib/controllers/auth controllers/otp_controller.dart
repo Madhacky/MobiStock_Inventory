@@ -10,6 +10,7 @@ import 'package:smartbecho/services/route_services.dart';
 import 'package:smartbecho/services/secure_storage_service.dart';
 import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:smartbecho/utils/app_colors.dart';
 
 class OTPController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -259,7 +260,7 @@ class OTPController extends GetxController
     Get.snackbar(
       'Code Sent',
       'A new verification code has been sent to $email',
-      backgroundColor: Colors.green.withValues(alpha:0.8),
+      backgroundColor: Colors.green.withValues(alpha: 0.8),
       colorText: Colors.white,
       snackPosition: SnackPosition.TOP,
       duration: const Duration(seconds: 3),
@@ -312,7 +313,7 @@ class OTPController extends GetxController
               message.isNotEmpty
                   ? message
                   : 'OTP verified and password reset successfully!',
-              backgroundColor: Colors.green.withValues(alpha:0.8),
+              backgroundColor: Colors.green.withValues(alpha: 0.8),
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
               duration: const Duration(seconds: 2),
@@ -343,7 +344,7 @@ class OTPController extends GetxController
         e.toString().contains('Exception:')
             ? e.toString().replaceAll('Exception: ', '')
             : 'Invalid OTP. Please try again.',
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),

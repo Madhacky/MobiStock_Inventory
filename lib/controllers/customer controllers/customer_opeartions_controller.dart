@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class CustomerOperationsController extends GetxController {
   @override
@@ -26,50 +27,52 @@ class CustomerOperationsController extends GetxController {
 
   // ADD CUSTOMER FORM
   final GlobalKey<FormState> addCustomerFormKey = GlobalKey<FormState>();
-  
+
   // Add Customer Form Controllers
   final TextEditingController customerNameController = TextEditingController();
   final TextEditingController primaryPhoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController primaryAddressController = TextEditingController();
-  
+  final TextEditingController primaryAddressController =
+      TextEditingController();
+
   // Add Customer Form States
   final RxBool isAddingCustomer = false.obs;
   final RxBool hasAddCustomerError = false.obs;
   final RxString addCustomerErrorMessage = ''.obs;
   final Rx<File?> selectedCustomerImage = Rx<File?>(null);
   final RxString selectedStates = ''.obs;
- final RxList<String> statesList = <String>[
-  'Andhra Pradesh',
-  'Arunachal Pradesh',
-  'Assam',
-  'Bihar',
-  'Chhattisgarh',
-  'Goa',
-  'Gujarat',
-  'Haryana',
-  'Himachal Pradesh',
-  'Jharkhand',
-  'Karnataka',
-  'Kerala',
-  'Madhya Pradesh',
-  'Maharashtra',
-  'Manipur',
-  'Meghalaya',
-  'Mizoram',
-  'Nagaland',
-  'Odisha',
-  'Punjab',
-  'Rajasthan',
-  'Sikkim',
-  'Tamil Nadu',
-  'Telangana',
-  'Tripura',
-  'Uttar Pradesh',
-  'Uttarakhand',
-  'West Bengal'
-].obs;
+  final RxList<String> statesList =
+      <String>[
+        'Andhra Pradesh',
+        'Arunachal Pradesh',
+        'Assam',
+        'Bihar',
+        'Chhattisgarh',
+        'Goa',
+        'Gujarat',
+        'Haryana',
+        'Himachal Pradesh',
+        'Jharkhand',
+        'Karnataka',
+        'Kerala',
+        'Madhya Pradesh',
+        'Maharashtra',
+        'Manipur',
+        'Meghalaya',
+        'Mizoram',
+        'Nagaland',
+        'Odisha',
+        'Punjab',
+        'Rajasthan',
+        'Sikkim',
+        'Tamil Nadu',
+        'Telangana',
+        'Tripura',
+        'Uttar Pradesh',
+        'Uttarakhand',
+        'West Bengal',
+      ].obs;
 
   /// Handle state selection
   void onSelectState(String state) {
@@ -110,7 +113,9 @@ class CustomerOperationsController extends GetxController {
   }
 
   String? validatePrimaryAddress(String? value) {
-    return value == null || value.isEmpty ? 'Please enter primary address' : null;
+    return value == null || value.isEmpty
+        ? 'Please enter primary address'
+        : null;
   }
 
   /// Add customer to database
@@ -137,7 +142,8 @@ class CustomerOperationsController extends GetxController {
 
       // Add file if selected
       if (selectedCustomerImage.value != null) {
-        String fileName = "${customerNameController.text}_${DateTime.now().millisecondsSinceEpoch}.${selectedCustomerImage.value!.path.split('.').last}";
+        String fileName =
+            "${customerNameController.text}_${DateTime.now().millisecondsSinceEpoch}.${selectedCustomerImage.value!.path.split('.').last}";
         formData.files.add(
           MapEntry(
             'file',
@@ -185,7 +191,7 @@ class CustomerOperationsController extends GetxController {
         'Error',
         'Failed to add customer. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         icon: const Icon(Icons.error, color: Colors.white),
         margin: const EdgeInsets.all(16),

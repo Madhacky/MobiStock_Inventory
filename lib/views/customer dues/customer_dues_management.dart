@@ -119,7 +119,7 @@ class _CustomerDuesManagementScreenState
               'Total Dues\nGiven',
               '₹${summary.totalGiven}',
               Icons.account_balance_wallet_outlined,
-              AppTheme.primaryLight,
+              AppColors.primaryLight,
             ),
             _buildSummaryCard(
               'Total\nCollected',
@@ -233,7 +233,7 @@ class _CustomerDuesManagementScreenState
           ),
           child: Center(
             child: CircularProgressIndicator(
-              color: AppTheme.primaryLight,
+              color: AppColors.primaryLight,
               strokeWidth: 2,
             ),
           ),
@@ -302,10 +302,10 @@ class _CustomerDuesManagementScreenState
                   height: 44,
                   width: 44,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                    color: AppColors.primaryLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                      color: AppColors.primaryLight.withValues(alpha: 0.3),
                     ),
                   ),
                   child: IconButton(
@@ -313,7 +313,7 @@ class _CustomerDuesManagementScreenState
                     icon: Icon(
                       Icons.tune,
                       size: 20,
-                      color: AppTheme.primaryLight,
+                      color: AppColors.primaryLight,
                     ),
                   ),
                 ),
@@ -395,7 +395,7 @@ class _CustomerDuesManagementScreenState
           dividerColor: Colors.transparent,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: AppTheme.primaryLight,
+            color: AppColors.primaryLight,
           ),
           labelColor: Colors.white,
           unselectedLabelColor: Colors.grey[600],
@@ -507,7 +507,7 @@ class _CustomerDuesManagementScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              color: AppTheme.primaryLight,
+              color: AppColors.primaryLight,
               strokeWidth: 3,
             ),
             SizedBox(height: 16),
@@ -554,7 +554,8 @@ class _CustomerDuesManagementScreenState
     required bool isDuesSection,
   }) {
     // Determine status color based on remainingDue
-    Color statusColor = customer.remainingDue <= 0 ? Colors.green : Colors.red;
+    Color statusColor =
+        customer.remainingDue <= 0 ? Colors.green : AppColors.errorLight;
 
     return Container(
       decoration: BoxDecoration(
@@ -644,7 +645,9 @@ class _CustomerDuesManagementScreenState
                   _buildAmountRow(
                     'Remaining:',
                     customer.remainingDue,
-                    customer.remainingDue <= 0 ? Colors.green : Colors.red,
+                    customer.remainingDue <= 0
+                        ? Colors.green
+                        : AppColors.errorLight,
                     isHighlight: true,
                   ),
                   SizedBox(height: 8),
@@ -776,7 +779,7 @@ class _CustomerDuesManagementScreenState
             child: Column(
               children: [
                 CircularProgressIndicator(
-                  color: AppTheme.primaryLight,
+                  color: AppColors.primaryLight,
                   strokeWidth: 2,
                 ),
                 SizedBox(height: 8),
@@ -823,7 +826,7 @@ class _CustomerDuesManagementScreenState
   Widget _buildFloatingActionButton() {
     return FloatingActionButton.extended(
       onPressed: controller.createDueEntry,
-      backgroundColor: AppTheme.primaryLight,
+      backgroundColor: AppColors.primaryLight,
       label: Text(
         'Add Due',
         style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
@@ -926,8 +929,8 @@ class _CustomerDuesManagementScreenState
                     child: OutlinedButton(
                       onPressed: _resetFilters,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.primaryLight,
-                        side: BorderSide(color: AppTheme.primaryLight),
+                        foregroundColor: AppColors.primaryLight,
+                        side: BorderSide(color: AppColors.primaryLight),
                         padding: EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -941,7 +944,7 @@ class _CustomerDuesManagementScreenState
                     child: ElevatedButton(
                       onPressed: () => Get.back(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryLight,
+                        backgroundColor: AppColors.primaryLight,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

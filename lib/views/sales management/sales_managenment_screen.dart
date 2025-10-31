@@ -76,12 +76,12 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
                 ),
               },
             ),
-        backgroundColor: AppTheme.primaryLight,
+        backgroundColor: AppColors.primaryLight,
         icon: Icon(Icons.add, color: Colors.white),
         label: Text(
           "Sell Product",
           style: AppStyles.custom(
-            color: AppTheme.cardLight,
+            color: AppColors.cardLight,
             size: 15,
             weight: FontWeight.bold,
           ),
@@ -141,7 +141,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primaryLight : Colors.transparent,
+            color: isSelected ? AppColors.primaryLight : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -1805,14 +1805,18 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: AppColors.errorLight.withValues(alpha: 0.4),
+          ),
           SizedBox(height: 16),
           Text(
             'Error Loading Sales',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.red[600],
+              color: AppColors.errorLight.withValues(alpha: 0.6),
             ),
           ),
           SizedBox(height: 8),

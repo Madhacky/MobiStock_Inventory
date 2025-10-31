@@ -77,7 +77,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
   String _errorMessage = '';
   bool _hasPermissionError = false;
 
-  Color get _themeColor => widget.themeColor ?? AppTheme.primaryLight;
+  Color get _themeColor => widget.themeColor ?? AppColors.primaryLight;
 
   @override
   void initState() {
@@ -120,19 +120,23 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           title: Text(
             '$permissionType Permission Required',
             style: TextStyle(
-              color: AppTheme.textPrimaryLight,
+              color: AppColors.textPrimaryLight,
               fontWeight: FontWeight.bold,
             ),
           ),
           content: Text(
             'Please enable $permissionType access in your device settings to use this feature.',
-            style: TextStyle(color: AppTheme.textSecondaryLight),
+            style: TextStyle(color: AppColors.textSecondaryLight),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(foregroundColor: AppTheme.textSecondaryLight),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textSecondaryLight,
+              ),
               child: const Text('Cancel'),
             ),
             ElevatedButton(
@@ -143,12 +147,17 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _themeColor,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: const Text('Open Settings'),
             ),
           ],
-          actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         );
       },
     );
@@ -262,7 +271,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
               CropAspectRatioPreset.ratio3x2,
               CropAspectRatioPreset.original,
               CropAspectRatioPreset.ratio4x3,
-              CropAspectRatioPreset.ratio16x9
+              CropAspectRatioPreset.ratio16x9,
             ],
             toolbarTitle: 'Crop Image',
             toolbarColor: _themeColor,
@@ -271,7 +280,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
             backgroundColor: Colors.white,
             statusBarColor: _themeColor,
             cropFrameColor: _themeColor,
-            cropGridColor: _themeColor.withValues(alpha:0.5),
+            cropGridColor: _themeColor.withValues(alpha: 0.5),
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
             hideBottomControls: false,
@@ -393,7 +402,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surfaceDark,
+      backgroundColor: AppColors.surfaceDark,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -406,7 +415,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
                 Text(
                   'Select Image Source',
                   style: TextStyle(
-                    color: AppTheme.onSurfaceDark,
+                    color: AppColors.onSurfaceDark,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -452,16 +461,13 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _themeColor.withValues(alpha:0.1),
+              color: _themeColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: _themeColor, size: 32),
           ),
           const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(color: AppTheme.textSecondaryDark),
-          ),
+          Text(label, style: TextStyle(color: AppColors.textSecondaryDark)),
         ],
       ),
     );
@@ -486,7 +492,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
             ),
           ],
         ),
-        backgroundColor: AppTheme.errorLight,
+        backgroundColor: AppColors.errorLight,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         margin: const EdgeInsets.all(12),
@@ -506,7 +512,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: AppTheme.textSecondaryLight,
+              color: AppColors.textSecondaryLight,
             ),
           ),
           const SizedBox(height: 8),
@@ -518,11 +524,11 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
             width: widget.width,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: AppTheme.borderLight, width: 0.4),
+              border: Border.all(color: AppColors.borderLight, width: 0.4),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha:0.08),
+                  color: Colors.grey.withValues(alpha: 0.08),
                   spreadRadius: 0,
                   blurRadius: 20,
                   offset: Offset(0, 4),
@@ -547,26 +553,26 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
                             width: double.infinity,
                             height: double.infinity,
                             decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha:0.5),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                              color: Colors.black.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircularProgressIndicator(
-                                value: _uploadProgress,
-                                color: _themeColor,
-                                strokeWidth: 3,
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'Uploading ${(_uploadProgress * 100).toInt()}%',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
+                                  value: _uploadProgress,
+                                  color: _themeColor,
+                                  strokeWidth: 3,
                                 ),
-                              ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Uploading ${(_uploadProgress * 100).toInt()}%',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -576,17 +582,19 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
                           child: GestureDetector(
                             onTap: _isUploading ? null : _removeImage,
                             child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: AppTheme.errorLight.withValues(alpha:0.8),
-                              shape: BoxShape.circle,
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: AppColors.errorLight.withValues(
+                                  alpha: 0.8,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ),
                           ),
                         ),
                       ],
@@ -600,7 +608,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           const SizedBox(height: 8),
           Text(
             _errorMessage,
-            style: const TextStyle(color: Colors.red, fontSize: 12),
+            style: const TextStyle(color: AppColors.errorLight, fontSize: 12),
           ),
         ],
       ],
@@ -616,7 +624,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: _themeColor.withValues(alpha:0.1),
+              color: _themeColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -629,7 +637,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Text(
             widget.uploadText,
             style: TextStyle(
-              color: AppTheme.textPrimaryLight,
+              color: AppColors.textPrimaryLight,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -637,10 +645,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           const SizedBox(height: 4),
           Text(
             'Tap to select',
-            style: TextStyle(
-              color: AppTheme.textSecondaryLight,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: AppColors.textSecondaryLight, fontSize: 12),
           ),
         ],
       ),
@@ -656,12 +661,12 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.errorLight.withValues(alpha:0.1),
+              color: AppColors.errorLight.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.error_outline,
-              color: AppTheme.errorLight,
+              color: AppColors.errorLight,
               size: 28,
             ),
           ),
@@ -669,7 +674,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
           Text(
             'Permission Required',
             style: TextStyle(
-              color: AppTheme.textPrimaryLight,
+              color: AppColors.textPrimaryLight,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -679,10 +684,7 @@ class _EnhancedImagePickerState extends State<EnhancedImagePicker> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               _errorMessage,
-              style: TextStyle(
-                color: AppTheme.errorLight,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: AppColors.errorLight, fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ),

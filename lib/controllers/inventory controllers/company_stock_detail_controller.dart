@@ -365,253 +365,264 @@ class CompanyStockDetailsController extends GetxController {
   }
 
   void sellItem(StockItem item) {
-    Get.find<InventoryController>().sellItem(InventoryItem.fromJson(item.toJson()));
+    Get.find<InventoryController>().sellItem(
+      InventoryItem.fromJson(item.toJson()),
+    );
   }
 
   void viewDetails(StockItem item) {
-  // Implement view details functionality
-  log("View details for ${item.model}");
-  
-  Get.dialog(
-    Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        width: 350,
-        padding: EdgeInsets.zero,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha:0.1),
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header with gradient
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: AppTheme.primaryGradientLight,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha:0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.phone_android,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.model,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          item.company,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha:0.9),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(item.stockStatus).withValues(alpha:0.2),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: _getStatusColor(item.stockStatus),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      item.stockStatus,
-                      style: TextStyle(
-                        color: _getStatusColor(item.stockStatus),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Content
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  _buildDetailRow(
-                    'Color',
-                    item.color,
-                    Icons.color_lens_outlined,
-                    Colors.orange,
-                  ),
-                  Divider(height: 24),
-                  _buildDetailRow(
-                    'RAM/ROM',
-                    item.ramRomDisplay,
-                    Icons.memory_outlined,
-                    Colors.blue,
-                  ),
-                  Divider(height: 24),
-                  _buildDetailRow(
-                    'Stock',
-                    '${item.qty} units',
-                    Icons.inventory_2_outlined,
-                    Colors.green,
-                  ),
-                  Divider(height: 24),
-                  _buildDetailRow(
-                    'Price',
-                    item.formattedPrice,
-                    Icons.attach_money_outlined,
-                    Colors.purple,
-                  ),
-                ],
-              ),
-            ),
-            
-            // Actions
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => Get.back(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppTheme.primaryLight,
-                      elevation: 0,
-                      side: BorderSide(color: AppTheme.primaryLight),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    child: Text('Close'),
-                  ),
-                  SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                      updateStock(item);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryLight,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    child: Text('Update Stock'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
+    // Implement view details functionality
+    log("View details for ${item.model}");
 
-// Helper method for detail rows
-Widget _buildDetailRow(String label, String value, IconData icon, Color iconColor) {
-  return Row(
-    children: [
-      Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: iconColor.withValues(alpha:0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: 20,
-        ),
-      ),
-      SizedBox(width: 16),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
-            ),
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          width: 350,
+          padding: EdgeInsets.zero,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with gradient
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: AppColors.primaryGradientLight,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.phone_android,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.model,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            item.company,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(
+                          item.stockStatus,
+                        ).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _getStatusColor(item.stockStatus),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        item.stockStatus,
+                        style: TextStyle(
+                          color: _getStatusColor(item.stockStatus),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-// Helper method to get status color
-Color _getStatusColor(String status) {
-  switch (status) {
-    case 'Out of Stock':
-      return Colors.red;
-    case 'Low Stock':
-      return Colors.orange;
-    case 'In Stock':
-      return Colors.green;
-    default:
-      return Colors.blue;
+              // Content
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    _buildDetailRow(
+                      'Color',
+                      item.color,
+                      Icons.color_lens_outlined,
+                      Colors.orange,
+                    ),
+                    Divider(height: 24),
+                    _buildDetailRow(
+                      'RAM/ROM',
+                      item.ramRomDisplay,
+                      Icons.memory_outlined,
+                      Colors.blue,
+                    ),
+                    Divider(height: 24),
+                    _buildDetailRow(
+                      'Stock',
+                      '${item.qty} units',
+                      Icons.inventory_2_outlined,
+                      Colors.green,
+                    ),
+                    Divider(height: 24),
+                    _buildDetailRow(
+                      'Price',
+                      item.formattedPrice,
+                      Icons.attach_money_outlined,
+                      Colors.purple,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Actions
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Get.back(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.primaryLight,
+                        elevation: 0,
+                        side: BorderSide(color: AppColors.primaryLight),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: Text('Close'),
+                    ),
+                    SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        updateStock(item);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryLight,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: Text('Update Stock'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
-}
+
+  // Helper method for detail rows
+  Widget _buildDetailRow(
+    String label,
+    String value,
+    IconData icon,
+    Color iconColor,
+  ) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
+            SizedBox(height: 4),
+            Text(
+              value,
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Helper method to get status color
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Out of Stock':
+        return AppColors.errorLight;
+      case 'Low Stock':
+        return Colors.orange;
+      case 'In Stock':
+        return Colors.green;
+      default:
+        return Colors.blue;
+    }
+  }
 
   void refreshData() {
     if (companyName.value.isNotEmpty) {

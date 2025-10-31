@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class AddDuesController extends GetxController {
   @override
@@ -23,12 +24,12 @@ class AddDuesController extends GetxController {
 
   // ADD DUE FORM
   final GlobalKey<FormState> addDueFormKey = GlobalKey<FormState>();
-  
+
   // Add Due Form Controllers
   final TextEditingController totalDueController = TextEditingController();
   final TextEditingController totalPaidController = TextEditingController();
   final TextEditingController paymentDateController = TextEditingController();
-  
+
   // Add Due Form States
   final RxBool isAddingDue = false.obs;
   final RxBool hasAddDueError = false.obs;
@@ -36,11 +37,11 @@ class AddDuesController extends GetxController {
   final RxString selectedCustomerId = ''.obs;
   final RxString selectedCustomerName = ''.obs;
   final RxDouble remainingDueAmount = 0.0.obs;
-  
+
   // Customer Data
   final RxList<Map<String, dynamic>> customers = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingCustomers = false.obs;
-  
+
   // Selected Payment Date
   final Rx<DateTime?> selectedPaymentDate = Rx<DateTime?>(null);
 
@@ -48,7 +49,7 @@ class AddDuesController extends GetxController {
   void onInit() {
     super.onInit();
     loadCustomers();
-    
+
     // Listen to due amount changes to calculate remaining
     totalDueController.addListener(calculateRemainingDue);
     totalPaidController.addListener(calculateRemainingDue);
@@ -58,9 +59,9 @@ class AddDuesController extends GetxController {
   Future<void> loadCustomers() async {
     try {
       isLoadingCustomers.value = true;
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url:_config.getCustomerDataDropdown,
+        url: _config.getCustomerDataDropdown,
         authToken: true,
       );
 
@@ -68,16 +69,18 @@ class AddDuesController extends GetxController {
         final data = response.data;
         if (data['payload'] != null && data['payload'] != null) {
           customers.value = List<Map<String, dynamic>>.from(
-            data['payload'].map((customer) => {
-              'id': customer['id'],
-              'name': customer['name'],
-              'primaryNumber': customer['primaryNumber'],
-              'defaultAddress': customer['defaultAddress'],
-              'profilePhoto': customer['profilePhoto'],
-            })
+            data['payload'].map(
+              (customer) => {
+                'id': customer['id'],
+                'name': customer['name'],
+                'primaryNumber': customer['primaryNumber'],
+                'defaultAddress': customer['defaultAddress'],
+                'profilePhoto': customer['profilePhoto'],
+              },
+            ),
           );
         }
-        
+
         log("✅ Customers loaded successfully: ${customers.length}");
       } else {
         throw Exception('Failed to load customers');
@@ -88,7 +91,7 @@ class AddDuesController extends GetxController {
         'Error',
         'Failed to load customers. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         icon: const Icon(Icons.error, color: Colors.white),
         margin: const EdgeInsets.all(16),
@@ -133,10 +136,11 @@ class AddDuesController extends GetxController {
         );
       },
     );
-    
+
     if (picked != null) {
       selectedPaymentDate.value = picked;
-      paymentDateController.text = "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
+      paymentDateController.text =
+          "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
     }
   }
 
@@ -171,7 +175,9 @@ class AddDuesController extends GetxController {
   }
 
   String? validatePaymentDate(String? value) {
-    return selectedPaymentDate.value == null ? 'Please select payment date' : null;
+    return selectedPaymentDate.value == null
+        ? 'Please select payment date'
+        : null;
   }
 
   /// Add due entry to database
@@ -199,7 +205,7 @@ class AddDuesController extends GetxController {
 
       // Make API call
       dio.Response? response = await _apiService.requestPostForApi(
-        url:_config. addCustomerDue,
+        url: _config.addCustomerDue,
         dictParameter: requestData,
         authToken: true,
       );
@@ -233,7 +239,7 @@ class AddDuesController extends GetxController {
         'Error',
         'Failed to create due entry. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         icon: const Icon(Icons.error, color: Colors.white),
         margin: const EdgeInsets.all(16),

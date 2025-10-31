@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/add_new_stock_operation_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
@@ -94,7 +95,7 @@ class AddNewStockForm extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
             spreadRadius: 1,
@@ -143,7 +144,7 @@ class AddNewStockForm extends StatelessWidget {
                     prefixText: '₹ ',
                     keyboardType: TextInputType.number,
                     readOnly: true,
-                  //  fillColor: Colors.grey.withValues(alpha: 0.1),
+                    //  fillColor: Colors.grey.withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -203,7 +204,7 @@ class AddNewStockForm extends StatelessWidget {
                       label: const Text('Add Item'),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                          color: const Color(0xFF10B981).withValues(alpha:0.3),
+                          color: const Color(0xFF10B981).withValues(alpha: 0.3),
                         ),
                         foregroundColor: const Color(0xFF10B981),
                         shape: RoundedRectangleBorder(
@@ -269,7 +270,9 @@ class AddNewStockForm extends StatelessWidget {
                                 ? null
                                 : controller.cancelAddBill,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withValues(alpha:0.3)),
+                          side: BorderSide(
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -327,7 +330,7 @@ class AddNewStockForm extends StatelessWidget {
                                       'Create Purchase Bill',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 13  ,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -348,17 +351,17 @@ class AddNewStockForm extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha:0.1),
+                          color: AppColors.errorLight.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.red.withValues(alpha:0.3),
+                            color: AppColors.errorLight.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
                           children: [
                             const Icon(
                               Icons.error_outline,
-                              color: Colors.red,
+                              color: AppColors.errorLight,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
@@ -366,7 +369,7 @@ class AddNewStockForm extends StatelessWidget {
                               child: Text(
                                 controller.addBillErrorMessage.value,
                                 style: const TextStyle(
-                                  color: Colors.red,
+                                  color: AppColors.errorLight,
                                   fontSize: 12,
                                 ),
                               ),
@@ -388,7 +391,7 @@ class AddNewStockForm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF10B981).withValues(alpha:0.1),
+            color: const Color(0xFF10B981).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, size: 16, color: const Color(0xFF10B981)),
@@ -424,9 +427,9 @@ class AddNewStockForm extends StatelessWidget {
             width: double.infinity,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha:0.05),
+              color: Colors.grey.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -451,9 +454,10 @@ class AddNewStockForm extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.check_circle,
-                              color: controller.isPaid.value
-                                  ? Colors.white
-                                  : const Color(0xFF6B7280),
+                              color:
+                                  controller.isPaid.value
+                                      ? Colors.white
+                                      : const Color(0xFF6B7280),
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -495,9 +499,10 @@ class AddNewStockForm extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.pending,
-                              color: !controller.isPaid.value
-                                  ? Colors.white
-                                  : const Color(0xFF6B7280),
+                              color:
+                                  !controller.isPaid.value
+                                      ? Colors.white
+                                      : const Color(0xFF6B7280),
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -526,264 +531,273 @@ class AddNewStockForm extends StatelessWidget {
     );
   }
 
- Widget _buildItemCard(
-  AddNewStockOperationController controller,
-  BillItem item,
-  int index,
-) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 16),
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.grey.withValues(alpha:0.05),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Item header with remove button
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha:0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                'Item ${index + 1}',
-                style: const TextStyle(
-                  color: Color(0xFF10B981),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+  Widget _buildItemCard(
+    AddNewStockOperationController controller,
+    BillItem item,
+    int index,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Item header with remove button
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
                 ),
-              ),
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () => controller.removeItem(index),
-              icon: Container(
-                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(
-                  Icons.delete_outline,
-                  color: Colors.red,
-                  size: 18,
+                child: Text(
+                  'Item ${index + 1}',
+                  style: const TextStyle(
+                    color: Color(0xFF10B981),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
+              const Spacer(),
+              IconButton(
+                onPressed: () => controller.removeItem(index),
+                icon: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.errorLight.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline,
+                    color: AppColors.errorLight,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
 
-        // Category Dropdown
-        Obx(
-          () => buildStyledDropdown(
-            labelText: 'Category *',
-            hintText: 'Select Category',
-            value: item.category.value.isEmpty ? null : item.category.value,
-            items: controller.categories,
-            onChanged: (String? newValue) {
-              controller.updateItemField(index, 'category', newValue ?? '');
+          // Category Dropdown
+          Obx(
+            () => buildStyledDropdown(
+              labelText: 'Category *',
+              hintText: 'Select Category',
+              value: item.category.value.isEmpty ? null : item.category.value,
+              items: controller.categories,
+              onChanged: (String? newValue) {
+                controller.updateItemField(index, 'category', newValue ?? '');
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Company and Model Row
+          Row(
+            children: [
+              Expanded(
+                child: buildStyledTextField(
+                  labelText: 'Company *',
+                  controller: item.companyController,
+                  hintText: 'Enter company name',
+                  onChanged: (value) {
+                    controller.updateItemField(index, 'company', value);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Company is required';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: buildStyledTextField(
+                  labelText: 'Model *',
+                  controller: item.modelController,
+                  hintText: 'Enter model name',
+                  onChanged: (value) {
+                    controller.updateItemField(index, 'model', value);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Model is required';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Show RAM and ROM only for SMARTPHONE category
+          Obx(
+            () =>
+                item.category.value.toUpperCase() == 'SMARTPHONE' ||
+                        item.category.value.toUpperCase() == 'TABLET'
+                    ? Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: buildStyledTextField(
+                                labelText: 'RAM (GB) *',
+                                controller: item.ramController,
+                                hintText: 'Enter RAM (e.g., 8)',
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  controller.updateItemField(
+                                    index,
+                                    'ram',
+                                    value,
+                                  );
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'RAM is required';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Enter valid RAM';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: buildStyledTextField(
+                                labelText: 'ROM (GB) *',
+                                controller: item.romController,
+                                hintText: 'Enter ROM (e.g., 128)',
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  controller.updateItemField(
+                                    index,
+                                    'rom',
+                                    value,
+                                  );
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'ROM is required';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Enter valid ROM';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    )
+                    : const SizedBox.shrink(),
+          ),
+
+          // Color and Quantity Row
+          Row(
+            children: [
+              Expanded(
+                child: buildStyledTextField(
+                  labelText: 'Color *',
+                  controller: item.colorController,
+                  hintText: 'Enter color',
+                  onChanged: (value) {
+                    controller.updateItemField(index, 'color', value);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Color is required';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: buildStyledTextField(
+                  labelText: 'Quantity *',
+                  controller: item.qtyController,
+                  hintText: '1',
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    controller.updateItemField(index, 'qty', value);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Required';
+                    }
+                    if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                      return 'Enter valid quantity';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Selling Price
+          buildStyledTextField(
+            labelText: 'Selling Price *',
+            controller: item.priceController,
+            hintText: '0',
+            prefixText: '₹ ',
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              controller.updateItemField(index, 'sellingPrice', value);
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Price is required';
+              }
+              if (double.tryParse(value) == null || double.parse(value) <= 0) {
+                return 'Enter valid price';
+              }
+              return null;
             },
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-        // Company and Model Row
-        Row(
-          children: [
-            Expanded(
-              child: buildStyledTextField(
-                labelText: 'Company *',
-                controller: item.companyController,
-                hintText: 'Enter company name',
-                onChanged: (value) {
-                  controller.updateItemField(index, 'company', value);
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Company is required';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: buildStyledTextField(
-                labelText: 'Model *',
-                controller: item.modelController,
-                hintText: 'Enter model name',
-                onChanged: (value) {
-                  controller.updateItemField(index, 'model', value);
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Model is required';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Show RAM and ROM only for SMARTPHONE category
-        Obx(
-          () => item.category.value.toUpperCase() == 'SMARTPHONE' || item.category.value.toUpperCase() == 'TABLET'
-              ? Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: buildStyledTextField(
-                            labelText: 'RAM (GB) *',
-                            controller: item.ramController,
-                            hintText: 'Enter RAM (e.g., 8)',
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              controller.updateItemField(index, 'ram', value);
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'RAM is required';
-                              }
-                              if (int.tryParse(value) == null) {
-                                return 'Enter valid RAM';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: buildStyledTextField(
-                            labelText: 'ROM (GB) *',
-                            controller: item.romController,
-                            hintText: 'Enter ROM (e.g., 128)',
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              controller.updateItemField(index, 'rom', value);
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'ROM is required';
-                              }
-                              if (int.tryParse(value) == null) {
-                                return 'Enter valid ROM';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                )
-              : const SizedBox.shrink(),
-        ),
-
-        // Color and Quantity Row
-        Row(
-          children: [
-            Expanded(
-              child: buildStyledTextField(
-                labelText: 'Color *',
-                controller: item.colorController,
-                hintText: 'Enter color',
-                onChanged: (value) {
-                  controller.updateItemField(index, 'color', value);
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Color is required';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: buildStyledTextField(
-                labelText: 'Quantity *',
-                controller: item.qtyController,
-                hintText: '1',
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  controller.updateItemField(index, 'qty', value);
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Required';
-                  }
-                  if (int.tryParse(value) == null || int.parse(value) <= 0) {
-                    return 'Enter valid quantity';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Selling Price
-        buildStyledTextField(
-          labelText: 'Selling Price *',
-          controller: item.priceController,
-          hintText: '0',
-          prefixText: '₹ ',
-          keyboardType: TextInputType.number,
-          onChanged: (value) {
-            controller.updateItemField(index, 'sellingPrice', value);
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Price is required';
-            }
-            if (double.tryParse(value) == null || double.parse(value) <= 0) {
-              return 'Enter valid price';
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 16),
-
-        // Description
-        buildStyledTextField(
-          labelText: 'Description (Optional)',
-          controller: item.descriptionController,
-          hintText: 'Enter item description',
-          maxLines: 3,
-          onChanged: (value) {
-            controller.updateItemField(index, 'description', value);
-          },
-        ),
-      ],
-    ),
-  );
-}
-
+          // Description
+          buildStyledTextField(
+            labelText: 'Description (Optional)',
+            controller: item.descriptionController,
+            hintText: 'Enter item description',
+            maxLines: 3,
+            onChanged: (value) {
+              controller.updateItemField(index, 'description', value);
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildFileUploadSection(AddNewStockOperationController controller) {
     return Obx(
       () => Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha:0.05),
+          color: Colors.grey.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.grey.withValues(alpha:0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             style: BorderStyle.solid,
           ),
         ),
@@ -821,7 +835,7 @@ class AddNewStockForm extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha:0.1),
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -868,7 +882,7 @@ class AddNewStockForm extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withValues(alpha:0.1),
+              color: const Color(0xFF10B981).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -905,10 +919,14 @@ class AddNewStockForm extends StatelessWidget {
             icon: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: AppColors.errorLight.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Icon(Icons.close, color: Colors.red, size: 16),
+              child: const Icon(
+                Icons.close,
+                color: AppColors.errorLight,
+                size: 16,
+              ),
             ),
           ),
         ],

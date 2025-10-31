@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smartbecho/utils/app_colors.dart';
+
 class ImageUploadWidget extends StatefulWidget {
   final String? labelText;
   final Function(File?)? onImageSelected;
@@ -42,7 +44,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
         maxHeight: 800,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
@@ -50,9 +52,9 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
         widget.onImageSelected?.call(_selectedImage);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
     }
   }
 
@@ -64,7 +66,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
         maxHeight: 800,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
@@ -72,9 +74,9 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
         widget.onImageSelected?.call(_selectedImage);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error taking photo: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error taking photo: $e')));
     }
   }
 
@@ -92,44 +94,45 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Select Image Source',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      builder:
+          (context) => Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildSourceOption(
-                  icon: Icons.camera_alt,
-                  label: 'Camera',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _takePhoto();
-                  },
+                const Text(
+                  'Select Image Source',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                _buildSourceOption(
-                  icon: Icons.photo_library,
-                  label: 'Gallery',
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage();
-                  },
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildSourceOption(
+                      icon: Icons.camera_alt,
+                      label: 'Camera',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _takePhoto();
+                      },
+                    ),
+                    _buildSourceOption(
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _pickImage();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
@@ -151,10 +154,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
             child: Icon(icon, color: Colors.white, size: 32),
           ),
           const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white70),
-          ),
+          Text(label, style: const TextStyle(color: Colors.white70)),
         ],
       ),
     );
@@ -182,62 +182,63 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
             height: widget.height,
             width: widget.width,
             decoration: BoxDecoration(
-          //    color: const Color(0xFF374151),
-              border: Border.all(color: const Color(0xFF4B5563),width: 0.4),
+              //    color: const Color(0xFF374151),
+              border: Border.all(color: const Color(0xFF4B5563), width: 0.4),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: _selectedImage != null
-                ? Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          _selectedImage!,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
+            child:
+                _selectedImage != null
+                    ? Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            _selectedImage!,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: GestureDetector(
-                          onTap: _removeImage,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 16,
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: GestureDetector(
+                            onTap: _removeImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: AppColors.errorLight,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.cloud_upload_outlined,
-                        color: Color(0xFF6366F1),
-                        size: 32,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.uploadText,
-                        style: const TextStyle(
+                      ],
+                    )
+                    : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.cloud_upload_outlined,
                           color: Color(0xFF6366F1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          size: 32,
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.uploadText,
+                          style: const TextStyle(
+                            color: Color(0xFF6366F1),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
           ),
         ),
       ],

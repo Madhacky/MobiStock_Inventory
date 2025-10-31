@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class PDFDownloadService {
   static final dio.Dio _dio = dio.Dio();
@@ -23,7 +24,7 @@ class PDFDownloadService {
         'Download Started',
         'Downloading $fileName...',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blue.withValues(alpha:0.8),
+        backgroundColor: Colors.blue.withValues(alpha: 0.8),
         colorText: Colors.white,
         showProgressIndicator: true,
         duration: const Duration(seconds: 2),
@@ -36,7 +37,7 @@ class PDFDownloadService {
           'Permission Denied',
           'Storage permission is required to download files',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withValues(alpha:0.8),
+          backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -51,7 +52,7 @@ class PDFDownloadService {
       _dio.options.validateStatus = (status) => status! < 500;
 
       // Download the file with progress tracking
-     dio.Response response = await _dio.download(
+      dio.Response response = await _dio.download(
         url,
         savePath,
         onReceiveProgress: (received, total) {
@@ -68,15 +69,12 @@ class PDFDownloadService {
           'Download Complete',
           '$fileName saved successfully',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withValues(alpha:0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           colorText: Colors.white,
           duration: const Duration(seconds: 3),
           mainButton: TextButton(
             onPressed: () => _openFile(savePath),
-            child: const Text(
-              'Open',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text('Open', style: TextStyle(color: Colors.white)),
           ),
         );
 
@@ -113,9 +111,8 @@ class PDFDownloadService {
       }
 
       // Fallback to legacy storage permissions
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.storage,
-      ].request();
+      Map<Permission, PermissionStatus> statuses =
+          await [Permission.storage].request();
 
       return statuses[Permission.storage]?.isGranted ?? false;
     } else if (Platform.isIOS) {
@@ -125,7 +122,10 @@ class PDFDownloadService {
   }
 
   /// Gets the appropriate save path based on platform
-  static Future<String> _getSavePath(String fileName, String? customPath) async {
+  static Future<String> _getSavePath(
+    String fileName,
+    String? customPath,
+  ) async {
     Directory? directory;
 
     if (Platform.isAndroid) {
@@ -171,7 +171,7 @@ class PDFDownloadService {
       'Download Failed',
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red.withValues(alpha:0.8),
+      backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
       colorText: Colors.white,
       duration: const Duration(seconds: 4),
     );

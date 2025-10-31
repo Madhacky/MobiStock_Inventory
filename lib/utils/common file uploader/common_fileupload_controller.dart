@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
+import 'package:smartbecho/utils/app_colors.dart';
+
 class FileUploadController extends GetxController {
   var isFileUploading = false.obs;
   var selectedFile = Rx<File?>(null);
@@ -16,23 +18,23 @@ class FileUploadController extends GetxController {
   }) async {
     try {
       isFileUploading.value = true;
-      
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: fileType,
         allowedExtensions: allowedExtensions ?? ['jpg', 'jpeg', 'png', 'pdf'],
         allowMultiple: false,
       );
-      
+
       if (result != null && result.files.single.path != null) {
         selectedFile.value = File(result.files.single.path!);
         fileName.value = result.files.single.name;
         fileSize.value = _formatFileSize(result.files.single.size);
-        
+
         // Call callback if provided
         if (onFileSelected != null) {
           onFileSelected(selectedFile.value!);
         }
-        
+
         Get.snackbar(
           'Success',
           'File selected: ${result.files.single.name}',
@@ -53,7 +55,7 @@ class FileUploadController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to pick file: ${e.toString()}',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
@@ -66,7 +68,7 @@ class FileUploadController extends GetxController {
     selectedFile.value = null;
     fileName.value = '';
     fileSize.value = '';
-    
+
     if (onFileRemoved != null) {
       onFileRemoved();
     }

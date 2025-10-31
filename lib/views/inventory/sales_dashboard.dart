@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/inventory_stock_comtroller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/inventory/components/company_stock_grid.dart';
@@ -19,7 +20,8 @@ class SalesStockDashboard extends StatelessWidget {
           onRefresh: controller.fetchInventoryData,
           color: const Color(0xFF4CAF50),
           child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(), // Ensures pull-to-refresh works
+            physics:
+                const AlwaysScrollableScrollPhysics(), // Ensures pull-to-refresh works
             child: Column(
               children: [
                 buildCustomAppBar("Sales & Inventory Dashboard", isdark: true),
@@ -28,7 +30,8 @@ class SalesStockDashboard extends StatelessWidget {
                 Obx(() {
                   // Show shimmer only when BOTH main loading states are true
                   final isMainLoading = controller.isLoading.value;
-                  final isSummaryLoading = controller.isbusinessSummaryCardsLoading.value;
+                  final isSummaryLoading =
+                      controller.isbusinessSummaryCardsLoading.value;
                   final shouldShowShimmer = isMainLoading && isSummaryLoading;
 
                   if (shouldShowShimmer) {
@@ -84,7 +87,10 @@ class BusinessSummaryCard extends StatelessWidget {
                 spreadRadius: 1,
               ),
             ],
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
+            border: Border.all(
+              color: Colors.grey.withValues(alpha: 0.1),
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,21 +124,16 @@ class BusinessSummaryCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              
+
               // Loading indicator
               Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFF4CAF50),
-                ),
+                child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
               ),
               const SizedBox(height: 20),
-              
+
               Text(
                 'Loading business overview...',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -155,7 +156,10 @@ class BusinessSummaryCard extends StatelessWidget {
                 spreadRadius: 1,
               ),
             ],
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
+            border: Border.all(
+              color: Colors.grey.withValues(alpha: 0.1),
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,12 +169,12 @@ class BusinessSummaryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.1),
+                      color: AppColors.errorLight.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.error_outline,
-                      color: Colors.red,
+                      color: AppColors.errorLight,
                       size: 22,
                     ),
                   ),
@@ -191,7 +195,7 @@ class BusinessSummaryCard extends StatelessWidget {
               Text(
                 'Failed to load business summary',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: AppColors.errorLight,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -199,16 +203,13 @@ class BusinessSummaryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 controller.businessSummaryCardsErrorMessage.value,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => controller.fetchBusinesssummaryegories(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: AppColors.errorLight,
                   foregroundColor: Colors.white,
                 ),
                 child: Text('Retry'),
@@ -232,7 +233,10 @@ class BusinessSummaryCard extends StatelessWidget {
               spreadRadius: 1,
             ),
           ],
-          border: Border.all(color: Colors.grey.withValues(alpha: 0.1), width: 1),
+          border: Border.all(
+            color: Colors.grey.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,9 +330,10 @@ class BusinessSummaryCard extends StatelessWidget {
                       child: _buildMetricCard(
                         icon: Icons.emoji_events_outlined,
                         title: 'Top Brand',
-                        value: controller.topSellingBrandAndModel.isEmpty 
-                            ? 'N/A' 
-                            : controller.topSellingBrandAndModel,
+                        value:
+                            controller.topSellingBrandAndModel.isEmpty
+                                ? 'N/A'
+                                : controller.topSellingBrandAndModel,
                         color: const Color(0xFFEF4444),
                         subtitle: 'Best seller',
                         isTextValue: true,

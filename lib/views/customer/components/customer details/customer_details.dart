@@ -12,7 +12,9 @@ class CustomerDetailsScreen extends StatefulWidget {
 }
 
 class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
-  final CustomerDetailsController controller = Get.put(CustomerDetailsController());
+  final CustomerDetailsController controller = Get.put(
+    CustomerDetailsController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -74,11 +76,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red[300],
-                ),
+                Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
                 SizedBox(height: 16),
                 Text(
                   'Failed to load customer details',
@@ -91,10 +89,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                 SizedBox(height: 8),
                 Text(
                   controller.errorMessage.value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 24),
@@ -128,11 +123,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.person_outline,
-                  size: 64,
-                  color: Colors.grey[300],
-                ),
+                Icon(Icons.person_outline, size: 64, color: Colors.grey[300]),
                 SizedBox(height: 16),
                 Text(
                   'No customer details found',
@@ -145,10 +136,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                 SizedBox(height: 8),
                 Text(
                   'Please try again later',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                 ),
               ],
             ),
@@ -186,149 +174,160 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
     );
   }
 
-Widget _buildCustomerHeader() {
-  final customer = controller.customerDetails.value!;
-  return Container(
-    margin: EdgeInsets.all(16),
-    padding: EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha:0.05),
-          blurRadius: 10,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [Color(0xFF6C5CE7), Color(0xFF74B9FF)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+  Widget _buildCustomerHeader() {
+    final customer = controller.customerDetails.value!;
+    return Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF6C5CE7), Color(0xFF74B9FF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
+                child:
+                    customer.profilePhoto != null
+                        ? ClipOval(
+                          child: Image.network(
+                            customer.profilePhoto!,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildAvatarFallback(customer.name);
+                            },
+                          ),
+                        )
+                        : _buildAvatarFallback(customer.name),
               ),
-              child: customer.profilePhoto != null
-                  ? ClipOval(
-                      child: Image.network(
-                        customer.profilePhoto!,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildAvatarFallback(customer.name);
-                        },
-                      ),
-                    )
-                  : _buildAvatarFallback(customer.name),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          customer.name,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
+              SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            customer.name,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[800],
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: controller.getCustomerTypeColor(),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              controller.getCustomerTypeIcon(),
-                              size: 12,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              controller.getCustomerType(),
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: controller.getCustomerTypeColor(),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                controller.getCustomerTypeIcon(),
+                                size: 12,
                                 color: Colors.white,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 4),
+                              Text(
+                                controller.getCustomerType(),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      customer.primaryNumber,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    customer.primaryNumber,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
                     ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    customer.defaultAddress,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[500],
+                    SizedBox(height: 4),
+                    Text(
+                      customer.defaultAddress,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionButton(
+                  icon: Icons.call,
+                  label: 'Call',
+                  onPressed: controller.callCustomer,
+                  color: Color(0xFF51CF66),
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                child: Obx(
+                  () => _buildActionButton(
+                    icon:
+                        controller.isNotifying.value
+                            ? Icons.hourglass_empty
+                            : Icons.notifications_active,
+                    label:
+                        controller.isNotifying.value
+                            ? 'Notifying...'
+                            : 'Notify',
+                    onPressed:
+                        controller.isNotifying.value
+                            ? null
+                            : controller.notifyCustomer,
+                    color: AppColors.warningLight,
+                    isLoading: controller.isNotifying.value,
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildActionButton(
-                icon: Icons.call,
-                label: 'Call',
-                onPressed: controller.callCustomer,
-                color: Color(0xFF51CF66),
-              ),
-            ),
-            SizedBox(width: 5),
-            Expanded(
-              child: Obx(() => _buildActionButton(
-                icon: controller.isNotifying.value 
-                    ? Icons.hourglass_empty 
-                    : Icons.notifications_active,
-                label: controller.isNotifying.value ? 'Notifying...' : 'Notify',
-                onPressed: controller.isNotifying.value ? null : controller.notifyCustomer,
-                color: AppTheme.warningLight,
-                isLoading: controller.isNotifying.value,
-              )),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAvatarFallback(String name) {
     return Center(
       child: Text(
@@ -342,50 +341,46 @@ Widget _buildCustomerHeader() {
     );
   }
 
- Widget _buildActionButton({
-  required IconData icon,
-  required String label,
-  required VoidCallback? onPressed,
-  required Color color,
-  bool isLoading = false,
-}) {
-  return ElevatedButton(
-    onPressed: onPressed,
-    style: ElevatedButton.styleFrom(
-      backgroundColor: onPressed == null ? color.withValues(alpha:0.6) : color,
-      foregroundColor: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback? onPressed,
+    required Color color,
+    bool isLoading = false,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor:
+            onPressed == null ? color.withValues(alpha: 0.6) : color,
+        foregroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 2,
       ),
-      elevation: 2,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (isLoading)
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          )
-        else
-          Icon(icon, size: 16),
-        SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (isLoading)
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          else
+            Icon(icon, size: 16),
+          SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Widget _buildStatsCards() {
     return Container(
@@ -436,7 +431,7 @@ Widget _buildCustomerHeader() {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -457,10 +452,7 @@ Widget _buildCustomerHeader() {
           SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 10, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -508,7 +500,7 @@ Widget _buildCustomerHeader() {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: Offset(0, 2),
             ),
@@ -528,7 +520,10 @@ Widget _buildCustomerHeader() {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withValues(alpha:0.2) : Color(0xFF6C5CE7),
+                color:
+                    isSelected
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : Color(0xFF6C5CE7),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -587,27 +582,22 @@ Widget _buildCustomerHeader() {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final sale = controller.salesList[index];
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: _buildSaleCard(sale),
-          );
-        },
-        childCount: controller.salesList.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final sale = controller.salesList[index];
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: _buildSaleCard(sale),
+        );
+      }, childCount: controller.salesList.length),
     );
   }
 
   Widget _buildSaleCard(Sale sale) {
-    
-    return Obx(
-     (){
-    final isExpanded = controller.expandedSaleId.value == sale.id;
-      
+    return Obx(() {
+      final isExpanded = controller.expandedSaleId.value == sale.id;
+
       return GestureDetector(
-              onTap: () => controller.toggleSaleExpansion(sale.id),
+        onTap: () => controller.toggleSaleExpansion(sale.id),
 
         child: Container(
           decoration: BoxDecoration(
@@ -615,7 +605,7 @@ Widget _buildCustomerHeader() {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha:0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: Offset(0, 2),
               ),
@@ -634,7 +624,7 @@ Widget _buildCustomerHeader() {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+                            color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -680,7 +670,10 @@ Widget _buildCustomerHeader() {
                             ),
                             SizedBox(height: 4),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: controller.getStatusColor(sale.paid),
                                 borderRadius: BorderRadius.circular(8),
@@ -698,7 +691,9 @@ Widget _buildCustomerHeader() {
                         ),
                         SizedBox(width: 8),
                         Icon(
-                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          isExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
                           color: Colors.grey[600],
                         ),
                       ],
@@ -709,13 +704,17 @@ Widget _buildCustomerHeader() {
                         _buildSaleInfoChip(
                           icon: Icons.payment,
                           label: sale.paymentMode,
-                          color: controller.getPaymentModeColor(sale.paymentMode),
+                          color: controller.getPaymentModeColor(
+                            sale.paymentMode,
+                          ),
                         ),
                         SizedBox(width: 8),
                         _buildSaleInfoChip(
                           icon: Icons.account_balance_wallet,
                           label: sale.paymentMethod,
-                          color: controller.getPaymentMethodColor(sale.paymentMethod),
+                          color: controller.getPaymentMethodColor(
+                            sale.paymentMethod,
+                          ),
                         ),
                         SizedBox(width: 8),
                         _buildSaleInfoChip(
@@ -732,8 +731,8 @@ Widget _buildCustomerHeader() {
             ],
           ),
         ),
-      );},
-    );
+      );
+    });
   }
 
   Widget _buildSaleInfoChip({
@@ -744,7 +743,7 @@ Widget _buildCustomerHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -804,7 +803,7 @@ Widget _buildCustomerHeader() {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+                        color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -942,41 +941,35 @@ Widget _buildCustomerHeader() {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final due = controller.duesList[index];
-          return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: _buildDueCard(due),
-          );
-        },
-        childCount: controller.duesList.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final due = controller.duesList[index];
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: _buildDueCard(due),
+        );
+      }, childCount: controller.duesList.length),
     );
   }
 
   Widget _buildDueCard(DueDetail due) {
-   
-    
-    return Obx(
-      (){
-         final isExpanded = controller.expandedDueId.value == due.id;
-         return GestureDetector(
-              onTap: () => controller.toggleDueExpansion(due.id),
+    return Obx(() {
+      final isExpanded = controller.expandedDueId.value == due.id;
+      return GestureDetector(
+        onTap: () => controller.toggleDueExpansion(due.id),
 
-           child: Container(
-                   decoration: BoxDecoration(
+        child: Container(
+          decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha:0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: Offset(0, 2),
               ),
             ],
-                   ),
-                   child: Column(
+          ),
+          child: Column(
             children: [
               Container(
                 padding: EdgeInsets.all(16),
@@ -989,7 +982,9 @@ Widget _buildCustomerHeader() {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: controller.getDueStatusColor(due).withValues(alpha:0.1),
+                            color: controller
+                                .getDueStatusColor(due)
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -1035,7 +1030,10 @@ Widget _buildCustomerHeader() {
                             ),
                             SizedBox(height: 4),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: controller.getDueStatusColor(due),
                                 borderRadius: BorderRadius.circular(8),
@@ -1053,7 +1051,9 @@ Widget _buildCustomerHeader() {
                         ),
                         SizedBox(width: 8),
                         Icon(
-                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          isExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
                           color: Colors.grey[600],
                         ),
                       ],
@@ -1085,10 +1085,10 @@ Widget _buildCustomerHeader() {
               ),
               if (isExpanded) _buildExpandedDueContent(due),
             ],
-                   ),
-                 ),
-         );}
-    );
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildDueInfoChip({
@@ -1099,7 +1099,7 @@ Widget _buildCustomerHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1198,7 +1198,7 @@ Widget _buildCustomerHeader() {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: Color(0xFF51CF66).withValues(alpha:0.1),
+                          color: Color(0xFF51CF66).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(

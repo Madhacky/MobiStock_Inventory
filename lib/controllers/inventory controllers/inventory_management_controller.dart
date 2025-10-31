@@ -16,6 +16,7 @@ import 'package:smartbecho/services/shared_preferences_services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class InventoryController extends GetxController {
   // PlutoGrid Manager
@@ -135,10 +136,13 @@ class InventoryController extends GetxController {
       );
     }
   }
+
   Future<String> get gstNumber => getGstNum();
   Future<String> getGstNum() async {
-    String gstNumber = await SharedPreferencesHelper.getGstNumber()??"No GST Number Available";
-    
+    String gstNumber =
+        await SharedPreferencesHelper.getGstNumber() ??
+        "No GST Number Available";
+
     return gstNumber;
   }
 
@@ -910,7 +914,7 @@ class InventoryController extends GetxController {
       textConfirm: 'Delete',
       textCancel: 'Cancel',
       confirmTextColor: Colors.white,
-      buttonColor: Colors.red,
+      buttonColor: AppColors.errorLight,
       onConfirm: () {
         allFetchedItems.removeWhere((item) => item.id.toString() == itemId);
         inventoryItems.removeWhere((item) => item.id.toString() == itemId);

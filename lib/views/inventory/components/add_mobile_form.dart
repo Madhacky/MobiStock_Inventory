@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/Inventory_crud_operation_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/image_uploader_widget.dart';
@@ -233,9 +234,10 @@ class AddNewMobileInventoryForm extends StatelessWidget {
               return buildStyledDropdown(
                 labelText: 'Category',
                 hintText: 'Select Category',
-                value: controller.selectedCategory.value.isEmpty
-                    ? null
-                    : controller.selectedCategory.value,
+                value:
+                    controller.selectedCategory.value.isEmpty
+                        ? null
+                        : controller.selectedCategory.value,
                 items: controller.categories,
                 onChanged: (value) => controller.onCategoryChanged(value ?? ''),
                 validator: controller.validateCategory,
@@ -261,11 +263,13 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 return buildStyledDropdown(
                   labelText: 'Company',
                   hintText: 'Select Company',
-                  value: controller.selectedAddCompany.value.isEmpty
-                      ? null
-                      : controller.selectedAddCompany.value,
+                  value:
+                      controller.selectedAddCompany.value.isEmpty
+                          ? null
+                          : controller.selectedAddCompany.value,
                   items: controller.companies,
-                  onChanged: (value) => controller.onAddCompanyChanged(value ?? ''),
+                  onChanged:
+                      (value) => controller.onAddCompanyChanged(value ?? ''),
                   validator: controller.validateCompany,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.edit, size: 16),
@@ -313,11 +317,13 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 return buildStyledDropdown(
                   labelText: 'Model',
                   hintText: 'Select Model',
-                  value: controller.selectedAddModel.value.isEmpty
-                      ? null
-                      : controller.selectedAddModel.value,
+                  value:
+                      controller.selectedAddModel.value.isEmpty
+                          ? null
+                          : controller.selectedAddModel.value,
                   items: controller.models,
-                  onChanged: (value) => controller.onAddModelChanged(value ?? ''),
+                  onChanged:
+                      (value) => controller.onAddModelChanged(value ?? ''),
                   validator: controller.validateModel,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.edit, size: 16),
@@ -344,12 +350,15 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                           child: buildStyledDropdown(
                             labelText: 'RAM (GB)',
                             hintText: 'Select RAM',
-                            value: controller.selectedAddRam.value.isEmpty
-                                ? null
-                                : controller.selectedAddRam.value,
+                            value:
+                                controller.selectedAddRam.value.isEmpty
+                                    ? null
+                                    : controller.selectedAddRam.value,
                             items: controller.ramOptions,
                             enabled: true,
-                            onChanged: (value) => controller.onAddRamChanged(value ?? ''),
+                            onChanged:
+                                (value) =>
+                                    controller.onAddRamChanged(value ?? ''),
                             validator: controller.validateRam,
                           ),
                         ),
@@ -358,12 +367,15 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                           child: buildStyledDropdown(
                             labelText: 'Storage (ROM) (GB)',
                             hintText: 'Select Storage',
-                            value: controller.selectedAddStorage.value.isEmpty
-                                ? null
-                                : controller.selectedAddStorage.value,
+                            value:
+                                controller.selectedAddStorage.value.isEmpty
+                                    ? null
+                                    : controller.selectedAddStorage.value,
                             items: controller.storageOptions,
                             enabled: true,
-                            onChanged: (value) => controller.onAddStorageChanged(value ?? ''),
+                            onChanged:
+                                (value) =>
+                                    controller.onAddStorageChanged(value ?? ''),
                             validator: controller.validateStorage,
                           ),
                         ),
@@ -390,11 +402,13 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                 return buildStyledDropdown(
                   labelText: 'Color',
                   hintText: 'Select Color',
-                  value: controller.selectedAddColor.value.isEmpty
-                      ? null
-                      : controller.selectedAddColor.value,
+                  value:
+                      controller.selectedAddColor.value.isEmpty
+                          ? null
+                          : controller.selectedAddColor.value,
                   items: controller.colorOptions,
-                  onChanged: (value) => controller.onAddColorChanged(value ?? ''),
+                  onChanged:
+                      (value) => controller.onAddColorChanged(value ?? ''),
                   validator: controller.validateColor,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.edit, size: 16),
@@ -469,71 +483,86 @@ class AddNewMobileInventoryForm extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Purchase Date - REQUIRED
-            Obx(() => InkWell(
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: Get.context!,
-                  initialDate: controller.selectedPurchaseDate.value ?? DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime.now(),
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        colorScheme: const ColorScheme.light(
-                          primary: Color(0xFF6366F1),
-                          onPrimary: Colors.white,
-                          onSurface: Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
-                );
-                if (picked != null) {
-                  controller.onPurchaseDateChanged(picked);
-                }
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Purchase Date',
-                    style: TextStyle(
-                      color: Color(0xFF374151),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFB),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_today, size: 18, color: Color(0xFF6B7280)),
-                        const SizedBox(width: 12),
-                        Text(
-                          controller.selectedPurchaseDate.value != null
-                              ? controller.formatDateForApi(controller.selectedPurchaseDate.value!)
-                              : 'Select purchase date',
-                          style: TextStyle(
-                            color: controller.selectedPurchaseDate.value != null
-                                ? const Color(0xFF1A1A1A)
-                                : const Color(0xFF9CA3AF),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+            Obx(
+              () => InkWell(
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: Get.context!,
+                    initialDate:
+                        controller.selectedPurchaseDate.value ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime.now(),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.light(
+                            primary: Color(0xFF6366F1),
+                            onPrimary: Colors.white,
+                            onSurface: Color(0xFF1A1A1A),
                           ),
                         ),
-                      ],
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (picked != null) {
+                    controller.onPurchaseDateChanged(picked);
+                  }
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Purchase Date',
+                      style: TextStyle(
+                        color: Color(0xFF374151),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF9FAFB),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.grey.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 18,
+                            color: Color(0xFF6B7280),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            controller.selectedPurchaseDate.value != null
+                                ? controller.formatDateForApi(
+                                  controller.selectedPurchaseDate.value!,
+                                )
+                                : 'Select purchase date',
+                            style: TextStyle(
+                              color:
+                                  controller.selectedPurchaseDate.value != null
+                                      ? const Color(0xFF1A1A1A)
+                                      : const Color(0xFF9CA3AF),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
             const SizedBox(height: 16),
 
             // Purchase Notes - OPTIONAL
@@ -575,11 +604,14 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                     child: Container(
                       height: 48,
                       child: OutlinedButton(
-                        onPressed: controller.isAddingMobile.value
-                            ? null
-                            : controller.cancelAddMobile,
+                        onPressed:
+                            controller.isAddingMobile.value
+                                ? null
+                                : controller.cancelAddMobile,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
+                          side: BorderSide(
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -600,9 +632,10 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                     child: Container(
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: controller.isAddingMobile.value
-                            ? null
-                            : controller.addMobileToInventory,
+                        onPressed:
+                            controller.isAddingMobile.value
+                                ? null
+                                : controller.addMobileToInventory,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF6366F1),
                           shape: RoundedRectangleBorder(
@@ -610,37 +643,38 @@ class AddNewMobileInventoryForm extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: controller.isAddingMobile.value
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              )
-                            : const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                  SizedBox(width: 2),
-                                  Text(
-                                    'Add to Inventory',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      overflow: TextOverflow.fade,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
+                        child:
+                            controller.isAddingMobile.value
+                                ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
                                     ),
                                   ),
-                                ],
-                              ),
+                                )
+                                : const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                    SizedBox(width: 2),
+                                    Text(
+                                      'Add to Inventory',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        overflow: TextOverflow.fade,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                       ),
                     ),
                   ),
@@ -650,39 +684,40 @@ class AddNewMobileInventoryForm extends StatelessWidget {
 
             // Error Message Display
             Obx(
-              () => controller.hasAddMobileError.value
-                  ? Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.red.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 20,
+              () =>
+                  controller.hasAddMobileError.value
+                      ? Container(
+                        margin: const EdgeInsets.only(top: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.errorLight.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColors.errorLight.withValues(alpha: 0.3),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              controller.addMobileErrorMessage.value,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: AppColors.errorLight,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                controller.addMobileErrorMessage.value,
+                                style: const TextStyle(
+                                  color: AppColors.errorLight,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+                          ],
+                        ),
+                      )
+                      : const SizedBox.shrink(),
             ),
           ],
         ),

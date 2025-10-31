@@ -56,7 +56,7 @@ class AddCustomerForm extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppTheme.primaryLight,
+                color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -107,15 +107,15 @@ class AddCustomerForm extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                color: AppColors.primaryLight.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.primaryLight.withValues(alpha: 0.2),
+                  color: AppColors.primaryLight.withValues(alpha: 0.2),
                 ),
               ),
               child: const Icon(
                 Icons.person,
-                color: AppTheme.primaryLight,
+                color: AppColors.primaryLight,
                 size: 24,
               ),
             ),
@@ -154,7 +154,7 @@ class AddCustomerForm extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                  color: AppColors.primaryLight.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
@@ -336,7 +336,7 @@ class AddCustomerForm extends StatelessWidget {
                                   ? null
                                   : controller.addCustomer,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryLight,
+                            backgroundColor: AppColors.primaryLight,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -388,17 +388,19 @@ class AddCustomerForm extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 16),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: AppColors.errorLight.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: Colors.red.withValues(alpha: 0.3),
+                              color: AppColors.errorLight.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                           ),
                           child: Row(
                             children: [
                               const Icon(
                                 Icons.error_outline,
-                                color: Colors.red,
+                                color: AppColors.errorLight,
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
@@ -406,7 +408,7 @@ class AddCustomerForm extends StatelessWidget {
                                 child: Text(
                                   controller.addCustomerErrorMessage.value,
                                   style: const TextStyle(
-                                    color: Colors.red,
+                                    color: AppColors.errorLight,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -431,10 +433,10 @@ class AddCustomerForm extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: AppTheme.primaryLight.withValues(alpha: 0.1),
+            color: AppColors.primaryLight.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: AppTheme.primaryLight, size: 16),
+          child: Icon(icon, color: AppColors.primaryLight, size: 16),
         ),
         const SizedBox(width: 12),
         Text(

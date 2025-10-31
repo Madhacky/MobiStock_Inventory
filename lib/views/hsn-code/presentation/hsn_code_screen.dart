@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/views/hsn-code/controllers/hsn_code_controller.dart';
 import 'package:smartbecho/views/hsn-code/models/hsn_code_model.dart';
@@ -456,7 +457,7 @@ class HsnCodeScreen extends StatelessWidget {
                               color:
                                   hsnCode.isActive
                                       ? Colors.green.withOpacity(0.1)
-                                      : Colors.red.withOpacity(0.1),
+                                      : AppColors.errorLight.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -465,7 +466,7 @@ class HsnCodeScreen extends StatelessWidget {
                                 color:
                                     hsnCode.isActive
                                         ? Colors.green
-                                        : Colors.red,
+                                        : AppColors.errorLight,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -491,7 +492,7 @@ class HsnCodeScreen extends StatelessWidget {
                                       hsnCode.id.toString(),
                                     ),
                                 icon: const Icon(Icons.delete),
-                                color: Colors.red,
+                                color: AppColors.errorLight,
                               ),
                             ],
                           ),
@@ -739,7 +740,9 @@ class HsnCodeScreen extends StatelessWidget {
                   controller.deleteHsnCode(id);
                   Get.back();
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.errorLight,
+                ),
                 child: const Text('Delete'),
               ),
             ],

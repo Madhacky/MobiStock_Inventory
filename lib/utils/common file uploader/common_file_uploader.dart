@@ -1,9 +1,9 @@
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common%20file%20uploader/common_fileupload_controller.dart';
 
 class CommonFileUploadWidget extends StatelessWidget {
@@ -44,13 +44,20 @@ class CommonFileUploadWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FileUploadController fileController = controller ?? Get.put(FileUploadController());
-    
+    final FileUploadController fileController =
+        controller ?? Get.put(FileUploadController());
+
     final Color effectivePrimaryColor = primaryColor ?? const Color(0xFF10B981);
-    final Color effectiveBackgroundColor = backgroundColor ?? 
-        (isDarkTheme ? const Color(0xFF2A2A2A) : Colors.grey.withValues(alpha:0.05));
-    final Color effectiveBorderColor = borderColor ?? 
-        (isDarkTheme ? Colors.grey.withValues(alpha:0.2) : Colors.grey.withValues(alpha:0.3));
+    final Color effectiveBackgroundColor =
+        backgroundColor ??
+        (isDarkTheme
+            ? const Color(0xFF2A2A2A)
+            : Colors.grey.withValues(alpha: 0.05));
+    final Color effectiveBorderColor =
+        borderColor ??
+        (isDarkTheme
+            ? Colors.grey.withValues(alpha: 0.2)
+            : Colors.grey.withValues(alpha: 0.3));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,28 +65,48 @@ class CommonFileUploadWidget extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: isDarkTheme ? const Color(0xFF9CA3AF) : const Color(0xFF374151),
+            color:
+                isDarkTheme ? const Color(0xFF9CA3AF) : const Color(0xFF374151),
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 6),
-        Obx(() => fileController.selectedFile.value == null
-            ? _buildFilePickerButton(fileController, effectivePrimaryColor, effectiveBackgroundColor, effectiveBorderColor)
-            : _buildSelectedFileCard(fileController, effectivePrimaryColor, effectiveBackgroundColor, effectiveBorderColor)),
+        Obx(
+          () =>
+              fileController.selectedFile.value == null
+                  ? _buildFilePickerButton(
+                    fileController,
+                    effectivePrimaryColor,
+                    effectiveBackgroundColor,
+                    effectiveBorderColor,
+                  )
+                  : _buildSelectedFileCard(
+                    fileController,
+                    effectivePrimaryColor,
+                    effectiveBackgroundColor,
+                    effectiveBorderColor,
+                  ),
+        ),
       ],
     );
   }
 
-  Widget _buildFilePickerButton(FileUploadController fileController, Color primaryColor, Color backgroundColor, Color borderColor) {
+  Widget _buildFilePickerButton(
+    FileUploadController fileController,
+    Color primaryColor,
+    Color backgroundColor,
+    Color borderColor,
+  ) {
     return InkWell(
-      onTap: fileController.isFileUploading.value 
-          ? null 
-          : () => fileController.pickFile(
-              allowedExtensions: allowedExtensions,
-              fileType: fileType,
-              onFileSelected: onFileSelected,
-            ),
+      onTap:
+          fileController.isFileUploading.value
+              ? null
+              : () => fileController.pickFile(
+                allowedExtensions: allowedExtensions,
+                fileType: fileType,
+                onFileSelected: onFileSelected,
+              ),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: double.infinity,
@@ -103,24 +130,30 @@ class CommonFileUploadWidget extends StatelessWidget {
                 ),
               )
             else
-              customIcon ?? Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: primaryColor.withValues(alpha:0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.cloud_upload_rounded,
-                  color: primaryColor,
-                  size: 24,
-                ),
-              ),
+              customIcon ??
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: primaryColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.cloud_upload_rounded,
+                      color: primaryColor,
+                      size: 24,
+                    ),
+                  ),
             const SizedBox(height: 12),
             Text(
-              fileController.isFileUploading.value ? 'Selecting file...' : title,
+              fileController.isFileUploading.value
+                  ? 'Selecting file...'
+                  : title,
               style: TextStyle(
-                color: isDarkTheme ? const Color(0xFF374151) : const Color(0xFF1F2937),
+                color:
+                    isDarkTheme
+                        ? const Color(0xFF374151)
+                        : const Color(0xFF1F2937),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -129,7 +162,8 @@ class CommonFileUploadWidget extends StatelessWidget {
             Text(
               fileController.isFileUploading.value ? 'Please wait' : subtitle,
               style: TextStyle(
-                color: isDarkTheme ? Colors.grey.shade600 : Colors.grey.shade500,
+                color:
+                    isDarkTheme ? Colors.grey.shade600 : Colors.grey.shade500,
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
               ),
@@ -141,7 +175,12 @@ class CommonFileUploadWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSelectedFileCard(FileUploadController fileController, Color primaryColor, Color backgroundColor, Color borderColor) {
+  Widget _buildSelectedFileCard(
+    FileUploadController fileController,
+    Color primaryColor,
+    Color backgroundColor,
+    Color borderColor,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -155,7 +194,7 @@ class CommonFileUploadWidget extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: primaryColor.withValues(alpha:0.1),
+              color: primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -173,7 +212,10 @@ class CommonFileUploadWidget extends StatelessWidget {
                   Text(
                     fileController.fileName.value,
                     style: TextStyle(
-                      color: isDarkTheme ? const Color(0xFF374151) : const Color(0xFF1F2937),
+                      color:
+                          isDarkTheme
+                              ? const Color(0xFF374151)
+                              : const Color(0xFF1F2937),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -191,12 +233,16 @@ class CommonFileUploadWidget extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    if (showFileSize && fileController.fileSize.value.isNotEmpty) ...[
+                    if (showFileSize &&
+                        fileController.fileSize.value.isNotEmpty) ...[
                       const SizedBox(width: 8),
                       Text(
                         '• ${fileController.fileSize.value}',
                         style: TextStyle(
-                          color: isDarkTheme ? Colors.grey.shade600 : Colors.grey.shade500,
+                          color:
+                              isDarkTheme
+                                  ? Colors.grey.shade600
+                                  : Colors.grey.shade500,
                           fontSize: 11,
                           fontWeight: FontWeight.w400,
                         ),
@@ -211,36 +257,35 @@ class CommonFileUploadWidget extends StatelessWidget {
           Row(
             children: [
               InkWell(
-                onTap: () => fileController.pickFile(
-                  allowedExtensions: allowedExtensions,
-                  fileType: fileType,
-                  onFileSelected: onFileSelected,
-                ),
+                onTap:
+                    () => fileController.pickFile(
+                      allowedExtensions: allowedExtensions,
+                      fileType: fileType,
+                      onFileSelected: onFileSelected,
+                    ),
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha:0.1),
+                    color: primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Icon(
-                    Icons.edit,
-                    color: primaryColor,
-                    size: 16,
-                  ),
+                  child: Icon(Icons.edit, color: primaryColor, size: 16),
                 ),
               ),
               const SizedBox(width: 8),
               InkWell(
-                onTap: () => fileController.removeFile(onFileRemoved: onFileRemoved),
+                onTap:
+                    () =>
+                        fileController.removeFile(onFileRemoved: onFileRemoved),
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha:0.1),
+                    color: AppColors.errorLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Icon(
                     Icons.delete_outline,
-                    color: Colors.red,
+                    color: AppColors.errorLight,
                     size: 16,
                   ),
                 ),

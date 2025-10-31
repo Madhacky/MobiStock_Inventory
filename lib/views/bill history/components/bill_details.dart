@@ -697,7 +697,7 @@ class BillDetailsPage extends StatelessWidget {
             // SizedBox(height: 8),
             // _buildAmountRow('Paid Amount', '₹${(bill.amount - bill.dues).toStringAsFixed(0)}', false, Colors.green),
             // SizedBox(height: 8),
-            // _buildAmountRow('Outstanding Dues', bill.formattedDues, false, Colors.red),
+            // _buildAmountRow('Outstanding Dues', bill.formattedDues, false,  AppColors.errorLight),
           ],
         ],
       ),

@@ -114,7 +114,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: AppTheme.backgroundDark,
+            color: AppColors.backgroundDark,
           ),
           textAlign: TextAlign.center,
         ),
@@ -134,7 +134,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w600,
-            color: AppTheme.backgroundDark,
+            color: AppColors.backgroundDark,
           ),
         ),
         SizedBox(height: 12),

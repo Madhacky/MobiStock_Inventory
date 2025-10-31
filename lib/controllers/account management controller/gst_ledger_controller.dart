@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/models/account%20management%20models/gst_ledger_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class GstLedgerController extends GetxController {
   @override
@@ -81,7 +82,7 @@ class GstLedgerController extends GetxController {
 
       if (response != null && response.statusCode == 200) {
         final dropdowns = GstLedgerDropdowns.fromJson(response.data);
-        
+
         entityNames.value = ['All', ...dropdowns.entityNames];
         transactionTypes.value = ['All', ...dropdowns.transactionTypes];
         hsnCodes.value = ['All', ...dropdowns.hsnCodes];
@@ -111,8 +112,8 @@ class GstLedgerController extends GetxController {
       };
 
       // Add date filters
-      if (isCustomDateRange.value && 
-          startDateController.text.isNotEmpty && 
+      if (isCustomDateRange.value &&
+          startDateController.text.isNotEmpty &&
           endDateController.text.isNotEmpty) {
         query['startDate'] = startDateController.text;
         query['endDate'] = endDateController.text;
@@ -157,7 +158,7 @@ class GstLedgerController extends GetxController {
           'Error',
           'Failed to load GST ledger entries',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -166,7 +167,7 @@ class GstLedgerController extends GetxController {
         'Error',
         'An error occurred while loading data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -175,20 +176,21 @@ class GstLedgerController extends GetxController {
   }
 
   void _applyFilters() {
-    var filtered = ledgerEntries.where((entry) {
-      // Search filter
-      if (searchQuery.value.isNotEmpty) {
-        final query = searchQuery.value.toLowerCase();
-        if (!entry.relatedEntityName.toLowerCase().contains(query) &&
-            !entry.transactionType.toLowerCase().contains(query) &&
-            !entry.hsnCode.toLowerCase().contains(query) &&
-            !entry.gstRateLabel.toLowerCase().contains(query)) {
-          return false;
-        }
-      }
+    var filtered =
+        ledgerEntries.where((entry) {
+          // Search filter
+          if (searchQuery.value.isNotEmpty) {
+            final query = searchQuery.value.toLowerCase();
+            if (!entry.relatedEntityName.toLowerCase().contains(query) &&
+                !entry.transactionType.toLowerCase().contains(query) &&
+                !entry.hsnCode.toLowerCase().contains(query) &&
+                !entry.gstRateLabel.toLowerCase().contains(query)) {
+              return false;
+            }
+          }
 
-      return true;
-    }).toList();
+          return true;
+        }).toList();
 
     filteredLedgerEntries.value = filtered;
   }
@@ -381,7 +383,8 @@ class GstLedgerController extends GetxController {
   double get totalGstAmount {
     return filteredLedgerEntries.fold(
       0.0,
-      (sum, entry) => sum + entry.cgstAmount + entry.sgstAmount + entry.igstAmount,
+      (sum, entry) =>
+          sum + entry.cgstAmount + entry.sgstAmount + entry.igstAmount,
     );
   }
 
@@ -406,8 +409,7 @@ class GstLedgerController extends GetxController {
   Map<String, int> get entryCountByGstRate {
     final Map<String, int> result = {};
     for (var entry in filteredLedgerEntries) {
-      result[entry.gstRateLabel] =
-          (result[entry.gstRateLabel] ?? 0) + 1;
+      result[entry.gstRateLabel] = (result[entry.gstRateLabel] ?? 0) + 1;
     }
     return result;
   }

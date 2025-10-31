@@ -4,6 +4,7 @@ import 'package:smartbecho/models/account%20management%20models/emi%20settlement
 import 'package:smartbecho/models/account%20management%20models/emi%20settlement/emi_settlement_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class EmiSettlementController extends GetxController {
   @override
@@ -140,13 +141,16 @@ class EmiSettlementController extends GetxController {
 
     try {
       isFormLoading.value = true;
-      
+
       // Create request body
       final requestBody = {
         'companyName': companyNameController.text,
         'amount': double.parse(amountController.text),
         'confirmedBy': confirmedByController.text,
-        'date': DateTime.parse(dateController.text).toUtc().toIso8601String().split('T')[0],
+        'date':
+            DateTime.parse(
+              dateController.text,
+            ).toUtc().toIso8601String().split('T')[0],
       };
 
       final response = await _apiService.requestPostForApi(
@@ -171,7 +175,7 @@ class EmiSettlementController extends GetxController {
         if (response?.data != null && response!.data['message'] != null) {
           errorMessage = response.data['message'];
         }
-        
+
         Get.snackbar(
           'Error',
           errorMessage,
@@ -267,7 +271,7 @@ class EmiSettlementController extends GetxController {
           'Error',
           'Failed to load EMI settlements',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -276,7 +280,7 @@ class EmiSettlementController extends GetxController {
         'Error',
         'An error occurred while loading data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -290,27 +294,29 @@ class EmiSettlementController extends GetxController {
       isChartLoading.value = true;
       final targetYear = year ?? chartYear.value;
       final query = {'year': targetYear.toString()};
-      
+
       final response = await _apiService.requestGetForApi(
         url: '${_config.baseUrl}/api/emi-settlements/monthly-summary/chart',
         dictParameter: query,
         authToken: true,
       );
-      
+
       if (response != null && response.statusCode == 200) {
-        final chartResponse = EmiSettlementChartResponse.fromJson(response.data);
-        
+        final chartResponse = EmiSettlementChartResponse.fromJson(
+          response.data,
+        );
+
         // Clear existing data and add new data
         chartData.clear();
         chartData.addAll(chartResponse.payload);
-        
+
         chartYear.value = targetYear;
       } else {
         Get.snackbar(
           'Error',
           'Failed to load chart data',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -320,7 +326,7 @@ class EmiSettlementController extends GetxController {
         'Error',
         'An error occurred while loading chart data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -335,7 +341,8 @@ class EmiSettlementController extends GetxController {
   }
 
   // Helper method to check if chart has data
-  bool get hasChartData => chartData.isNotEmpty && chartData.any((item) => item.amount > 0);
+  bool get hasChartData =>
+      chartData.isNotEmpty && chartData.any((item) => item.amount > 0);
 
   void _updateFilterOptions() {
     // Update company options

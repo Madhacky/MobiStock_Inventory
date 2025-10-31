@@ -36,7 +36,8 @@ class AuthController extends GetxController
   // Basic Information Controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController shopStoreNameController = TextEditingController();
   final TextEditingController gstNumberController = TextEditingController();
@@ -58,7 +59,8 @@ class AuthController extends GetxController
   final TextEditingController zipcodeController = TextEditingController();
 
   // Social Media Links
-  final RxList<Map<String, dynamic>> socialMediaLinks = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> socialMediaLinks =
+      <Map<String, dynamic>>[].obs;
 
   // Shop Images - ONLY ONE IMAGE ALLOWED
   final Rx<File?> shopImage = Rx<File?>(null);
@@ -118,10 +120,10 @@ class AuthController extends GetxController
   void _initializeDefaultValues() {
     // Set default country
     countryController.text = 'India';
-    
+
     // Initialize with empty social media links
     socialMediaLinks.clear();
-    
+
     // Initialize with null shop image
     shopImage.value = null;
   }
@@ -167,7 +169,7 @@ class AuthController extends GetxController
           Get.snackbar(
             'Error',
             'Please agree to terms and conditions',
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.errorLight,
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
           );
@@ -204,7 +206,7 @@ class AuthController extends GetxController
         maxHeight: 1024,
         imageQuality: 80,
       );
-      
+
       if (pickedFile != null) {
         shopImage.value = File(pickedFile.path);
       }
@@ -212,7 +214,7 @@ class AuthController extends GetxController
       Get.snackbar(
         'Error',
         'Failed to pick image: ${e.toString()}',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     }
@@ -244,7 +246,7 @@ class AuthController extends GetxController
       Get.snackbar(
         "Error",
         'Email is required',
-        backgroundColor: AppTheme.errorDark,
+        backgroundColor: AppColors.errorDark,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 2),
@@ -275,16 +277,16 @@ class AuthController extends GetxController
         countryController.clear();
         streetController.clear();
         zipcodeController.clear();
-        
+
         // Clear social media links
         for (var link in socialMediaLinks) {
           link['controller']?.dispose();
         }
         socialMediaLinks.clear();
-        
+
         // Clear shop image
         shopImage.value = null;
-        
+
         // Reset step and checkboxes
         currentStep.value = 1;
         agreeToTerms.value = false;
@@ -381,7 +383,9 @@ class AuthController extends GetxController
       return null; // Valid - optional field
     }
     // If provided, validate format (15 characters)
-    if (!RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$').hasMatch(value)) {
+    if (!RegExp(
+      r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+    ).hasMatch(value)) {
       return 'Please enter a valid GST number (e.g., 29ABCDE1234F1Z5)';
     }
     return null;
@@ -562,7 +566,7 @@ class AuthController extends GetxController
         'Error',
         'Logout failed: ${e.toString()}',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     }
@@ -582,36 +586,64 @@ class AuthController extends GetxController
       var formData = dio.FormData();
 
       // Basic Information - matching curl field names exactly
-      formData.fields.add(MapEntry('shopStoreName', shopStoreNameController.text.trim()));
+      formData.fields.add(
+        MapEntry('shopStoreName', shopStoreNameController.text.trim()),
+      );
       formData.fields.add(MapEntry('email', emailController.text.trim()));
-      formData.fields.add(MapEntry('phone', phoneNumberController.text.trim())); // Changed from phoneNumber to phone
+      formData.fields.add(
+        MapEntry('phone', phoneNumberController.text.trim()),
+      ); // Changed from phoneNumber to phone
       formData.fields.add(MapEntry('password', passwordController.text.trim()));
       formData.fields.add(MapEntry('Status', '1'));
 
       // Address Information
       formData.fields.add(MapEntry('shopAddress.label', 'Shop'));
-      formData.fields.add(MapEntry('shopAddress.city', cityController.text.trim()));
-      formData.fields.add(MapEntry('shopAddress.state', stateController.text.trim()));
-      formData.fields.add(MapEntry('shopAddress.pincode', pincodeController.text.trim()));
-      formData.fields.add(MapEntry('shopAddress.country', countryController.text.trim()));
+      formData.fields.add(
+        MapEntry('shopAddress.city', cityController.text.trim()),
+      );
+      formData.fields.add(
+        MapEntry('shopAddress.state', stateController.text.trim()),
+      );
+      formData.fields.add(
+        MapEntry('shopAddress.pincode', pincodeController.text.trim()),
+      );
+      formData.fields.add(
+        MapEntry('shopAddress.country', countryController.text.trim()),
+      );
 
       // GST Number - Optional
       if (gstNumberController.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry('GSTNumber', gstNumberController.text.trim()));
+        formData.fields.add(
+          MapEntry('GSTNumber', gstNumberController.text.trim()),
+        );
       }
 
       // Aadhaar Number
-      formData.fields.add(MapEntry('AdhaarNumber', adhaarNumberController.text.trim()));
+      formData.fields.add(
+        MapEntry('AdhaarNumber', adhaarNumberController.text.trim()),
+      );
 
       // Optional fields
       if (addressLine1Controller.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry('shopAddress.addressLine1', addressLine1Controller.text.trim()));
+        formData.fields.add(
+          MapEntry(
+            'shopAddress.addressLine1',
+            addressLine1Controller.text.trim(),
+          ),
+        );
       }
       if (addressLine2Controller.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry('shopAddress.addressLine2', addressLine2Controller.text.trim()));
+        formData.fields.add(
+          MapEntry(
+            'shopAddress.addressLine2',
+            addressLine2Controller.text.trim(),
+          ),
+        );
       }
       if (landmarkController.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry('shopAddress.landmark', landmarkController.text.trim()));
+        formData.fields.add(
+          MapEntry('shopAddress.landmark', landmarkController.text.trim()),
+        );
       }
 
       // Social Media Links - matching curl format
@@ -620,7 +652,9 @@ class AuthController extends GetxController
         String url = link['controller']?.text?.trim() ?? '';
         if (url.isNotEmpty) {
           String platform = link['platform'].toString().toLowerCase();
-          formData.fields.add(MapEntry('socialMediaLinks[$i].platform', platform));
+          formData.fields.add(
+            MapEntry('socialMediaLinks[$i].platform', platform),
+          );
           formData.fields.add(MapEntry('socialMediaLinks[$i].url', url));
         }
       }
@@ -628,21 +662,24 @@ class AuthController extends GetxController
       // Shop Image - ONLY ONE IMAGE
       if (shopImage.value != null && await shopImage.value!.exists()) {
         try {
-          String extension = shopImage.value!.path.split('.').last.toLowerCase();
+          String extension =
+              shopImage.value!.path.split('.').last.toLowerCase();
           String fileName = 'shop_image.$extension';
-          
+
           String contentType = 'image/jpeg';
           if (extension == 'png') contentType = 'image/png';
-          
-          formData.files.add(MapEntry(
-            'file',
-            await dio.MultipartFile.fromFile(
-              shopImage.value!.path,
-              filename: fileName,
-              contentType: dio.DioMediaType.parse(contentType),
+
+          formData.files.add(
+            MapEntry(
+              'file',
+              await dio.MultipartFile.fromFile(
+                shopImage.value!.path,
+                filename: fileName,
+                contentType: dio.DioMediaType.parse(contentType),
+              ),
             ),
-          ));
-          
+          );
+
           print('Added image file: $fileName');
         } catch (fileError) {
           print('Error processing image file: $fileError');
@@ -652,7 +689,7 @@ class AuthController extends GetxController
       // Debug: Print FormData contents
       print('FormData fields count: ${formData.fields.length}');
       print('FormData files count: ${formData.files.length}');
-      
+
       for (var field in formData.fields) {
         print('Field: ${field.key} = ${field.value}');
       }
@@ -703,7 +740,7 @@ class AuthController extends GetxController
             } else {
               errorData = response.data;
             }
-            
+
             // Get the error message from the response
             if (errorData['message'] != null) {
               errorMessage = errorData['message'];
@@ -711,15 +748,21 @@ class AuthController extends GetxController
           } catch (e) {
             print('Error parsing error response: $e');
           }
-          
+
           ToastCustom.errorToast(context, errorMessage);
         } else if (response.statusCode == 500) {
-          ToastCustom.errorToast(context, "Server error. Please try again later.");
+          ToastCustom.errorToast(
+            context,
+            "Server error. Please try again later.",
+          );
         } else {
           ToastCustom.errorToast(context, 'Signup failed. Please try again.');
         }
       } else {
-        ToastCustom.errorToast(context, 'Network error. Please check your connection.');
+        ToastCustom.errorToast(
+          context,
+          'Network error. Please check your connection.',
+        );
       }
     } catch (e) {
       // Extract error message if available
@@ -732,7 +775,7 @@ class AuthController extends GetxController
           } else {
             errorData = e.response!.data;
           }
-          
+
           if (errorData['message'] != null) {
             errorMessage = errorData['message'];
           }
@@ -740,7 +783,7 @@ class AuthController extends GetxController
           print('Error parsing error response: $parseError');
         }
       }
-      
+
       ToastCustom.errorToast(context, errorMessage);
       print('Signup error: $e');
     } finally {
@@ -769,7 +812,7 @@ class AuthController extends GetxController
         Get.snackbar(
           'Error',
           'Please try again later',
-          backgroundColor: Colors.red.withValues(alpha:0.8),
+          backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 3),
@@ -793,9 +836,10 @@ class AuthController extends GetxController
 
       if (response != null) {
         if (response.statusCode == 200) {
-          final data = response.data is String
-              ? json.decode(response.data)
-              : response.data;
+          final data =
+              response.data is String
+                  ? json.decode(response.data)
+                  : response.data;
 
           if (data is Map<String, dynamic>) {
             String status = data['status'] ?? '';
@@ -815,7 +859,9 @@ class AuthController extends GetxController
             return false;
           }
         } else {
-          log("❌ Reset password API failed with status code: ${response.statusCode}");
+          log(
+            "❌ Reset password API failed with status code: ${response.statusCode}",
+          );
           return false;
         }
       } else {
@@ -852,7 +898,7 @@ class AuthController extends GetxController
       countryController.dispose();
       streetController.dispose();
       zipcodeController.dispose();
-      
+
       // Dispose social media controllers
       for (var link in socialMediaLinks) {
         link['controller']?.dispose();

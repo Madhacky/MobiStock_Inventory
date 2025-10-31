@@ -8,6 +8,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/services/launch_phone_dailer_service.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class CustomerCardsController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -70,7 +71,10 @@ class CustomerCardsController extends GetxController {
   }
 
   // Load customers from API
-  Future<void> loadCustomersFromApi({bool loadMore = false, String? keyword}) async {
+  Future<void> loadCustomersFromApi({
+    bool loadMore = false,
+    String? keyword,
+  }) async {
     try {
       if (loadMore) {
         isLoadingMore.value = true;
@@ -143,8 +147,8 @@ class CustomerCardsController extends GetxController {
       currentPage.value++;
       String keyword = searchQuery.value.trim();
       await loadCustomersFromApi(
-        loadMore: true, 
-        keyword: keyword.isNotEmpty ? keyword : null
+        loadMore: true,
+        keyword: keyword.isNotEmpty ? keyword : null,
       );
     }
   }
@@ -171,10 +175,10 @@ class CustomerCardsController extends GetxController {
   // Debounced search functionality
   void onSearchChanged(String query) {
     searchQuery.value = query;
-    
+
     // Cancel previous timer
     _debounceTimer?.cancel();
-    
+
     // Start new timer
     _debounceTimer = Timer(_debounceDuration, () {
       _performSearch(query.trim());
@@ -206,13 +210,15 @@ class CustomerCardsController extends GetxController {
 
   // Apply local filters (excluding search which is handled by API)
   void _applyLocalFilters() {
-    filteredCustomers.value = apiCustomers.where((customer) {
-      // Category filter only (search is handled by API)
-      bool matchesCategory = selectedFilter.value == 'All' ||
-          customer.customerType == selectedFilter.value;
+    filteredCustomers.value =
+        apiCustomers.where((customer) {
+          // Category filter only (search is handled by API)
+          bool matchesCategory =
+              selectedFilter.value == 'All' ||
+              customer.customerType == selectedFilter.value;
 
-      return matchesCategory;
-    }).toList();
+          return matchesCategory;
+        }).toList();
 
     // Sort customers
     _sortCustomers();
@@ -247,11 +253,11 @@ class CustomerCardsController extends GetxController {
   void resetFilters() {
     // Cancel any pending search
     _debounceTimer?.cancel();
-    
+
     searchQuery.value = '';
     selectedFilter.value = 'All';
     sortBy.value = 'Name';
-    
+
     // Load all customers without search
     loadCustomersFromApi();
   }
@@ -334,7 +340,10 @@ class CustomerCardsController extends GetxController {
                 colorText: Colors.white,
               );
             },
-            child: Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorLight),
+            ),
           ),
         ],
       ),
@@ -350,7 +359,7 @@ class CustomerCardsController extends GetxController {
       }
     } catch (e) {
       print('Error calling customer: $e');
-      
+
       Get.snackbar('Error', 'Unable to make call: ${e.toString()}');
     }
   }

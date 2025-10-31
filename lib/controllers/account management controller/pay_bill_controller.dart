@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:smartbecho/models/account%20management%20models/pay_bill_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common%20file%20uploader/common_fileupload_controller.dart';
 import 'package:dio/dio.dart' as dio;
 
@@ -58,7 +59,7 @@ class PayBillsController extends GetxController {
   var fileName = ''.obs;
 
   // Form Dropdown options
- final List<String> formPaymentModes = [
+  final List<String> formPaymentModes = [
     "CASH",
     "BANK",
     "UPI",
@@ -67,19 +68,17 @@ class PayBillsController extends GetxController {
     "CHEQUE",
     "OTHERS",
     "GIVEN_SALE_DUES",
-    "EMI_PENDING"
-];
-
+    "EMI_PENDING",
+  ];
 
   final List<String> formPurposes = [
-  'Inventory Purchase',
-  'Utility Bill',
-  'Rent',
-  'Salary',
-  'Maintenance',
-  'Other',
-];
-
+    'Inventory Purchase',
+    'Utility Bill',
+    'Rent',
+    'Salary',
+    'Maintenance',
+    'Other',
+  ];
 
   final List<String> months = [
     'January',
@@ -185,7 +184,7 @@ class PayBillsController extends GetxController {
           'Error',
           'Failed to load pay bills',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -194,7 +193,7 @@ class PayBillsController extends GetxController {
         'Error',
         'An error occurred while loading data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -353,17 +352,17 @@ class PayBillsController extends GetxController {
   Future<void> pickFile() async {
     try {
       isFileUploading.value = true;
-      
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
         allowMultiple: false,
       );
-      
+
       if (result != null && result.files.single.path != null) {
         selectedFile.value = File(result.files.single.path!);
         fileName.value = result.files.single.name;
-        
+
         Get.snackbar(
           'Success',
           'File selected: ${result.files.single.name}',
@@ -384,7 +383,7 @@ class PayBillsController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to pick file: ${e.toString()}',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
@@ -398,107 +397,109 @@ class PayBillsController extends GetxController {
     fileName.value = '';
   }
 
-// Add file upload controller instance
+  // Add file upload controller instance
   final fileUploadController = FileUploadController();
   // Save pay bill
-   Future<void> savePayBill() async {
-  if (!formKey.currentState!.validate()) return;
+  Future<void> savePayBill() async {
+    if (!formKey.currentState!.validate()) return;
 
-  try {
-    isFormLoading.value = true;
-    
-    // Parse the date to ISO format
-    DateTime selectedDate = DateTime.parse(dateController.text);
-    String isoDate = selectedDate.toUtc().toIso8601String();
+    try {
+      isFormLoading.value = true;
 
-    
-    // Create the PayBill object according to the API format
-    final payBillData = {
-      'date': isoDate,
-      'company': companyController.text,
-      'paidToPerson': paidToController.text,
-      'purpose': selectedFormPurpose.value,
-      'paidBy': paidByController.text,
-      'amount': double.parse(amountController.text),
-      'paymentMode': selectedFormPaymentMode.value,
-      'description': notesController.text,
-      'uploadedFileUrl': '', 
-    };
+      // Parse the date to ISO format
+      DateTime selectedDate = DateTime.parse(dateController.text);
+      String isoDate = selectedDate.toUtc().toIso8601String();
 
-    final formData = dio.FormData();
-    
-    formData.fields.add(MapEntry('PayBill', jsonEncode(payBillData)));
-    
-    if (fileUploadController.selectedFile.value != null) {
-      String fileName = fileUploadController.selectedFile.value!.path.split('/').last;
-      formData.files.add(MapEntry(
-        'file',
-        dio.MultipartFile.fromFileSync(
-          fileUploadController.selectedFile.value!.path,
-          filename: fileName,
-        ),
-      ));
-    }
+      // Create the PayBill object according to the API format
+      final payBillData = {
+        'date': isoDate,
+        'company': companyController.text,
+        'paidToPerson': paidToController.text,
+        'purpose': selectedFormPurpose.value,
+        'paidBy': paidByController.text,
+        'amount': double.parse(amountController.text),
+        'paymentMode': selectedFormPaymentMode.value,
+        'description': notesController.text,
+        'uploadedFileUrl': '',
+      };
 
-    final response = await _apiService.requestMultipartApi(
-      url: '${_config.baseUrl}/api/pay-bills',
-      formData: formData,
-      authToken: true,
-    );
+      final formData = dio.FormData();
 
-    if (response != null && response.statusCode == 201) {
-      Get.snackbar(
-        'Success',
-        'Pay bill saved successfully!',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
-      
-      clearForm();
-       loadPayBills(refresh: true);
-      
-      // Get.back();
-    } else {
-      String errorMessage = 'Failed to save pay bill';
-      if (response?.data != null && response!.data['message'] != null) {
-        errorMessage = response.data['message'];
+      formData.fields.add(MapEntry('PayBill', jsonEncode(payBillData)));
+
+      if (fileUploadController.selectedFile.value != null) {
+        String fileName =
+            fileUploadController.selectedFile.value!.path.split('/').last;
+        formData.files.add(
+          MapEntry(
+            'file',
+            dio.MultipartFile.fromFileSync(
+              fileUploadController.selectedFile.value!.path,
+              filename: fileName,
+            ),
+          ),
+        );
       }
-      
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
+
+      final response = await _apiService.requestMultipartApi(
+        url: '${_config.baseUrl}/api/pay-bills',
+        formData: formData,
+        authToken: true,
       );
-    }
-  } catch (e) {
-    print('Error saving pay bill: $e');
-    Get.snackbar(
-      'Error',
-      'Failed to save pay bill: ${e.toString()}',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 3),
-    );
-  } finally {
-    isFormLoading.value = false;
-  }
-}
-  // Updated generate invoice method
-  Future<void> generateInvoice() async {
-            Get.snackbar(
+
+      if (response != null && response.statusCode == 201) {
+        Get.snackbar(
           'Success',
-          'Invoice generated successfully!',
+          'Pay bill saved successfully!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          duration: const Duration(seconds: 3),
         );
+
+        clearForm();
+        loadPayBills(refresh: true);
+
+        // Get.back();
+      } else {
+        String errorMessage = 'Failed to save pay bill';
+        if (response?.data != null && response!.data['message'] != null) {
+          errorMessage = response.data['message'];
+        }
+
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          backgroundColor: AppColors.errorLight,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      print('Error saving pay bill: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to save pay bill: ${e.toString()}',
+        backgroundColor: AppColors.errorLight,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isFormLoading.value = false;
+    }
+  }
+
+  // Updated generate invoice method
+  Future<void> generateInvoice() async {
+    Get.snackbar(
+      'Success',
+      'Invoice generated successfully!',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
     // if (!formKey.currentState!.validate()) return;
 
     // try {
-     
-      
+
     //   // Create form data
     //   final formData = {
     //     'date': dateController.text,
@@ -530,14 +531,14 @@ class PayBillsController extends GetxController {
     //       backgroundColor: Colors.green,
     //       colorText: Colors.white,
     //     );
-        
+
     //     // TODO: Handle invoice download/view
-        
+
     //   } else {
     //     Get.snackbar(
     //       'Error',
     //       'Failed to generate invoice',
-    //       backgroundColor: Colors.red,
+    //       backgroundColor:  AppColors.errorLight,
     //       colorText: Colors.white,
     //     );
     //   }
@@ -545,7 +546,7 @@ class PayBillsController extends GetxController {
     //   Get.snackbar(
     //     'Error',
     //     'Failed to generate invoice: ${e.toString()}',
-    //     backgroundColor: Colors.red,
+    //     backgroundColor:  AppColors.errorLight,
     //     colorText: Colors.white,
     //   );
     // } finally {
@@ -562,14 +563,13 @@ class PayBillsController extends GetxController {
     notesController.clear();
     selectedFormPaymentMode.value = '';
     selectedFormPurpose.value = '';
-    
+
     // Clear file upload
     fileUploadController.removeFile();
-    
+
     // Reset date to today
     dateController.text = DateTime.now().toString().split(' ')[0];
   }
-
 
   // Validators
   String? validateRequired(String? value) {

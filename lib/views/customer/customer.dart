@@ -84,7 +84,7 @@ class CustomerManagementScreen extends StatelessWidget {
                 'title': 'Total Customers',
                 'value': controller.totalCustomers.value.toString(),
                 'icon': Icons.people_outline,
-                'color': AppTheme.primaryLight,
+                'color': AppColors.primaryLight,
                 'trend': '+12%',
                 'trendUp': true,
                 'onTap': () => print('Total customers tapped'),
@@ -274,7 +274,7 @@ class CustomerManagementScreen extends StatelessWidget {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryLight,
+                            color: AppColors.primaryLight,
                             shape: BoxShape.circle,
                           ),
                         )
@@ -350,7 +350,7 @@ class CustomerManagementScreen extends StatelessWidget {
                         child: Icon(
                           Icons.search,
                           size: 18,
-                          color: AppTheme.primaryLight,
+                          color: AppColors.primaryLight,
                         ),
                       ),
                       suffixIcon: Obx(
@@ -381,10 +381,10 @@ class CustomerManagementScreen extends StatelessWidget {
                 height: 44,
                 width: 44,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                  color: AppColors.primaryLight.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                    color: AppColors.primaryLight.withValues(alpha: 0.3),
                   ),
                 ),
                 child: IconButton(
@@ -392,7 +392,7 @@ class CustomerManagementScreen extends StatelessWidget {
                   icon: Icon(
                     Icons.tune,
                     size: 20,
-                    color: AppTheme.primaryLight,
+                    color: AppColors.primaryLight,
                   ),
                 ),
               ),
@@ -443,7 +443,7 @@ class CustomerManagementScreen extends StatelessWidget {
                                     child: Icon(
                                       Icons.search,
                                       size: 18,
-                                      color: AppTheme.primaryLight,
+                                      color: AppColors.primaryLight,
                                     ),
                                   ),
                                   suffixIcon: Obx(
@@ -550,7 +550,7 @@ class CustomerManagementScreen extends StatelessWidget {
                   //         child: Icon(
                   //           Icons.search,
                   //           size: 18,
-                  //           color: AppTheme.primaryLight,
+                  //           color: AppColors.primaryLight,
                   //         ),
                   //       ),
                   //       suffixIcon: Obx(
@@ -618,7 +618,7 @@ class CustomerManagementScreen extends StatelessWidget {
         ),
         selected: controller.selectedFilter.value == value,
         onSelected: (selected) => controller.onFilterChanged(value),
-        selectedColor: AppTheme.primaryLight,
+        selectedColor: AppColors.primaryLight,
         backgroundColor: Colors.grey[100],
         checkmarkColor: Colors.white,
         side: BorderSide.none,
@@ -643,7 +643,7 @@ class CustomerManagementScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryLight.withValues(alpha: 0.3),
+            color: AppColors.primaryLight.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: Offset(0, 8),
           ),
@@ -780,12 +780,12 @@ class CustomerManagementScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                    color: AppColors.primaryLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.people_outline,
-                    color: AppTheme.primaryLight,
+                    color: AppColors.primaryLight,
                     size: 20,
                   ),
                 ),
@@ -880,7 +880,7 @@ class CustomerManagementScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(
-                        color: AppTheme.primaryLight,
+                        color: AppColors.primaryLight,
                         strokeWidth: 3,
                       ),
                       SizedBox(height: 16),
@@ -927,7 +927,7 @@ class CustomerManagementScreen extends StatelessWidget {
                         icon: Icon(Icons.refresh, size: 16),
                         label: Text('Retry'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryLight,
+                          backgroundColor: AppColors.primaryLight,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: 20,
@@ -974,7 +974,7 @@ class CustomerManagementScreen extends StatelessWidget {
                         icon: Icon(Icons.person_add, size: 16),
                         label: Text('Add First Customer'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryLight,
+                          backgroundColor: AppColors.primaryLight,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: 20,
@@ -1026,10 +1026,10 @@ class CustomerManagementScreen extends StatelessWidget {
             cellTextStyle: TextStyle(fontSize: 13, color: Colors.black87),
             rowColor: Colors.white,
             evenRowColor: Colors.grey[25],
-            activatedColor: AppTheme.primaryLight.withValues(alpha: 0.08),
+            activatedColor: AppColors.primaryLight.withValues(alpha: 0.08),
             gridBackgroundColor: Colors.white,
             borderColor: Colors.grey[200]!,
-            activatedBorderColor: AppTheme.primaryLight,
+            activatedBorderColor: AppColors.primaryLight,
             inactivatedBorderColor: Colors.grey[300]!,
             iconColor: Colors.grey[600]!,
             disabledIconColor: Colors.grey[400]!,
@@ -1068,12 +1068,12 @@ class CustomerManagementScreen extends StatelessWidget {
                   : controller.loadMoreCustomers,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
-            foregroundColor: AppTheme.primaryLight,
+            foregroundColor: AppColors.primaryLight,
             padding: EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                color: AppColors.primaryLight.withValues(alpha: 0.3),
               ),
             ),
             elevation: 0,
@@ -1088,7 +1088,7 @@ class CustomerManagementScreen extends StatelessWidget {
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppTheme.primaryLight,
+                          color: AppColors.primaryLight,
                         ),
                       ),
                       SizedBox(width: 12),
@@ -1112,7 +1112,7 @@ class CustomerManagementScreen extends StatelessWidget {
     return SpeedDial(
       icon: Icons.add,
       activeIcon: Icons.close,
-      backgroundColor: AppTheme.primaryLight,
+      backgroundColor: AppColors.primaryLight,
       foregroundColor: Colors.white,
       overlayColor: Colors.black,
       overlayOpacity: 0.4,
@@ -1127,7 +1127,7 @@ class CustomerManagementScreen extends StatelessWidget {
           child: Icon(Icons.person_add_outlined, size: 24),
           label: 'Add New Customer',
           labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          backgroundColor: AppTheme.primaryLight,
+          backgroundColor: AppColors.primaryLight,
           foregroundColor: Colors.white,
           onTap: () => Get.toNamed(AppRoutes.addCustomer),
         ),

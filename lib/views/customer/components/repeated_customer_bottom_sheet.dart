@@ -114,7 +114,7 @@ class RepeatedCustomersModal extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            color: AppTheme.primaryLight,
+            color: AppColors.primaryLight,
             strokeWidth: 3,
           ),
           SizedBox(height: 16),
@@ -156,7 +156,7 @@ class RepeatedCustomersModal extends StatelessWidget {
               icon: Icon(Icons.refresh, size: 18),
               label: Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryLight,
+                backgroundColor: AppColors.primaryLight,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
@@ -238,7 +238,7 @@ class RepeatedCustomersModal extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight.withValues(alpha: 0.15),
+                  color: AppColors.primaryLight.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -246,7 +246,7 @@ class RepeatedCustomersModal extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryLight,
+                    color: AppColors.primaryLight,
                   ),
                 ),
               ),
@@ -274,7 +274,7 @@ class RepeatedCustomersModal extends StatelessWidget {
                         Icon(
                           Icons.phone,
                           size: 13,
-                          color: AppTheme.primaryLight.withValues(alpha: 0.7),
+                          color: AppColors.primaryLight.withValues(alpha: 0.7),
                         ),
                         SizedBox(width: 6),
                         Text(
@@ -296,7 +296,9 @@ class RepeatedCustomersModal extends StatelessWidget {
                           Icon(
                             Icons.email,
                             size: 13,
-                            color: AppTheme.primaryLight.withValues(alpha: 0.7),
+                            color: AppColors.primaryLight.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
                           SizedBox(width: 6),
                           Expanded(
@@ -330,7 +332,7 @@ class RepeatedCustomersModal extends StatelessWidget {
                         // Icon(
                         //   Icons.location_on,
                         //   size: 13,
-                        //   color: AppTheme.primaryLight.withValues(alpha: 0.7),
+                        //   color: AppColors.primaryLight.withValues(alpha: 0.7),
                         // ),
                         SizedBox(width: 4),
                         Expanded(

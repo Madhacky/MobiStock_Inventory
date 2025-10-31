@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:smartbecho/models/bill%20history/this_month_added_stock_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class ThisMonthStockController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -44,16 +45,26 @@ class ThisMonthStockController extends GetxController {
 
     // Apply company filter
     if (selectedCompany.value != 'All') {
-      items = items.where((item) => 
-        item.company.toLowerCase() == selectedCompany.value.toLowerCase()
-      ).toList();
+      items =
+          items
+              .where(
+                (item) =>
+                    item.company.toLowerCase() ==
+                    selectedCompany.value.toLowerCase(),
+              )
+              .toList();
     }
 
     // Apply category filter
     if (selectedCategory.value != 'All') {
-      items = items.where((item) => 
-        item.itemCategory.toLowerCase() == selectedCategory.value.toLowerCase()
-      ).toList();
+      items =
+          items
+              .where(
+                (item) =>
+                    item.itemCategory.toLowerCase() ==
+                    selectedCategory.value.toLowerCase(),
+              )
+              .toList();
     }
 
     // Apply sorting
@@ -106,10 +117,9 @@ class ThisMonthStockController extends GetxController {
 
       final stockResponse = ThisMonthStockResponse.fromJson(response.data);
       stockItems.value = stockResponse.payload;
-      
+
       _calculateStats();
       _extractFilterOptions();
-
     } catch (e) {
       error.value = 'Error: $e';
       _showErrorSnackbar('Error loading stock data: $e');
@@ -121,29 +131,30 @@ class ThisMonthStockController extends GetxController {
 
   void _calculateStats() {
     final items = filteredItems;
-    
+
     totalItems.value = items.length;
     totalQuantity.value = items.fold(0, (sum, item) => sum + item.qty);
-    totalValue.value = items.fold(0.0, (sum, item) => sum + (item.sellingPrice * item.qty));
-    
-    uniqueModels.value = items.map((item) => item.model.toLowerCase()).toSet().length;
-    uniqueCompanies.value = items.map((item) => item.company.toLowerCase()).toSet().length;
+    totalValue.value = items.fold(
+      0.0,
+      (sum, item) => sum + (item.sellingPrice * item.qty),
+    );
+
+    uniqueModels.value =
+        items.map((item) => item.model.toLowerCase()).toSet().length;
+    uniqueCompanies.value =
+        items.map((item) => item.company.toLowerCase()).toSet().length;
   }
 
   void _extractFilterOptions() {
     // Extract unique companies
-    final companies = stockItems
-        .map((item) => item.companyDisplayName)
-        .toSet()
-        .toList();
+    final companies =
+        stockItems.map((item) => item.companyDisplayName).toSet().toList();
     companies.sort();
     companyOptions.value = ['All', ...companies];
 
     // Extract unique categories
-    final categories = stockItems
-        .map((item) => item.categoryDisplayName)
-        .toSet()
-        .toList();
+    final categories =
+        stockItems.map((item) => item.categoryDisplayName).toSet().toList();
     categories.sort();
     categoryOptions.value = ['All', ...categories];
   }
@@ -265,7 +276,7 @@ class ThisMonthStockController extends GetxController {
       'Error',
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
+      backgroundColor: AppColors.errorLight,
       colorText: Colors.white,
       duration: Duration(seconds: 3),
     );

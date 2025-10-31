@@ -71,7 +71,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(
-                  color: AppTheme.primaryLight,
+                  color: AppColors.primaryLight,
                   strokeWidth: 3,
                 ),
                 SizedBox(height: 16),
@@ -119,7 +119,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                   icon: Icon(Icons.refresh, color: Colors.white),
                   label: Text('Retry', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryLight,
+                    backgroundColor: AppColors.primaryLight,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -203,16 +203,16 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
           margin: EdgeInsets.all(16),
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppTheme.primaryLight,
+            color: AppColors.primaryLight,
             // gradient: LinearGradient(
-            //   colors: [AppTheme.primaryLight, Color(0xFF4C51BF)],
+            //   colors: [AppColors.primaryLight, Color(0xFF4C51BF)],
             //   begin: Alignment.topLeft,
             //   end: Alignment.bottomRight,
             // ),
             borderRadius: BorderRadius.circular(20),
             // boxShadow: [
             //   BoxShadow(
-            //     color: AppTheme.primaryLight.withValues(alpha: 0.3),
+            //     color: AppColors.primaryLight.withValues(alpha: 0.3),
             //     spreadRadius: 0,
             //     blurRadius: 20,
             //     offset: Offset(0, 8),
@@ -422,7 +422,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
             'Total Due',
             '₹${_formatAmount(dueDetails.totalDue)}',
             Icons.account_balance_wallet_outlined,
-            AppTheme.primaryLight,
+            AppColors.primaryLight,
           ),
           _buildSummaryCard(
             'Total Paid',
@@ -740,7 +740,7 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryLight,
+                  backgroundColor: AppColors.primaryLight,
                   padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -775,14 +775,14 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
               onPressed: () => _showNotifyDialog(dueDetails),
               icon: Icon(
                 Icons.notifications_outlined,
-                color: AppTheme.primaryLight,
+                color: AppColors.primaryLight,
               ),
               label: Text(
                 'Send Reminder',
-                style: TextStyle(color: AppTheme.primaryLight, fontSize: 16),
+                style: TextStyle(color: AppColors.primaryLight, fontSize: 16),
               ),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppTheme.primaryLight),
+                side: BorderSide(color: AppColors.primaryLight),
                 padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -802,10 +802,10 @@ class _CustomerDueDetailsScreenState extends State<CustomerDueDetailsScreen> {
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryLight.withValues(alpha: 0.1),
+            color: AppColors.primaryLight.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: AppTheme.primaryLight, size: 20),
+          child: Icon(icon, color: AppColors.primaryLight, size: 20),
         ),
         SizedBox(width: 12),
         Text(

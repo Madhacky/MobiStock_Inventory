@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
-class InventoryCrudOperationController extends GetxController{
+class InventoryCrudOperationController extends GetxController {
   @override
   void onClose() {
     quantityController.dispose();
@@ -33,7 +34,8 @@ class InventoryCrudOperationController extends GetxController{
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController purchasePriceController = TextEditingController();
-  final TextEditingController supplierDetailsController = TextEditingController();
+  final TextEditingController supplierDetailsController =
+      TextEditingController();
   final TextEditingController companyTextController = TextEditingController();
   final TextEditingController modelTextController = TextEditingController();
   final TextEditingController colorTextController = TextEditingController();
@@ -63,8 +65,20 @@ class InventoryCrudOperationController extends GetxController{
   final RxList<String> categories = <String>[].obs;
   final RxList<String> companies = <String>[].obs;
   final RxList<String> models = <String>[].obs;
-  final RxList<String> ramOptions = <String>["2GB", "3GB", "4GB", "6GB", "8GB", "12GB", "16GB", "24GB", "32GB"].obs;
-  final RxList<String> storageOptions = <String>["64GB", "128GB", "256GB", "512GB", "1024GB"].obs;
+  final RxList<String> ramOptions =
+      <String>[
+        "2GB",
+        "3GB",
+        "4GB",
+        "6GB",
+        "8GB",
+        "12GB",
+        "16GB",
+        "24GB",
+        "32GB",
+      ].obs;
+  final RxList<String> storageOptions =
+      <String>["64GB", "128GB", "256GB", "512GB", "1024GB"].obs;
   final RxList<String> colorOptions = <String>[].obs;
 
   // Dropdown mode flags
@@ -161,7 +175,7 @@ class InventoryCrudOperationController extends GetxController{
       isLoadingFilters.value = false;
     }
   }
-  
+
   //string num sort
   RxList<String> sortStringList(RxList<String> list) {
     final sorted = list.map(int.parse).toList()..sort();
@@ -451,7 +465,9 @@ class InventoryCrudOperationController extends GetxController{
         'company': finalCompany,
         'description': descriptionController.text,
         'purchasedFrom': purchasedFromController.text,
-        'purchaseDate': formatDateForApi(selectedPurchaseDate.value ?? DateTime.now()),
+        'purchaseDate': formatDateForApi(
+          selectedPurchaseDate.value ?? DateTime.now(),
+        ),
         'purchaseNotes': purchaseNotesController.text,
         'itemCategory': selectedCategory.value,
       };
@@ -520,7 +536,7 @@ class InventoryCrudOperationController extends GetxController{
         'Error',
         'Failed to add product to inventory. Please try again.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         icon: const Icon(Icons.error, color: Colors.white),
         margin: const EdgeInsets.all(16),

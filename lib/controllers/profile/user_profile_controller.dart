@@ -5,6 +5,7 @@ import 'package:smartbecho/models/profile/user_profile_model.dart';
 import 'dart:developer';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileController extends GetxController {
@@ -128,14 +129,13 @@ class ProfileController extends GetxController {
         );
       } else {
         hasError.value = true;
-        errorMessage.value = 'Failed to load profile. Status: ${response?.statusCode}';
+        errorMessage.value =
+            'Failed to load profile. Status: ${response?.statusCode}';
       }
     } catch (e) {
       hasError.value = true;
       errorMessage.value = 'Error loading profile: $e';
       log('Error loading profile: $e');
-
- 
     } finally {
       isLoading.value = false;
     }
@@ -153,7 +153,9 @@ class ProfileController extends GetxController {
     // Update address fields
     if (profile.shopAddress != null) {
       final address = profile.shopAddress!;
-      shopAddress.value = '${address.addressLine1}, ${address.addressLine2}'.replaceAll('N/A, ', '').replaceAll(', N/A', '');
+      shopAddress.value = '${address.addressLine1}, ${address.addressLine2}'
+          .replaceAll('N/A, ', '')
+          .replaceAll(', N/A', '');
       nearLandmark.value = address.landmark;
       city.value = address.city;
       state.value = address.state;
@@ -165,7 +167,8 @@ class ProfileController extends GetxController {
     // Update status and dates
     accountStatus.value = profile.status == 1 ? 'Active' : 'Inactive';
     memberSince.value = formattedMemberSince;
-    passwordStatus.value = profile.passwordUpdatedAt != null ? 'Updated' : 'Not Updated';
+    passwordStatus.value =
+        profile.passwordUpdatedAt != null ? 'Updated' : 'Not Updated';
 
     // Update gallery images
     galleryImages.assignAll(profile.images);
@@ -176,87 +179,84 @@ class ProfileController extends GetxController {
     instagramUrl.value = getSocialMediaLink('Instagram');
     websiteUrl.value = getSocialMediaLink('Website');
   }
+
   // Save profile changes to API
- Future<void> saveProfile() async {
-  try {
-    isLoading.value = true;
+  Future<void> saveProfile() async {
+    try {
+      isLoading.value = true;
 
-    // Prepare update data according to your API body structure
-    Map<String, dynamic> updateData = {
-      'shopStoreName': shopName.value,
-      'GSTNumber': gstNumber.value, // You'll need to add this field
-      'adhaarNumer': adhaarNumber.value, // You'll need to add this field (note: typo in API - "adhaarNumer" instead of "adhaarNumber")
-      'shopAddress': {
-        'street': shopAddress.value,
-        'city': city.value,
-        'state': state.value,
-        'zipCode': pinCode.value,
-      },
-      'socialMediaLinks': [
-        if (facebookUrl.value.isNotEmpty) {
-          'platform': 'Facebook', 
-          'url': facebookUrl.value
+      // Prepare update data according to your API body structure
+      Map<String, dynamic> updateData = {
+        'shopStoreName': shopName.value,
+        'GSTNumber': gstNumber.value, // You'll need to add this field
+        'adhaarNumer':
+            adhaarNumber
+                .value, // You'll need to add this field (note: typo in API - "adhaarNumer" instead of "adhaarNumber")
+        'shopAddress': {
+          'street': shopAddress.value,
+          'city': city.value,
+          'state': state.value,
+          'zipCode': pinCode.value,
         },
-        if (instagramUrl.value.isNotEmpty) {
-          'platform': 'Instagram', 
-          'url': instagramUrl.value
-        },
-        if (websiteUrl.value.isNotEmpty) {
-          'platform': 'Website', 
-          'url': websiteUrl.value
-        },
-      ],
-      'images': [
-        // Add your image URLs here - you'll need to implement image handling
-        if (galleryImages.isNotEmpty) 
-          ...galleryImages.map((url) => {'imageUrl': url.imageUrl}),
-      ],
-    };
+        'socialMediaLinks': [
+          if (facebookUrl.value.isNotEmpty)
+            {'platform': 'Facebook', 'url': facebookUrl.value},
+          if (instagramUrl.value.isNotEmpty)
+            {'platform': 'Instagram', 'url': instagramUrl.value},
+          if (websiteUrl.value.isNotEmpty)
+            {'platform': 'Website', 'url': websiteUrl.value},
+        ],
+        'images': [
+          // Add your image URLs here - you'll need to implement image handling
+          if (galleryImages.isNotEmpty)
+            ...galleryImages.map((url) => {'imageUrl': url.imageUrl}),
+        ],
+      };
 
-    // Remove email field as it's not in your API body structure
-    // Remove phone, country, landmark fields as they're not in your API structure
+      // Remove email field as it's not in your API body structure
+      // Remove phone, country, landmark fields as they're not in your API structure
 
-    dio.Response? response = await _apiService.requestPutForApi(
-      url: _config.updateProfile,
-      dictParameter: updateData,
-      authToken: true,
-    );
-
-    if (response != null && response.statusCode == 200) {
-      isEditing.value = false;
-      Get.snackbar(
-        'Success',
-        'Profile updated successfully',
-        backgroundColor: Color(0xFF51CF66),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 2),
+      dio.Response? response = await _apiService.requestPutForApi(
+        url: _config.updateProfile,
+        dictParameter: updateData,
+        authToken: true,
       );
 
-      // Reload profile data to get latest changes
-      await loadProfileFromApi();
-    } else {
+      if (response != null && response.statusCode == 200) {
+        isEditing.value = false;
+        Get.snackbar(
+          'Success',
+          'Profile updated successfully',
+          backgroundColor: Color(0xFF51CF66),
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 2),
+        );
+
+        // Reload profile data to get latest changes
+        await loadProfileFromApi();
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to update profile',
+          backgroundColor: AppColors.errorLight,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      log('Error saving profile: $e');
       Get.snackbar(
         'Error',
-        'Failed to update profile',
-        backgroundColor: Colors.red,
+        'Error updating profile: $e',
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    log('Error saving profile: $e');
-    Get.snackbar(
-      'Error',
-      'Error updating profile: $e',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.TOP,
-    );
-  } finally {
-    isLoading.value = false;
   }
-}
 
   // Toggle edit mode
   void toggleEditMode() {
@@ -287,7 +287,7 @@ class ProfileController extends GetxController {
       Get.snackbar(
         'Error',
         'Error uploading image: $e',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
@@ -319,7 +319,7 @@ class ProfileController extends GetxController {
         Get.snackbar(
           'Error',
           'Could not open URL: $url',
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
         );
@@ -355,17 +355,18 @@ class ProfileController extends GetxController {
   void showDeleteAccountDialog() {
     Get.defaultDialog(
       title: 'Delete Account',
-      middleText: 'Are you sure you want to delete your account? This action cannot be undone.',
+      middleText:
+          'Are you sure you want to delete your account? This action cannot be undone.',
       textConfirm: 'Delete',
       textCancel: 'Cancel',
       confirmTextColor: Colors.white,
-      buttonColor: Colors.red,
+      buttonColor: AppColors.errorLight,
       onConfirm: () {
         // Implement account deletion logic
         Get.snackbar(
           'Info',
           'Account deletion functionality would be implemented here',
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
         );

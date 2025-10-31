@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
 import 'package:smartbecho/controllers/dashboard_controller.dart';
 import 'package:smartbecho/models/customer%20dues%20management/monthly_dues_analytics_model.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/generic_charts.dart';
 
 class CustomerDuesAnalyticsModal extends StatelessWidget {
@@ -236,7 +237,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                            color: AppColors.errorLight,
                           ),
                         ),
                       ],
@@ -379,7 +380,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: AppColors.errorLight,
                       ),
                     ),
                   ],
@@ -432,7 +433,7 @@ class CustomerDuesAnalyticsModal extends StatelessWidget {
   Color _getStatusColor(double percentage) {
     if (percentage >= 80) return Colors.green;
     if (percentage >= 50) return Colors.orange;
-    return Colors.red;
+    return AppColors.errorLight;
   }
 
   // String _formatAmount(double amount) {
@@ -475,7 +476,7 @@ class _PaymentPieCardState extends State<PaymentPieCard> {
         radius: touchedIndex == 0 ? 70 : 60,
       ),
       PieChartSectionData(
-        color: Colors.red,
+        color: AppColors.errorLight,
         value: widget.remaining,
         title: '',
         radius: touchedIndex == 1 ? 70 : 60,
@@ -597,7 +598,7 @@ class _PaymentPieCardState extends State<PaymentPieCard> {
           //             style: const TextStyle(
           //               fontSize: 16,
           //               fontWeight: FontWeight.bold,
-          //               color: Colors.red,
+          //               color:  AppColors.errorLight,
           //             ),
           //           ),
           //         ],

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/models/account%20management%20models/financial_year_summary_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class ViewHistoryController extends GetxController {
   final ApiServices _apiService = ApiServices();
@@ -33,9 +34,7 @@ class ViewHistoryController extends GetxController {
   Future<void> loadFinancialSummary() async {
     try {
       isLoading.value = true;
-      final query = {
-        'year': selectedYear.value.toString(),
-      };
+      final query = {'year': selectedYear.value.toString()};
 
       final response = await _apiService.requestGetForApi(
         url: '${_config.baseUrl}/api/commissions/financial-summary',
@@ -51,7 +50,7 @@ class ViewHistoryController extends GetxController {
           'Error',
           'Failed to load financial summary',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -60,7 +59,7 @@ class ViewHistoryController extends GetxController {
         'Error',
         'An error occurred while loading data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -89,14 +88,25 @@ class ViewHistoryController extends GetxController {
   }
 
   double getMaxValue() {
-    if (financialData.isEmpty) return 100.0; // Return default value instead of 0
-    
-    double maxBills = financialData.map((e) => e.totalBillsPaid).reduce((a, b) => a > b ? a : b);
-    double maxSales = financialData.map((e) => e.totalSalesAmount).reduce((a, b) => a > b ? a : b);
-    double maxCommissions = financialData.map((e) => e.totalCommissions).reduce((a, b) => a > b ? a : b);
-    
-    double maxValue = [maxBills, maxSales, maxCommissions].reduce((a, b) => a > b ? a : b);
-    
+    if (financialData.isEmpty)
+      return 100.0; // Return default value instead of 0
+
+    double maxBills = financialData
+        .map((e) => e.totalBillsPaid)
+        .reduce((a, b) => a > b ? a : b);
+    double maxSales = financialData
+        .map((e) => e.totalSalesAmount)
+        .reduce((a, b) => a > b ? a : b);
+    double maxCommissions = financialData
+        .map((e) => e.totalCommissions)
+        .reduce((a, b) => a > b ? a : b);
+
+    double maxValue = [
+      maxBills,
+      maxSales,
+      maxCommissions,
+    ].reduce((a, b) => a > b ? a : b);
+
     // Return a minimum value if all data is zero to prevent division by zero
     return maxValue > 0 ? maxValue : 100.0;
   }

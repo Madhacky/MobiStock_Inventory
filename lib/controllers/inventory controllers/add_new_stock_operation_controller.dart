@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/services/api_services.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_textfield.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 import 'package:smartbecho/utils/custom_back_button.dart';
@@ -136,7 +137,7 @@ class AddNewStockOperationController extends GetxController {
     String totalAmountText = amountController.text.trim();
     if (totalAmountText.isNotEmpty) {
       double totalAmount = double.tryParse(totalAmountText) ?? 0;
-      
+
       if (!isPaid.value) {
         duesController.text = totalAmount.toStringAsFixed(2);
       } else {
@@ -149,9 +150,10 @@ class AddNewStockOperationController extends GetxController {
   Future<void> fetchCategories() async {
     try {
       isLoadingCategories.value = true;
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url: 'https://backend-production-91e4.up.railway.app/inventory/item-types',
+        url:
+            'https://backend-production-91e4.up.railway.app/inventory/item-types',
         authToken: true,
       );
 
@@ -232,7 +234,7 @@ class AddNewStockOperationController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to pick file: ${e.toString()}',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         duration: Duration(seconds: 3),
       );
@@ -272,7 +274,8 @@ class AddNewStockOperationController extends GetxController {
         }
 
         // Validate RAM/ROM for SMARTPHONE and TABLET
-        if ((item.category.value == 'SMARTPHONE' || item.category.value == 'TABLET') &&
+        if ((item.category.value == 'SMARTPHONE' ||
+                item.category.value == 'TABLET') &&
             (item.ram.value.isEmpty || item.rom.value.isEmpty)) {
           hasAddBillError.value = true;
           addBillErrorMessage.value =
@@ -297,25 +300,28 @@ class AddNewStockOperationController extends GetxController {
 
   Map<String, dynamic> _prepareBillData() {
     // Prepare items array
-    List<Map<String, dynamic>> itemsArray = billItems.map((item) {
-      Map<String, dynamic> itemData = {
-        "company": item.company.value,
-        "model": item.model.value,
-        "sellingPrice": item.sellingPrice.value,
-        "color": item.color.value,
-        "qty": item.qty.value,
-        "itemCategory": item.category.value,
-        "description": item.description.value.isEmpty ? "" : item.description.value,
-      };
+    List<Map<String, dynamic>> itemsArray =
+        billItems.map((item) {
+          Map<String, dynamic> itemData = {
+            "company": item.company.value,
+            "model": item.model.value,
+            "sellingPrice": item.sellingPrice.value,
+            "color": item.color.value,
+            "qty": item.qty.value,
+            "itemCategory": item.category.value,
+            "description":
+                item.description.value.isEmpty ? "" : item.description.value,
+          };
 
-      // Only add RAM and ROM if category is SMARTPHONE or TABLET
-      if (item.category.value == "SMARTPHONE" || item.category.value == 'TABLET') {
-        itemData["ram"] = int.tryParse(item.ram.value) ?? 0;
-        itemData["rom"] = int.tryParse(item.rom.value) ?? 0;
-      }
+          // Only add RAM and ROM if category is SMARTPHONE or TABLET
+          if (item.category.value == "SMARTPHONE" ||
+              item.category.value == 'TABLET') {
+            itemData["ram"] = int.tryParse(item.ram.value) ?? 0;
+            itemData["rom"] = int.tryParse(item.rom.value) ?? 0;
+          }
 
-      return itemData;
-    }).toList();
+          return itemData;
+        }).toList();
 
     // Helper function to safely parse string to number
     double parseToDouble(String value) {
@@ -330,12 +336,13 @@ class AddNewStockOperationController extends GetxController {
       "withoutGst": withoutGstController.text.trim(),
       "gst": parseToDouble(gstController.text.trim()),
       "items": itemsArray,
-      "date":"2025-10-22",
+      "date": "2025-10-22",
     };
   }
 
   Future<void> _sendBillToAPI() async {
-    const String apiUrl = "https://backend-production-91e4.up.railway.app/api/purchase-bills";
+    const String apiUrl =
+        "https://backend-production-91e4.up.railway.app/api/purchase-bills";
 
     try {
       // Prepare bill data as JSON string
@@ -355,7 +362,7 @@ class AddNewStockOperationController extends GetxController {
         if (!await file.exists()) {
           throw Exception('Selected file does not exist');
         }
-        
+
         formDataMap['file'] = await dio.MultipartFile.fromFile(
           selectedFile.value!.path,
           filename: fileName.value ?? 'invoice.pdf',
@@ -383,8 +390,9 @@ class AddNewStockOperationController extends GetxController {
           // Parse response data safely
           dynamic responseData = response.data;
           String billId = 'Unknown';
-          
-          if (responseData is Map<String, dynamic> && responseData.containsKey('billId')) {
+
+          if (responseData is Map<String, dynamic> &&
+              responseData.containsKey('billId')) {
             billId = responseData['billId'].toString();
           }
 
@@ -406,10 +414,8 @@ class AddNewStockOperationController extends GetxController {
           } else {
             errorMessage = response.data.toString();
           }
-          
-          throw Exception(
-            'API Error: ${response.statusCode} - $errorMessage',
-          );
+
+          throw Exception('API Error: ${response.statusCode} - $errorMessage');
         }
       } else {
         throw Exception('Failed to connect to server - no response received');
@@ -417,10 +423,11 @@ class AddNewStockOperationController extends GetxController {
     } on dio.DioException catch (e) {
       isAddingBill.value = false;
       String errorMessage = 'Network error occurred';
-      
+
       switch (e.type) {
         case dio.DioExceptionType.connectionTimeout:
-          errorMessage = 'Connection timeout - please check your internet connection';
+          errorMessage =
+              'Connection timeout - please check your internet connection';
           break;
         case dio.DioExceptionType.receiveTimeout:
           errorMessage = 'Server response timeout';
@@ -443,7 +450,7 @@ class AddNewStockOperationController extends GetxController {
         default:
           errorMessage = 'Network error occurred';
       }
-      
+
       throw Exception(errorMessage);
     } catch (e) {
       isAddingBill.value = false;
@@ -594,11 +601,11 @@ class BillItem {
     priceController = TextEditingController();
     qtyController = TextEditingController();
     descriptionController = TextEditingController();
-    
+
     // Set default quantity
     qty.value = '1';
     qtyController.text = '1';
-    
+
     // Sync controllers with observable values
     _setupControllerListeners();
   }
@@ -608,31 +615,31 @@ class BillItem {
     companyController.addListener(() {
       company.value = companyController.text;
     });
-    
+
     modelController.addListener(() {
       model.value = modelController.text;
     });
-    
+
     ramController.addListener(() {
       ram.value = ramController.text;
     });
-    
+
     romController.addListener(() {
       rom.value = romController.text;
     });
-    
+
     colorController.addListener(() {
       color.value = colorController.text;
     });
-    
+
     priceController.addListener(() {
       sellingPrice.value = priceController.text;
     });
-    
+
     qtyController.addListener(() {
       qty.value = qtyController.text;
     });
-    
+
     descriptionController.addListener(() {
       description.value = descriptionController.text;
     });

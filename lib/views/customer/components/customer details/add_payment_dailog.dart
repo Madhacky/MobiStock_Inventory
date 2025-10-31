@@ -62,7 +62,6 @@ class _PaymentDialogState extends State<PaymentDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      
       backgroundColor: Colors.transparent,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -310,7 +309,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: _isValidAmount ? Colors.grey[300]! : Colors.red,
+              color: _isValidAmount ? Colors.grey[300]! : AppColors.errorLight,
               width: 1,
             ),
           ),
@@ -357,10 +356,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
             value: _selectedPaymentMethod,
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
-              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               prefixIcon: Container(
                 margin: EdgeInsets.all(8),
                 padding: EdgeInsets.all(4),

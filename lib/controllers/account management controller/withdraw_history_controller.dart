@@ -4,6 +4,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/models/account%20management%20models/withdraw_history_model.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/custom_dropdown.dart';
 
 class WithdrawController extends GetxController {
@@ -45,7 +46,7 @@ class WithdrawController extends GetxController {
     "CHEQUE",
     "OTHERS",
     "GIVEN_SALE_DUES",
-    "EMI_PENDING"
+    "EMI_PENDING",
   ];
 
   // Observable variables
@@ -288,7 +289,7 @@ class WithdrawController extends GetxController {
           'Error',
           'Failed to load withdrawals',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -297,7 +298,7 @@ class WithdrawController extends GetxController {
         'Error',
         'An error occurred while loading data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -466,14 +467,16 @@ class WithdrawController extends GetxController {
   }
 
   Widget buildPaymentMethodDropdown() {
-    return Obx(() => buildStyledDropdown(
-      labelText: 'Payment Method',
-      hintText: 'Select Payment Method',
-      value: selectedPaymentMethod.value,
-      items: paymentMethodOptions,
-      onChanged: onPaymentMethodChanged,
-      validator: validatePaymentMethod,
-    ));
+    return Obx(
+      () => buildStyledDropdown(
+        labelText: 'Payment Method',
+        hintText: 'Select Payment Method',
+        value: selectedPaymentMethod.value,
+        items: paymentMethodOptions,
+        onChanged: onPaymentMethodChanged,
+        validator: validatePaymentMethod,
+      ),
+    );
   }
 
   Color getWithdrawnByColor(String withdrawnBy) {

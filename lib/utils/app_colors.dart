@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartbecho/services/theme_config.dart';
 
-class AppTheme {
+class AppColors {
   // Light Theme Colors
   static const Color primaryLight = Color(0xFF16A085);
   static const Color primaryVariantLight = Color(0xFFA29BFE);
@@ -14,7 +14,7 @@ class AppTheme {
   static const Color onSecondaryLight = Colors.white;
   static const Color onBackgroundLight = Color(0xFF1A1A1A);
   static const Color onSurfaceLight = Color(0xFF2D3436);
-  static const Color errorLight = Color(0xFFFF7675);
+  static const Color errorLight = Color(0xFFF44336);
   static const Color successLight = Color(0xFF00B894);
   static const Color warningLight = Color(0xFFFFB347);
   static const Color infoLight = Color(0xFF74B9FF);

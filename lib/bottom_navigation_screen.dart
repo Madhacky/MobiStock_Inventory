@@ -91,7 +91,7 @@ class BottomNavigationScreen extends StatelessWidget {
               backgroundColor: Colors.white,
               currentIndex: c.selectedIndex.value,
               onTap: c.setIndex,
-              selectedItemColor: AppTheme.primaryLight,
+              selectedItemColor: AppColors.primaryLight,
               unselectedItemColor: Colors.grey,
               type: BottomNavigationBarType.fixed,
               items: const [

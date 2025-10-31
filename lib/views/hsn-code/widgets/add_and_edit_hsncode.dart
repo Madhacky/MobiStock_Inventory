@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/hsn-code/models/hsn_code_model.dart';
 
 class AddEditHsnCodeForm extends StatefulWidget {
@@ -79,8 +80,8 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
         'Error',
         'Please select an item category',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.1),
-        colorText: Colors.red,
+        backgroundColor: AppColors.errorLight.withOpacity(0.1),
+        colorText: AppColors.errorLight,
       );
       return;
     }
@@ -542,7 +543,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Colors.red),
+              borderSide: const BorderSide(color: AppColors.errorLight),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,

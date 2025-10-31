@@ -13,6 +13,7 @@ import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:smartbecho/services/launch_phone_dailer_service.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_analytics.dart';
 import 'package:smartbecho/views/customer%20dues/components/customer_dues_details.dart';
 
@@ -46,7 +47,7 @@ class CustomerDuesController extends GetxController {
   final RxString searchQuery = ''.obs;
   final RxString selectedTab = 'dues'.obs; // 'dues' or 'paid'
   final RxBool isPaidFilter = false.obs;
-  
+
   // Filter Parameters
   final RxnInt selectedYear = RxnInt(null);
   final RxnInt selectedMonth = RxnInt(null);
@@ -54,7 +55,8 @@ class CustomerDuesController extends GetxController {
   final Rxn<DateTime> endDate = Rxn<DateTime>(null);
   final RxString sortBy = 'id'.obs; // Changed from 'creationDate' to match cURL
   final RxString sortDir = 'asc'.obs; // Changed from 'desc' to match cURL
-  final RxString timePeriodType = 'Month/Year'.obs; // 'Month/Year' or 'Custom Range'
+  final RxString timePeriodType =
+      'Month/Year'.obs; // 'Month/Year' or 'Custom Range'
 
   // Controllers for date fields
   final TextEditingController startDateController = TextEditingController();
@@ -65,10 +67,10 @@ class CustomerDuesController extends GetxController {
   final List<String> sortOptions = [
     'id', // Added id as first option to match cURL
     'creationDate',
-    'totalDue', 
+    'totalDue',
     'totalPaid',
     'remainingDue',
-    'name'
+    'name',
   ];
 
   final RxBool isFiltersExpanded = false.obs;
@@ -82,10 +84,10 @@ class CustomerDuesController extends GetxController {
     // Initialize with only current year, no month initially
     selectedYear.value = DateTime.now().year;
     // Don't set selectedMonth initially - let it be null
-    
+
     fetchCustomerDues(isRefresh: true);
     getSummaryData();
-    
+
     // Listen to search changes
     debounce(
       searchQuery,
@@ -190,7 +192,9 @@ class CustomerDuesController extends GetxController {
 
           log("Customer dues loaded successfully");
           log("Page: ${currentPage.value}, Total Pages: ${totalPages.value}");
-          log("Total dues loaded: ${isPaidFilter.value ? paidDues.length : allDues.length}");
+          log(
+            "Total dues loaded: ${isPaidFilter.value ? paidDues.length : allDues.length}",
+          );
         } else {
           throw Exception(duesResponse.message);
         }
@@ -207,7 +211,7 @@ class CustomerDuesController extends GetxController {
         'Error',
         'Failed to load dues: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -340,8 +344,18 @@ class CustomerDuesController extends GetxController {
 
   String getMonthName(int month) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
@@ -394,7 +408,7 @@ class CustomerDuesController extends GetxController {
             'Success',
             model.message,
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green.withValues(alpha:0.8),
+            backgroundColor: Colors.green.withValues(alpha: 0.8),
             colorText: Colors.white,
           );
           // Refresh data after successful payment
@@ -410,7 +424,7 @@ class CustomerDuesController extends GetxController {
         'Error',
         'Failed to add payment: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -435,7 +449,7 @@ class CustomerDuesController extends GetxController {
           'Success',
           'Due marked as paid successfully',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withValues(alpha:0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
 
@@ -448,7 +462,7 @@ class CustomerDuesController extends GetxController {
         'Error',
         'Failed to mark as paid: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -463,7 +477,7 @@ class CustomerDuesController extends GetxController {
           'Error',
           'Unable to make call',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withValues(alpha:0.8),
+          backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -472,7 +486,7 @@ class CustomerDuesController extends GetxController {
         'Error',
         'Unable to make call: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -495,7 +509,7 @@ class CustomerDuesController extends GetxController {
           'Success',
           'Notification sent to $customerName',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.blue.withValues(alpha:0.8),
+          backgroundColor: Colors.blue.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       } else {
@@ -509,7 +523,7 @@ class CustomerDuesController extends GetxController {
         'Success',
         'Failed to send notification to $customerName',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.blue.withValues(alpha:0.8),
+        backgroundColor: Colors.blue.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -530,7 +544,7 @@ class CustomerDuesController extends GetxController {
       'Success',
       'Dues exported successfully',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.withValues(alpha:0.8),
+      backgroundColor: Colors.green.withValues(alpha: 0.8),
       colorText: Colors.white,
     );
   }
@@ -564,7 +578,7 @@ class CustomerDuesController extends GetxController {
         'Error',
         'Failed to load analytics: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -641,7 +655,7 @@ class CustomerDuesController extends GetxController {
         'Error',
         'Failed to load customer details: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -674,7 +688,7 @@ class DuesSummaryModel {
       totalGiven += due.totalDue;
       totalCollected += due.totalPaid;
       totalRemaining += due.remainingDue;
-      
+
       // Calculate this month's collection
       final now = DateTime.now();
       for (var payment in due.partialPayments) {

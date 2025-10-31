@@ -12,9 +12,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:smartbecho/services/pdf_downloader_service.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 
 class SalesManagementController extends GetxController {
-  
   // Utility methods
   bool get isSmallScreen => Get.width < 360;
   bool get isMediumScreen => Get.width >= 360 && Get.width < 400;
@@ -43,18 +43,20 @@ class SalesManagementController extends GetxController {
   final RxBool isLastPage = false.obs;
 
   /// Sales Insights Data
-  
+
   // Stats Data
   final Rx<SalesStats?> statsData = Rx<SalesStats?>(null);
-  final Rx<SalesInsightsStatsModel?> insightsStatsData = Rx<SalesInsightsStatsModel?>(null);
+  final Rx<SalesInsightsStatsModel?> insightsStatsData =
+      Rx<SalesInsightsStatsModel?>(null);
 
   // Search and Filters
   final RxString searchQuery = ''.obs;
-  final RxString selectedTab = 'dashboard'.obs; // 'dashboard', 'history', 'insights'
+  final RxString selectedTab =
+      'dashboard'.obs; // 'dashboard', 'history', 'insights'
   final RxString selectedSort = 'saleDate,desc'.obs;
   final TextEditingController searchController = TextEditingController();
 
-  // Sales detail 
+  // Sales detail
   final Rx<SaleDetailResponse?> saleDetail = Rx<SaleDetailResponse?>(null);
   final RxBool isLoadingDetail = false.obs;
   final RxBool hasDetailError = false.obs;
@@ -83,12 +85,7 @@ class SalesManagementController extends GetxController {
   final RxList<String> paymentMethodOptions = <String>[].obs;
 
   // Static Filter Options
-  final List<String> paymentModeOptions = [
-    'All Modes',
-    'FULL',
-    'EMI',
-    'DUES'
-  ];
+  final List<String> paymentModeOptions = ['All Modes', 'FULL', 'EMI', 'DUES'];
 
   final List<String> sortByOptions = [
     'saleDate',
@@ -96,7 +93,7 @@ class SalesManagementController extends GetxController {
     'customerName',
     'invoiceNumber',
     'paymentMethod',
-    'company'
+    'company',
   ];
 
   // Constants
@@ -104,13 +101,18 @@ class SalesManagementController extends GetxController {
 
   // Computed property to check if any filters are active
   bool get hasActiveFilters {
-    return (selectedCompany.value.isNotEmpty && selectedCompany.value != 'All Companies') ||
-           (selectedItemCategory.value.isNotEmpty && selectedItemCategory.value != 'All Categories') ||
-           (selectedPaymentMethod.value.isNotEmpty && selectedPaymentMethod.value != 'All Methods') ||
-           (selectedPaymentMode.value.isNotEmpty && selectedPaymentMode.value != 'All Modes') ||
-           (selectedMonth.value != null) ||
-           (selectedYear.value != null) ||
-           (dateFilterType.value == 'Date Range' && (startDate.value != null || endDate.value != null));
+    return (selectedCompany.value.isNotEmpty &&
+            selectedCompany.value != 'All Companies') ||
+        (selectedItemCategory.value.isNotEmpty &&
+            selectedItemCategory.value != 'All Categories') ||
+        (selectedPaymentMethod.value.isNotEmpty &&
+            selectedPaymentMethod.value != 'All Methods') ||
+        (selectedPaymentMode.value.isNotEmpty &&
+            selectedPaymentMode.value != 'All Modes') ||
+        (selectedMonth.value != null) ||
+        (selectedYear.value != null) ||
+        (dateFilterType.value == 'Date Range' &&
+            (startDate.value != null || endDate.value != null));
   }
 
   @override
@@ -126,7 +128,9 @@ class SalesManagementController extends GetxController {
     debounce(
       searchQuery,
       (_) => _handleSearch(),
-      time: Duration(milliseconds: 800), // Increased debounce time for API calls
+      time: Duration(
+        milliseconds: 800,
+      ), // Increased debounce time for API calls
     );
   }
 
@@ -139,18 +143,20 @@ class SalesManagementController extends GetxController {
   }
 
   // Base URLs for sales API
-  String get salesHistoryUrl => 'https://backend-production-91e4.up.railway.app/api/sales/shop-history';
-  String get salesStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats/today';
-  String get salesInsightsStatsUrl => 'https://backend-production-91e4.up.railway.app/api/sales/stats';
-  String get mobilesFiltersUrl => 'https://backend-production-91e4.up.railway.app/api/mobiles/filters';
-  String get paymentAccountTypesUrl => 'https://backend-production-91e4.up.railway.app/api/v1/dropdown/payment-account-types';
+  String get salesHistoryUrl =>
+      'https://backend-production-91e4.up.railway.app/api/sales/shop-history';
+  String get salesStatsUrl =>
+      'https://backend-production-91e4.up.railway.app/api/sales/stats/today';
+  String get salesInsightsStatsUrl =>
+      'https://backend-production-91e4.up.railway.app/api/sales/stats';
+  String get mobilesFiltersUrl =>
+      'https://backend-production-91e4.up.railway.app/api/mobiles/filters';
+  String get paymentAccountTypesUrl =>
+      'https://backend-production-91e4.up.railway.app/api/v1/dropdown/payment-account-types';
 
   // Initialize filter options by fetching from APIs
   Future<void> _initializeFilterOptions() async {
-    await Future.wait([
-      fetchMobilesFilters(),
-      fetchPaymentMethods(),
-    ]);
+    await Future.wait([fetchMobilesFilters(), fetchPaymentMethods()]);
   }
 
   // Fetch mobiles filters (companies and categories)
@@ -166,12 +172,15 @@ class SalesManagementController extends GetxController {
 
       if (response != null && response.data != null) {
         final filtersData = response.data as Map<String, dynamic>;
-        
+
         // Extract companies
         if (filtersData.containsKey('companies')) {
           List<String> companies = ['All Companies'];
-          List<dynamic> apiCompanies = filtersData['companies'] as List<dynamic>;
-          companies.addAll(apiCompanies.map((company) => company.toString()).toList());
+          List<dynamic> apiCompanies =
+              filtersData['companies'] as List<dynamic>;
+          companies.addAll(
+            apiCompanies.map((company) => company.toString()).toList(),
+          );
           companyOptions.value = companies;
           log("Companies loaded: ${companies.length}");
         }
@@ -179,8 +188,11 @@ class SalesManagementController extends GetxController {
         // Extract item categories
         if (filtersData.containsKey('itemCategories')) {
           List<String> categories = ['All Categories'];
-          List<dynamic> apiCategories = filtersData['itemCategories'] as List<dynamic>;
-          categories.addAll(apiCategories.map((category) => category.toString()).toList());
+          List<dynamic> apiCategories =
+              filtersData['itemCategories'] as List<dynamic>;
+          categories.addAll(
+            apiCategories.map((category) => category.toString()).toList(),
+          );
           itemCategoryOptions.value = categories;
           log("Item categories loaded: ${categories.length}");
         }
@@ -197,7 +209,7 @@ class SalesManagementController extends GetxController {
         'Warning',
         'Failed to load filter options, using defaults',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withValues(alpha:0.8),
+        backgroundColor: Colors.orange.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -234,13 +246,13 @@ class SalesManagementController extends GetxController {
         'UPI',
         'CARD',
         'CHEQUE',
-        'OTHERS'
+        'OTHERS',
       ];
       Get.snackbar(
         'Warning',
         'Failed to load payment methods, using defaults',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withValues(alpha:0.8),
+        backgroundColor: Colors.orange.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -257,7 +269,7 @@ class SalesManagementController extends GetxController {
       'Xiaomi',
       'Realme',
       'OnePlus',
-      'Others'
+      'Others',
     ];
 
     itemCategoryOptions.value = [
@@ -270,7 +282,7 @@ class SalesManagementController extends GetxController {
       'POWER_BANK',
       'MOBILE_COVER',
       'TEMPERED_GLASS',
-      'OTHERS'
+      'OTHERS',
     ];
   }
 
@@ -355,7 +367,7 @@ class SalesManagementController extends GetxController {
     endDateController.clear();
     selectedSortBy.value = 'saleDate';
     selectedSortDir.value = 'desc';
-    
+
     log("Filters reset");
     fetchSalesHistory(isRefresh: true);
   }
@@ -390,14 +402,13 @@ class SalesManagementController extends GetxController {
         'Error',
         'Failed to load sales stats: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
       isStatsLoading.value = false;
     }
   }
-  
 
   // Fetch sales stats from API
   Future<void> fetchSalesStats() async {
@@ -429,7 +440,7 @@ class SalesManagementController extends GetxController {
         'Error',
         'Failed to load sales stats: $error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withValues(alpha:0.8),
+        backgroundColor: AppColors.errorLight.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -470,21 +481,27 @@ class SalesManagementController extends GetxController {
       }
 
       // Add filter parameters
-      if (selectedCompany.value.isNotEmpty && selectedCompany.value != 'All Companies') {
+      if (selectedCompany.value.isNotEmpty &&
+          selectedCompany.value != 'All Companies') {
         queryParams['company'] = selectedCompany.value;
       }
 
-      if (selectedItemCategory.value.isNotEmpty && selectedItemCategory.value != 'All Categories') {
+      if (selectedItemCategory.value.isNotEmpty &&
+          selectedItemCategory.value != 'All Categories') {
         queryParams['itemCategory'] = selectedItemCategory.value;
       }
 
-      if (selectedPaymentMethod.value.isNotEmpty && selectedPaymentMethod.value != 'All Methods') {
+      if (selectedPaymentMethod.value.isNotEmpty &&
+          selectedPaymentMethod.value != 'All Methods') {
         // Map UI payment method to API format
-        String apiPaymentMethod = _mapPaymentMethodToApi(selectedPaymentMethod.value);
+        String apiPaymentMethod = _mapPaymentMethodToApi(
+          selectedPaymentMethod.value,
+        );
         queryParams['paymentMethod'] = apiPaymentMethod;
       }
 
-      if (selectedPaymentMode.value.isNotEmpty && selectedPaymentMode.value != 'All Modes') {
+      if (selectedPaymentMode.value.isNotEmpty &&
+          selectedPaymentMode.value != 'All Modes') {
         queryParams['paymentMode'] = selectedPaymentMode.value;
       }
 
@@ -498,10 +515,12 @@ class SalesManagementController extends GetxController {
         }
       } else if (dateFilterType.value == 'Date Range') {
         if (startDate.value != null) {
-          queryParams['startDate'] = '${startDate.value!.year}-${startDate.value!.month.toString().padLeft(2, '0')}-${startDate.value!.day.toString().padLeft(2, '0')}';
+          queryParams['startDate'] =
+              '${startDate.value!.year}-${startDate.value!.month.toString().padLeft(2, '0')}-${startDate.value!.day.toString().padLeft(2, '0')}';
         }
         if (endDate.value != null) {
-          queryParams['endDate'] = '${endDate.value!.year}-${endDate.value!.month.toString().padLeft(2, '0')}-${endDate.value!.day.toString().padLeft(2, '0')}';
+          queryParams['endDate'] =
+              '${endDate.value!.year}-${endDate.value!.month.toString().padLeft(2, '0')}-${endDate.value!.day.toString().padLeft(2, '0')}';
         }
       }
 
@@ -545,8 +564,6 @@ class SalesManagementController extends GetxController {
       hasError.value = true;
       errorMessage.value = 'Error: $error';
       log("❌ Error in fetchSalesHistory: $error");
-
-   
     } finally {
       isLoading.value = false;
       isLoadingMore.value = false;
@@ -571,11 +588,11 @@ class SalesManagementController extends GetxController {
       isLoadingDetail.value = true;
       hasDetailError.value = false;
       detailErrorMessage.value = '';
-      
+
       log("Fetching sale detail for ID: $saleId");
-      
+
       dio.Response? response = await _apiService.requestGetForApi(
-        url:"${_config.saleDetail}/$saleId",
+        url: "${_config.saleDetail}/$saleId",
         authToken: true,
       );
 
@@ -590,8 +607,6 @@ class SalesManagementController extends GetxController {
       hasDetailError.value = true;
       detailErrorMessage.value = 'Error: $error';
       log("❌ Error in fetchSaleDetail: $error");
-      
-     
     } finally {
       isLoadingDetail.value = false;
     }
@@ -613,7 +628,7 @@ class SalesManagementController extends GetxController {
   // This method is no longer needed since search is handled by API
   // Keeping it for backward compatibility but it won't do client-side filtering
   void filterSales() {
-    // Since search is now handled by API, this method is primarily for 
+    // Since search is now handled by API, this method is primarily for
     // any additional client-side filtering if needed in the future
     filteredSales.value = allSales.toList();
   }
@@ -736,10 +751,10 @@ class SalesManagementController extends GetxController {
 
   void downloadInvoice(Sale sale) {
     log(sale.invoicePdfUrl);
-    
+
     // Extract filename from URL or create a custom one
     String fileName = 'invoice_${sale.invoiceNumber}.pdf';
-    
+
     // Download the PDF
     PDFDownloadService.downloadPDF(
       url: sale.invoicePdfUrl,
@@ -767,21 +782,36 @@ class SalesManagementController extends GetxController {
   String get formattedCashAmount => '₹${cashAmount.toStringAsFixed(2)}';
   String get formattedCardAmount => '₹${cardAmount.toStringAsFixed(2)}';
 
-  double get totalSaleAmount => insightsStatsData.value?.payload.totalSaleAmount ?? 0.0;
-  double get averageSaleAmountGrowth => insightsStatsData.value?.payload.averageSaleAmountGrowth ?? 0.0;
-  double get averageSaleAmount =>insightsStatsData.value?.payload.averageSaleAmount ?? 0.0;
-  double get totalUnitsSoldGrowth =>insightsStatsData.value?.payload.totalUnitsSoldGrowth ?? 0.0;
-  int get totalUnitsSold => insightsStatsData.value?.payload.totalUnitsSold ?? 0;
-  double get totalSaleAmountGrowth => insightsStatsData.value?.payload.totalSaleAmountGrowth ?? 0.0;
-  double get totalEmiSalesAmount => insightsStatsData.value?.payload.totalEmiSalesAmount ?? 0.0;
-  double get totalEmiSalesAmountGrowth =>insightsStatsData.value?.payload.totalEmiSalesAmountGrowth ?? 0.0;
+  double get totalSaleAmount =>
+      insightsStatsData.value?.payload.totalSaleAmount ?? 0.0;
+  double get averageSaleAmountGrowth =>
+      insightsStatsData.value?.payload.averageSaleAmountGrowth ?? 0.0;
+  double get averageSaleAmount =>
+      insightsStatsData.value?.payload.averageSaleAmount ?? 0.0;
+  double get totalUnitsSoldGrowth =>
+      insightsStatsData.value?.payload.totalUnitsSoldGrowth ?? 0.0;
+  int get totalUnitsSold =>
+      insightsStatsData.value?.payload.totalUnitsSold ?? 0;
+  double get totalSaleAmountGrowth =>
+      insightsStatsData.value?.payload.totalSaleAmountGrowth ?? 0.0;
+  double get totalEmiSalesAmount =>
+      insightsStatsData.value?.payload.totalEmiSalesAmount ?? 0.0;
+  double get totalEmiSalesAmountGrowth =>
+      insightsStatsData.value?.payload.totalEmiSalesAmountGrowth ?? 0.0;
 
-  String get formattedTotalSaleAmount => '₹${totalSaleAmount.toStringAsFixed(2)}';
-  String get formattedAverageSaleAmountGrowth => '₹${averageSaleAmountGrowth.toStringAsFixed(2)}';
-  String get formattedAverageSaleAmount => '₹${averageSaleAmount.toStringAsFixed(2)}';
-  String get formattedTotalUnitsSoldGrowth => '₹${totalUnitsSoldGrowth.toStringAsFixed(2)}';
+  String get formattedTotalSaleAmount =>
+      '₹${totalSaleAmount.toStringAsFixed(2)}';
+  String get formattedAverageSaleAmountGrowth =>
+      '₹${averageSaleAmountGrowth.toStringAsFixed(2)}';
+  String get formattedAverageSaleAmount =>
+      '₹${averageSaleAmount.toStringAsFixed(2)}';
+  String get formattedTotalUnitsSoldGrowth =>
+      '₹${totalUnitsSoldGrowth.toStringAsFixed(2)}';
   String get formattedTotalUnitsSold => totalUnitsSold.toStringAsFixed(0);
-  String get formattedTotalSaleAmountGrowth => '₹${totalSaleAmountGrowth.toStringAsFixed(2)}';
-  String get formattedTotalEmiSalesAmount => '₹${totalEmiSalesAmount.toStringAsFixed(2)}';
-  String get formattedTotalEmiSalesAmountGrowth => '₹${totalEmiSalesAmountGrowth.toStringAsFixed(2)}';
+  String get formattedTotalSaleAmountGrowth =>
+      '₹${totalSaleAmountGrowth.toStringAsFixed(2)}';
+  String get formattedTotalEmiSalesAmount =>
+      '₹${totalEmiSalesAmount.toStringAsFixed(2)}';
+  String get formattedTotalEmiSalesAmountGrowth =>
+      '₹${totalEmiSalesAmountGrowth.toStringAsFixed(2)}';
 }

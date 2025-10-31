@@ -1104,7 +1104,7 @@ class BillsHistoryPage extends GetView<BillHistoryController> {
   Widget buildFloatingActionButtons() {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
-      backgroundColor: AppTheme.primaryLight,
+      backgroundColor: AppColors.primaryLight,
       foregroundColor: Colors.white,
       elevation: 8,
       shape: const CircleBorder(),

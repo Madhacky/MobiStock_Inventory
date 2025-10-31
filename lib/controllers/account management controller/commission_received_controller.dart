@@ -7,8 +7,9 @@ import 'package:smartbecho/services/app_config.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
+import 'package:smartbecho/utils/app_colors.dart';
+
 class CommissionReceivedController extends GetxController {
-  
   @override
   void dispose() {
     scrollController.dispose();
@@ -43,12 +44,13 @@ class CommissionReceivedController extends GetxController {
     "CHEQUE",
     "OTHERS",
     "GIVEN_SALE_DUES",
-    "EMI_PENDING"
+    "EMI_PENDING",
   ];
 
   // Form state
   var isFormLoading = false.obs;
-  var selectedReceivedModeForm = 'CASH'.obs; // Changed default to match predefined options
+  var selectedReceivedModeForm =
+      'CASH'.obs; // Changed default to match predefined options
   var selectedFile = Rxn<File>();
 
   // Observable variables
@@ -73,7 +75,7 @@ class CommissionReceivedController extends GetxController {
   var companyOptions = <String>['All'].obs;
   var confirmedByOptions = <String>['All'].obs;
   var receivedModeOptions = <String>['All'].obs;
-  
+
   final TextEditingController searchController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final int pageSize = 10;
@@ -98,10 +100,11 @@ class CommissionReceivedController extends GetxController {
     super.onInit();
     loadCommissions(refresh: true);
     dateController.text = DateTime.now().toIso8601String().split('T')[0];
-    
+
     // Setup scroll controller for pagination
     scrollController.addListener(() {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
         loadNextPage();
       }
     });
@@ -228,25 +231,34 @@ class CommissionReceivedController extends GetxController {
 
     try {
       isFormLoading.value = true;
-      
+
       // Create form data
       final formData = dio.FormData();
       formData.fields.add(MapEntry('company', companyController.text));
       formData.fields.add(MapEntry('amount', amountController.text));
-      formData.fields.add(MapEntry('receivedMode', selectedReceivedModeForm.value));
+      formData.fields.add(
+        MapEntry('receivedMode', selectedReceivedModeForm.value),
+      );
       formData.fields.add(MapEntry('confirmedBy', confirmedByController.text));
       formData.fields.add(MapEntry('description', descriptionController.text));
-      formData.fields.add(MapEntry('date', DateTime.parse(dateController.text).toUtc().toIso8601String()));
+      formData.fields.add(
+        MapEntry(
+          'date',
+          DateTime.parse(dateController.text).toUtc().toIso8601String(),
+        ),
+      );
 
       // Add file if selected
       if (selectedFile.value != null) {
-        formData.files.add(MapEntry(
-          'file',
-          await dio.MultipartFile.fromFile(
-            selectedFile.value!.path,
-            filename: selectedFile.value!.path.split('/').last,
+        formData.files.add(
+          MapEntry(
+            'file',
+            await dio.MultipartFile.fromFile(
+              selectedFile.value!.path,
+              filename: selectedFile.value!.path.split('/').last,
+            ),
           ),
-        ));
+        );
       }
 
       final response = await _apiService.requestMultipartApi(
@@ -271,7 +283,7 @@ class CommissionReceivedController extends GetxController {
         if (response?.data != null && response!.data['message'] != null) {
           errorMessage = response.data['message'];
         }
-        
+
         Get.snackbar(
           'Error',
           errorMessage,
@@ -368,7 +380,7 @@ class CommissionReceivedController extends GetxController {
           'Error',
           'Failed to load commissions',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -377,7 +389,7 @@ class CommissionReceivedController extends GetxController {
         'Error',
         'An error occurred while loading data: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
     } finally {
@@ -387,51 +399,55 @@ class CommissionReceivedController extends GetxController {
 
   void _updateFilterOptions() {
     // Update company options
-    final companySet = commissions.map((commission) => commission.company).toSet();
+    final companySet =
+        commissions.map((commission) => commission.company).toSet();
     companyOptions.value = ['All', ...companySet.toList()..sort()];
 
     // Update confirmed by options
-    final confirmedBySet = commissions.map((commission) => commission.confirmedBy).toSet();
+    final confirmedBySet =
+        commissions.map((commission) => commission.confirmedBy).toSet();
     confirmedByOptions.value = ['All', ...confirmedBySet.toList()..sort()];
 
     // Update received mode options - now using predefined options
-    final receivedModeSet = commissions.map((commission) => commission.receivedMode).toSet();
+    final receivedModeSet =
+        commissions.map((commission) => commission.receivedMode).toSet();
     receivedModeOptions.value = ['All', ...receivedModeSet.toList()..sort()];
   }
 
   void _applyFilters() {
-    var filtered = commissions.where((commission) {
-      // Search filter
-      if (searchQuery.value.isNotEmpty) {
-        final query = searchQuery.value.toLowerCase();
-        if (!commission.company.toLowerCase().contains(query) &&
-            !commission.confirmedBy.toLowerCase().contains(query) &&
-            !commission.description.toLowerCase().contains(query) &&
-            !commission.receivedMode.toLowerCase().contains(query)) {
-          return false;
-        }
-      }
+    var filtered =
+        commissions.where((commission) {
+          // Search filter
+          if (searchQuery.value.isNotEmpty) {
+            final query = searchQuery.value.toLowerCase();
+            if (!commission.company.toLowerCase().contains(query) &&
+                !commission.confirmedBy.toLowerCase().contains(query) &&
+                !commission.description.toLowerCase().contains(query) &&
+                !commission.receivedMode.toLowerCase().contains(query)) {
+              return false;
+            }
+          }
 
-      // Company filter
-      if (selectedCompany.value != 'All' &&
-          commission.company != selectedCompany.value) {
-        return false;
-      }
+          // Company filter
+          if (selectedCompany.value != 'All' &&
+              commission.company != selectedCompany.value) {
+            return false;
+          }
 
-      // Confirmed by filter
-      if (selectedConfirmedBy.value != 'All' &&
-          commission.confirmedBy != selectedConfirmedBy.value) {
-        return false;
-      }
+          // Confirmed by filter
+          if (selectedConfirmedBy.value != 'All' &&
+              commission.confirmedBy != selectedConfirmedBy.value) {
+            return false;
+          }
 
-      // Received mode filter
-      if (selectedReceivedMode.value != 'All' &&
-          commission.receivedMode != selectedReceivedMode.value) {
-        return false;
-      }
+          // Received mode filter
+          if (selectedReceivedMode.value != 'All' &&
+              commission.receivedMode != selectedReceivedMode.value) {
+            return false;
+          }
 
-      return true;
-    }).toList();
+          return true;
+        }).toList();
 
     filteredCommissions.value = filtered;
   }

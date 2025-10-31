@@ -10,6 +10,7 @@ import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/services/api_services.dart';
 import 'package:smartbecho/services/app_config.dart';
 import 'package:smartbecho/services/launch_phone_dailer_service.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/customer/components/customer%20details/add_payment_dailog.dart';
 
 class CustomerDetailsController extends GetxController {
@@ -62,7 +63,7 @@ class CustomerDetailsController extends GetxController {
         url: '${_config.baseUrl}/api/customers/$customerId',
         authToken: true,
       );
-log(response!.data.toString());
+      log(response!.data.toString());
 
       if (response != null && response.statusCode == 200) {
         final customerResponse = CustomerDetailsResponse.fromJson(
@@ -140,7 +141,7 @@ log(response!.data.toString());
           Get.snackbar(
             'Error',
             'Failed to launch phone dialer',
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.errorLight,
             colorText: Colors.white,
           );
         }
@@ -148,7 +149,7 @@ log(response!.data.toString());
         Get.snackbar(
           'Error',
           'Unable to make call: ${e.toString()}',
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
         );
       }
@@ -160,7 +161,7 @@ log(response!.data.toString());
       Get.snackbar(
         'Error',
         'Customer details not available',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
       return;
@@ -214,7 +215,7 @@ log(response!.data.toString());
           Get.snackbar(
             'Error',
             notifyResponse.message,
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.errorLight,
             colorText: Colors.white,
             duration: Duration(seconds: 3),
           );
@@ -223,7 +224,7 @@ log(response!.data.toString());
         Get.snackbar(
           'Error',
           'Failed to send notification. Status: ${response?.statusCode}',
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
           duration: Duration(seconds: 3),
         );
@@ -232,7 +233,7 @@ log(response!.data.toString());
       Get.snackbar(
         'Error',
         'Failed to send notification: ${e.toString()}',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         duration: Duration(seconds: 3),
       );
@@ -286,7 +287,7 @@ log(response!.data.toString());
         Get.snackbar(
           'Error',
           'Failed to process payment. Status: ${response?.statusCode}',
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.errorLight,
           colorText: Colors.white,
           duration: Duration(seconds: 3),
         );
@@ -297,7 +298,7 @@ log(response!.data.toString());
       Get.snackbar(
         'Error',
         'Failed to process payment: ${e.toString()}',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
         duration: Duration(seconds: 3),
       );
@@ -345,7 +346,7 @@ log(response!.data.toString());
       Get.snackbar(
         'Error',
         'Customer details not available',
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.errorLight,
         colorText: Colors.white,
       );
       return;

@@ -346,7 +346,11 @@ class InventoryManagementScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.filter_list, color: AppTheme.primaryLight, size: 20),
+                Icon(
+                  Icons.filter_list,
+                  color: AppColors.primaryLight,
+                  size: 20,
+                ),
                 SizedBox(width: 8),
                 Text(
                   'Filters',
@@ -366,7 +370,7 @@ class InventoryManagementScreen extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryLight,
+                          color: AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -391,7 +395,7 @@ class InventoryManagementScreen extends StatelessWidget {
                     initialValue: controller.searchQuery.value,
                     onChanged: (value) => controller.searchQuery.value = value,
                     onClear: () => controller.searchQuery.value = '',
-                    primaryColor: AppTheme.primaryLight,
+                    primaryColor: AppColors.primaryLight,
                   ),
                 ),
                 SizedBox(width: 12),
@@ -414,7 +418,7 @@ class InventoryManagementScreen extends StatelessWidget {
                     ),
                     label: Text('Filters'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryLight,
+                      backgroundColor: AppColors.primaryLight,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -534,14 +538,16 @@ class InventoryManagementScreen extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryLight.withValues(alpha: 0.1),
+                            color: AppColors.primaryLight.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             'Filtered',
                             style: TextStyle(
                               fontSize: 10,
-                              color: AppTheme.primaryLight,
+                              color: AppColors.primaryLight,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -571,7 +577,7 @@ class InventoryManagementScreen extends StatelessWidget {
                           ' • Scroll for more',
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppTheme.primaryLight,
+                            color: AppColors.primaryLight,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -590,7 +596,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: AppTheme.primaryLight,
+                        color: AppColors.primaryLight,
                       ),
                     ),
                   ),
@@ -648,7 +654,7 @@ class InventoryManagementScreen extends StatelessWidget {
               controller.isLoadingMore.value
                   ? Center(
                     child: CircularProgressIndicator(
-                      color: AppTheme.primaryLight,
+                      color: AppColors.primaryLight,
                       strokeWidth: 2,
                     ),
                   )
@@ -814,7 +820,7 @@ class InventoryManagementScreen extends StatelessWidget {
                   height: 45,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppTheme.primaryLight, const Color(0xFF69F5D9)],
+                      colors: [AppColors.primaryLight, const Color(0xFF69F5D9)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -989,7 +995,7 @@ class InventoryManagementScreen extends StatelessWidget {
                                     backgroundColor: Color(
                                       0xFF6C5CE7,
                                     ).withValues(alpha: 0.1),
-                                    foregroundColor: AppTheme.primaryLight,
+                                    foregroundColor: AppColors.primaryLight,
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -1095,10 +1101,10 @@ class InventoryManagementScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.primaryLight.withValues(alpha: 0.1),
+        color: AppColors.primaryLight.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.primaryLight.withValues(alpha: 0.3),
+          color: AppColors.primaryLight.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -1106,7 +1112,7 @@ class InventoryManagementScreen extends StatelessWidget {
         label,
         style: TextStyle(
           fontSize: 11,
-          color: AppTheme.primaryLight,
+          color: AppColors.primaryLight,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -1139,7 +1145,7 @@ class InventoryManagementScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.tune, color: AppTheme.primaryLight, size: 24),
+                  Icon(Icons.tune, color: AppColors.primaryLight, size: 24),
                   SizedBox(width: 12),
                   Text(
                     'Filter Options',
@@ -1159,7 +1165,7 @@ class InventoryManagementScreen extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryLight,
+                            color: AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -1190,7 +1196,9 @@ class InventoryManagementScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(color: AppTheme.primaryLight),
+                        CircularProgressIndicator(
+                          color: AppColors.primaryLight,
+                        ),
                         SizedBox(height: 16),
                         Text(
                           'Loading filters...',
@@ -1210,14 +1218,18 @@ class InventoryManagementScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.error_outline, color: Colors.red, size: 48),
+                        Icon(
+                          Icons.error_outline,
+                          color: AppColors.errorLight,
+                          size: 48,
+                        ),
                         SizedBox(height: 16),
                         Text(
                           'Error Loading Filters',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                            color: AppColors.errorLight,
                           ),
                         ),
                         SizedBox(height: 8),
@@ -1232,7 +1244,7 @@ class InventoryManagementScreen extends StatelessWidget {
                           icon: Icon(Icons.refresh),
                           label: Text('Retry'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryLight,
+                            backgroundColor: AppColors.primaryLight,
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(
                               horizontal: 24,
@@ -1255,17 +1267,19 @@ class InventoryManagementScreen extends StatelessWidget {
                         padding: EdgeInsets.all(16),
                         margin: EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryLight.withValues(alpha: 0.05),
+                          color: AppColors.primaryLight.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: AppTheme.primaryLight.withValues(alpha: 0.2),
+                            color: AppColors.primaryLight.withValues(
+                              alpha: 0.2,
+                            ),
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.info_outline,
-                              color: AppTheme.primaryLight,
+                              color: AppColors.primaryLight,
                               size: 20,
                             ),
                             SizedBox(width: 12),
@@ -1274,7 +1288,7 @@ class InventoryManagementScreen extends StatelessWidget {
                                 'Select Company/Category first, then Model, then specifications',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: AppTheme.primaryLight,
+                                  color: AppColors.primaryLight,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -1426,7 +1440,7 @@ class InventoryManagementScreen extends StatelessWidget {
                                   filterPath.join(' → '),
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: AppTheme.primaryLight,
+                                    color: AppColors.primaryLight,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -1465,9 +1479,9 @@ class InventoryManagementScreen extends StatelessWidget {
                       icon: Icon(Icons.refresh, size: 18),
                       label: Text('Clear All'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.primaryLight,
+                        foregroundColor: AppColors.primaryLight,
                         side: BorderSide(
-                          color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                          color: AppColors.primaryLight.withValues(alpha: 0.3),
                         ),
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -1486,7 +1500,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       icon: Icon(Icons.search, size: 18),
                       label: Text('Apply Filters'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryLight,
+                        backgroundColor: AppColors.primaryLight,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -1538,8 +1552,8 @@ class InventoryManagementScreen extends StatelessWidget {
                     ? Colors.grey.withValues(alpha: 0.3)
                     : selectedValue.value.isNotEmpty &&
                         selectedValue.value != 'All'
-                    ? AppTheme.primaryLight
-                    : AppTheme.primaryLight.withValues(alpha: 0.2),
+                    ? AppColors.primaryLight
+                    : AppColors.primaryLight.withValues(alpha: 0.2),
             width:
                 selectedValue.value.isNotEmpty && selectedValue.value != 'All'
                     ? 1.5
@@ -1551,7 +1565,7 @@ class InventoryManagementScreen extends StatelessWidget {
                   ? Colors.grey[100]
                   : selectedValue.value.isNotEmpty &&
                       selectedValue.value != 'All'
-                  ? AppTheme.primaryLight.withValues(alpha: 0.05)
+                  ? AppColors.primaryLight.withValues(alpha: 0.05)
                   : Colors.grey[50],
         ),
         child:
@@ -1563,7 +1577,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: AppTheme.primaryLight,
+                        color: AppColors.primaryLight,
                       ),
                     ),
                     SizedBox(width: 8),
@@ -1571,7 +1585,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       'Loading $hint...',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppTheme.primaryLight,
+                        color: AppColors.primaryLight,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1592,7 +1606,7 @@ class InventoryManagementScreen extends StatelessWidget {
                               color:
                                   !isEnabled
                                       ? Colors.grey[400]
-                                      : AppTheme.primaryLight,
+                                      : AppColors.primaryLight,
                               fontWeight: FontWeight.w500,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -1646,7 +1660,7 @@ class InventoryManagementScreen extends StatelessWidget {
                               padding: EdgeInsets.all(2),
                               child: Icon(
                                 Icons.clear,
-                                color: AppTheme.primaryLight,
+                                color: AppColors.primaryLight,
                                 size: 14,
                               ),
                             ),
@@ -1656,7 +1670,7 @@ class InventoryManagementScreen extends StatelessWidget {
                           color:
                               !isEnabled
                                   ? Colors.grey[400]
-                                  : AppTheme.primaryLight,
+                                  : AppColors.primaryLight,
                           size: 16,
                         ),
                       ],
@@ -1696,7 +1710,7 @@ class InventoryManagementScreen extends StatelessWidget {
               child: FloatingActionButton(
                 mini: true,
                 backgroundColor: Colors.white,
-                foregroundColor: AppTheme.primaryLight,
+                foregroundColor: AppColors.primaryLight,
                 elevation: 4,
                 onPressed: controller.scrollToTop,
                 heroTag: "scrollToTop",
@@ -1707,7 +1721,7 @@ class InventoryManagementScreen extends StatelessWidget {
           // Main Speed Dial
           SpeedDial(
             animatedIcon: AnimatedIcons.menu_close,
-            backgroundColor: AppTheme.primaryLight,
+            backgroundColor: AppColors.primaryLight,
             foregroundColor: Colors.white,
             elevation: 8,
             shape: CircleBorder(),
@@ -1742,7 +1756,7 @@ class InventoryManagementScreen extends StatelessWidget {
               // ),
               SpeedDialChild(
                 child: Icon(Icons.inventory_rounded, color: Colors.white),
-                backgroundColor: AppTheme.primaryLight,
+                backgroundColor: AppColors.primaryLight,
                 label: 'Add New Stock',
                 labelStyle: TextStyle(
                   fontSize: 14,
@@ -1784,7 +1798,7 @@ class InventoryManagementScreen extends StatelessWidget {
           Spacer(),
           IconButton(
             onPressed: controller.refreshData,
-            icon: Icon(Icons.refresh, color: AppTheme.primaryLight),
+            icon: Icon(Icons.refresh, color: AppColors.primaryLight),
             tooltip: 'Refresh',
           ),
         ],

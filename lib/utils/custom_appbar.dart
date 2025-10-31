@@ -15,7 +15,7 @@ Widget buildCustomAppBar(
     preferredSize: const Size.fromHeight(kToolbarHeight),
     child: Container(
       decoration: BoxDecoration(
-        color: AppTheme.primaryLight,
+        color: AppColors.primaryLight,
 
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
       ),
@@ -160,7 +160,7 @@ class BuildAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: AppBar(
           toolbarHeight: 300,
           centerTitle: true,
-          backgroundColor: AppTheme.primaryLight,
+          backgroundColor: AppColors.primaryLight,
           title: Text(
             title,
             style: TextStyle(color: isdark ? Colors.black : Colors.white),
@@ -221,7 +221,7 @@ class BuildFormAppBar extends StatelessWidget implements PreferredSizeWidget {
           bottomRight: Radius.circular(20),
         ),
         child: AppBar(
-       backgroundColor: AppTheme.primaryLight,
+          backgroundColor: AppColors.primaryLight,
           elevation: 0,
           centerTitle: true,
           leading: Padding(
