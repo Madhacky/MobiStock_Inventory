@@ -16,6 +16,7 @@ Widget buildStyledTextField({
   bool readOnly = false,
   bool enabled = true,
   List<TextInputFormatter>? inputFormatters,
+  FocusNode? focusNode
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +40,7 @@ Widget buildStyledTextField({
                 : Colors.grey.withValues(alpha:0.1),
           ),
         ),
-        child: TextFormField(
+        child: TextFormField(focusNode: focusNode,
           inputFormatters: inputFormatters  ,
           controller: controller,
           keyboardType: keyboardType,
