@@ -115,7 +115,7 @@ class HsnCodeController extends GetxController {
         snackBar(
           title: 'Success',
           message: errorMessage.value,
-          color: AppTheme.successDark,
+          color: AppColors.successDark,
           messageColor: Colors.white,
           icon: Icons.check_circle,
         );
@@ -128,7 +128,7 @@ class HsnCodeController extends GetxController {
         snackBar(
           title: 'Error',
           message: errorMessage.value,
-          color: AppTheme.warningDark,
+          color: AppColors.warningDark,
           icon: Icons.error,
           duration: Duration(seconds: 4),
         );
@@ -139,7 +139,7 @@ class HsnCodeController extends GetxController {
       snackBar(
         title: 'Error',
         message: 'Failed to add HSN code',
-        color: AppTheme.errorDark,
+        color: AppColors.errorDark,
         messageColor: Colors.white,
         icon: Icons.error,
         duration: Duration(seconds: 4),
@@ -165,7 +165,7 @@ class HsnCodeController extends GetxController {
         snackBar(
           title: 'Success',
           message: errorMessage.value,
-          color: AppTheme.successDark,
+          color: AppColors.successDark,
           messageColor: Colors.white,
           icon: Icons.check_circle,
         );
@@ -176,7 +176,7 @@ class HsnCodeController extends GetxController {
         snackBar(
           title: 'Error',
           message: errorMessage.value,
-          color: AppTheme.warningDark,
+          color: AppColors.warningDark,
           icon: Icons.error,
           duration: Duration(seconds: 4),
         );
@@ -187,7 +187,7 @@ class HsnCodeController extends GetxController {
       snackBar(
         title: 'Error',
         message: errorMessage.value,
-        color: AppTheme.errorDark,
+        color: AppColors.errorDark,
         messageColor: Colors.white,
         icon: Icons.error,
         duration: Duration(seconds: 4),
@@ -210,7 +210,7 @@ class HsnCodeController extends GetxController {
         snackBar(
           title: 'Success',
           message: errorMessage.value,
-          color: AppTheme.successDark,
+          color: AppColors.successDark,
           messageColor: Colors.white,
           icon: Icons.check_circle,
         );
@@ -220,7 +220,7 @@ class HsnCodeController extends GetxController {
         snackBar(
           title: 'Error',
           message: errorMessage.value,
-          color: AppTheme.warningDark,
+          color: AppColors.warningDark,
           icon: Icons.error,
           duration: Duration(seconds: 4),
         );
@@ -231,7 +231,7 @@ class HsnCodeController extends GetxController {
       snackBar(
         title: 'Error',
         message: 'Failed to delete HSN code',
-        color: AppTheme.errorDark,
+        color: AppColors.errorDark,
         icon: Icons.error,
         duration: Duration(seconds: 4),
       );

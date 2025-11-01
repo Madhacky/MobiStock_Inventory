@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/hsn-code/models/hsn_code_model.dart';
 
 class AddEditHsnCodeForm extends StatefulWidget {
@@ -154,7 +155,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: const Color(0xFF16A085),
+              color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
@@ -206,15 +207,15 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFF16A085).withOpacity(0.1),
+                color: AppColors.primaryLight.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF16A085).withOpacity(0.2),
+                  color: AppColors.primaryLight.withOpacity(0.2),
                 ),
               ),
               child: const Icon(
                 Icons.qr_code_2,
-                color: Color(0xFF16A085),
+                color: AppColors.primaryLight,
                 size: 24,
               ),
             ),
@@ -249,13 +250,13 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF16A085).withOpacity(0.1),
+                  color: AppColors.primaryLight.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   selectedCategory!,
                   style: const TextStyle(
-                    color: Color(0xFF16A085),
+                    color: AppColors.primaryLight,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -413,7 +414,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _handleSave,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF16A085),
+                        backgroundColor: AppColors.primaryLight,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -468,10 +469,10 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF16A085).withOpacity(0.1),
+            color: AppColors.primaryLight.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: const Color(0xFF16A085), size: 16),
+          child: Icon(icon, color: AppColors.primaryLight, size: 16),
         ),
         const SizedBox(width: 12),
         Text(
@@ -520,7 +521,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
             hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
             prefixIcon:
                 prefixIcon != null
-                    ? Icon(prefixIcon, color: const Color(0xFF16A085), size: 20)
+                    ? Icon(prefixIcon, color: AppColors.primaryLight, size: 20)
                     : null,
             suffixText: suffixText,
             filled: true,
@@ -536,7 +537,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(
-                color: Color(0xFF16A085),
+                color: AppColors.primaryLight,
                 width: 1.5,
               ),
             ),
@@ -581,7 +582,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
             hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
             prefixIcon:
                 prefixIcon != null
-                    ? Icon(prefixIcon, color: const Color(0xFF16A085), size: 20)
+                    ? Icon(prefixIcon, color: AppColors.primaryLight, size: 20)
                     : null,
             filled: true,
             fillColor: Colors.grey.withOpacity(0.05),
@@ -596,7 +597,7 @@ class _AddEditHsnCodeFormState extends State<AddEditHsnCodeForm> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(
-                color: Color(0xFF16A085),
+                color: AppColors.primaryLight,
                 width: 1.5,
               ),
             ),

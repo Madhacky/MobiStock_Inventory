@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/hsn-code/controllers/hsn_code_controller.dart';
 import 'package:smartbecho/views/hsn-code/models/hsn_code_model.dart';
 
@@ -26,7 +27,7 @@ class HsnCodeTable extends StatelessWidget {
               // sortColumnIndex: sortColumnIndex,
               // sortAscending: isAscending,
               headingRowColor: MaterialStateProperty.all(
-                const Color(0xFF1A9B8E),
+             AppColors.primaryLight,
               ),
               columns: [
                 DataColumn(

@@ -33,7 +33,9 @@ class RouteService {
   static void toDashboard() {
     Get.toNamed(AppRoutes.dashboard);
   }
-
+static void toBottomNavigation() {
+    Get.toNamed(AppRoutes.bottomNavigation);
+  }
   static void toProfile() {
     Get.toNamed(AppRoutes.profile);
   }

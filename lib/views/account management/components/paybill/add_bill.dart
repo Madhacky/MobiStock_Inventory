@@ -9,7 +9,7 @@ import 'package:smartbecho/utils/custom_back_button.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 
 class AddPayBillPage extends StatelessWidget {
-  final PayBillsController controller = Get.find<PayBillsController>();
+  final PayBillsController controller = Get.put(PayBillsController());
 
   AddPayBillPage({Key? key}) : super(key: key);
 

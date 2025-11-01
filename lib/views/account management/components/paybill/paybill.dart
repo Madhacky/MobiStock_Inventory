@@ -15,7 +15,7 @@ class PayBillsPage extends StatefulWidget {
 
 class _PayBillsPageState extends State<PayBillsPage>
     with TickerProviderStateMixin {
-  final PayBillsController controller = Get.find<PayBillsController>();
+  final PayBillsController controller = Get.put(PayBillsController());
 
   bool isFilterExpanded = false;
   late AnimationController _animationController;

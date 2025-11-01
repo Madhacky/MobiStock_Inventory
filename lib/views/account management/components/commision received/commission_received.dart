@@ -16,8 +16,9 @@ class CommissionReceivedPage extends StatefulWidget {
 
 class _CommissionReceivedPageState extends State<CommissionReceivedPage>
     with TickerProviderStateMixin {
-  final CommissionReceivedController controller =
-      Get.find<CommissionReceivedController>();
+  final CommissionReceivedController controller = Get.put(
+    CommissionReceivedController(),
+  );
 
   bool isFilterExpanded = false;
   late AnimationController _animationController;
@@ -72,7 +73,8 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
               children: [
-                SizedBox(width: 150,
+                SizedBox(
+                  width: 150,
                   child: Text(
                     'Commission Received',
                     style: TextStyle(
@@ -82,7 +84,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                     ),
                   ),
                 ),
-                
+
                 Spacer(),
                 Container(
                   margin: const EdgeInsets.only(right: 12),
@@ -101,7 +103,9 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                         borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF4ECDC4).withValues(alpha:0.3),
+                            color: const Color(
+                              0xFF4ECDC4,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -128,11 +132,11 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                 Obx(
                   () => Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 6,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -155,9 +159,9 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha:0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
               ),
               child: TextField(
                 controller: controller.searchController,
@@ -189,7 +193,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
               ),
               child: Material(
                 color: Colors.transparent,
@@ -226,7 +230,9 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                                color: const Color(
+                                  0xFF3B82F6,
+                                ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
@@ -268,7 +274,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,10 +430,10 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3B82F6).withValues(alpha:0.05),
+                  color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                    color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                   ),
                 ),
                 child: Row(
@@ -524,12 +530,15 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.08),
+              color: Colors.grey.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],
-          border: Border.all(color: Colors.grey.withValues(alpha:0.1), width: 1),
+          border: Border.all(
+            color: Colors.grey.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,7 +588,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                 Container(
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                    color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
@@ -658,7 +667,8 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                 ),
                 const SizedBox(height: 10),
 
-                Wrap(crossAxisAlignment: WrapCrossAlignment.start,
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.start,
                   children: [
                     const Icon(
                       Icons.payment_outlined,
@@ -709,7 +719,9 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                    backgroundColor: const Color(
+                      0xFF3B82F6,
+                    ).withValues(alpha: 0.1),
                     foregroundColor: const Color(0xFF3B82F6),
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -786,7 +798,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -865,15 +877,15 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF10B981).withValues(alpha:0.1),
-                        const Color(0xFF059669).withValues(alpha:0.05),
+                        const Color(0xFF10B981).withValues(alpha: 0.1),
+                        const Color(0xFF059669).withValues(alpha: 0.05),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFF10B981).withValues(alpha:0.2),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.2),
                     ),
                   ),
                   child: Column(
@@ -1007,10 +1019,10 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withValues(alpha:0.05),
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: const Color(0xFF3B82F6).withValues(alpha:0.2),
+                          color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -1018,7 +1030,9 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+                              color: const Color(
+                                0xFF3B82F6,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Icon(
@@ -1063,8 +1077,6 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
                 ],
 
                 const SizedBox(height: 16),
-
-                
               ],
             ),
           ),
@@ -1079,7 +1091,7 @@ class _CommissionReceivedPageState extends State<CommissionReceivedPage>
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: const Color(0xFF3B82F6).withValues(alpha:0.1),
+            color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, color: const Color(0xFF3B82F6), size: 14),

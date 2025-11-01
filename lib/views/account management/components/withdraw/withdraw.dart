@@ -14,7 +14,7 @@ class WithdrawHistoryPage extends StatefulWidget {
 
 class _WithdrawHistoryPageState extends State<WithdrawHistoryPage>
     with TickerProviderStateMixin {
-  final WithdrawController controller = Get.find<WithdrawController>();
+  final WithdrawController controller = Get.put(WithdrawController());
 
   bool isFilterExpanded = false;
   late AnimationController _animationController;

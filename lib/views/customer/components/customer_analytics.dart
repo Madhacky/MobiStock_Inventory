@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_chart_loader.dart';
 import 'package:smartbecho/utils/common_month_year_dropdown.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -101,13 +102,13 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             spreadRadius: 0,
             blurRadius: 4,
             offset: const Offset(0, 1),
@@ -121,14 +122,14 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF6C5CE7), Color(0xFFA29BFE)],
+              colors: AppColors.primaryGradientLight,
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6C5CE7).withValues(alpha:0.3),
+                color: AppColors.primaryLight.withValues(alpha: 0.3),
                 spreadRadius: 0,
                 blurRadius: 12,
                 offset: const Offset(0, 4),
@@ -199,7 +200,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha:0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 2),
@@ -282,7 +283,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withValues(alpha:0.1),
+                            color: Colors.grey.withValues(alpha: 0.1),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: const Offset(0, 2),
@@ -375,7 +376,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha:0.1),
+                                  color: Colors.grey.withValues(alpha: 0.1),
                                   spreadRadius: 1,
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
@@ -457,7 +458,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha:0.1),
+                                  color: Colors.grey.withValues(alpha: 0.1),
                                   spreadRadius: 1,
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
@@ -559,7 +560,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha:0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 2),
@@ -676,7 +677,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -748,9 +749,11 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF6C5CE7).withValues(alpha:0.1),
+        color: AppColors.primaryLight.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF6C5CE7).withValues(alpha:0.3)),
+        border: Border.all(
+          color: AppColors.primaryLight.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -765,7 +768,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
             dropdownColor: Colors.white,
             underline: Container(),
             style: const TextStyle(
-              color: Color(0xFF6C5CE7),
+              color: AppColors.primaryLight,
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
@@ -846,10 +849,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                                   height: 32,
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF6C5CE7),
-                                        Color(0xFFA29BFE),
-                                      ],
+                                      colors: AppColors.primaryGradientLight,
                                     ),
                                     borderRadius: BorderRadius.circular(16),
                                   ),
@@ -891,7 +891,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -913,7 +913,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFF6C5CE7).withValues(alpha:0.05),
+              color: AppColors.primaryLight.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -972,7 +972,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
                         height: 24,
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF6C5CE7), Color(0xFFA29BFE)],
+                            colors: AppColors.primaryGradientLight,
                           ),
                           shape: BoxShape.circle,
                         ),
@@ -1025,7 +1025,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -1081,7 +1081,7 @@ class _CustomerAnalyticsState extends State<CustomerAnalytics>
 
   Color _getColorForLocation(String location) {
     const colors = [
-      Color(0xFF6C5CE7),
+      AppColors.primaryLight,
       Color(0xFFFF9500),
       Color(0xFF51CF66),
       Color(0xFFE74C3C),

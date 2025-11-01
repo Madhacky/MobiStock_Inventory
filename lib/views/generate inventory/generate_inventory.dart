@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/generate%20inventory%20controller/generate_inventory_controller.dart';
 import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 
 class GenerateInventoryScreen extends StatefulWidget {
   @override
-  _GenerateInventoryScreenState createState() => _GenerateInventoryScreenState();
+  _GenerateInventoryScreenState createState() =>
+      _GenerateInventoryScreenState();
 }
 
 class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
-  final GenerateInventoryController controller = Get.find<GenerateInventoryController>();
+  final GenerateInventoryController controller =
+      Get.find<GenerateInventoryController>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +23,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
         child: Column(
           children: [
             _buildCustomAppBar(),
-            Expanded(
-              child: _buildMainContent(),
-            ),
+            Expanded(child: _buildMainContent()),
           ],
         ),
       ),
@@ -32,6 +33,10 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
   Widget _buildCustomAppBar() {
     return buildCustomAppBar(
       "Generate Inventory Link",
+      onPressed: () {
+        Get.find<BottomNavigationController>().setIndex(0);
+        Get.back();
+      },
       isdark: true,
       actionItem: Obx(() {
         if (controller.hasGeneratedLink.value) {
@@ -72,64 +77,53 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color(0xFF6C5CE7).withValues(alpha:0.2),
-                Color(0xFF6C5CE7).withValues(alpha:0.1),
+                Color(0xFF6C5CE7).withValues(alpha: 0.2),
+                Color(0xFF6C5CE7).withValues(alpha: 0.1),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(60),
           ),
-          child: Icon(
-            Icons.link,
-            size: 60,
-            color: Color(0xFF6C5CE7),
-          ),
+          child: Icon(Icons.link, size: 60, color: Color(0xFF6C5CE7)),
         ),
         SizedBox(height: 32),
-        
+
         // Title
         Text(
           'Go beyond limits',
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: AppTheme.backgroundDark,
+            color: AppColors.backgroundDark,
           ),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 8),
-        
+
         // Subtitle
         Text(
           'Let the world discover what you offer.',
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.grey[400],
-          ),
+          style: TextStyle(fontSize: 18, color: Colors.grey[400]),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 32),
-        
+
         // Generate Inventory Link text
         Text(
           'Generate Inventory Link',
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w600,
-            color: AppTheme.backgroundDark,
+            color: AppColors.backgroundDark,
           ),
         ),
         SizedBox(height: 12),
-        
+
         // Description
         Text(
           'Click the button below to generate and share your inventory link.',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[500],
-            height: 1.4,
-          ),
+          style: TextStyle(fontSize: 16, color: Colors.grey[500], height: 1.4),
           textAlign: TextAlign.center,
         ),
       ],
@@ -143,11 +137,12 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
         height: 56,
         margin: EdgeInsets.symmetric(horizontal: 16),
         child: ElevatedButton(
-          onPressed: controller.isGenerating.value 
-              ? null 
-              : controller.generateInventoryLink,
+          onPressed:
+              controller.isGenerating.value
+                  ? null
+                  : controller.generateInventoryLink,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF6C5CE7),
+            backgroundColor: AppColors.primaryLight,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -155,35 +150,35 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
             elevation: 0,
             shadowColor: Colors.transparent,
           ),
-          child: controller.isGenerating.value
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          child:
+              controller.isGenerating.value
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      'Generating...',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                      SizedBox(width: 12),
+                      Text(
+                        'Generating...',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              : Text(
-                  'Create Link',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    ],
+                  )
+                  : Text(
+                    'Create Link',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
-                ),
         ),
       );
     });
@@ -203,7 +198,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha:0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 0,
               blurRadius: 20,
               offset: Offset(0, 4),
@@ -216,11 +211,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
             // Section title
             Row(
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 24,
-                ),
+                Icon(Icons.check_circle, color: Colors.green, size: 24),
                 SizedBox(width: 8),
                 Text(
                   'Your Inventory Link',
@@ -233,7 +224,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
               ],
             ),
             SizedBox(height: 16),
-            
+
             // Link container
             Container(
               width: double.infinity,
@@ -241,7 +232,7 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
               decoration: BoxDecoration(
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha:0.3)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -263,21 +254,17 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
                     child: Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha:0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(
-                        Icons.copy,
-                        size: 18,
-                        color: Colors.blue,
-                      ),
+                      child: Icon(Icons.copy, size: 18, color: Colors.blue),
                     ),
                   ),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            
+
             // Action buttons
             Row(
               children: [
@@ -317,9 +304,9 @@ class _GenerateInventoryScreenState extends State<GenerateInventoryScreen> {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: color.withValues(alpha:0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha:0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

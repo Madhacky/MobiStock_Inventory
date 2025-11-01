@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/routes/app_routes.dart';
 import 'package:smartbecho/utils/app_styles.dart';
 import 'package:flutter/services.dart';
@@ -523,28 +524,45 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     setState(() {
       _selectedIndex = index;
     });
+    final bottomNavController = Get.find<BottomNavigationController>();
+
     print(_selectedIndex);
     switch (_selectedIndex) {
       case 1:
-        Get.toNamed(AppRoutes.inventory_management);
+        bottomNavController.setIndex(1); // Inventory tab index
+        Get.back(); // Drawer close
+        break;
+
+      // Get.toNamed(AppRoutes.inventory_management);
 
       case 2:
-        Get.toNamed(AppRoutes.billHistory);
-
+        // Get.toNamed(AppRoutes.billHistory);
+        bottomNavController.setIndex(2);
+        Get.back();
+        break;
       case 3:
         Get.toNamed(AppRoutes.customerManagement);
-      case 4:
-        Get.toNamed(AppRoutes.salesManagement);
 
+        break;
+      case 4:
+        // Get.toNamed(AppRoutes.salesManagement);
+        bottomNavController.setIndex(3);
+        Get.back();
+        break;
       case 5:
         Get.toNamed(AppRoutes.customerDuesManagement);
-
+        bottomNavController.setIndex(4);
+        Get.back();
+        break;
       case 6:
-        Get.toNamed(AppRoutes.accountManagement);
+        // Get.toNamed(AppRoutes.accountManagement);
+        bottomNavController.setIndex(5);
+        Get.back();
+        break;
       case 7:
         Get.toNamed(AppRoutes.hsnCodeManagement);
       case 8:
-        // Get.toNamed(AppRoutes.posterGeneration);
+      // Get.toNamed(AppRoutes.posterGeneration);
       case 9:
         Get.toNamed(AppRoutes.generateInventory);
 

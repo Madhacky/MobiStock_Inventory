@@ -226,197 +226,209 @@ class InventoryManagementScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard(
-  String title,
-  String value,
-  String subtitle,
-  IconData icon,
-  Color color,
-  List<Color> gradient, {
-  void Function()? onTap,
-}) {
-  return InkWell(
-    onTap: onTap ?? () => Get.toNamed(AppRoutes.salesStockDashboard),
-    borderRadius: BorderRadius.circular(12),
-    child: Container(
-      padding: EdgeInsets.all(12),
+    String title,
+    String value,
+    String subtitle,
+    IconData icon,
+    Color color,
+    List<Color> gradient, {
+    void Function()? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap ?? () => Get.toNamed(AppRoutes.salesStockDashboard),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 24),
+            SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (subtitle.isNotEmpty) ...[
+              SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 9,
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+            SizedBox(height: 4),
+            Container(
+              width: 20,
+              height: 2,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltersSection() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withValues(alpha: 0.05),
-            blurRadius: 8,
+            spreadRadius: 0,
+            blurRadius: 10,
             offset: Offset(0, 2),
           ),
         ],
-        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 24),
-          SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 4),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (subtitle.isNotEmpty) ...[
-            SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 9,
-                color: Colors.grey[500],
-                fontWeight: FontWeight.w400,
+          Row(
+            children: [
+              Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: TextField(
+                    //initialValue: controller.searchQuery.value,
+                    onChanged: (value) => controller.searchQuery.value = value,
+                    decoration: InputDecoration(
+                      hintText: 'Search items...',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w400,
+                      ),
+                      suffixIcon: Obx(
+                        () =>
+                            controller.searchQuery.value.isNotEmpty
+                                ? IconButton(
+                                  onPressed:
+                                      () => controller.searchQuery.value = '',
+                                  icon: Icon(
+                                    Icons.clear,
+                                    size: 16,
+                                    color: Colors.grey[400],
+                                  ),
+                                )
+                                : SizedBox(),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-          SizedBox(height: 4),
-          Container(
-            width: 20,
-            height: 2,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(1),
-            ),
+              SizedBox(width: 8),
+              // Filter Button
+              Obx(() {
+                int activeFilters = _getActiveFiltersCount();
+
+                return Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color:
+                        activeFilters > 0 ? Color(0xFF1E293B) : Colors.grey[50],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: IconButton(
+                    onPressed: () => _showFilterBottomSheet(),
+                    icon: Icon(
+                      Icons.tune,
+                      size: 18,
+                      color:
+                          activeFilters > 0 ? Colors.white : Color(0xFF1E293B),
+                    ),
+                    tooltip: 'Filter & Sort',
+                  ),
+                );
+              }),
+              SizedBox(width: 8),
+              IconButton(
+                onPressed: () => controller.refreshData(),
+                icon: Obx(
+                  () =>
+                      controller.isFiltersLoading.value
+                          ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFF1E293B),
+                            ),
+                          )
+                          : Icon(
+                            Icons.refresh,
+                            size: 18,
+                            color: Color(0xFF1E293B),
+                          ),
+                ),
+                tooltip: 'Refresh',
+              ),
+            ],
           ),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
-  Widget _buildFiltersSection() {
-  return Container(
-    margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
-    padding: EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withValues(alpha: 0.05),
-          spreadRadius: 0,
-          blurRadius: 10,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      children: [
-        Row(
-          children: [
-            Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
-            SizedBox(width: 8),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(2),
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.grey.withValues(alpha: 0.2),
-                  ),
-                ),
-                child: TextField(
-                  //initialValue: controller.searchQuery.value,
-                  onChanged: (value) => controller.searchQuery.value = value,
-                  decoration: InputDecoration(
-                    hintText: 'Search items...',
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w400,
-                    ),
-                    suffixIcon: Obx(
-                      () => controller.searchQuery.value.isNotEmpty
-                          ? IconButton(
-                              onPressed: () => controller.searchQuery.value = '',
-                              icon: Icon(
-                                Icons.clear,
-                                size: 16,
-                                color: Colors.grey[400],
-                              ),
-                            )
-                          : SizedBox(),
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 8),
-            // Filter Button
-            Obx(() {
-              int activeFilters = _getActiveFiltersCount();
-              
-              return Container(
-                height: 40,
-                decoration: BoxDecoration(
-                  color: activeFilters > 0 ? Color(0xFF1E293B) : Colors.grey[50],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-                ),
-                child: IconButton(
-                  onPressed: () => _showFilterBottomSheet(),
-                  icon: Icon(
-                    Icons.tune,
-                    size: 18,
-                    color: activeFilters > 0 ? Colors.white : Color(0xFF1E293B),
-                  ),
-                  tooltip: 'Filter & Sort',
-                ),
-              );
-            }),
-            SizedBox(width: 8),
-            IconButton(
-              onPressed: () => controller.refreshData(),
-              icon: Obx(
-                () => controller.isFiltersLoading.value
-                    ? SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Color(0xFF1E293B),
-                        ),
-                      )
-                    : Icon(Icons.refresh, size: 18, color: Color(0xFF1E293B)),
-              ),
-              tooltip: 'Refresh',
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
   Widget _buildInventoryHeader() {
     return Obx(
       () => Container(
@@ -459,14 +471,16 @@ class InventoryManagementScreen extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                            color: AppColors.primaryLight.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             'Filtered',
                             style: TextStyle(
                               fontSize: 10,
-                              color: Color(0xFF6C5CE7),
+                              color: AppColors.primaryLight,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -496,7 +510,7 @@ class InventoryManagementScreen extends StatelessWidget {
                           ' • Scroll for more',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF6C5CE7),
+                            color: AppColors.primaryLight,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -515,7 +529,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Color(0xFF6C5CE7),
+                        color: AppColors.primaryLight,
                       ),
                     ),
                   ),
@@ -573,7 +587,7 @@ class InventoryManagementScreen extends StatelessWidget {
               controller.isLoadingMore.value
                   ? Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFF6C5CE7),
+                      color: AppColors.primaryLight,
                       strokeWidth: 2,
                     ),
                   )
@@ -739,7 +753,7 @@ class InventoryManagementScreen extends StatelessWidget {
                   height: 45,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF6C5CE7), Color(0xFF9C88FF)],
+                      colors: [AppColors.primaryLight, const Color(0xFF59F0D2)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -903,24 +917,30 @@ class InventoryManagementScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
-                      child: item.quantity ==0?  SizedBox.shrink():  Container(
-                        height: 32,
-                        child: ElevatedButton(
-                          onPressed: () => controller.sellItem(item),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(
-                              0xFF6C5CE7,
-                            ).withValues(alpha: 0.1),
-                            foregroundColor: Color(0xFF6C5CE7),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: Icon(Icons.shopping_cart_rounded, size: 14),
-                        ),
-                      ),
+                      child:
+                          item.quantity == 0
+                              ? SizedBox.shrink()
+                              : Container(
+                                height: 32,
+                                child: ElevatedButton(
+                                  onPressed: () => controller.sellItem(item),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(
+                                      0xFF6C5CE7,
+                                    ).withValues(alpha: 0.1),
+                                    foregroundColor: AppColors.primaryLight,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                  child: Icon(
+                                    Icons.shopping_cart_rounded,
+                                    size: 14,
+                                  ),
+                                ),
+                              ),
                     ),
                     SizedBox(width: 8),
                     Expanded(
@@ -1014,10 +1034,10 @@ class InventoryManagementScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Color(0xFF6C5CE7).withValues(alpha: 0.1),
+        color: AppColors.primaryLight.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
+          color: AppColors.primaryLight.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -1025,7 +1045,7 @@ class InventoryManagementScreen extends StatelessWidget {
         label,
         style: TextStyle(
           fontSize: 11,
-          color: Color(0xFF6C5CE7),
+          color: AppColors.primaryLight,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -1058,7 +1078,7 @@ class InventoryManagementScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.tune, color: Color(0xFF6C5CE7), size: 24),
+                  Icon(Icons.tune, color: AppColors.primaryLight, size: 24),
                   SizedBox(width: 12),
                   Text(
                     'Filter Options',
@@ -1078,7 +1098,7 @@ class InventoryManagementScreen extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFF6C5CE7),
+                            color: AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -1109,7 +1129,9 @@ class InventoryManagementScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(color: Color(0xFF6C5CE7)),
+                        CircularProgressIndicator(
+                          color: AppColors.primaryLight,
+                        ),
                         SizedBox(height: 16),
                         Text(
                           'Loading filters...',
@@ -1151,7 +1173,7 @@ class InventoryManagementScreen extends StatelessWidget {
                           icon: Icon(Icons.refresh),
                           label: Text('Retry'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF6C5CE7),
+                            backgroundColor: AppColors.primaryLight,
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(
                               horizontal: 24,
@@ -1174,17 +1196,19 @@ class InventoryManagementScreen extends StatelessWidget {
                         padding: EdgeInsets.all(16),
                         margin: EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                          color: Color(0xFF6C5CE7).withValues(alpha: 0.05),
+                          color: AppColors.primaryLight.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Color(0xFF6C5CE7).withValues(alpha: 0.2),
+                            color: AppColors.primaryLight.withValues(
+                              alpha: 0.2,
+                            ),
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.info_outline,
-                              color: Color(0xFF6C5CE7),
+                              color: AppColors.primaryLight,
                               size: 20,
                             ),
                             SizedBox(width: 12),
@@ -1193,7 +1217,7 @@ class InventoryManagementScreen extends StatelessWidget {
                                 'Select Company/Category first, then Model, then specifications',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Color(0xFF6C5CE7),
+                                  color: AppColors.primaryLight,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -1345,7 +1369,7 @@ class InventoryManagementScreen extends StatelessWidget {
                                   filterPath.join(' → '),
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Color(0xFF6C5CE7),
+                                    color: AppColors.primaryLight,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -1384,9 +1408,9 @@ class InventoryManagementScreen extends StatelessWidget {
                       icon: Icon(Icons.refresh, size: 18),
                       label: Text('Clear All'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Color(0xFF6C5CE7),
+                        foregroundColor: AppColors.primaryLight,
                         side: BorderSide(
-                          color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
+                          color: AppColors.primaryLight.withValues(alpha: 0.3),
                         ),
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -1405,7 +1429,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       icon: Icon(Icons.search, size: 18),
                       label: Text('Apply Filters'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF6C5CE7),
+                        backgroundColor: AppColors.primaryLight,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -1457,8 +1481,8 @@ class InventoryManagementScreen extends StatelessWidget {
                     ? Colors.grey.withValues(alpha: 0.3)
                     : selectedValue.value.isNotEmpty &&
                         selectedValue.value != 'All'
-                    ? Color(0xFF6C5CE7)
-                    : Color(0xFF6C5CE7).withValues(alpha: 0.2),
+                    ? AppColors.primaryLight
+                    : AppColors.primaryLight.withValues(alpha: 0.2),
             width:
                 selectedValue.value.isNotEmpty && selectedValue.value != 'All'
                     ? 1.5
@@ -1470,7 +1494,7 @@ class InventoryManagementScreen extends StatelessWidget {
                   ? Colors.grey[100]
                   : selectedValue.value.isNotEmpty &&
                       selectedValue.value != 'All'
-                  ? Color(0xFF6C5CE7).withValues(alpha: 0.05)
+                  ? AppColors.primaryLight.withValues(alpha: 0.05)
                   : Colors.grey[50],
         ),
         child:
@@ -1482,7 +1506,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Color(0xFF6C5CE7),
+                        color: AppColors.primaryLight,
                       ),
                     ),
                     SizedBox(width: 8),
@@ -1490,7 +1514,7 @@ class InventoryManagementScreen extends StatelessWidget {
                       'Loading $hint...',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF6C5CE7),
+                        color: AppColors.primaryLight,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1511,7 +1535,7 @@ class InventoryManagementScreen extends StatelessWidget {
                               color:
                                   !isEnabled
                                       ? Colors.grey[400]
-                                      : Color(0xFF6C5CE7),
+                                      : AppColors.primaryLight,
                               fontWeight: FontWeight.w500,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -1565,7 +1589,7 @@ class InventoryManagementScreen extends StatelessWidget {
                               padding: EdgeInsets.all(2),
                               child: Icon(
                                 Icons.clear,
-                                color: Color(0xFF6C5CE7),
+                                color: AppColors.primaryLight,
                                 size: 14,
                               ),
                             ),
@@ -1573,7 +1597,9 @@ class InventoryManagementScreen extends StatelessWidget {
                         Icon(
                           Icons.keyboard_arrow_down,
                           color:
-                              !isEnabled ? Colors.grey[400] : Color(0xFF6C5CE7),
+                              !isEnabled
+                                  ? Colors.grey[400]
+                                  : AppColors.primaryLight,
                           size: 16,
                         ),
                       ],
@@ -1613,7 +1639,7 @@ class InventoryManagementScreen extends StatelessWidget {
               child: FloatingActionButton(
                 mini: true,
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF6C5CE7),
+                foregroundColor: AppColors.primaryLight,
                 elevation: 4,
                 onPressed: controller.scrollToTop,
                 heroTag: "scrollToTop",
@@ -1624,7 +1650,7 @@ class InventoryManagementScreen extends StatelessWidget {
           // Main Speed Dial
           SpeedDial(
             animatedIcon: AnimatedIcons.menu_close,
-            backgroundColor: Color(0xFF6C5CE7),
+            backgroundColor: AppColors.primaryLight,
             foregroundColor: Colors.white,
             elevation: 8,
             shape: CircleBorder(),
@@ -1659,7 +1685,7 @@ class InventoryManagementScreen extends StatelessWidget {
               // ),
               SpeedDialChild(
                 child: Icon(Icons.inventory_rounded, color: Colors.white),
-                backgroundColor: Color(0xFF6C5CE7),
+                backgroundColor: AppColors.primaryLight,
                 label: 'Add New Stock',
                 labelStyle: TextStyle(
                   fontSize: 14,
@@ -1701,7 +1727,7 @@ class InventoryManagementScreen extends StatelessWidget {
           Spacer(),
           IconButton(
             onPressed: controller.refreshData,
-            icon: Icon(Icons.refresh, color: Color(0xFF6C5CE7)),
+            icon: Icon(Icons.refresh, color: AppColors.primaryLight),
             tooltip: 'Refresh',
           ),
         ],

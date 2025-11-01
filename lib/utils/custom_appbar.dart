@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 
 Widget buildCustomAppBar(
   String title, {
   required bool isdark,
   Widget? actionItem,
+  void Function()? onPressed,
 }) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -29,7 +31,7 @@ Widget buildCustomAppBar(
               color: isdark ? Colors.black : Colors.white,
               size: 20,
             ),
-            onPressed: () => Get.back(),
+            onPressed: onPressed ?? () => Get.back(),
             padding: const EdgeInsets.all(8),
           ),
         ),
@@ -48,6 +50,7 @@ Widget buildCustomAppBar(
     ),
   );
 }
+
 SliverAppBar buildStyledSliverAppBar({
   required String title,
   required bool isDark,
@@ -69,9 +72,10 @@ SliverAppBar buildStyledSliverAppBar({
           color: Colors.white.withValues(alpha: 0.2),
           shape: BoxShape.circle,
           border: Border.all(
-            color: !isDark
-                ? Colors.black.withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.3),
+            color:
+                !isDark
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : Colors.white.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -81,7 +85,9 @@ SliverAppBar buildStyledSliverAppBar({
             color: !isDark ? Colors.black : Colors.white,
             size: 22,
           ),
-          onPressed: () => Get.back(),
+          onPressed: () {
+            Get.find<BottomNavigationController>().setIndex(0);
+          },
           padding: const EdgeInsets.all(8),
         ),
       ),
@@ -98,11 +104,7 @@ SliverAppBar buildStyledSliverAppBar({
     actions: [
       IconButton(
         onPressed: onRefresh,
-        icon: Icon(
-          Icons.refresh,
-          color: const Color(0xFF6C5CE7),
-          size: 25,
-        ),
+        icon: Icon(Icons.refresh, color: const Color(0xFF6C5CE7), size: 25),
         tooltip: 'Refresh',
       ),
       SizedBox(width: 8), // Add some padding on the right

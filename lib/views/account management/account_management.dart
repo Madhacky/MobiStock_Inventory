@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/account%20management%20controller/account_management_controller.dart';
 import 'package:smartbecho/models/account%20management%20models/account_summary_model.dart';
 import 'package:smartbecho/services/app_config.dart';
@@ -91,6 +92,9 @@ class AccountManagementScreen extends StatelessWidget {
     return buildCustomAppBar(
       "Account Management",
       isdark: true,
+      onPressed: () {
+        Get.find<BottomNavigationController>().setIndex(0);
+      },
       actionItem: Obx(
         () => IconButton(
           onPressed: controller.isLoading.value ? null : controller.refreshData,

@@ -12,6 +12,9 @@ class AppRoutes {
   // Main App Routes
   static const String dashboard = '/dashboard';
 
+  //bottom_navigation
+  static const String bottomNavigation = '/bottom-navigation';
+  
   //inventory managemnet
   static const String inventory_management = '/inventory-management';
   static const String salesStockDashboard = '/sales-stock-dashboard';

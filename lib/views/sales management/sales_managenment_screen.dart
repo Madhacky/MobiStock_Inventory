@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/sales%20hisrory%20controllers/sales_history_comtroller.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_history_reponse_model.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/common_month_year_dropdown.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -59,12 +61,12 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
       //           ),
       //         },
       //       ),
-      //   backgroundColor: Color(0xFF6C5CE7),
+      //   backgroundColor: AppColors.primaryLight,
       //   icon: Icon(Icons.add, color: Colors.white),
       //   label: Text(
       //     "Sell Product",
       //     style: AppStyles.custom(
-      //       color: AppTheme.cardLight,
+      //       color: AppColors.cardLight,
       //       size: 15,
       //       weight: FontWeight.bold,
       //     ),
@@ -77,6 +79,9 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
     return buildCustomAppBar(
       "Sales Management",
       isdark: true,
+       onPressed: () {
+        Get.find<BottomNavigationController>().setIndex(0);
+      },
       actionItem: IconButton(
         onPressed: () => controller.refreshData(),
         icon: Icon(Icons.refresh, color: Colors.black),
@@ -120,7 +125,7 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected ? Color(0xFF6C5CE7) : Colors.transparent,
+            color: isSelected ? AppColors.primaryLight : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

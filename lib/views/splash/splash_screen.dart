@@ -105,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen>
       } else {
         // Token is valid, navigate to dashboard
         print('JWT Token is valid, navigating to dashboard');
-        RouteService.toDashboard();
+        RouteService.toBottomNavigation();
       }
     } catch (e) {
       print('Error checking token in splash screen: $e');

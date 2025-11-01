@@ -9,7 +9,7 @@ class History extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ViewHistoryController controller = Get.find<ViewHistoryController>();
+    final ViewHistoryController controller = Get.put(ViewHistoryController());
 
     return SingleChildScrollView(
       child: Column(

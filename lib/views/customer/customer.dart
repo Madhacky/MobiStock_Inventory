@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/inventory/widgets/inventory_shimmer.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:smartbecho/controllers/customer%20controllers/customer_controller.dart';
@@ -24,7 +26,14 @@ class CustomerManagementScreen extends StatelessWidget {
           physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
-              buildCustomAppBar("Customer Management", isdark: true),
+              buildCustomAppBar(
+                "Customer Management",
+                isdark: true,
+                onPressed: () {
+                  Get.find<BottomNavigationController>().setIndex(0);
+                  Get.back();
+                },
+              ),
               _buildStatsCards(),
               _buildAdvancedSearchAndFilters(),
               _buildCustomerAnalyticsCard(context),
@@ -37,137 +46,137 @@ class CustomerManagementScreen extends StatelessWidget {
     );
   }
 
- // Update your _buildStatsCards method in CustomerManagementScreen
+  // Update your _buildStatsCards method in CustomerManagementScreen
 
-Widget _buildStatsCards() {
-  return Container(
-    height: 130,
-    margin: EdgeInsets.symmetric(vertical: 5),
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 3,
-      itemBuilder: (context, index) {
-        return Obx(() {
-          final stats = [
-            {
-              'title': 'Total Customers',
-              'value': controller.totalCustomers.value.toString(),
-              'icon': Icons.people_outline,
-              'color': Color(0xFF6C5CE7),
-              'trend': '+12%',
-              'trendUp': true,
-              'onTap': () => print('Total customers tapped'),
-            },
-            {
-              'title': 'Repeat Customers',
-              'value': controller.repeatedCustomers.value.toString(),
-              'icon': Icons.refresh_outlined,
-              'color': Color(0xFFFF9500),
-              'trend': '+8%',
-              'trendUp': true,
-              'onTap': () => controller.showRepeatedCustomersModal(),
-            },
-            {
-              'title': 'New This Month',
-              'value': controller.newCustomersThisMonth.value.toString(),
-              'icon': Icons.person_add_outlined,
-              'color': Color(0xFF51CF66),
-              'trend': '+24%',
-              'trendUp': true,
-              'onTap': () => print('New this month tapped'),
-            },
-          ];
+  Widget _buildStatsCards() {
+    return Container(
+      height: 130,
+      margin: EdgeInsets.symmetric(vertical: 5),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return Obx(() {
+            final stats = [
+              {
+                'title': 'Total Customers',
+                'value': controller.totalCustomers.value.toString(),
+                'icon': Icons.people_outline,
+                'color': AppColors.primaryLight,
+                'trend': '+12%',
+                'trendUp': true,
+                'onTap': () => print('Total customers tapped'),
+              },
+              {
+                'title': 'Repeat Customers',
+                'value': controller.repeatedCustomers.value.toString(),
+                'icon': Icons.refresh_outlined,
+                'color': Color(0xFFFF9500),
+                'trend': '+8%',
+                'trendUp': true,
+                'onTap': () => controller.showRepeatedCustomersModal(),
+              },
+              {
+                'title': 'New This Month',
+                'value': controller.newCustomersThisMonth.value.toString(),
+                'icon': Icons.person_add_outlined,
+                'color': Color(0xFF51CF66),
+                'trend': '+24%',
+                'trendUp': true,
+                'onTap': () => print('New this month tapped'),
+              },
+            ];
 
-          return Container(
-            width: 200,
-            margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
-            child: _buildEnhancedStatCard(
-              stats[index]['title'] as String,
-              stats[index]['value'] as String,
-              stats[index]['icon'] as IconData,
-              stats[index]['color'] as Color,
-              stats[index]['trend'] as String,
-              stats[index]['trendUp'] as bool,
-              stats[index]['onTap'] as VoidCallback,
-            ),
-          );
-        });
-      },
-    ),
-  );
-}
-
-// Update your _buildEnhancedStatCard method to include tap functionality
-
-Widget _buildEnhancedStatCard(
-  String title,
-  String value,
-  IconData icon,
-  Color color,
-  String trend,
-  bool trendUp,
-  VoidCallback onTap,
-) {
-  return InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(12),
-    child: Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+            return Container(
+              width: 200,
+              margin: EdgeInsets.only(right: index == 3 ? 0 : 12),
+              child: _buildEnhancedStatCard(
+                stats[index]['title'] as String,
+                stats[index]['value'] as String,
+                stats[index]['icon'] as IconData,
+                stats[index]['color'] as Color,
+                stats[index]['trend'] as String,
+                stats[index]['trendUp'] as bool,
+                stats[index]['onTap'] as VoidCallback,
+              ),
+            );
+          });
+        },
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 24),
-          SizedBox(height: 8),
-          if (value.isNotEmpty) ...[
+    );
+  }
+
+  // Update your _buildEnhancedStatCard method to include tap functionality
+
+  Widget _buildEnhancedStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    String trend,
+    bool trendUp,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 24),
+            SizedBox(height: 8),
+            if (value.isNotEmpty) ...[
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 4),
+            ],
             Text(
-              value,
+              title,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
+                fontSize: 11,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 4),
+            Container(
+              width: 20,
+              height: 2,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
           ],
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: 4),
-          Container(
-            width: 20,
-            height: 2,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(1),
-            ),
-          ),
-        ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildAdvancedSearchAndFilters() {
     return Container(
@@ -177,7 +186,7 @@ Widget _buildEnhancedStatCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -195,7 +204,6 @@ Widget _buildEnhancedStatCard(
               padding: EdgeInsets.all(16),
               child: Row(
                 children: [
-                
                   Text(
                     'Search & Filters',
                     style: TextStyle(
@@ -217,7 +225,7 @@ Widget _buildEnhancedStatCard(
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: Color(0xFF6C5CE7),
+                            color: AppColors.primaryLight,
                             shape: BoxShape.circle,
                           ),
                         )
@@ -296,7 +304,7 @@ Widget _buildEnhancedStatCard(
                                 color: Colors.grey[50],
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.grey.withValues(alpha:0.2),
+                                  color: Colors.grey.withValues(alpha: 0.2),
                                 ),
                               ),
                               child: TextField(
@@ -313,7 +321,7 @@ Widget _buildEnhancedStatCard(
                                     child: Icon(
                                       Icons.search,
                                       size: 18,
-                                      color: Color(0xFF6C5CE7),
+                                      color: AppColors.primaryLight,
                                     ),
                                   ),
                                   suffixIcon: Obx(
@@ -388,7 +396,7 @@ Widget _buildEnhancedStatCard(
         ),
         selected: controller.selectedFilter.value == value,
         onSelected: (selected) => controller.onFilterChanged(value),
-        selectedColor: Color(0xFF6C5CE7),
+        selectedColor: AppColors.primaryLight,
         backgroundColor: Colors.grey[100],
         checkmarkColor: Colors.white,
         side: BorderSide.none,
@@ -406,14 +414,14 @@ Widget _buildEnhancedStatCard(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF6C5CE7), Color(0xFF8B7ED8)],
+          colors: AppColors.primaryGradientLight,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6C5CE7).withValues(alpha:0.3),
+            color: AppColors.primaryLight.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: Offset(0, 8),
           ),
@@ -454,7 +462,7 @@ Widget _buildEnhancedStatCard(
                           'Customer trends & growth',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withValues(alpha:0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -470,7 +478,7 @@ Widget _buildEnhancedStatCard(
             width: 1,
             height: 90,
             margin: EdgeInsets.symmetric(horizontal: 12),
-            color: Colors.white.withValues(alpha:0.3),
+            color: Colors.white.withValues(alpha: 0.3),
           ),
 
           /// Right Section: Details
@@ -499,7 +507,7 @@ Widget _buildEnhancedStatCard(
                           'View all customer records',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withValues(alpha:0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -522,7 +530,7 @@ Widget _buildEnhancedStatCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 20,
             offset: Offset(0, 4),
@@ -550,12 +558,12 @@ Widget _buildEnhancedStatCard(
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+                    color: AppColors.primaryLight.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.people_outline,
-                    color: Color(0xFF6C5CE7),
+                    color: AppColors.primaryLight,
                     size: 20,
                   ),
                 ),
@@ -609,7 +617,7 @@ Widget _buildEnhancedStatCard(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(
-                        color: Color(0xFF6C5CE7),
+                        color: AppColors.primaryLight,
                         strokeWidth: 3,
                       ),
                       SizedBox(height: 16),
@@ -656,7 +664,7 @@ Widget _buildEnhancedStatCard(
                         icon: Icon(Icons.refresh, size: 16),
                         label: Text('Retry'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF6C5CE7),
+                          backgroundColor: AppColors.primaryLight,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: 20,
@@ -703,7 +711,7 @@ Widget _buildEnhancedStatCard(
                         icon: Icon(Icons.person_add, size: 16),
                         label: Text('Add First Customer'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF6C5CE7),
+                          backgroundColor: AppColors.primaryLight,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: 20,
@@ -748,10 +756,12 @@ Widget _buildEnhancedStatCard(
                     ),
                     rowColor: Colors.white,
                     evenRowColor: Colors.grey[25],
-                    activatedColor: Color(0xFF6C5CE7).withValues(alpha:0.08),
+                    activatedColor: AppColors.primaryLight.withValues(
+                      alpha: 0.08,
+                    ),
                     gridBackgroundColor: Colors.white,
                     borderColor: Colors.grey[200]!,
-                    activatedBorderColor: Color(0xFF6C5CE7),
+                    activatedBorderColor: AppColors.primaryLight,
                     inactivatedBorderColor: Colors.grey[300]!,
                     iconColor: Colors.grey[600]!,
                     disabledIconColor: Colors.grey[400]!,
@@ -795,11 +805,13 @@ Widget _buildEnhancedStatCard(
                   : controller.loadMoreCustomers,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
-            foregroundColor: Color(0xFF6C5CE7),
+            foregroundColor: AppColors.primaryLight,
             padding: EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Color(0xFF6C5CE7).withValues(alpha:0.3)),
+              side: BorderSide(
+                color: AppColors.primaryLight.withValues(alpha: 0.3),
+              ),
             ),
             elevation: 0,
           ),
@@ -813,7 +825,7 @@ Widget _buildEnhancedStatCard(
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Color(0xFF6C5CE7),
+                          color: AppColors.primaryLight,
                         ),
                       ),
                       SizedBox(width: 12),
@@ -837,8 +849,8 @@ Widget _buildEnhancedStatCard(
     return SpeedDial(
       icon: Icons.add,
       activeIcon: Icons.close,
-      backgroundColor: Color(0xFF6C5CE7),
-      foregroundColor: const Color.fromARGB(255, 219, 153, 153),
+      backgroundColor: AppColors.primaryLight,
+      foregroundColor: Colors.white,
       overlayColor: Colors.black,
       overlayOpacity: 0.4,
       spacing: 12,
@@ -852,7 +864,7 @@ Widget _buildEnhancedStatCard(
           child: Icon(Icons.person_add_outlined, size: 24),
           label: 'Add New Customer',
           labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          backgroundColor: Color(0xFF6C5CE7),
+          backgroundColor: AppColors.primaryLight,
           foregroundColor: Colors.white,
           onTap: () => Get.toNamed(AppRoutes.addCustomer),
         ),
@@ -892,7 +904,3 @@ Widget _buildEnhancedStatCard(
     );
   }
 }
-
-
-
-

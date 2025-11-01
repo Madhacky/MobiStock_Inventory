@@ -22,6 +22,7 @@ import 'package:smartbecho/bindings/inventory%20management%20bindings/inventory_
 import 'package:smartbecho/bindings/inventory%20management%20bindings/sales_dashboard_binding.dart';
 import 'package:smartbecho/bindings/profile/profile_binding.dart';
 import 'package:smartbecho/bindings/sales%20history%20binding/sales_management_binding.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/inventory%20controllers/company_stock_detail_controller.dart';
 import 'package:smartbecho/middlewares/auth_middleware.dart';
 import 'package:smartbecho/routes/app_routes.dart';
@@ -118,6 +119,14 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: ProfileBinding(),
     ),
+    //bottomNavigation
+    GetPage(
+      name: AppRoutes.bottomNavigation,
+      page: () => BottomNavigationScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      middlewares: [AuthMiddleware()],
+    ),
     //main screens
     GetPage(
       name: AppRoutes.dashboard,
@@ -181,14 +190,14 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: CustomerCardViewBinding(),
     ),
-        GetPage(
+    GetPage(
       name: AppRoutes.invoiceDetails,
       page: () => InvoiceDetailsPage(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: InvoiceDetailsBinding(),
     ),
-        GetPage(
+    GetPage(
       name: AppRoutes.customerDetails,
       page: () => CustomerDetailsScreen(),
       transition: Transition.leftToRight,
@@ -211,7 +220,7 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: BillHistoryBindings(),
     ),
-      GetPage(
+    GetPage(
       name: AppRoutes.thisMonthAddedStock,
       page: () => ThisMonthStockScreen(),
       transition: Transition.leftToRight,
@@ -231,19 +240,17 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: AddNewStockOperationBinding(),
     ),
-      GetPage(
+    GetPage(
       name: AppRoutes.stockList,
       page: () => StockHistoryPage(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
-      
     ),
-      GetPage(
+    GetPage(
       name: AppRoutes.billAnalytics,
       page: () => BillAnalyticsScreen(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
-      
     ),
     GetPage(
       name: AppRoutes.onlineAddedProducts,
@@ -283,12 +290,12 @@ class AppPages {
       transitionDuration: Duration(milliseconds: 300),
       binding: AccountManagementBinding(),
     ),
-     GetPage(
+    GetPage(
       name: AppRoutes.hsnCodeManagement,
       page: () => HsnCodeScreen(),
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 300),
-      middlewares:[ AuthMiddleware()],
+      middlewares: [AuthMiddleware()],
     ),
     //sales  management
     GetPage(
@@ -304,7 +311,7 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
-       GetPage(
+    GetPage(
       name: AppRoutes.mobileSalesForm,
       page: () => MobileSalesForm(),
       transition: Transition.rightToLeft,
@@ -312,13 +319,13 @@ class AppPages {
     ),
 
     //generate inventory
-       GetPage(
+    GetPage(
       name: AppRoutes.generateInventory,
       page: () => GenerateInventoryScreen(),
       transition: Transition.fade,
       transitionDuration: Duration(milliseconds: 300),
       binding: GenerateInventoryBinding(),
-      middlewares:[ AuthMiddleware()]
+      middlewares: [AuthMiddleware()],
     ),
   ];
 

@@ -14,7 +14,7 @@ class SwitchableChartWidget extends StatefulWidget {
   final bool isSmallScreen;
   final List<Color>? customColors;
   final String initialChartType; // "barchart" or "piechart"
-  final ChartDataType chartDataType ;
+  final ChartDataType chartDataType;
 
   const SwitchableChartWidget({
     Key? key,
@@ -24,7 +24,8 @@ class SwitchableChartWidget extends StatefulWidget {
     required this.screenHeight,
     required this.isSmallScreen,
     this.customColors,
-    this.initialChartType = "barchart", required this.chartDataType,
+    this.initialChartType = "barchart",
+    required this.chartDataType,
   }) : super(key: key);
 
   @override
@@ -56,14 +57,16 @@ class _SwitchableChartWidgetState extends State<SwitchableChartWidget> {
           payload: widget.payload,
           screenWidth: widget.screenWidth,
           isSmallScreen: widget.isSmallScreen,
-          customColors: widget.customColors ?? [
-            const Color(0xFF2196F3), // Blue
-            const Color(0xFFE91E63), // Pink
-            const Color(0xFFFF9800), // Orange
-            const Color(0xFF4CAF50), // Green
-            const Color(0xFF9C27B0), // Purple
-            const Color(0xFFFF5722), // Deep Orange
-          ],
+          customColors:
+              widget.customColors ??
+              [
+                const Color(0xFF2196F3), // Blue
+                const Color(0xFFE91E63), // Pink
+                const Color(0xFFFF9800), // Orange
+                const Color(0xFF4CAF50), // Green
+                const Color(0xFF9C27B0), // Purple
+                const Color(0xFFFF5722), // Deep Orange
+              ],
         );
       default:
         return const SizedBox.shrink();
@@ -112,7 +115,8 @@ class _SwitchableChartWidgetState extends State<SwitchableChartWidget> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
+          color:
+              isSelected ? Theme.of(context).primaryColor : Colors.transparent,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -149,33 +153,33 @@ class _SwitchableChartWidgetState extends State<SwitchableChartWidget> {
             vertical: 8,
           ),
           child: Row(
-      children: [
-        Container(
-          width: 4,
-          height: 24,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppTheme.primaryDark,AppTheme. primaryLight],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-            borderRadius: BorderRadius.circular(2),
+            children: [
+              Container(
+                width: 4,
+                height: 24,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primaryDark, AppColors.primaryLight],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    fontSize: widget.isSmallScreen ? 14 : 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+              _buildToggleButton(),
+            ],
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: widget.isSmallScreen ? 14 : 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey.shade800,
-            ),
-          ),
-        ),
-        _buildToggleButton()
-      ],
-    ),
         ),
         const SizedBox(height: 12),
         // Chart content

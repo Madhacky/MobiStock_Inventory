@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/views/hsn-code/models/hsn_code_model.dart';
 
 class HsnCodeCard extends StatelessWidget {
@@ -16,11 +17,11 @@ class HsnCodeCard extends StatelessWidget {
   }) : super(key: key);
 
   Color get _statusColor =>
-      hsnCode.isActive ? const Color(0xFF16A085) : Colors.grey;
+      hsnCode.isActive ? AppColors.primaryLight : Colors.grey;
 
   List<Color> get _gradientColors =>
       hsnCode.isActive
-          ? [const Color(0xFF16A085), const Color(0xFF1ABC9C)]
+          ? AppColors.primaryGradientLight
           : [Colors.grey, Colors.grey[400]!];
 
   @override

@@ -23,12 +23,13 @@ class InvoiceDetailsPage extends StatelessWidget {
             buildCustomAppBar("Invoice Details", isdark: true),
             // Loading indicator
             Obx(
-              () => controller.isLoading.value
-                  ? LinearProgressIndicator(
-                      backgroundColor: Colors.grey[200],
-                      color: Color(0xFF6C5CE7),
-                    )
-                  : SizedBox(),
+              () =>
+                  controller.isLoading.value
+                      ? LinearProgressIndicator(
+                        backgroundColor: Colors.grey[200],
+                        color: Color(0xFF6C5CE7),
+                      )
+                      : SizedBox(),
             ),
             // Main content
             Expanded(
@@ -87,7 +88,7 @@ class InvoiceDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF6C5CE7).withValues(alpha:0.3),
+            color: Color(0xFF6C5CE7).withValues(alpha: 0.3),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 4),
@@ -114,10 +115,7 @@ class InvoiceDetailsPage extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(
                     invoice.invoiceNumber,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
               ),
@@ -144,10 +142,7 @@ class InvoiceDetailsPage extends StatelessWidget {
                   ),
                   Text(
                     'Shop ID: ${invoice.shopId}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.white70),
                   ),
                 ],
               ),
@@ -156,10 +151,7 @@ class InvoiceDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     'Date: ${invoice.formattedSaleDate}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.white),
                   ),
                 ],
               ),
@@ -179,7 +171,7 @@ class InvoiceDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.05),
+            color: Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -216,10 +208,7 @@ class InvoiceDetailsPage extends StatelessWidget {
           SizedBox(height: 4),
           Text(
             'Customer ID: ${invoice.saleId}',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -234,7 +223,7 @@ class InvoiceDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.05),
+            color: Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -267,7 +256,8 @@ class InvoiceDetailsPage extends StatelessWidget {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: invoice.items.length,
-            separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[200]),
+            separatorBuilder:
+                (context, index) => Divider(height: 1, color: Colors.grey[200]),
             itemBuilder: (context, index) {
               final item = invoice.items[index];
               return Container(
@@ -302,16 +292,23 @@ class InvoiceDetailsPage extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: controller.getSpecificationColor(item.model).withValues(alpha:0.1),
+                            color: controller
+                                .getSpecificationColor(item.model)
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             item.specifications,
                             style: TextStyle(
                               fontSize: 12,
-                              color: controller.getSpecificationColor(item.model),
+                              color: controller.getSpecificationColor(
+                                item.model,
+                              ),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -325,16 +322,22 @@ class InvoiceDetailsPage extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              controller.getAccessoryIcon(item.accessoryIncluded),
+                              controller.getAccessoryIcon(
+                                item.accessoryIncluded,
+                              ),
                               size: 16,
-                              color: controller.getAccessoryColor(item.accessoryIncluded),
+                              color: controller.getAccessoryColor(
+                                item.accessoryIncluded,
+                              ),
                             ),
                             SizedBox(width: 4),
                             Text(
                               item.accessoryName,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: controller.getAccessoryColor(item.accessoryIncluded),
+                                color: controller.getAccessoryColor(
+                                  item.accessoryIncluded,
+                                ),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -393,7 +396,7 @@ class InvoiceDetailsPage extends StatelessWidget {
   Widget _buildPaymentStatus() {
     final invoice = controller.invoiceDetails.value!;
     final dues = invoice.dues;
-    
+
     if (dues == null) {
       return SizedBox();
     }
@@ -405,7 +408,7 @@ class InvoiceDetailsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.05),
+            color: Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -443,10 +446,7 @@ class InvoiceDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     'Total Amount',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                   Text(
                     dues.formattedTotalDue,
@@ -463,10 +463,7 @@ class InvoiceDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     'Amount Paid',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                   Text(
                     dues.formattedTotalPaid,
@@ -489,17 +486,17 @@ class InvoiceDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     'Remaining Due',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                   Text(
                     dues.formattedRemainingDue,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: dues.remainingDue > 0 ? Color(0xFFFF6B6B) : Color(0xFF51CF66),
+                      color:
+                          dues.remainingDue > 0
+                              ? Color(0xFFFF6B6B)
+                              : Color(0xFF51CF66),
                     ),
                   ),
                 ],
@@ -507,7 +504,9 @@ class InvoiceDetailsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: controller.getPaymentStatusColor().withValues(alpha:0.1),
+                  color: controller.getPaymentStatusColor().withValues(
+                    alpha: 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -531,10 +530,7 @@ class InvoiceDetailsPage extends StatelessWidget {
                   children: [
                     Text(
                       'Payment Progress',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                     Text(
                       controller.getPaymentProgressPercentage(),
@@ -567,14 +563,14 @@ class InvoiceDetailsPage extends StatelessWidget {
     }
 
     final paymentHistory = controller.getValidPaymentHistory();
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha:0.05),
+            color: Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 0,
             blurRadius: 10,
             offset: Offset(0, 2),
@@ -606,191 +602,211 @@ class InvoiceDetailsPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Obx(() => Icon(
-                    controller.isPaymentHistoryExpanded.value
-                        ? Icons.expand_less
-                        : Icons.expand_more,
-                    color: Color(0xFF6C5CE7),
-                  )),
+                  Obx(
+                    () => Icon(
+                      controller.isPaymentHistoryExpanded.value
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      color: Color(0xFF6C5CE7),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-          Obx(() => controller.isPaymentHistoryExpanded.value
-              ? Column(
-                  children: [
-                    Divider(height: 1, color: Colors.grey[200]),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: paymentHistory.length,
-                      separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[200]),
-                      itemBuilder: (context, index) {
-                        final payment = paymentHistory[index];
-                        return Container(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+          Obx(
+            () =>
+                controller.isPaymentHistoryExpanded.value
+                    ? Column(
+                      children: [
+                        Divider(height: 1, color: Colors.grey[200]),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: paymentHistory.length,
+                          separatorBuilder:
+                              (context, index) =>
+                                  Divider(height: 1, color: Colors.grey[200]),
+                          itemBuilder: (context, index) {
+                            final payment = paymentHistory[index];
+                            return Container(
+                              padding: EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    payment.formattedPaidAmount,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        payment.formattedPaidAmount,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        payment.formattedPaidDate,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    payment.formattedPaidDate,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: controller
+                                          .getPaymentMethodColor(
+                                            payment.paymentMethod,
+                                          )
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      controller.getPaymentMethodDisplayName(
+                                        payment.paymentMethod,
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: controller.getPaymentMethodColor(
+                                          payment.paymentMethod,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: controller.getPaymentMethodColor(payment.paymentMethod).withValues(alpha:0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  controller.getPaymentMethodDisplayName(payment.paymentMethod),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: controller.getPaymentMethodColor(payment.paymentMethod),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                )
-              : SizedBox()),
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                    : SizedBox(),
+          ),
         ],
       ),
     );
   }
 
-
-Widget _buildActionButtons() {
-
-  return Column(
-    children: [
-      Row(
-        children: [
-          Expanded(
-            child: Obx(() => ElevatedButton.icon(
-              onPressed: controller.isNotifying.value 
-                  ? null 
-                  : () => controller.notifyCustomer(),
-              icon: controller.isNotifying.value
-                  ? SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Icon(Icons.email, size: 18),
-              label: Text(controller.isNotifying.value ? 'Notifying...' : 'Notify'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: controller.isNotifying.value 
-                    ? AppTheme.warningLight.withValues(alpha:0.7)
-                    : AppTheme.warningLight,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Obx(
+                () => ElevatedButton.icon(
+                  onPressed:
+                      controller.isNotifying.value
+                          ? null
+                          : () => controller.notifyCustomer(),
+                  icon:
+                      controller.isNotifying.value
+                          ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : Icon(Icons.email, size: 18),
+                  label: Text(
+                    controller.isNotifying.value ? 'Notifying...' : 'Notify',
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        controller.isNotifying.value
+                            ? AppColors.warningLight.withValues(alpha: 0.7)
+                            : AppColors.warningLight,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
               ),
-            )),
-          ),
-        ],
-      ),
-      // if (controller.invoiceDetails.value?.dues?.remainingDue != null && 
-      //     controller.invoiceDetails.value!.dues!.remainingDue > 0) ...[
-      //   SizedBox(height: 12),
-      //   Row(
-      //     children: [
-      //       Expanded(
-      //         child: ElevatedButton.icon(
-      //           onPressed: () => controller.addPayment(),
-      //           icon: Icon(Icons.payment, size: 18),
-      //           label: Text('Add Payment'),
-      //           style: ElevatedButton.styleFrom(
-      //             backgroundColor: Color(0xFF6C5CE7),
-      //             foregroundColor: Colors.white,
-      //             padding: EdgeInsets.symmetric(vertical: 12),
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(8),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //       SizedBox(width: 12),
-      //       Expanded(
-      //         child: Obx(() => ElevatedButton.icon(
-      //           onPressed: controller.isNotifying.value 
-      //               ? null 
-      //               : () => controller.notifyCustomer(),
-      //           icon: controller.isNotifying.value
-      //               ? SizedBox(
-      //                   width: 18,
-      //                   height: 18,
-      //                   child: CircularProgressIndicator(
-      //                     strokeWidth: 2,
-      //                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-      //                   ),
-      //                 )
-      //               : Icon(Icons.notifications, size: 18),
-      //           label: Text(controller.isNotifying.value ? 'Notifying...' : 'Notify Customer'),
-      //           style: ElevatedButton.styleFrom(
-      //             backgroundColor: controller.isNotifying.value 
-      //                 ? Color(0xFF51CF66).withValues(alpha:0.7)
-      //                 : Color(0xFF51CF66),
-      //             foregroundColor: Colors.white,
-      //             padding: EdgeInsets.symmetric(vertical: 12),
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(8),
-      //             ),
-      //           ),
-      //         )),
-      //       ),
-      //     ],
-      //   ),
-      // ],
-    ],
-  );
-}
-
-  
+            ),
+          ],
+        ),
+        // if (controller.invoiceDetails.value?.dues?.remainingDue != null &&
+        //     controller.invoiceDetails.value!.dues!.remainingDue > 0) ...[
+        //   SizedBox(height: 12),
+        //   Row(
+        //     children: [
+        //       Expanded(
+        //         child: ElevatedButton.icon(
+        //           onPressed: () => controller.addPayment(),
+        //           icon: Icon(Icons.payment, size: 18),
+        //           label: Text('Add Payment'),
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: Color(0xFF6C5CE7),
+        //             foregroundColor: Colors.white,
+        //             padding: EdgeInsets.symmetric(vertical: 12),
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(8),
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //       SizedBox(width: 12),
+        //       Expanded(
+        //         child: Obx(() => ElevatedButton.icon(
+        //           onPressed: controller.isNotifying.value
+        //               ? null
+        //               : () => controller.notifyCustomer(),
+        //           icon: controller.isNotifying.value
+        //               ? SizedBox(
+        //                   width: 18,
+        //                   height: 18,
+        //                   child: CircularProgressIndicator(
+        //                     strokeWidth: 2,
+        //                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        //                   ),
+        //                 )
+        //               : Icon(Icons.notifications, size: 18),
+        //           label: Text(controller.isNotifying.value ? 'Notifying...' : 'Notify Customer'),
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: controller.isNotifying.value
+        //                 ? Color(0xFF51CF66).withValues(alpha:0.7)
+        //                 : Color(0xFF51CF66),
+        //             foregroundColor: Colors.white,
+        //             padding: EdgeInsets.symmetric(vertical: 12),
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius: BorderRadius.circular(8),
+        //             ),
+        //           ),
+        //         )),
+        //       ),
+        //     ],
+        //   ),
+        // ],
+      ],
+    );
+  }
 
   Widget _buildLoadingState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: Color(0xFF6C5CE7),
-          ),
+          CircularProgressIndicator(color: Color(0xFF6C5CE7)),
           SizedBox(height: 16),
           Text(
             'Loading invoice details...',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -802,11 +818,7 @@ Widget _buildActionButtons() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red[300],
-          ),
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
           SizedBox(height: 16),
           Text(
             'Error Loading Invoice',
@@ -819,10 +831,7 @@ Widget _buildActionButtons() {
           SizedBox(height: 8),
           Text(
             controller.errorMessage.value,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24),
@@ -849,11 +858,7 @@ Widget _buildActionButtons() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.receipt_long,
-            size: 64,
-            color: Colors.grey[300],
-          ),
+          Icon(Icons.receipt_long, size: 64, color: Colors.grey[300]),
           SizedBox(height: 16),
           Text(
             'No Invoice Found',
@@ -866,10 +871,7 @@ Widget _buildActionButtons() {
           SizedBox(height: 8),
           Text(
             'The requested invoice could not be found.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24),

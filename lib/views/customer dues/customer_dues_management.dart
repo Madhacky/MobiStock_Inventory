@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartbecho/bottom_navigation_screen.dart';
 import 'package:smartbecho/controllers/customer%20dues%20controllers/customer_dues_controller.dart';
 import 'package:smartbecho/models/customer%20dues%20management/all_customer_dues_model.dart';
 import 'package:smartbecho/routes/app_routes.dart';
+import 'package:smartbecho/utils/app_colors.dart';
 import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
 import 'package:smartbecho/utils/show_network_image.dart';
@@ -72,6 +74,9 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     return buildCustomAppBar(
       "Dues Management",
       isdark: true,
+      onPressed: () {
+        Get.find<BottomNavigationController>().setIndex(0);
+      },
       actionItem: IconButton(
         onPressed: controller.showAnalyticsModal,
         icon: Icon(Icons.analytics_outlined),
@@ -98,7 +103,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
               'Total Dues\nGiven',
               '₹${summary.totalGiven}',
               Icons.account_balance_wallet_outlined,
-              Color(0xFF6C5CE7),
+              AppColors.primaryLight,
             ),
             _buildSummaryCard(
               'Total\nCollected',
@@ -370,7 +375,7 @@ Widget _buildSummaryCard(
           ),
           child: Center(
             child: CircularProgressIndicator(
-              color: Color(0xFF6C5CE7),
+              color: AppColors.primaryLight,
               strokeWidth: 2,
             ),
           ),
@@ -431,16 +436,16 @@ Widget _buildSummaryCard(
                   height: 44,
                   width: 44,
                   decoration: BoxDecoration(
-                    color: Color(0xFF6C5CE7).withValues(alpha:0.1),
+                    color: AppColors.primaryLight.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xFF6C5CE7).withValues(alpha:0.3)),
+                    border: Border.all(color: AppColors.primaryLight.withValues(alpha:0.3)),
                   ),
                   child: IconButton(
                     onPressed: () => _showFilterBottomSheet(context),
                     icon: Icon(
                       Icons.tune,
                       size: 20,
-                      color: Color(0xFF6C5CE7),
+                      color: AppColors.primaryLight,
                     ),
                   ),
                 ),
@@ -518,7 +523,7 @@ Widget _buildSummaryCard(
           dividerColor: Colors.transparent,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: Color(0xFF6C5CE7),
+            color: AppColors.primaryLight,
           ),
           labelColor: Colors.white,
           unselectedLabelColor: Colors.grey[600],
@@ -630,7 +635,7 @@ Widget _buildSummaryCard(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(
-              color: Color(0xFF6C5CE7),
+              color: AppColors.primaryLight,
               strokeWidth: 3,
             ),
             SizedBox(height: 16),
@@ -881,7 +886,7 @@ Widget _buildSummaryCard(
             child: Column(
               children: [
                 CircularProgressIndicator(
-                  color: Color(0xFF6C5CE7),
+                  color: AppColors.primaryLight,
                   strokeWidth: 2,
                 ),
                 SizedBox(height: 8),
@@ -938,7 +943,7 @@ Widget _buildSummaryCard(
   Widget _buildFloatingActionButton() {
     return FloatingActionButton.extended(
       onPressed: controller.createDueEntry,
-      backgroundColor: Color(0xFF6C5CE7),
+      backgroundColor: AppColors.primaryLight,
       label: Text(
         'Add Due',
         style: TextStyle(
