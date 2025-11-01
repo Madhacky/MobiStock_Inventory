@@ -12,7 +12,7 @@ class AddNewStockOperationController extends GetxController {
   final ApiServices _apiService = ApiServices();
 
   // Arguments from previous page
-  bool hasGstNumber = true;
+  bool? hasGstNumber ;
   String? dateFromPrevPage;
 
   // Bill Details
@@ -231,7 +231,7 @@ class AddNewStockOperationController extends GetxController {
     item.withoutGstAmount.value = withoutGstAmount.toString();
     
     // Calculate with GST if applicable
-    if (hasGstNumber && item.gstPercentage.value > 0) {
+    if (hasGstNumber! && item.gstPercentage.value > 0) {
       double gstAmount = withoutGstAmount * (item.gstPercentage.value / 100);
       double withGstAmount = withoutGstAmount + gstAmount;
       
@@ -496,7 +496,7 @@ class AddNewStockOperationController extends GetxController {
   void addNewItem() {
     billItems.add(BillItem(
       controller: this,
-      hasGstNumber: hasGstNumber,
+      hasGstNumber: hasGstNumber!,
     ));
   }
 

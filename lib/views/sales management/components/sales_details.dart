@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smartbecho/controllers/sales%20hisrory%20controllers/sales_history_comtroller.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_details_model.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
+import 'package:smartbecho/views/sales%20management/components/invoice_dailog.dart';
 
 class SaleDetailsPage extends StatefulWidget {
   @override
@@ -150,191 +151,33 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
             padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildSaleOverview(sale),
-                SizedBox(height: 16),
+                // 1. Customer Section (First)
                 _buildCustomerSection(sale),
                 SizedBox(height: 16),
-                _buildItemsList(sale),
+                
+                // 2. Combined Invoice & Sale Overview
+                _buildInvoiceAndOverview(sale),
                 SizedBox(height: 16),
-                _buildPricingBreakdown(sale),
+                
+                // 3. Combined Items & Pricing
+                _buildItemsAndPricing(sale),
                 SizedBox(height: 16),
+                
+                // 4. Dues Section (if applicable)
                 if (sale.dues != null) _buildDuesSection(sale.dues!),
+                
+                // 5. EMI Section (if applicable)
                 if (sale.emi != null) ...[
                   SizedBox(height: 16),
                   _buildEmiSection(sale.emi!),
                 ],
-                SizedBox(height: 20),
+                SizedBox(height: 16),
+                _buildInvoiceButton(sale)
               ],
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildSaleOverview(SaleDetailResponse sale) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Invoice',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '#${sale.invoiceNumber}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: sale.paid 
-                      ? Color(0xFF10B981).withValues(alpha:0.1) 
-                      : Color(0xFFF59E0B).withValues(alpha:0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      sale.paid ? Icons.check_circle : Icons.pending,
-                      size: 16,
-                      color: sale.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      sale.paymentStatus,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: sale.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 16),
-
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Date & Time',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '${sale.formattedDate}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    if (sale.formattedTime.isNotEmpty)
-                      Text(
-                        '${sale.formattedTime}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Shop',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      sale.shopName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 16),
-
-          Divider(color: Colors.grey[200]),
-
-          SizedBox(height: 16),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total Amount',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              Text(
-                sale.formattedTotalAmount,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF10B981),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -470,7 +313,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
     );
   }
 
-  Widget _buildItemsList(SaleDetailResponse sale) {
+  Widget _buildInvoiceAndOverview(SaleDetailResponse sale) {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -488,6 +331,145 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Invoice',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '#${sale.invoiceNumber}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: sale.paid 
+                      ? Color(0xFF10B981).withValues(alpha:0.1) 
+                      : Color(0xFFF59E0B).withValues(alpha:0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      sale.paid ? Icons.check_circle : Icons.pending,
+                      size: 16,
+                      color: sale.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      sale.paymentStatus,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: sale.paid ? Color(0xFF10B981) : Color(0xFFF59E0B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 16),
+
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Date & Time',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '${sale.formattedDate}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    if (sale.formattedTime.isNotEmpty)
+                      Text(
+                        '${sale.formattedTime}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Shop',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      sale.shopName,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItemsAndPricing(SaleDetailResponse sale) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha:0.08),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Items Header
           Row(
             children: [
               Icon(Icons.shopping_bag, size: 20, color: Color(0xFF3B82F6)),
@@ -521,12 +503,13 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
 
           SizedBox(height: 16),
 
+          // Items List
           ...sale.items.asMap().entries.map((entry) {
             SaleItem item = entry.value;
 
             return Container(
               margin: EdgeInsets.only(bottom: 12),
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(12),
@@ -538,8 +521,8 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                   Row(
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 36,
+                        height: 36,
                         decoration: BoxDecoration(
                           color: Color(0xFF3B82F6),
                           borderRadius: BorderRadius.circular(8),
@@ -547,7 +530,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                         child: Icon(
                           Icons.phone_android,
                           color: Colors.white,
-                          size: 20,
+                          size: 18,
                         ),
                       ),
                       SizedBox(width: 12),
@@ -558,16 +541,16 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                             Text(
                               item.model,
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            SizedBox(height: 2),
                             Text(
                               '${item.color} • ${item.specifications}',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -580,15 +563,15 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                           Text(
                             'Qty: ${item.quantity}',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11,
                               color: Colors.grey[600],
                             ),
                           ),
-                          SizedBox(height: 4),
+                          SizedBox(height: 2),
                           Text(
                             item.formattedPrice,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF10B981),
                             ),
@@ -599,19 +582,19 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
                   ),
 
                   if (item.accessoryIncluded && item.accessoryName.isNotEmpty) ...[
-                    SizedBox(height: 8),
+                    SizedBox(height: 6),
                     Row(
                       children: [
                         Icon(
                           Icons.check_circle,
-                          size: 16,
+                          size: 14,
                           color: Color(0xFF10B981),
                         ),
                         SizedBox(width: 4),
                         Text(
                           'Includes: ${item.accessoryName}',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Color(0xFF10B981),
                           ),
                         ),
@@ -622,86 +605,70 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
               ),
             );
           }).toList(),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildPricingBreakdown(SaleDetailResponse sale) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha:0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+          SizedBox(height: 16),
+          Divider(color: Colors.grey[300]),
+          SizedBox(height: 16),
+
+          // Pricing Breakdown Header
           Row(
             children: [
-              Icon(Icons.receipt, size: 20, color: Color(0xFF8B5CF6)),
+              Icon(Icons.receipt, size: 18, color: Color(0xFF8B5CF6)),
               SizedBox(width: 8),
               Text(
-                'Pricing Breakdown',
+                'Pricing Details',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
             ],
           ),
-          
-          SizedBox(height: 16),
-          
-          _buildPriceRow('Amount (without GST)', sale.formattedWithoutGst),
-          SizedBox(height: 8),
-          _buildPriceRow('GST (${sale.gst.toStringAsFixed(0)}%)', '₹${(sale.withGst - sale.withoutGst).toStringAsFixed(2)}'),
-          SizedBox(height: 8),
-          _buildPriceRow('Amount (with GST)', sale.formattedWithGst),
+
+          SizedBox(height: 12),
+
+          // Pricing Details
+          _buildPriceRow('Subtotal (without GST)', sale.formattedWithoutGst, isSmall: true),
+          SizedBox(height: 6),
+          _buildPriceRow('GST (${sale.gst.toStringAsFixed(0)}%)', '₹${(sale.withGst - sale.withoutGst).toStringAsFixed(2)}', isSmall: true),
           
           if (sale.accessoriesCost > 0) ...[
-            SizedBox(height: 8),
-            _buildPriceRow('Accessories Cost', sale.formattedAccessoriesCost),
+            SizedBox(height: 6),
+            _buildPriceRow('Accessories', sale.formattedAccessoriesCost, isSmall: true),
           ],
           
           if (sale.extraCharges > 0) ...[
-            SizedBox(height: 8),
-            _buildPriceRow('Extra Charges', sale.formattedExtraCharges),
+            SizedBox(height: 6),
+            _buildPriceRow('Extra Charges', sale.formattedExtraCharges, isSmall: true),
           ],
           
           if (sale.repairCharges > 0) ...[
-            SizedBox(height: 8),
-            _buildPriceRow('Repair Charges', sale.formattedRepairCharges),
+            SizedBox(height: 6),
+            _buildPriceRow('Repair Charges', sale.formattedRepairCharges, isSmall: true),
           ],
           
           if (sale.totalDiscount > 0) ...[
-            SizedBox(height: 8),
+            SizedBox(height: 6),
             _buildPriceRow('Discount', '- ${sale.formattedTotalDiscount}', 
-                isDiscount: true),
+                isDiscount: true, isSmall: true),
           ],
           
           SizedBox(height: 12),
-          Divider(color: Colors.grey[300]),
+          Divider(color: Colors.grey[300], thickness: 1.5),
           SizedBox(height: 12),
           
+          // Total Amount (Larger & Prominent)
           _buildPriceRow('Total Amount', sale.formattedTotalAmount, 
               isBold: true, isTotal: true),
           
           if (sale.downPayment > 0) ...[
-            SizedBox(height: 8),
+            SizedBox(height: 10),
             _buildPriceRow('Down Payment', sale.formattedDownPayment, 
                 isDownPayment: true),
-            SizedBox(height: 8),
-            _buildPriceRow('Remaining', '₹${(sale.totalAmount - sale.downPayment).toStringAsFixed(2)}'),
+            SizedBox(height: 6),
+            _buildPriceRow('Remaining Balance', '₹${(sale.totalAmount - sale.downPayment).toStringAsFixed(2)}',
+                isRemaining: true),
           ],
         ],
       ),
@@ -713,6 +680,8 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
     bool isTotal = false, 
     bool isDiscount = false,
     bool isDownPayment = false,
+    bool isRemaining = false,
+    bool isSmall = false,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -720,7 +689,7 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         Text(
           label,
           style: TextStyle(
-            fontSize: isBold ? 16 : 14,
+            fontSize: isTotal ? 16 : (isSmall ? 13 : 14),
             fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
             color: isTotal ? Colors.black87 : Colors.grey[600],
           ),
@@ -728,11 +697,12 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
         Text(
           value,
           style: TextStyle(
-            fontSize: isBold ? 16 : 14,
+            fontSize: isTotal ? 20 : (isSmall ? 13 : 14),
             fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
             color: isTotal ? Color(0xFF10B981) : 
                    isDiscount ? Colors.red[600] :
                    isDownPayment ? Color(0xFF3B82F6) :
+                   isRemaining ? Color(0xFFF59E0B) :
                    Colors.black87,
           ),
         ),
@@ -1049,4 +1019,70 @@ class _SaleDetailsPageState extends State<SaleDetailsPage> {
       ],
     );
   }
+
+Widget _buildInvoiceButton(SaleDetailResponse sale) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          Colors.teal.withOpacity(0.1),
+          Colors.teal.withOpacity(0.05),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: Colors.teal.withOpacity(0.3),
+        width: 1.5,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.teal.withOpacity(0.15),
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: ElevatedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => InvoiceTypeDialog(
+            saleDetailResponse: sale,
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.description_outlined,
+            color: Colors.teal.shade700,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Show Invoice',
+            style: TextStyle(
+              color: Colors.teal.shade700,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 }

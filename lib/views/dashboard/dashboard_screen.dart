@@ -291,11 +291,11 @@ class _InventoryDashboardState extends State<InventoryDashboard>
                     ),
                     Row(
                       children: [
-                        _buildAppBarIcon(
-                          Icons.notifications_rounded,
-                          () {},
-                          hasNotification: true,
-                        ),
+                        // _buildAppBarIcon(
+                        //   Icons.notifications_rounded,
+                        //   () {},
+                        //   hasNotification: true,
+                        // ),
                         const SizedBox(width: 12),
                         _buildAppBarIcon(
                           Icons.person_rounded,

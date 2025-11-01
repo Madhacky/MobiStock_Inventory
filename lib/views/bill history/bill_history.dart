@@ -1167,7 +1167,7 @@ Widget _buildFilterButton(BuildContext context, {bool showSearch = false}) {
         buildSpeedDialChild(
           label: 'Online added Products',
           backgroundColor: const Color(0xFF00CEC9),
-          icon: Icons.add,
+          icon: Icons.inventory_2,
           onTap: () => Get.toNamed(AppRoutes.onlineAddedProducts),
         ),
         buildSpeedDialChild(

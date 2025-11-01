@@ -36,10 +36,7 @@ class StockHistoryPage extends GetView<BillHistoryController> {
             _buildStatsSection(),
             
             // Search bar
-            _buildSearchBar(),
-            
-            // Filter button
-            _buildFilterButton(context),
+   _buildSearchAndFilterSection(context),
             
             // Stock items grid with lazy loading
             Expanded(
@@ -173,130 +170,177 @@ class StockHistoryPage extends GetView<BillHistoryController> {
     );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha:0.05),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: controller.searchController,
-        onChanged: (value) {
-          // Debounce search
-          Future.delayed(Duration(milliseconds: 500), () {
-            if (controller.searchController.text == value) {
-              controller.onSearchChanged(value);
-            }
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'Search by model, company, or description...',
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
-          suffixIcon: Obx(() => controller.searchKeyword.value.isNotEmpty
-              ? IconButton(
-                  onPressed: () {
-                    controller.searchController.clear();
-                    controller.onSearchChanged('');
-                  },
-                  icon: Icon(Icons.clear, color: Colors.grey[400]),
-                )
-              : SizedBox.shrink()),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 12),
+Widget _buildSearchAndFilterSection(BuildContext context, {bool showSearch = false}) {
+  return Container(
+    margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha: 0.05),
+          spreadRadius: 0,
+          blurRadius: 10,
+          offset: Offset(0, 2),
         ),
-      ),
-    );
-  }
-
-  Widget _buildFilterButton(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => _showFilterBottomSheet(context),
-              icon: Icon(Icons.filter_list, size: 18),
-              label: Obx(() {
-                String filterText = 'Filter & Sort';
-                List<String> activeFilters = [];
-                
-                if (controller.selectedStockCompany.value != 'All') {
-                  activeFilters.add(controller.selectedStockCompany.value);
-                }
-                
-                if (controller.selectedCategory.value != 'All') {
-                  activeFilters.add(controller.selectedCategory.value.replaceAll('_', ' '));
-                }
-                
-                if (controller.stockTimePeriodType.value == 'Month/Year') {
-                  activeFilters.add('${controller.getMonthName(controller.stockSelectedMonth.value)} ${controller.stockSelectedYear.value}');
-                } else if (controller.stockTimePeriodType.value == 'Custom Date' && 
-                           controller.stockStartDate.value != null && controller.stockEndDate.value != null) {
-                  activeFilters.add('Custom Range');
-                }
-                
-                if (activeFilters.isNotEmpty) {
-                  filterText = activeFilters.join(' • ');
-                }
-                
-                return Text(
-                  filterText,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  overflow: TextOverflow.ellipsis,
-                );
-              }),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF1E293B),
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-              ),
-            ),
-          ),
-          SizedBox(width: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha:0.2)),
-            ),
-            child: IconButton(
-              onPressed: () => controller.refreshStockItems(),
-              icon: Obx(() => controller.isLoadingStock.value
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(0xFF1E293B),
+      ],
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            if (showSearch) ...[
+              Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: TextField(
+                    controller: controller.searchController,
+                    onChanged: (value) {
+                      // Debounce search
+                      Future.delayed(Duration(milliseconds: 500), () {
+                        if (controller.searchController.text == value) {
+                          controller.onSearchChanged(value);
+                        }
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search by model, company, or description...',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w400,
                       ),
-                    )
-                  : Icon(Icons.refresh, color: Color(0xFF1E293B))),
+                      suffixIcon: Obx(
+                        () => controller.searchKeyword.value.isNotEmpty
+                            ? IconButton(
+                                onPressed: () {
+                                  controller.searchController.clear();
+                                  controller.onSearchChanged('');
+                                },
+                                icon: Icon(
+                                  Icons.clear,
+                                  size: 16,
+                                  color: Colors.grey[400],
+                                ),
+                              )
+                            : SizedBox(),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
+            ] else ...[
+              Icon(Icons.filter_list, color: Color(0xFF1E293B), size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Obx(() {
+                  String filterText = 'Filter & Sort';
+                  List<String> activeFilters = [];
+
+                  if (controller.selectedStockCompany.value != 'All') {
+                    activeFilters.add(controller.selectedStockCompany.value);
+                  }
+
+                  if (controller.selectedCategory.value != 'All') {
+                    activeFilters.add(
+                        controller.selectedCategory.value.replaceAll('_', ' '));
+                  }
+
+                  if (controller.stockTimePeriodType.value == 'Month/Year') {
+                    activeFilters.add(
+                      '${controller.getMonthName(controller.stockSelectedMonth.value)} ${controller.stockSelectedYear.value}',
+                    );
+                  } else if (controller.stockTimePeriodType.value ==
+                          'Custom Date' &&
+                      controller.stockStartDate.value != null &&
+                      controller.stockEndDate.value != null) {
+                    activeFilters.add('Custom Range');
+                  }
+
+                  if (activeFilters.isNotEmpty) {
+                    filterText = activeFilters.join(' • ');
+                  }
+
+                  return Text(
+                    filterText,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1E293B),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  );
+                }),
+              ),
+              SizedBox(width: 8),
+            ],
+            // Filter Button
+            Obx(() {
+              bool hasActiveFilters =
+                  controller.selectedStockCompany.value != 'All' ||
+                      controller.selectedCategory.value != 'All' ||
+                      controller.stockTimePeriodType.value != 'All Time' ||
+                      (controller.stockStartDate.value != null &&
+                          controller.stockEndDate.value != null);
+
+              return Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  color: hasActiveFilters ? Color(0xFF1E293B) : Colors.grey[50],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                ),
+                child: IconButton(
+                  onPressed: () => _showFilterBottomSheet(context),
+                  icon: Icon(
+                    Icons.tune,
+                    size: 18,
+                    color: hasActiveFilters ? Colors.white : Color(0xFF1E293B),
+                  ),
+                  tooltip: 'Filter & Sort',
+                ),
+              );
+            }),
+            SizedBox(width: 8),
+            IconButton(
+              onPressed: () => controller.refreshStockItems(),
+              icon: Obx(
+                () => controller.isLoadingStock.value
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF1E293B),
+                        ),
+                      )
+                    : Icon(Icons.refresh, size: 18, color: Color(0xFF1E293B)),
+              ),
               tooltip: 'Refresh',
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
   void _showFilterBottomSheet(BuildContext context) {
     Get.bottomSheet(

@@ -888,8 +888,9 @@ class InventoryController extends GetxController {
     Get.toNamed(AppRoutes.addNewItem);
   }
 
-  void addNewStocks() {
-    Get.toNamed(AppRoutes.addNewStock);
+  void addNewStocks() async{
+    final bool isGtsAvailable=await SharedPreferencesHelper.getGstNumber()!=null;
+    Get.toNamed(AppRoutes.addNewStock, arguments: {"hasGstNumber":isGtsAvailable});
   }
 
   void exportData() {

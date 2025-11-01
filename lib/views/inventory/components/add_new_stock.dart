@@ -591,7 +591,7 @@ class AddNewStockForm extends StatelessWidget {
           const SizedBox(height: 16),
 
           // GST fields (only if hasGstNumber is true)
-          if (controller.hasGstNumber) ...[
+          if (controller.hasGstNumber!) ...[
             Row(
               children: [
                 Expanded(

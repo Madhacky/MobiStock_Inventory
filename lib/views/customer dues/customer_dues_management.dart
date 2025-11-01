@@ -81,7 +81,7 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
 
   Widget _buildSummaryCards() {
     return Container(
-      height: 120,
+      height: 130,
       margin: EdgeInsets.symmetric(vertical: 8),
       child: Obx(() {
         if (controller.isSummaryDataLoading.value == true) {
@@ -131,70 +131,230 @@ class _CustomerDuesManagementScreenState extends State<CustomerDuesManagementScr
     );
   }
 
-  Widget _buildSummaryCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color, {
-    void Function()? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        width: 140,
-        margin: EdgeInsets.only(right: 12),
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha:0.08),
-              spreadRadius: 0,
-              blurRadius: 20,
-              offset: Offset(0, 4),
+  Widget _buildStatCard(
+  String title,
+  String value,
+  String subtitle,
+  IconData icon,
+  Color color,
+  List<Color> gradient, {
+  void Function()? onTap,
+}) {
+  return InkWell(
+    onTap: onTap ?? () => Get.toNamed(AppRoutes.salesStockDashboard),
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 24),
+          SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (subtitle.isNotEmpty) ...[
+            SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 9,
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha:0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: color, size: 18),
+          SizedBox(height: 4),
+          Container(
+            width: 20,
+            height: 2,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(1),
             ),
-            SizedBox(height: 8),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildEnhancedStatCard(
+  String title,
+  String value,
+  IconData icon,
+  Color color,
+  String trend,
+  bool trendUp,
+  VoidCallback onTap,
+) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 24),
+          SizedBox(height: 8),
+          if (value.isNotEmpty) ...[
             Text(
               value,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: color,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 2),
+            SizedBox(height: 4),
+          ],
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 4),
+          Container(
+            width: 20,
+            height: 2,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(1),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildSummaryCard(
+  String title,
+  String value,
+  IconData icon,
+  Color color, {
+  void Function()? onTap,
+  double width = 140,
+}) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      width: width,
+      padding: EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+        border: onTap != null
+            ? Border.all(color: color.withValues(alpha: 0.2), width: 1)
+            : null,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 24),
+          SizedBox(height: 8),
+          if (value.isNotEmpty) ...[
             Text(
-              title,
+              value,
               style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-                height: 1.2,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: color,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 4),
+          ],
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (onTap != null) ...[
+            SizedBox(height: 4),
+            Container(
+              width: 20,
+              height: 2,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(1),
+              ),
             ),
           ],
-        ),
+        ],
       ),
-    );
-  }
-
+    ),
+  );
+}
   Widget _buildSummaryCardsShimmer() {
     return ListView.builder(
       scrollDirection: Axis.horizontal,

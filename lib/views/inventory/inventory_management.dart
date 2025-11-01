@@ -94,7 +94,7 @@ class InventoryManagementScreen extends StatelessWidget {
                 AppConfig.isSmallScreen,
               )
               : Container(
-                height: 120,
+                height: 130,
                 margin: EdgeInsets.symmetric(vertical: 16),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -226,258 +226,197 @@ class InventoryManagementScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard(
-    String title,
-    String value,
-    String subtitle,
-    IconData icon,
-    Color color,
-    List<Color> gradient,
-  ) {
-    return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.salesStockDashboard),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.white],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.1),
-              spreadRadius: 1,
-              blurRadius: 20,
-              offset: Offset(0, 8),
-            ),
-          ],
-          border: Border.all(color: color.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: gradient),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(icon, color: Colors.white, size: 16),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 2),
-            Flexible(
-              child: Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 9,
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.w400,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFiltersSection() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+  String title,
+  String value,
+  String subtitle,
+  IconData icon,
+  Color color,
+  List<Color> gradient, {
+  void Function()? onTap,
+}) {
+  return InkWell(
+    onTap: onTap ?? () => Get.toNamed(AppRoutes.salesStockDashboard),
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.08),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            color: Colors.grey.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 24),
+          SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (subtitle.isNotEmpty) ...[
+            SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 9,
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          SizedBox(height: 4),
+          Container(
+            width: 20,
+            height: 2,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(1),
+            ),
           ),
         ],
       ),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
+    ),
+  );
+}
+
+  Widget _buildFiltersSection() {
+  return Container(
+    margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withValues(alpha: 0.05),
+          spreadRadius: 0,
+          blurRadius: 10,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Icon(Icons.filter_list, color: Color(0xFF6C5CE7), size: 20),
-                SizedBox(width: 8),
-                Text(
-                  'Filters',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+            Icon(Icons.search, color: Color(0xFF1E293B), size: 18),
+            SizedBox(width: 8),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(2),
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Colors.grey.withValues(alpha: 0.2),
                   ),
                 ),
-                Spacer(),
-                Obx(() {
-                  int activeFilters = controller.getActiveFiltersCount();
-                  return activeFilters > 0
-                      ? Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF6C5CE7),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          '$activeFilters',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      )
-                      : SizedBox.shrink();
-                }),
-              ],
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomSearchWidget(
+                child: TextField(
+                  //initialValue: controller.searchQuery.value,
+                  onChanged: (value) => controller.searchQuery.value = value,
+                  decoration: InputDecoration(
                     hintText: 'Search items...',
-                    initialValue: controller.searchQuery.value,
-                    onChanged: (value) => controller.searchQuery.value = value,
-                    onClear: () => controller.searchQuery.value = '',
-                    primaryColor: Color(0xFF6C5CE7),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Container(
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: () => _showFilterBottomSheet(),
-                    icon: Obx(
-                      () =>
-                          controller.isFiltersLoading.value
-                              ? SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                              : Icon(Icons.tune, size: 18),
+                    hintStyle: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w400,
                     ),
-                    label: Text('Filters'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF6C5CE7),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    suffixIcon: Obx(
+                      () => controller.searchQuery.value.isNotEmpty
+                          ? IconButton(
+                              onPressed: () => controller.searchQuery.value = '',
+                              icon: Icon(
+                                Icons.clear,
+                                size: 16,
+                                color: Colors.grey[400],
+                              ),
+                            )
+                          : SizedBox(),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-            // Show active filters summary
+            SizedBox(width: 8),
+            // Filter Button
             Obx(() {
               int activeFilters = _getActiveFiltersCount();
-              if (activeFilters > 0) {
-                return Container(
-                  margin: EdgeInsets.only(top: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Active Filters:',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: [
-                          if (controller.selectedCompany.value.isNotEmpty)
-                            _buildActiveFilterChip(
-                              'Company: ${controller.selectedCompany.value}',
-                            ),
-                          if (controller.selectedCategory.value.isNotEmpty)
-                            _buildActiveFilterChip(
-                              'Category: ${controller.selectedCategory.value}',
-                            ),
-                          if (controller.selectedModel.value.isNotEmpty)
-                            _buildActiveFilterChip(
-                              'Model: ${controller.selectedModel.value}',
-                            ),
-                          if (controller.selectedRAM.value.isNotEmpty)
-                            _buildActiveFilterChip(
-                              'RAM: ${controller.selectedRAM.value}',
-                            ),
-                          if (controller.selectedROM.value.isNotEmpty)
-                            _buildActiveFilterChip(
-                              'Storage: ${controller.selectedROM.value}',
-                            ),
-                          if (controller.selectedColor.value.isNotEmpty)
-                            _buildActiveFilterChip(
-                              'Color: ${controller.selectedColor.value}',
-                            ),
-                          if (controller
-                              .selectedStockAvailability
-                              .value
-                              .isNotEmpty)
-                            _buildActiveFilterChip(
-                              'Stock: ${controller.selectedStockAvailability.value}',
-                            ),
-                        ],
-                      ),
-                    ],
+              
+              return Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  color: activeFilters > 0 ? Color(0xFF1E293B) : Colors.grey[50],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                ),
+                child: IconButton(
+                  onPressed: () => _showFilterBottomSheet(),
+                  icon: Icon(
+                    Icons.tune,
+                    size: 18,
+                    color: activeFilters > 0 ? Colors.white : Color(0xFF1E293B),
                   ),
-                );
-              }
-              return SizedBox.shrink();
+                  tooltip: 'Filter & Sort',
+                ),
+              );
             }),
+            SizedBox(width: 8),
+            IconButton(
+              onPressed: () => controller.refreshData(),
+              icon: Obx(
+                () => controller.isFiltersLoading.value
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF1E293B),
+                        ),
+                      )
+                    : Icon(Icons.refresh, size: 18, color: Color(0xFF1E293B)),
+              ),
+              tooltip: 'Refresh',
+            ),
           ],
         ),
-      ),
-    );
-  }
-
+      ],
+    ),
+  );
+}
   Widget _buildInventoryHeader() {
     return Obx(
       () => Container(

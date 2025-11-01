@@ -112,13 +112,13 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
     //   color: Color(0xFF9c88ff),
     //   category: 'Reports',
     // ),
-    DrawerMenuItem(
-      title: 'Generate Inventory',
-      subtitle: 'App preferences',
-      icon: Icons.link,
-      color: Color(0xFFfa709a),
-      category: 'Marketing',
-    ),
+    // DrawerMenuItem(
+    //   title: 'Generate Inventory',
+    //   subtitle: 'App preferences',
+    //   icon: Icons.link,
+    //   color: Color(0xFFfa709a),
+    //   category: 'Marketing',
+    // ),
     // DrawerMenuItem(
     //   title: 'Settings',
     //   subtitle: 'App preferences',
@@ -220,40 +220,40 @@ class _ModernAppDrawerState extends State<ModernAppDrawer>
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF00b894).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(0xFF00b894).withValues(alpha: 0.2),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF00b894),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'System Online',
-                        style: AppStyles.custom(
-                          size: 12,
-                          color: Color(0xFF00b894),
-                          weight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // SizedBox(height: 20),
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                //   decoration: BoxDecoration(
+                //     color: Color(0xFF00b894).withValues(alpha: 0.1),
+                //     borderRadius: BorderRadius.circular(20),
+                //     border: Border.all(
+                //       color: Color(0xFF00b894).withValues(alpha: 0.2),
+                //       width: 1,
+                //     ),
+                //   ),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Container(
+                //         width: 8,
+                //         height: 8,
+                //         decoration: BoxDecoration(
+                //           color: Color(0xFF00b894),
+                //           borderRadius: BorderRadius.circular(4),
+                //         ),
+                //       ),
+                //       SizedBox(width: 8),
+                //       Text(
+                //         'System Online',
+                //         style: AppStyles.custom(
+                //           size: 12,
+                //           color: Color(0xFF00b894),
+                //           weight: FontWeight.w600,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),

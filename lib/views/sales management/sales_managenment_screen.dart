@@ -3,11 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smartbecho/controllers/sales%20hisrory%20controllers/sales_history_comtroller.dart';
-import 'package:smartbecho/models/inventory%20management/inventory_item_model.dart';
 import 'package:smartbecho/models/sales%20history%20models/sales_history_reponse_model.dart';
-import 'package:smartbecho/routes/app_routes.dart';
-import 'package:smartbecho/utils/app_colors.dart';
-import 'package:smartbecho/utils/app_styles.dart';
 import 'package:smartbecho/utils/common_date_feild.dart';
 import 'package:smartbecho/utils/common_month_year_dropdown.dart';
 import 'package:smartbecho/utils/custom_appbar.dart';
@@ -44,36 +40,36 @@ class SalesManagementScreen extends GetView<SalesManagementController> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed:
-            () => Get.toNamed(
-              AppRoutes.mobileSalesForm,
-              arguments: {
-                "inventoryItem": InventoryItem(
-                  id: 0,
-                  itemCategory: '',
-                  logo: '',
-                  model: '',
-                  ram: '',
-                  rom: '',
-                  color: '',
-                  sellingPrice: 0.0,
-                  quantity: 0,
-                  company: '',
-                ),
-              },
-            ),
-        backgroundColor: Color(0xFF6C5CE7),
-        icon: Icon(Icons.add, color: Colors.white),
-        label: Text(
-          "Sell Product",
-          style: AppStyles.custom(
-            color: AppTheme.cardLight,
-            size: 15,
-            weight: FontWeight.bold,
-          ),
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed:
+      //       () => Get.toNamed(
+      //         AppRoutes.mobileSalesForm,
+      //         arguments: {
+      //           "inventoryItem": InventoryItem(
+      //             id: 0,
+      //             itemCategory: '',
+      //             logo: '',
+      //             model: '',
+      //             ram: '',
+      //             rom: '',
+      //             color: '',
+      //             sellingPrice: 0.0,
+      //             quantity: 0,
+      //             company: '',
+      //           ),
+      //         },
+      //       ),
+      //   backgroundColor: Color(0xFF6C5CE7),
+      //   icon: Icon(Icons.add, color: Colors.white),
+      //   label: Text(
+      //     "Sell Product",
+      //     style: AppStyles.custom(
+      //       color: AppTheme.cardLight,
+      //       size: 15,
+      //       weight: FontWeight.bold,
+      //     ),
+      //   ),
+      // ),
     );
   }
 
